@@ -4,7 +4,7 @@ export default [
   {
     path: process.env.VUE_APP_PATH,
     name: "base",
-    component: () => import("@/pages/BasePage"),
+    component: () => import("@/layout/BaseLayout"),
     children: [
       {
         path: process.env.VUE_APP_HOME,
@@ -29,6 +29,48 @@ export default [
           title: "마이페이지",
         },
         component: () => import("@/pages/mypage"),
+      },
+    ],
+  },
+  {
+    path: process.env.VUE_APP_ACCOUNT,
+    name: "auth",
+    component: () => import("@/layout/AuthLayout"),
+    children: [
+      {
+        path: process.env.VUE_APP_LOGIN,
+        name: "login",
+        meta: {
+          title: "로그인",
+        },
+        component: () => import("@/pages/account/login"),
+      },
+      {
+        path: process.env.VUE_APP_REGISTER,
+        name: "register",
+        meta: {
+          title: "회원가입",
+          back: process.env.VUE_APP_LOGIN
+        },
+        component: () => import("@/pages/account/register"),
+      },
+      {
+        path: process.env.VUE_APP_CHANGEPASS,
+        name: "changepass",
+        meta: {
+          title: "비밀번호변경",
+          back: process.env.VUE_APP_LOGIN
+        },
+        component: () => import("@/pages/account/changepass"),
+      },
+      {
+        path: process.env.VUE_APP_FINDPASS,
+        name: "findpass",
+        meta: {
+          title: "비밀번호찾기",
+          back: process.env.VUE_APP_LOGIN
+        },
+        component: () => import("@/pages/account/findpass"),
       },
     ],
   },
