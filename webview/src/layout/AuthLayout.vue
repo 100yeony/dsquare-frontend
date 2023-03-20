@@ -13,10 +13,10 @@
 <script>
 import { computed, onMounted, toRef } from "vue";
 import { useStore } from "vuex";
-import TopBar from "@/components/TopBar"
-import Footer from "@/components/Footer"
+import TopBar from "@/components/TopBarAuth"
+import Footer from "@/components/FooterAuth"
 export default {
-  name: "BasePage",
+  name: "AuthLayout",
 
   components: {
     TopBar,
