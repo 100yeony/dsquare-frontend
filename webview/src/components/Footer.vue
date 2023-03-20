@@ -2,14 +2,10 @@
   <div>
     <v-footer fixed app>
       <v-bottom-navigation bg-color="teal" color="white" v-model="nowMenu" @update:modelValue="callLink">
-        <v-row no-gutters>
-          <v-col v-for="(item,index) of menuItems" :key="index" cols="4">
-            <v-btn :value="item.index" block>
-              <v-icon>{{item.icon}}</v-icon>
-              <span>{{item.title}}</span>
-            </v-btn>
-          </v-col>
-        </v-row>
+        <v-btn v-for="(item,index) of menuItems" :key="index" block :value="item.index" >
+          <v-icon block>{{item.icon}}</v-icon>
+          <span>{{item.title}}</span>
+        </v-btn>
       </v-bottom-navigation>
     </v-footer>
   </div>
