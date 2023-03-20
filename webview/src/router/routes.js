@@ -18,7 +18,7 @@ export default [
         path: process.env.VUE_APP_FAQ,
         name: "faq",
         meta: {
-          title: "faq",
+          title: "FAQ",
         },
         component: () => import("@/pages/faq"),
       },
@@ -26,7 +26,7 @@ export default [
         path: process.env.VUE_APP_MYPAGE,
         name: "mypage",
         meta: {
-          title: "mypage",
+          title: "마이페이지",
         },
         component: () => import("@/pages/mypage"),
       },

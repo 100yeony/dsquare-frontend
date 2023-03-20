@@ -16,5 +16,13 @@ const router = createRouter({
 		}
 	},
 });
+/**
+ * Vue router의 권한 및 title을 설정해주는 script 입니다.
+ */
+router.beforeEach(async (to, from, next) => {
+	let title = to?.meta?.title ?? ''
+	store.dispatch("layout/setMenuTitle", title)
 
+	return next();
+});
 export default router;
