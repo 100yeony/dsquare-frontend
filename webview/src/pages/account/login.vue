@@ -36,6 +36,7 @@ export default {
       // stop here if form is invalid
       this.v$.$touch();
       if (!this.v$.$error) {
+        this.$store.dispatch('info/setInfoToken', 'ABCDEFG'); // 테스트로 토큰을 'ABCDEFG' 로 넣습니다. 이건 router에서 확인과 연관이 있습니다.
         this.$router.push('/');
         return;
       }
@@ -145,7 +146,7 @@ export default {
                       <p class="mb-0">
                         계정이 없으신가요?
                         <router-link
-                          to="/account/register"
+                          to="/account/register/"
                           class="fw-medium text-primary"
                           >회원가입</router-link
                         >
