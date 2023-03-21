@@ -34,7 +34,16 @@ export default {
       this.v$.$touch();
       if (!this.v$.$error) {
         // api 통신 필요.
-        this.$router.push('/account/login');
+        // 기초적인 스낵바 예제.
+        this.$inform(
+        {
+          text : "비밀번호를 재생성하였습니다.",
+          snackbarX : "center",
+          snackbarY : "bottom",
+          snackbarTimeout : 10000,
+        }
+        );
+        //this.$router.push('/account/login');
         return;
       }
     },
