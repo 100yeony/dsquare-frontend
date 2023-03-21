@@ -50,7 +50,7 @@ export default {
   setup() {
     const store = useStore();
     const menuTitle = computed(() => store.getters["layout/menuTitle"]);
-    const back = ref('');
+    const back = computed(() => store.getters["url/urlBack"]);
     return { menuTitle, back };
   },
   data: () => ({
@@ -61,11 +61,6 @@ export default {
       { title: '테스트 push 04', id :3 },
     ],
   }),
-  watch:{
-      $route (to, from){
-        this.back = to.meta.back;
-      }
-  },
   methods: {
     onclickBackBtn() {
       if(!stringUtils.isEmptyBool(this.back)){

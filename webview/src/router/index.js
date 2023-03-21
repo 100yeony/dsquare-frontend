@@ -21,7 +21,9 @@ const router = createRouter({
  */
 router.beforeEach(async (to, from, next) => {
 	let title = to?.meta?.title ?? ''
+	let back = to?.meta?.back ?? ''
 	store.dispatch("layout/setMenuTitle", title)
+	store.dispatch("url/setUrlBack", back)
 
 	return next();
 });
