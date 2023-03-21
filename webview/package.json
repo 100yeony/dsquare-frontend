@@ -1,20 +1,16 @@
 {
-  "name": "spamfilter-webview",
+  "name": "dsquare-user-webview",
   "version": "0.1.0",
   "private": true,
   "scripts": {
     "serve": "vue-cli-service serve",
     "serve:tb": "vue-cli-service serve --mode tb",
     "serve:prod": "vue-cli-service serve --mode prod",
-    "serve:kkw": "vue-cli-service serve --mode kkw",
-    "serve:kyy": "vue-cli-service serve --mode kyy",
     "build": "vue-cli-service build",
     "postbuild": "npm run cp:android && npm run cp:ios",
     "build:tb": "vue-cli-service build --mode tb",
     "build:prod": "vue-cli-service build --mode prod",
-    "lint": "vue-cli-service lint",
-    "cp:android": "cp -rf ./dist ../SpamFilter_v3.3.3_Android/app/src/main/assets",
-    "cp:ios": "cp -rf ./dist ../SpamFilter_v3.3.2_220304_maos_1.5.6_iOS/SpamFilter_v3.3.2_220304_maos_1.5.6/SpamFilter"
+    "lint": "vue-cli-service lint"
   },
   "dependencies": {
     "@babel/runtime-corejs3": "^7.21.0",
