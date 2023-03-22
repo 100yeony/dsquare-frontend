@@ -6,6 +6,10 @@ export default [
     name: "base",
     component: () => import("@/layout/BaseLayout"),
     children: [
+      { // '/' 으로 들어오면 '/home/'으로 redirect 한다.
+        path: process.env.VUE_APP_PATH,
+        redirect: process.env.VUE_APP_HOME,
+      },
       {
         path: process.env.VUE_APP_HOME,
         name: "home",
