@@ -15,13 +15,49 @@ export default [
         component: () => import("@/pages/home"),
       },
       {
-        path: process.env.VUE_APP_FAQ,
-        name: "faq",
+        path: process.env.VUE_APP_BOARD,
+        name: "board",
         meta: {
-          title: "FAQ",
+          title: "게시판",
         },
-        component: () => import("@/pages/faq"),
+        component: () => import("@/pages/board"),
       },
+      {
+        path: process.env.VUE_APP_BOARD_QNA_WRITE,
+        name: "qna-write",
+        meta: {
+          title: "Q&A작성",
+          back: process.env.VUE_APP_BOARD
+        },
+        component: () => import("@/pages/board/qna/editor"),
+      },
+			{
+				path:  process.env.VUE_APP_BOARD_QNA_DETAIL,
+				name: "qna-detail",
+				meta: {
+          title: "Q&A상세",
+          back: process.env.VUE_APP_BOARD
+				},
+				component: () => import("@/pages/board/qna/_id"),
+			},
+			{
+				path:  process.env.VUE_APP_BOARD_FREE_WRITE,
+				name: "free-write",
+				meta: {
+          title: "자유게시판 작성",
+          back: process.env.VUE_APP_BOARD
+				},
+				component: () => import("@/pages/board/free/editor"),
+			},
+			{
+				path:  process.env.VUE_APP_BOARD_FREE_DETAIL,
+				name: "free-detail",
+				meta: {
+          title: "자유게시판 상세",
+          back: process.env.VUE_APP_BOARD
+				},
+				component: () => import("@/pages/board/free/_id"),
+			},
       {
         path: process.env.VUE_APP_MYPAGE,
         name: "mypage",

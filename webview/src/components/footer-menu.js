@@ -9,9 +9,9 @@ export const menuItems = [
   {
     id: 2,
     icon: 'mdi-format-list-bulleted',
-    link: process.env.VUE_APP_FAQ,
+    link: process.env.VUE_APP_BOARD,
     value: '',
-    title: 'FAQ'
+    title: '게시판'
   },
   {
     id: 3,
