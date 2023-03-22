@@ -49,20 +49,16 @@
         >
       </template>
       <v-list v-if="tab === 1">
-        <v-list-item v-for="(item, index) of qnaTab" :key="item">
-          <v-list-item-title
-            v-text="item.title"
-            @click="routerMove(item)"
-          ></v-list-item-title>
+        <v-list-item v-for="(item, index) of qnaTab" :key="index">
+          <v-list-item-title @click="routerMove(item)">
+          {{ item.title }}</v-list-item-title>
         </v-list-item>
       </v-list>
 
       <v-list v-if="tab === 2">
-        <v-list-item v-for="(item, index) of freeTab" :key="item">
-          <v-list-item-title
-            v-text="item.title"
-            @click="routerMove(item)"
-          ></v-list-item-title>
+        <v-list-item v-for="(item, index) of freeTab" :key="index">
+          <v-list-item-title @click="routerMove(item)">
+          {{ item.title }}</v-list-item-title>
         </v-list-item>
       </v-list>
     </v-menu>
