@@ -112,6 +112,15 @@ export default [
         },
         component: () => import("@/pages/account/findpass"),
       },
+      {
+        path: process.env.VUE_APP_FINDPASS_OK,
+        name: "findpass_ok",
+        meta: {
+          title: "비밀번호찾기성공",
+          back: process.env.VUE_APP_FINDPASS
+        },
+        component: () => import("@/pages/account/findpass_ok"),
+      },
     ],
   },
 ];

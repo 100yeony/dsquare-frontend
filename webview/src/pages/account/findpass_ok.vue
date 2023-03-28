@@ -48,7 +48,7 @@ export default {
           color : "#ECEFF1",
         }
         );
-        this.$router.push('/account/find-pass-ok');
+        // this.$router.push();
         return;
       }
     },
