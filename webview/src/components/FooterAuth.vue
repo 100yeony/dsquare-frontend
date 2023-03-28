@@ -1,7 +1,12 @@
 <template>
   <div>
     <v-footer fixed app>
-      <div>문의: example@gmail.com</div>
+      <v-row justify="center mb-2">
+        <v-col class="text-center mt-4 text-caption" cols="12">
+          <p>문의: example@gmail.com</p>
+          <p>Copyright© {{ new Date().getFullYear() }} KT DS. All rights reserved.</p>
+        </v-col>
+      </v-row>
     </v-footer>
   </div>
 </template>
