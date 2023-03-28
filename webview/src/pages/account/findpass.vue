@@ -89,6 +89,33 @@ export default {
                             'is-invalid': submitted && v$.email.$error,
                           }"
                         />
+                        <!-- height, width 크기 조절 예시-->
+                        <v-responsive max-width="50%">
+                          <v-text-field
+                            type="email"
+                            v-model="email"
+                            class="form-control"
+                            id="useremail"
+                            placeholder="Enter email"
+                            :class="{
+                              'is-invalid': submitted && v$.email.$error,
+                            }"
+                            density="compact"
+                          />
+                        </v-responsive>
+
+                        <v-responsive max-width="50%" max-height="5vh">
+                          <v-text-field
+                            type="email"
+                            v-model="email"
+                            class="form-control"
+                            id="useremail"
+                            placeholder="Enter email"
+                            :class="{
+                              'is-invalid': submitted && v$.email.$error,
+                            }"
+                          />
+                        </v-responsive>
                         <div
                           v-if="submitted && v$.email.$error"
                           class="invalid-feedback"
