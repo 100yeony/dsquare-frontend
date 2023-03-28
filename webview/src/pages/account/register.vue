@@ -1,5 +1,5 @@
-<template>
-  <div v-if="stepper === 0" class="font-sm">
+<template class="font-sm">
+  <div v-if="stepper === 0" >
     <!-- 더 꾸며보세요.-->
     <div class="text-primary font-weight text-center font-xxl">디스퀘어</div>
     <v-expansion-panels class="mt-4">
@@ -127,6 +127,7 @@
     <v-btn :disabled="!(terms[0] && terms[1] && terms[2])" block @click="stepper = 1" class="mt-5" >회원가입 진행하기</v-btn>
   </div>
   <div v-else-if="stepper === 1">
+    <div class="text-center mt-3">회원가입에 필요한 정보를 입력해주세요.</div>
     <div class="p-2 mt-4">
       <v-form @submit.prevent="tryToRegisterIn" class="overflow-show  ">
         <v-form-group id="email-group" label="Email" label-for="email" class="">
@@ -212,16 +213,22 @@
     </div>
   </div>
   <div v-else>  
-    <v-card>
-      <v-card-title>
-        <h3 class="text-center">환영합니다!</h3>
-        <h3 class="text-center"><span class="text-primary font-weight">{{ user.nickname }}</span>님</h3>
-      </v-card-title>
-      <v-card-item>
-        <p>회원가입이 성공적으로 완료되었습니다.<br> 로그인해주세요.</p>
-        <v-btn block @click="onLogin">로그인</v-btn>
-      </v-card-item>
-    </v-card>
+    <div>
+      <div class="text-center">
+        <v-icon color="green" class="mb-4 large-icon">mdi-check-circle</v-icon>
+        <h2 class="mb-4">환영합니다!</h2>
+        <h2 class="mb-4"><span class="text-primary">{{ user.nickname }}</span>님</h2>
+      </div>
+      <v-card variant="outlined" class="mb-4">
+        <v-card-item>
+          <div class="card-body text-center">
+            <p>회원가입이 성공적으로 완료되었습니다.</p>
+            <p>로그인해주세요.</p>
+          </div>
+        </v-card-item>
+      </v-card>
+      <v-btn block @click="onLogin">로그인</v-btn>
+    </div>
   </div>
 </template>
 
@@ -315,5 +322,9 @@ export default {
 .error {
   color: #B00020;
   font-size: smaller;
+}
+
+.large-icon {
+  font-size: 3rem;
 }
 </style>
