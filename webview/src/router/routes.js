@@ -114,4 +114,9 @@ export default [
       },
     ],
   },
+  {
+    path: process.env.VUE_APP_FINDPASS_OK,
+    name: "findpass_ok",
+    component: () => import("@/pages/account/findpass_ok"),
+  },
 ];

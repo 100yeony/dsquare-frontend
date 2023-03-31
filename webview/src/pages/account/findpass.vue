@@ -26,6 +26,10 @@ export default {
     }
   },
   methods: {
+
+    cancel() {
+      this.$router.push(process.env.VUE_APP_LOGIN);
+    },
     // Try to register the user in with the email, fullname
     // and password they provided.
     tryToReset() {
@@ -35,15 +39,16 @@ export default {
       if (!this.v$.$error) {
         // api 통신 필요.
         // 기초적인 스낵바 예제.
-        this.$inform(
-        {
-          text : "비밀번호를 재생성하였습니다.",
-          snackbarX : "center",
-          snackbarY : "bottom",
-          snackbarTimeout : 10000,
-        }
-        );
-        //this.$router.push('/account/login');
+        // this.$inform(
+        // {
+        //   text : "임시 비밀번호가 발급되었습니다.",
+        //   snackbarX : "center",
+        //   snackbarY : "center",
+        //   snackbarTimeout : 10000,
+        //   color : "#ECEFF1",
+        // }
+        // );
+        this.$router.push('/account/find-pass-ok');
         return;
       }
     },
@@ -66,56 +71,24 @@ export default {
               <div class="card">
                 <div class="card-body p-4">
                   <div class="text-center mt-2">
-                    <h5 class="text-primary">비밀번호 초기화</h5>
-                    <p class="text-muted">Reset Password with KTDS.</p>
+                    <h2 class="text-primary">비밀번호 찾기</h2>
+                    <p class="text-muted mt-4 font-sm">회원 가입시 입력하신 이메일 주소를 입력하시면, <br> 해당 이메일로 임시 비밀번호를 발급해드립니다.</p>
                   </div>
-                  <div class="p-2 mt-4">
-                    <div
-                      class="alert alert-success text-center mb-4"
-                      role="alert"
-                    >
-                      이메일로 비밀번호 초기화 코드를 발송합니다.
-                    </div>
+                  <div class="mt-8 space-y-6">
                     <form @submit.prevent="tryToReset">
                       <div class="mb-3">
-                        <label for="useremail">Email</label>
+                        <label for="useremail" class="font-sm"><b>이메일 주소</b></label>
                         <v-text-field
                           type="email"
                           v-model="email"
                           class="form-control"
                           id="useremail"
-                          placeholder="Enter email"
+                          placeholder="이메일을 입력해주세요"
+                          density="compact"
                           :class="{
                             'is-invalid': submitted && v$.email.$error,
                           }"
                         />
-                        <!-- height, width 크기 조절 예시-->
-                        <v-responsive max-width="50%">
-                          <v-text-field
-                            type="email"
-                            v-model="email"
-                            class="form-control"
-                            id="useremail"
-                            placeholder="Enter email"
-                            :class="{
-                              'is-invalid': submitted && v$.email.$error,
-                            }"
-                            density="compact"
-                          />
-                        </v-responsive>
-
-                        <v-responsive max-width="50%" max-height="5vh">
-                          <v-text-field
-                            type="email"
-                            v-model="email"
-                            class="form-control"
-                            id="useremail"
-                            placeholder="Enter email"
-                            :class="{
-                              'is-invalid': submitted && v$.email.$error,
-                            }"
-                          />
-                        </v-responsive>
                         <div
                           v-if="submitted && v$.email.$error"
                           class="invalid-feedback"
@@ -128,22 +101,15 @@ export default {
                           >
                         </div>
                       </div>
-                      <div class="form-group row mb-0">
-                        <div class="col-12 text-end">
-                          <v-btn type="submit">
-                            비밀번호 초기화
+                      <div class="text-center">
+                        <div class="col-12">
+                          <v-btn min-width = "165" type="submit" class="mr-5" @click="cancel">
+                            취소
+                          </v-btn>
+                          <v-btn min-width = "165" type="submit" class="text-white" color="rgb(var(--v-theme-primary))">
+                            비밀번호 찾기
                           </v-btn>
                         </div>
-                      </div>
-                      <div class="mt-4 text-center">
-                        <p class="mb-0">
-                          비밀번호가 기억나시나요?
-                          <router-link
-                            to="/account/login"
-                            class="fw-medium text-primary"
-                            >Signin</router-link
-                          >
-                        </p>
                       </div>
                     </form>
                   </div>
@@ -158,3 +124,5 @@ export default {
 </template>
 
 <style lang="scss" module></style>
+
+
