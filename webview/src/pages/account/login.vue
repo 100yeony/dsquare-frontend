@@ -97,10 +97,10 @@ export default {
       <v-container>
         <v-col class="text-center mt-30">
           <div>
-            <router-link to="/account/find-pass/" class="fw-medium text-primary font-sm">비밀번호 찾기</router-link>
+            <router-link to="/account/find-pass/" class="fw-medium text-primary font-sm n_td">비밀번호 찾기</router-link>
           </div>
           <div>
-            <router-link to="/account/register/" class="fw-medium text-primary font-sm">회원가입</router-link>
+            <router-link to="/account/register/" class="fw-medium text-primary font-sm n_td">회원가입</router-link>
           </div>
         </v-col>
       </v-container>
