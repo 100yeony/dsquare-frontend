@@ -79,7 +79,7 @@ export default {
                       <div class="mb-3">
                         <label for="useremail" class="font-sm"><b>이메일 주소</b></label>
                         <v-text-field
-                          type="email"
+                          type="text"
                           v-model="email"
                           class="form-control"
                           id="useremail"
@@ -103,7 +103,7 @@ export default {
                       </div>
                       <div class="text-center">
                         <div class="col-12">
-                          <v-btn min-width = "165" type="submit" class="mr-5" @click="cancel">
+                          <v-btn min-width = "165" class="mr-5" @click="cancel">
                             취소
                           </v-btn>
                           <v-btn min-width = "165" type="submit" class="text-white" color="rgb(var(--v-theme-primary))">
