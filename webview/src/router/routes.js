@@ -78,14 +78,6 @@ export default [
     component: () => import("@/layout/AuthLayout"),
     children: [
       {
-        path: process.env.VUE_APP_LOGIN,
-        name: "login",
-        meta: {
-          title: "로그인",
-        },
-        component: () => import("@/pages/account/login"),
-      },
-      {
         path: process.env.VUE_APP_REGISTER,
         name: "register",
         meta: {
@@ -117,6 +109,17 @@ export default [
   {
     path: process.env.VUE_APP_FINDPASS_OK,
     name: "findpass_ok",
+    meta: {
+      title: "비밀번호찾기 완료"
+    },
     component: () => import("@/pages/account/findpass_ok"),
   },
+  {
+    path: process.env.VUE_APP_LOGIN,
+    name: "login",
+    meta: {
+      title: "로그인",
+    },
+    component: () => import("@/pages/account/login"),
+  }
 ];
