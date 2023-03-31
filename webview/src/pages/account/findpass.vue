@@ -77,29 +77,29 @@ export default {
                   <div class="mt-8 space-y-6">
                     <form @submit.prevent="tryToReset">
                       <div class="mb-3">
-                        <label for="useremail" class="font-sm"><b>이메일 주소</b></label>
-                        <v-text-field
+                        <div
+                          v-if="submitted && v$.email.$error"
+                          class="invalid-feedback"
+                        >
+                          <span v-if="v$.email.required.$invalid" class="font-xs font_red"
+                            >이메일을 입력해주세요.</span
+                          >
+                          <span v-if="v$.email.email.$invalid" class="font-xs font_red"
+                            >올바르지 않은 이메일입니다.</span
+                          >
+                        </div>
+                        <v-text-field 
+                          label="이메일을 입력해주세요"
                           type="text"
                           v-model="email"
-                          class="form-control"
+                          prepend-inner-icon="mdi-account"
+                          class="form-control font-sm" 
                           id="useremail"
-                          placeholder="이메일을 입력해주세요"
                           density="compact"
                           :class="{
                             'is-invalid': submitted && v$.email.$error,
                           }"
                         />
-                        <div
-                          v-if="submitted && v$.email.$error"
-                          class="invalid-feedback"
-                        >
-                          <span v-if="v$.email.required.$invalid"
-                            >이메일을 입력해주세요.</span
-                          >
-                          <span v-if="v$.email.email.$invalid"
-                            >올바르지 않은 이메일입니다.</span
-                          >
-                        </div>
                       </div>
                       <div class="text-center">
                         <div class="col-12">
