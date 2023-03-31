@@ -69,7 +69,7 @@ export default {
   <v-container class="ph-100 pw-100">
     <v-row class="ph-100">
       <v-col class="pw-100" align-self="center">
-        <h3 class="text-primary font-xxl text-center mb-40">DSquare</h3>
+        <h2 class="text-primary text-center mb-40">DSquare</h2>
         <div class="p-2 mt-4">
           <v-alert v-model="isAuthError" variant="danger" class="mt-3" dismissible>{{ authError }}</v-alert>
 
