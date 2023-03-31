@@ -98,9 +98,8 @@
         </v-expansion-panel-title>
         <v-expansion-panel-text class="wrap__agree">
           <p class="mb-1">회사는 다음과 같은 방법으로 개인정보를 수집합니다.</p>
-          <p class="mb-1">1. 가입신청서, 명의변경신청서 등 각종 서면 작성, 신분증 제시 및 스캔, 인터넷 홈페이지, 전화, 팩스 등을 통한 회원/서비스 가입, 전화나 인터넷을 통한 상담, 경품
-            행사 응모, 배송 요청 등의 과정에서 수집</p>
-          <p class="mb-1">2. 서비스 이용 또는 업무 처리 과정에서 생성되거나 제휴사 등 제3자로부터의 제공, 생성정보 수집 툴을 통한 수집 등</p>
+          <p class="mb-1">1. 모바일 앱, 인터넷 홈페이지를 통한 회원 가입 과정에서 수집</p>
+          <p class="mb-1">2. 서비스 이용 또는 업무 처리 과정에서 생성되거나 생성정보 수집 툴을 통한 수집 등</p>
         </v-expansion-panel-text>
       </v-expansion-panel>
 
@@ -133,7 +132,7 @@
         <v-form-group id="email-group" label="Email" label-for="email" class="">
           <v-text-field id="email" v-model="user.email" type="email" label="아이디(이메일)" :class="{
             'is-invalid': submitted && v$.user.email.$error,
-          }" hide-details=true clearable></v-text-field>
+          }" hide-details=true></v-text-field>
           <div class="invalid-feedback error mb-3">
             <template v-if="submitted && v$.user.email.$error">
               <template v-if="v$.user.email.required.$invalid">아이디(이메일)를 입력해주세요.</template>
@@ -143,12 +142,12 @@
           </div>
         </v-form-group>
 
-        <v-form-group id="password-group" label="Password" label-for="password" >
-          <v-text-field id="password" v-model="user.password" type="password" label="비밀번호" :class="{
+        <v-form-group id="pw-group" label="Pw" label-for="pw" >
+          <v-text-field id="pw" v-model="user.pw" type="password" label="비밀번호" :class="{
             'is-invalid': submitted && v$.user.password.$error,
-          }" hide-details=true clearable></v-text-field>
+          }" hide-details=true></v-text-field>
           <div class="invalid-feedback error mb-3">
-            <template v-if="submitted && v$.user.password.required.$invalid">비밀번호를 입력해주세요.</template>
+            <template v-if="submitted && v$.user.pw.required.$invalid">비밀번호를 입력해주세요.</template>
             <template v-else>&nbsp;</template>
           </div>
         </v-form-group>
@@ -156,19 +155,19 @@
         <v-form-group id="nickname-group" label="Nickname" label-for="nickname" >
           <v-text-field id="nickname" v-model="user.nickname" type="text" label="닉네임" :class="{
             'is-invalid': submitted && v$.user.nickname.$error,
-          }" hide-details=true clearable></v-text-field>
+          }" hide-details=true></v-text-field>
           <div class="invalid-feedback error mb-3">
             <template v-if="submitted && v$.user.nickname.required.$invalid">닉네임을 입력해주세요.</template>
             <template v-else>&nbsp;</template>
           </div>
         </v-form-group>
 
-        <v-form-group id="fullname-group" label="Fullname" label-for="fullname">
-          <v-text-field id="fullname" v-model="user.fullname" type="text" label="이름" :class="{
-            'is-invalid': submitted && v$.user.fullname.$error,
-          }" hide-details=true clearable></v-text-field>
+        <v-form-group id="name-group" label="Name" label-for="name">
+          <v-text-field id="name" v-model="user.name" type="text" label="이름" :class="{
+            'is-invalid': submitted && v$.user.name.$error,
+          }" hide-details=true></v-text-field>
           <div class="invalid-feedback error mb-3">
-            <template v-if="submitted && v$.user.fullname.required.$invalid">이름을 입력해주세요.</template>
+            <template v-if="submitted && v$.user.name.required.$invalid">이름을 입력해주세요.</template>
             <template v-else>&nbsp;</template>
           </div>
         </v-form-group>
@@ -176,19 +175,19 @@
         <v-form-group id="contact-group" label="Contact" label-for="contact">
           <v-text-field id="contact" v-model="user.contact" type="text" label="연락처" :class="{
             'is-invalid': submitted && v$.user.contact.$error,
-          }" hide-details=true clearable></v-text-field>
+          }" hide-details=true></v-text-field>
           <div class="invalid-feedback error mb-3">
             <template v-if="submitted && v$.user.contact.required.$invalid">연락처를 입력해주세요.</template>
             <template v-else>&nbsp;</template>
           </div>
         </v-form-group>
 
-        <v-form-group id="team-group" label="Team" label-for="team">
-          <v-text-field id="team" v-model="user.team" type="text" label="소속팀" :class="{
-            'is-invalid': submitted && v$.user.team.$error,
-          }" hide-details=true clearable></v-text-field>
+        <v-form-group id="teamId-group" label="TeamId" label-for="teamId">
+          <v-text-field id="teamId" v-model="user.teamId" type="text" label="소속팀" :class="{
+            'is-invalid': submitted && v$.user.teamId.$error,
+          }" hide-details=true></v-text-field>
           <div class="invalid-feedback error mb-3">
-            <template v-if="submitted && v$.user.team.required.$invalid">소속팀을 입력해주세요.</template>
+            <template v-if="submitted && v$.user.teamId.required.$invalid">소속팀을 입력해주세요.</template>
             <template v-else>&nbsp;</template>
           </div>
         </v-form-group>
@@ -196,7 +195,7 @@
         <v-form-group id="email-group" label="KtMmail" label-for="ktMail">
           <v-text-field id="ktMail" v-model="user.ktMail" type="ktMail" label="사내메일" placeholder="@kt.com" :class="{
             'is-invalid': submitted && v$.user.ktMail.$error,
-          }" hide-details=true clearable></v-text-field>
+          }" hide-details=true></v-text-field>
           <div class="invalid-feedback error mb-3">
             <template v-if="submitted && v$.user.ktMail.$error">
               <template v-if="v$.user.ktMail.required.$invalid">사내메일을 입력해주세요.</template>
@@ -217,7 +216,7 @@
       <div class="text-center">
         <v-icon color="green" class="mb-4 large-icon">mdi-check-circle</v-icon>
         <h2 class="mb-4">환영합니다!</h2>
-        <h2 class="mb-4"><span class="text-primary">{{ user.nickname }}</span>님</h2>
+        <h2 class="mb-4"><span class="text-primary">{{ signupData.value.id }}</span>님</h2>  <!-- ******* TEST ******* -->
       </div>
       <v-card variant="outlined" class="mb-4">
         <v-card-item>
@@ -236,8 +235,11 @@
 import { computed, onMounted, ref } from "vue";
 import { useVuelidate } from "@vuelidate/core";
 import { required, email } from "@vuelidate/validators";
+import axios from 'axios';
+import signup from "@/assets/test_data/signup_response.json" // ******* TEST *******
 
 const ktEmailValidator = (email) => email == "" || new RegExp("[A-Za-z0-9]+@kt.com").test(email);
+
 
 export default {
   setup() {
@@ -249,16 +251,18 @@ export default {
     return {
       user: {
         email: "",
-        password: "",
+        pw: "",
         nickname: "",
-        fullname: "",
+        name: "",
         contact: "",
-        team: "",
+        teamId: "",
         ktMail: "",
       },
       submitted: false,
       tryingToRegister: false,
       isRegisterError: false,
+
+      signupData: signup.data,  // ******* TEST *******
     };
   },
   validations() {
@@ -268,19 +272,19 @@ export default {
           required,
           email,
         },
-        password: {
+        pw: {
           required,
         },
         nickname: {
           required,
         },
-        fullname: {
+        name: {
           required,
         },
         contact: {
           required,
         },
-        team: {
+        teamId: {
           required,
         },
         ktMail: {
@@ -302,6 +306,10 @@ export default {
       if (!this.v$.$error) {
         // api 통신 필요.
         // register 하기.
+        axios.post('api_url', this.user)
+        .then()
+        .catch(error => console.log(this.user));
+
         this.stepper = 2;
       }
     },

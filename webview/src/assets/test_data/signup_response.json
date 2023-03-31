@@ -1,0 +1,19 @@
+{
+    "common": {
+      "code": 200,
+      "message": "정상처리되었습니다."
+    },
+    "data": {
+      "value": {
+        "id": "bee@kt.com",
+        "accessToken": "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJ1c2VySWQiOiJiZWVAa3QuY29tIiwic3ViIjoidXNlciIsImlhdCI6MTY3NTczMjk2MCwiZXhwIjoxNjc1NzUwOTYwfQ.Csh6SVUcpP84eQE5-RuRma9iV_uiO6gmXYP7pvotfJigoSZKHQU4-RHThq6wgaiWFV19gAwLhITX5BLj371wOCa2jP0xnA78odoyjEe8fZfIZtNwnyIC_VLDbtluDNUiTdkS6c7lTHcj-7c4BxqDom48fruXQJxOzWwZpoHT2lTEmUJz_GqAI8SBnq0N72lC1MrCNjsB7tAd34E9ickk4hff-SB3zAFB4G7ZYCegRZfLOAZ6E0Y6OWVw7RzVqHLzMcjO6PZg2BCwVFjPrMnMtRq7sh7FH4eKTssPQO8VbhJXDx6cbhEdS9jB9RJpHr1URDsy9DfPbYl3l7nuzNBIKw",
+        "refreshToken": "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJ1c2VySWQiOiJiZWVAa3QuY29tIiwic3ViIjoidXNlciIsImV4cCI6MTY3NTgxOTM2MCwiaWF0IjoxNjc1NzMyOTYwfQ.IHGazCyfRCuzfExtamJT9RR79YtMpFQKvMOoeqHRFBF9c9_qT-p2po7Xh5GDlmGZaySU4femw6IXlhPPEbM7eWVD2vLRKO1YFWv3fPiP3z1flcS8f7p7RxHHDlKtJgyl3VVpKKtgv1NdaPJd_54-JcO3aJywYCsCo_87EL_C9UPa6hAK8n6sorrHKZRScj5TFfjnDPBWTONeCisZxASVWV4xg45NY-HNP5VEpciwfsRh8FrwPdR66GXboKioeyg9M8kfxYtidsBfmli1Tc6jcZmOskM7F5eamLUDg4Oxbmn_JRPU2RZgl6YkYMlmrRjzp09KwIxutMxF6RB9S__Itg",
+        "refreshTokenExpirationAt": "2023-02-08 10:22:40",
+        "userNm": "최석원",
+        "authId": "0001",
+        "isChgPwd": false,
+        "isTmpPwd": false
+      },
+      "pagination": null
+    }
+  }
