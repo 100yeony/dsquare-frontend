@@ -1,13 +1,9 @@
 <template>
-  <div>
     <TopBar/>
-    <v-main>
-      <v-container>
+      <v-main>
         <router-view />
-      </v-container>
-    </v-main>
+      </v-main>
     <Footer/>
-  </div>
 </template>
 
 <script>
@@ -28,5 +24,4 @@ export default {
 </script>
 
 
-<style>
-</style>
+<style lang="scss" module></style>
