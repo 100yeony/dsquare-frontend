@@ -212,31 +212,31 @@ export default {
               </v-expansion-panel>
 
               <!-- 
-                    <v-expansion-panel>
-                      <v-expansion-panel-title @click="terms[3] = true">
-                        디스퀘어 개인정보 처리방침 선택 동의(선택)
-                        <template v-slot:actions="{ expanded }">
-                          <v-icon
-                            :color="terms[3] === false ? '' : 'teal'"
-                            :icon="terms[3] === false ? 'mdi-pencil' : 'mdi-check'"
-                          ></v-icon>
-                        </template>
-                      </v-expansion-panel-title>
-                      <v-expansion-panel-text class="wrap__agree">
-                        개인정보의 수집항목 및 수집/이용 목적 1. 회사는 회원가입, 상담, 서비스
-                        제공 등을 위하여 필요한 범위에서 최소한의 개인정보만을 수집합니다. 2.
-                        회사가 수집하는 개인정보 항목과 수집/이용하는 목적은 다음과 같습니다.
-                        \n\n회원가입 및 로그인에서...........
-                      </v-expansion-panel-text>
-                    </v-expansion-panel> 
-              -->
+                        <v-expansion-panel>
+                          <v-expansion-panel-title @click="terms[3] = true">
+                            디스퀘어 개인정보 처리방침 선택 동의(선택)
+                            <template v-slot:actions="{ expanded }">
+                              <v-icon
+                                :color="terms[3] === false ? '' : 'teal'"
+                                :icon="terms[3] === false ? 'mdi-pencil' : 'mdi-check'"
+                              ></v-icon>
+                            </template>
+                          </v-expansion-panel-title>
+                          <v-expansion-panel-text class="wrap__agree">
+                            개인정보의 수집항목 및 수집/이용 목적 1. 회사는 회원가입, 상담, 서비스
+                            제공 등을 위하여 필요한 범위에서 최소한의 개인정보만을 수집합니다. 2.
+                            회사가 수집하는 개인정보 항목과 수집/이용하는 목적은 다음과 같습니다.
+                            \n\n회원가입 및 로그인에서...........
+                          </v-expansion-panel-text>
+                        </v-expansion-panel> 
+                  -->
             </v-expansion-panels>
           </v-col>
           <v-btn :disabled="!(terms[0] && terms[1] && terms[2])" block @click="stepper = 1" class="mt-5 font-sm">회원가입
             진행하기</v-btn>
         </v-container>
       </v-col>
-      <v-col v-else-if="stepper === 1">
+      <v-col class="pw-100" align-self="center" v-else-if="stepper === 1">
         <h2 class="text-primary text-center mb-5">회원가입</h2>
         <div class="pph-10 text-center font-sm mb-5">
           회원가입에 필요한 정보를 입력해주세요.
@@ -327,24 +327,21 @@ export default {
           <v-btn class="mt-5 font-sm" type="submit" block>회원가입</v-btn>
         </v-form>
       </v-col>
-      <v-col v-else>
-        <div>
-          <div class="text-center">
-            <v-icon color="green" class="mb-4 large-icon">mdi-check-circle</v-icon>
-            <h2 class="mb-4">환영합니다!</h2>
-            <h2 class="mb-4"><span class="text-primary">{{ signupData.value.id }}</span>님</h2>
-            <!-- ******* TEST ******* -->
-          </div>
-          <v-card variant="outlined" class="mb-4">
-            <v-card-item>
-              <div class="card-body text-center">
-                <p>회원가입이 성공적으로 완료되었습니다.</p>
-                <p>로그인해주세요.</p>
-              </div>
-            </v-card-item>
-          </v-card>
-          <v-btn block @click="onLogin">로그인</v-btn>
+      <v-col class="pw-100" align-self="center" v-else>
+        <div class="text-center">
+          <img src="@/assets/images/check.png" width="55" height="55">
+          <h2 class="text-primary mt-20">{{ signupData.value.id }} 님</h2>
+          <h2>환영합니다!</h2>
+          <h2>회원가입이 성공적으로 완료되었습니다. <br> 로그인해주세요.</h2>
         </div>
+        <div class="text-center">
+          <div class="col-12 mt-30">
+            <v-btn type="submit" class="text-white" color="rgb(var(--v-theme-primary))" @click="onLogin">
+              로그인
+            </v-btn>
+          </div>
+        </div>
+
       </v-col>
     </v-row>
   </v-container>
