@@ -2,6 +2,7 @@
 import { useVuelidate } from '@vuelidate/core'
 import { required, email } from '@vuelidate/validators'
 import dialogUtils from '@/utils/dialogUtils'
+import Footer from "@/components/FooterAuth"
 /**
  * Login component
  */
@@ -57,6 +58,9 @@ export default {
         // return;
       }
     }
+  },
+  components: {
+    Footer
   }
 };
 </script>
@@ -106,6 +110,7 @@ export default {
       </v-container>
     </v-form>
   </div>
+  <Footer/>
 </template>
 
 <style lang="scss" module></style>
