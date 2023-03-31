@@ -39,15 +39,15 @@ export default {
       if (!this.v$.$error) {
         // api 통신 필요.
         // 기초적인 스낵바 예제.
-        this.$inform(
-        {
-          text : "임시 비밀번호가 발급되었습니다.",
-          snackbarX : "center",
-          snackbarY : "center",
-          snackbarTimeout : 10000,
-          color : "#ECEFF1",
-        }
-        );
+        // this.$inform(
+        // {
+        //   text : "임시 비밀번호가 발급되었습니다.",
+        //   snackbarX : "center",
+        //   snackbarY : "center",
+        //   snackbarTimeout : 10000,
+        //   color : "#ECEFF1",
+        // }
+        // );
         this.$router.push('/account/find-pass-ok');
         return;
       }
@@ -84,6 +84,7 @@ export default {
                           class="form-control"
                           id="useremail"
                           placeholder="이메일을 입력해주세요"
+                          density="compact"
                           :class="{
                             'is-invalid': submitted && v$.email.$error,
                           }"
@@ -102,10 +103,10 @@ export default {
                       </div>
                       <div class="text-center">
                         <div class="col-12">
-                          <v-btn type="submit" class="mr-5" @click="cancel">
+                          <v-btn min-width = "165" type="submit" class="mr-5" @click="cancel">
                             취소
                           </v-btn>
-                          <v-btn type="submit" class="text-white" color="rgb(var(--v-theme-primary))">
+                          <v-btn min-width = "165" type="submit" class="text-white" color="rgb(var(--v-theme-primary))">
                             비밀번호 찾기
                           </v-btn>
                         </div>
