@@ -1,16 +1,35 @@
-<template class="pw-100 ph-100">
-  <div class="pw-100 ph-100">
-    <v-card>
-      <v-tabs v-model="tab" color="deep-purple-accent-4" align-tabs="center">
-        <v-tab :value="1">FAQ</v-tab>
-        <v-tab :value="2">자유게시판</v-tab>
-      </v-tabs>
-      <v-window v-model="tab">
-        <v-window-item v-for="n in 2" :key="n" :value="n">
-          <!-- 1이면 FAQ 2이면 자유게시판을 보여주도록 합니다.
-        나중에 화면 바꾸시고, recylcer view 형식으로 변경하는걸 권장합니다.  -->
-          <v-container fluid>
-            <div v-if="n === 1">
+<template class="pw-100 ph-100 fill-height">
+  <div class="pw-100 ph-100 fill-height">
+    <v-tabs v-model="tab" color="deep-purple-accent-4" fixed-tabs>
+      <v-tab :value="1">Q&A</v-tab>
+      <v-tab :value="2">자유게시판</v-tab>
+    </v-tabs>
+      
+
+    <v-window v-model="tab">
+      <v-window-item v-for="n in 2" :key="n" :value="n">
+        <!-- 1이면 FAQ 3이면 자유게시판을 보여주도록 합니다.
+      나중에 화면 바꾸시고, recylcer view 형식으로 변경하는걸 권장합니다.  -->
+        <v-container fluid>
+          <!-- ***** Q&A ***** -->
+          <div v-if="n === 1">
+            <v-tabs v-model="subtab" color="deep-purple-accent-4" show-arrows>
+              <v-tab :value="1" variant="elevated">업무</v-tab>
+              <v-tab :value="2" variant="elevated">비업무</v-tab>
+            </v-tabs>
+
+            <!-- ***** 업무 ***** -->
+            <div v-if="subtab === 1">
+              <v-card
+                v-for="qnaItem in qnaItems"
+                :key="qnaItem.questionId"
+                :title="qnaItem.title"
+                :subtitle="qnaItem.name"
+                :text="qnaItem.lastUpdateDate"
+                class="mt-4"
+                @click="routerMove(qnaItem)"
+              ></v-card>
+<!-- 
               <v-card
                 v-for="qnaItem in qnaItems"
                 :key="qnaItem.id"
@@ -20,22 +39,32 @@
                 class="mt-4"
                 @click="routerMove(qnaItem)"
               ></v-card>
+-->
             </div>
-            <div v-if="n === 2">
-              <v-card
-                v-for="boardItems in boardItems"
-                :key="boardItems.id"
-                :title="boardItems.title"
-                :subtitle="boardItems.subtitle"
-                :text="boardItems.text"
-                class="mt-4"
-                @click="routerMove(boardItems)"
-              ></v-card>
+
+            <!-- ***** 비업무 ***** -->
+            <div v-else>
+              <div class="align-middle" style="height: 100%">
+                질문이 없습니다.
+              </div>
             </div>
-          </v-container>
-        </v-window-item>
-      </v-window>
-    </v-card>
+          </div>
+
+          <!-- ***** 자유게시판 ***** -->
+          <div v-if="n === 2">
+            <v-card
+              v-for="boardItems in boardItems"
+              :key="boardItems.id"
+              :title="boardItems.title"
+              :subtitle="boardItems.subtitle"
+              :text="boardItems.text"
+              class="mt-4"
+              @click="routerMove(boardItems)"
+            ></v-card>
+          </div>
+        </v-container>
+      </v-window-item>
+    </v-window>
 
     <v-menu transition="slide-y-transition">
       <template v-slot:activator="{ props }">
@@ -67,15 +96,21 @@
 
 <script>
 import { computed, onMounted, ref } from "vue";
+import questions from "@/assets/test_data/questions_response.json";
+
+
 export default {
   name: "board",
   setup() {
     let tab = ref(null);
-    return { tab };
+    let subtab = ref(null);
+    return { tab, subtab };
   },
   data() {
     return {
       // 서버랑 연동하게 바꾸세요.
+      qnaItems: questions.data,
+/*
       qnaItems: [
         {
           id: 0,
@@ -143,6 +178,7 @@ export default {
           },
         },
       ],
+*/
       boardItems: [
         {
           id: 0,
@@ -243,7 +279,7 @@ export default {
     routerMove(item) {
       console.log(item);
       this.$router.replace({
-        path: item.url,
+        path: item.url, // 각 글 url
         query: item?.query ?? {},
       });
     },

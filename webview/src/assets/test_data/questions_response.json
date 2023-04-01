@@ -1,0 +1,38 @@
+{
+    "data": [
+        {
+            "questionId": 3,
+            "writerId": 1,
+            "name": "홍길동",
+            "cateId": 9,
+            "title": "질문3 제목입니다.",
+            "lastUpdateDate": "2022-10-19 10:23:54",
+            "atc": {
+                "atcId": 1,
+                "fileUrl": "https://ktds.dsquare.co.kr/테스트파일.xlsx",
+                "extension": "xlsx",
+                "createDate": "2023-03-23 21:02:12",
+                "fileSize": 512345
+            },
+            "answerCnt": 2
+        },
+        {
+            "questionId": 2,
+            "writerId": 2,
+            "name": "김철수",
+            "cateId": 3,
+            "title": "질문2 제목입니다.",
+            "lastUpdateDate": "2022-12-11 10:23:54",
+            "answerCnt": 0
+        },
+        {
+            "questionId": 1,
+            "writerId": 3,
+            "name": "이순신",
+            "cateId": 16,
+            "title": "질문1 제목입니다.",
+            "lastUpdateDate": "2022-11-22 10:23:54",
+            "answerCnt": 4
+        }
+    ]
+}
