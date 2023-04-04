@@ -74,6 +74,7 @@ export default {
                 'is-invalid': submitted && v$.email.$error,
               }" />
             <div v-if="submitted && v$.email.$error" class="invalid-feedback">
+              <v-icon size="x-small" color="red">mdi-close-circle-outline</v-icon>
               <span v-if="v$.email.required.$invalid" class="font-xs font_red">이메일을 입력해주세요.</span>
               <span v-if="v$.email.email.$invalid" class="font-xs font_red">올바르지 않은 이메일입니다.</span>
             </div>
@@ -117,6 +118,10 @@ export default {
 .max-pw {
   max-width: 500px;
   width: 95% !important;
+}
+
+span{
+  padding: 0px 5px !important; 
 }
 </style>
 
