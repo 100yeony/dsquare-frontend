@@ -1,0 +1,41 @@
+stages:
+  - libs
+  - build
+  - deploy
+
+npm:
+  stage: libs
+  only:
+    - dev
+  cache:
+    paths:
+      - webview/node_modules
+  script:
+    - cd webview
+    - npm install
+
+build:
+  stage: build
+  only:
+    - dev
+  cache:
+    paths:
+      - dist
+  script:
+    - cd webveiw
+    - npm run build
+  tags:
+    - runner-dev
+
+deploy:
+  stage: deploy
+  only:
+    - dev
+  cache:
+    paths:
+      - dist
+  script:
+    - sudo rm -rf cd ~/welcome-front
+    - sudo cp -r dist cd ~/welcome-front
+  tags:
+    - runner-dev
