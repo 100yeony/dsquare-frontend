@@ -3,10 +3,8 @@ stages:
   - build
   - deploy
 
-npm:
+libs:
   stage: libs
-  only:
-    - dev
   script:
     - echo "Hello! npm install!"
   tags:
@@ -14,8 +12,6 @@ npm:
 
 build:
   stage: build
-  only:
-    - dev
   script:
     - echo "Hello! npm build!"
   tags:
@@ -23,9 +19,6 @@ build:
 
 deploy:
   stage: deploy
-  only:
-    - dev
-    - dev
   script:
     - echo "Hello! npm deploy!"
   tags:
