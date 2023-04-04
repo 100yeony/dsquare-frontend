@@ -539,6 +539,12 @@
   margin-top: 5px !important;
   ;
 }
+
+.mt-2 {
+  margin-top: 2px !important;
+  ;
+}
+
 .mt-5 {
   margin-top: 5px !important;
   ;
@@ -575,6 +581,11 @@
 }
 .mb-5 {
   margin-bottom: 5px !important;
+  ;
+}
+
+.mb-7 {
+  margin-bottom: 7px !important;
   ;
 }
 
@@ -1020,3 +1031,4 @@ $bottom-navigation-content-font-size : var(--font-size-v-xxs);
 .n_td {
   text-decoration: none;
 }
+
