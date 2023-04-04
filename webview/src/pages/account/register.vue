@@ -73,11 +73,15 @@ export default {
       if (!this.v$.$error) {
         // api 통신 필요.
         // register 하기.
-        axios.post('api_url', this.user)
-          .then()
+        this.user.teamId = 1
+        axios.post('https://dsquare.kt.co.kr/account/singup', this.user)
+          .then(response => {
+            console.log('state code:'+ response.data.common.code)
+            if (response.data.common.code === 200){
+              this.stepper = 2;
+            } 
+          })
           .catch(error => console.log(this.user));
-
-        this.stepper = 2;
       }
     },
     onLogin() {
