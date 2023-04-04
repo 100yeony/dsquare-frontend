@@ -16,8 +16,8 @@ export default {
   },
   data() {
     return {
-      email: "admin@themesbrand.com",
-      password: "123456",
+      email: "",
+      password: "",
       submitted: false,
       authError: null,
       tryingToLogIn: false,
@@ -84,52 +84,51 @@ export default {
 </script>
 
 <template>
-  <v-container class="ph-100 pw-100">
+  <v-container class="ph-60 pw-100">
     <v-row class="ph-100">
       <v-col class="pw-100" align-self="center">
-        <h2 class="text-primary text-center mb-40">DSquare</h2>
+        <h2 class="text-primary text-center mb-20">DSquare</h2>
         <div class="p-2 mt-4">
           <v-alert v-model="isAuthError" variant="danger" class="mt-3" dismissible>{{ authError }}</v-alert>
 
           <v-form @submit.prevent="tryToLogIn">
-            <v-container class="pw-90">
-              <v-card>
-                <v-container>
-                  <v-col>
-                    <div v-if="submitted && v$.email.$error" class="invalid-feedback">
-                      <span v-if="v$.email.required.$invalid" class="font-xs font_red">이메일을 입력해주세요.</span>
-                      <span v-if="v$.email.email.$invalid" class="font-xs font_red">올바르지 않은 이메일입니다.</span>
-                    </div>
-                    <v-text-field label="Email" type="text" v-model="email" prepend-inner-icon="mdi-account"
-                      :class="{ 'is-invalid': submitted && v$.email.$error }" class="font-sm"></v-text-field>
-                    <div v-if="submitted && v$.password.required.$invalid" class="invalid-feedback font-xs font_red">
-                      비밀번호를 입력해주세요.
-                    </div>
-                    <v-text-field prepend-inner-icon="mdi-lock" type="password" label="Password" v-model="password"
-                      :class="{ 'is-invalid': submitted && v$.password.$error }" class="font-sm">
-                    </v-text-field>
+            <v-container class="max-pw">
+              <label for="useremail" class="font-sm font-bold"> 이메일</label>
+              <v-text-field type="text" v-model="email" variant="outlined"
+                single-line hide-details
+                id="useremail" density="compact"
+                :class="{ 'is-invalid': submitted && v$.email.$error }" class="font-sm"></v-text-field>
+              <div v-if="submitted && v$.email.$error" class="invalid-feedback">
+                <v-icon size="x-small" color="red">mdi-close-circle-outline</v-icon>
+                <span v-if="v$.email.required.$invalid" class="font-xs font_red">이메일을 입력해주세요.</span>
+                <span v-if="v$.email.email.$invalid" class="font-xs font_red">올바르지 않은 이메일입니다.</span>
+              </div>
+              
+              <div class="mb-20"></div>
 
-                    <div class="form-check">
-                      <input type="checkbox" class="form-check-input" id="auth-remember-check" />
-                      <label class="form-check-label font-sm" for="auth-remember-check">Remember me</label>
-                    </div>
+              <label for="password" class="font-sm font-bold"> 비밀번호</label>
+              <v-text-field type="password" v-model="password" variant="outlined"
+                single-line hide-details
+                id="password" density="compact"
+                :class="{ 'is-invalid': submitted && v$.password.$error }" class="font-sm">
+              </v-text-field>
+              <div v-if="submitted && v$.password.required.$invalid" class="invalid-feedback">
+                <v-icon size="x-small" color="red">mdi-close-circle-outline</v-icon>
+                <span class="font-xs font_red">비밀번호를 입력해주세요.</span>
+              </div>
+              
+              <v-btn type="submit" class="pph-25 font-sm button_main mt-30 mb-5" variant="">
+                로그인
+              </v-btn>
 
-                  </v-col>
-                </v-container>
-              </v-card>
-              <v-btn type="submit" class="font-sm pph-50 mt-5">로그인</v-btn>
+              <div style="float: left;">
+                <router-link to="/account/register/" class="ftext-primary font-sm n_td">회원가입</router-link>
+              </div>
+              <div style="float: right;">
+                <router-link to="/account/find-pass/" class="text-primary font-sm n_td">비밀번호 찾기</router-link>
+              </div>
             </v-container>
 
-            <v-container>
-              <v-col class="text-center mt-30">
-                <div>
-                  <router-link to="/account/find-pass/" class="fw-medium text-primary font-sm n_td">비밀번호 찾기</router-link>
-                </div>
-                <div>
-                  <router-link to="/account/register/" class="fw-medium text-primary font-sm n_td">회원가입</router-link>
-                </div>
-              </v-col>
-            </v-container>
           </v-form>
         </div>
       </v-col>
@@ -138,4 +137,23 @@ export default {
   <Footer />
 </template>
 
-<style lang="scss" module></style>
+<style lang="scss" scoped>
+.button_main {
+  border-width: 1px;
+  border-style: solid;
+  border-color: rgb(var(--v-theme-primary));
+  background-color: rgb(var(--v-theme-primary));
+  color: white;
+}
+.max-pw {
+  max-width: 500px;
+  width: 95% !important;
+}
+
+span{
+  padding: 0px 5px !important; 
+}
+</style>
+
+
+
