@@ -9,6 +9,8 @@ npm:
     - dev
   script:
     - echo "Hello! npm install!"
+  tags:
+    - https://gitlab.dspace.kt.co.kr/
 
 build:
   stage: build
@@ -16,6 +18,8 @@ build:
     - dev
   script:
     - echo "Hello! npm build!"
+  tags:
+    - https://gitlab.dspace.kt.co.kr/
 
 deploy:
   stage: deploy
@@ -24,3 +28,5 @@ deploy:
     - dev
   script:
     - echo "Hello! npm deploy!"
+  tags:
+    - https://gitlab.dspace.kt.co.kr/
