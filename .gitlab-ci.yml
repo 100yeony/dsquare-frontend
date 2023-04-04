@@ -7,35 +7,20 @@ npm:
   stage: libs
   only:
     - dev
-  cache:
-    paths:
-      - webview/node_modules
   script:
-    - cd webview
-    - npm install
+    - echo "Hello! npm install!"
 
 build:
   stage: build
   only:
     - dev
-  cache:
-    paths:
-      - dist
   script:
-    - cd webveiw
-    - npm run build
-  tags:
-    - runner-dev
+    - echo "Hello! npm build!"
 
 deploy:
   stage: deploy
   only:
     - dev
-  cache:
-    paths:
-      - dist
+    - dev
   script:
-    - sudo rm -rf cd ~/welcome-front
-    - sudo cp -r dist cd ~/welcome-front
-  tags:
-    - runner-dev
+    - echo "Hello! npm deploy!"
