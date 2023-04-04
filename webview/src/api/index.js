@@ -3,7 +3,7 @@ import router from '@/router/index'
 import dayjs from "dayjs";
 import { v4 } from 'uuid';
 
-const prefix = '/'
+const prefix = ''
 var apiInstance
 var vocInstance
 function setAxiosInterceptor(instance) {
@@ -44,7 +44,7 @@ function setAxiosInterceptor(instance) {
 }
 
 function createInstance() {
-  let apiUrl = process.env.VUE_APP_API
+  let apiUrl = ''// process.env.VUE_APP_API
   apiInstance = axios.create({
     headers: {
       'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8',
@@ -125,7 +125,7 @@ const fn = {
     try {
       console.log('[POST]', uri, params)
       console.log('auth :::::::::::::::', headers)
-      const res = await apiInstance.post(`${prefix + uri}`, encodeURIComponentPostParams, { headers }, { withCredentials: true }, {params: encodeURIComponentQueryParams})
+      const res = await apiInstance.post(`${prefix + uri}`, params, { headers }, { withCredentials: true })
       return this.ResponsePayload(res)
     } catch (err) {
       return this.ErrorPayload(err)

@@ -3,6 +3,7 @@ import { useVuelidate } from '@vuelidate/core'
 import { required, email } from '@vuelidate/validators'
 import dialogUtils from '@/utils/dialogUtils'
 import Footer from "@/components/FooterAuth"
+import api from '@/api'
 /**
  * Login component
  */
@@ -31,7 +32,24 @@ export default {
       }
     }
   },
+  mounted(){
+    this.apiPostTest();
+    this.apiGetTest();
+  },
   methods: {
+    async apiPostTest(){ // CRUD 전체를 담당.
+      let postParam = {};
+      let url = 'https://jsonplaceholder.typicode.com/comments'
+      const res = await api.post(url , postParam)
+      console.log('[res] apiPostTest : \n', res)
+    },
+    async apiGetTest(){ // R 위주로 담당.
+      let getParam = {};
+      getParam.postId=1
+      let url = 'https://jsonplaceholder.typicode.com/comments'
+      const res = await api.get(url , getParam)
+      console.log('[res] apiGetTest : \n', res)
+    },
     async tryToLogIn() {
       // 기초적 로그인 로직.
       this.submitted = true;
