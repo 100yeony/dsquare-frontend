@@ -87,13 +87,13 @@ export default {
   <v-container class="ph-60 pw-100">
     <v-row class="ph-100">
       <v-col class="pw-100" align-self="center">
-        <h2 class="text-primary text-center mb-20">DSquare</h2>
+        <h1 class="text-primary text-center mb-20 font-bold">DSquare</h1>
         <div class="p-2 mt-4">
           <v-alert v-model="isAuthError" variant="danger" class="mt-3" dismissible>{{ authError }}</v-alert>
 
           <v-form @submit.prevent="tryToLogIn">
             <v-container class="max-pw">
-              <label for="useremail" class="font-sm font-bold"> 이메일</label>
+              <label for="useremail" class="font-sm font-medium"> 이메일</label>
               <v-text-field type="text" v-model="email" variant="outlined"
                 single-line hide-details
                 id="useremail" density="compact"
@@ -106,7 +106,7 @@ export default {
               
               <div class="mb-20"></div>
 
-              <label for="password" class="font-sm font-bold"> 비밀번호</label>
+              <label for="password" class="font-sm font-medium"> 비밀번호</label>
               <v-text-field type="password" v-model="password" variant="outlined"
                 single-line hide-details
                 id="password" density="compact"
@@ -117,12 +117,12 @@ export default {
                 <span class="font-xs font_red">비밀번호를 입력해주세요.</span>
               </div>
               
-              <v-btn type="submit" class="pph-25 font-sm button_main mt-30 mb-5" variant="">
+              <v-btn type="submit" class="pph-25 font-sm button_main mt-30 mb-5 font-medium" variant="">
                 로그인
               </v-btn>
 
               <div style="float: left;">
-                <router-link to="/account/register/" class="ftext-primary font-sm n_td">회원가입</router-link>
+                <router-link to="/account/register/" class="text-primary font-sm n_td">회원가입</router-link>
               </div>
               <div style="float: right;">
                 <router-link to="/account/find-pass/" class="text-primary font-sm n_td">비밀번호 찾기</router-link>
