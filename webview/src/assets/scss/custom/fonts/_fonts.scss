@@ -28,22 +28,6 @@
 }
 
 @font-face {
-    font-family: 'NotoSans';
-    font-style: normal;
-    font-weight: 400;
-    src: url('@/assets/fonts/NotoSans-Regular.eot');
-    src: url('@/assets/fonts/NotoSans-Regular.ttf') format('truetype'), url('@/assets/fonts/NotoSans-Regular.woff') format('woff'), url('@/assets/fonts/NotoSans-Regular.eot?#iefix') format('embedded-opentype');
-}
-
-@font-face {
-    font-family: 'NotoSans';
-    font-style: bold;
-    font-weight: 700;
-    src: url('@/assets/fonts/NotoSans-Bold.eot');
-    src: url('@/assets/fonts/NotoSans-Bold.ttf') format('truetype'), url('@/assets/fonts/NotoSans-Bold.woff') format('woff'), url('@/assets/fonts/NotoSans-Bold.eot?#iefix') format('embedded-opentype');
-}
-
-@font-face {
     font-family: 'GothamSSm-Book';
     font-style: normal;
     font-weight: 400;
@@ -67,6 +51,25 @@
     src: url('@/assets/fonts/GothamSSm-Bold.ttf') format('truetype'), url('@/assets/fonts/GothamSSm-Bold.woff') format('woff'), url('@/assets/fonts/GothamSSm-Bold.eot?#iefix') format('embedded-opentype');
 }
 
-body {
-    font-family: 'Nanum Gothic' !important;
+@font-face {
+    font-family: 'NotoSans RG';
+    src: url('@/assets/fonts/NotoSans-Regular.eot');
+    src: url('@/assets/fonts/NotoSans-Regular.otf') format('truetype'), url('@/assets/fonts/NotoSans-Regular.woff') format('woff');
 }
+
+@font-face {
+    font-family: 'NotoSans MD';
+    src: url('@/assets/fonts/NotoSans-Medium.eot');
+    src: url('@/assets/fonts/NotoSans-Medium.otf') format('truetype'), url('@/assets/fonts/NotoSans-Medium.woff') format('woff');
+}
+
+@font-face {
+    font-family: 'NotoSans BD';
+    src: url('@/assets/fonts/NotoSans-Bold.eot');
+    src: url('@/assets/fonts/NotoSans-Bold.otf') format('truetype'), url('@/assets/fonts/NotoSans-Bold.woff') format('woff');
+}
+
+body {
+    font-family: 'NotoSans RG' !important;
+}
+

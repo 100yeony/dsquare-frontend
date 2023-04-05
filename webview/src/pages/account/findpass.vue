@@ -62,11 +62,11 @@ export default {
       <v-col class="pw-100" align-self="center">
         <form @submit.prevent="tryToReset">
           <v-container class="max-pw">
-            <h2 class="text-primary text-center mb-5">비밀번호 찾기</h2>
-            <div class="pph-10 text-center font-sm mb-7">
+            <h2 class="text-primary text-center mb-5 font-bold">비밀번호 찾기</h2>
+            <div class="pph-10 text-center font-sm mb-7 font_gray">
               회원 가입시 입력하신 이메일 주소를 입력하시면, 해당 이메일로 임시 비밀번호를 발급해드립니다.
             </div>
-            <label for="useremail" class="font-bold font-sm"> 이메일 주소</label>
+            <label for="useremail" class="font-medium font-sm"> 이메일 주소</label>
             
             <v-text-field label="이메일을 입력해주세요" type="text" v-model="email" variant="outlined"
               single-line hide-details
@@ -81,12 +81,12 @@ export default {
           
             <v-row align="center" class="mt-5">
               <v-col>
-                <v-btn class="mr-5 pph-25 font-sm button_white" @click="cancel" variant="">
+                <v-btn class="mr-5 pph-25 font-sm button_white font-medium" @click="cancel" variant="">
                   취소
                 </v-btn>
               </v-col>
               <v-col>
-                <v-btn type="submit" class="pph-25 font-sm button_main" variant="">
+                <v-btn type="submit" class="pph-25 font-sm button_main font-medium" variant="">
                   비밀번호 찾기
                 </v-btn>
               </v-col>
