@@ -346,7 +346,7 @@ export default {
 
                 <v-form-group id="email-group" label="KtMmail" label-for="ktMail">
                   <label for="ktMail" class="font-medium font-sm">사내메일</label>
-                  <v-text-field type="text" v-model="user.ktMail" variant="outlined"
+                  <v-text-field type="email" v-model="user.ktMail" variant="outlined"
                     single-line hide-details
                     class="form-control font-sm mt-2" id="ktMail" density="compact" :class="{
                       'is-invalid': submitted && v$.user.ktMail.$error,
@@ -370,16 +370,15 @@ export default {
             </v-container>
         </v-form>
       </v-col>
-      <v-col class="pw-100" align-self="center" v-else>
+      <v-col class="pw-100 ph-70" align-self="center" v-else>
         <div class="text-center">
-          <img src="@/assets/images/check.png" width="55" height="55">
-          <h2 class="text-primary mt-20">{{ signupData.value.id }} 님</h2>
-          <h2>환영합니다!</h2>
-          <h2>회원가입이 성공적으로 완료되었습니다. <br> 로그인해주세요.</h2>
+          <img src="@/assets/images/celebration.png" width="90" height="90">
+          <h2 class="text-primary mt-20 font-bold">{{ signupData.value.id }} 님</h2>
+          <h2 class="font-bold">환영합니다!</h2>
         </div>
         <div class="text-center">
           <div class="col-12 mt-30">
-            <v-btn type="submit" class="text-white" color="rgb(var(--v-theme-primary))" @click="onLogin">
+            <v-btn max-width="180" type="submit" class="pw-50 font-medium button_main" variant="" @click="onLogin">
               로그인
             </v-btn>
           </div>
