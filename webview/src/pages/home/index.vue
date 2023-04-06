@@ -3,7 +3,7 @@
     <!-- My place body-->
     <v-row>
       <v-col cols="10">
-        <p class="text-h7 font-weight-black">My Place</p>
+        <p class="text-h6 font-weight-black">My Place</p>
       </v-col>
       <v-col cols="2"><v-icon icon="mdi-plus"></v-icon></v-col>
     </v-row>
@@ -30,7 +30,7 @@
     <!-- My Weekly Hot body-->
     <v-row>
       <v-col cols="10">
-        <p class="text-h7 font-weight-black">Weekly Hot</p>
+        <p class=" text-h6 font-weight-black">Weekly Hot</p>
       </v-col>
       <v-col cols="2"><v-icon icon="mdi-plus"></v-icon></v-col>
     </v-row>
@@ -56,7 +56,7 @@
     <!-- 명예의 전당 body-->
     <v-row class="mt-2 mb-2">
       <v-col cols="10">
-        <p class="text-h7 font-weight-black">명예의 전당</p>
+        <p class="text-h6 font-weight-black">명예의 전당</p>
       </v-col>
       <v-col cols="2"><v-icon icon="mdi-plus"></v-icon></v-col>
     </v-row>
@@ -86,19 +86,19 @@
                 <tr v-for="item in hallOfFameData[0]" :key="item.id">
                   <v-row no-gutters>
                     <v-col cols="8">
-                      <td class="text-body2 font-bold" color="#0000008F">
+                      <td class="text-body-2 font-weight-bold" color="#0000008F">
                         {{ item.title }}
                       </td>
                     </v-col>
                     <v-col cols="2"
-                      ><td class="text-caption">
+                      ><td class="text-caption font-0000008F">
                         <img src="@/assets/images/icons/icon_heart.png" />{{
                           item.like
                         }}
                       </td></v-col
                     >
                     <v-col cols="2"
-                      ><td class="text-caption">
+                      ><td class="text-caption font-0000008F">
                         <img
                           src="@/assets/images/icons/icon_message-circle.png"
                         />{{ item.comment }}
@@ -115,13 +115,23 @@
                 <tr v-for="item in hallOfFameData[1]" :key="item.id">
                   <v-row no-gutters>
                     <v-col cols="8">
-                      <td class="text-body2 font-bold">{{ item.title }}</td>
+                      <td class="text-body-2 font-weight-bold" color="#0000008F">
+                        {{ item.title }}
+                      </td>
                     </v-col>
                     <v-col cols="2"
-                      ><td class="text-caption">{{ item.like }}</td></v-col
+                      ><td class="text-caption font-0000008F">
+                        <img src="@/assets/images/icons/icon_heart.png" />{{
+                          item.like
+                        }}
+                      </td></v-col
                     >
                     <v-col cols="2"
-                      ><td class="text-caption">{{ item.comment }}</td></v-col
+                      ><td class="text-caption font-0000008F">
+                        <img
+                          src="@/assets/images/icons/icon_message-circle.png"
+                        />{{ item.comment }}
+                      </td></v-col
                     >
                   </v-row>
                 </tr>
@@ -134,7 +144,7 @@
     <!-- 사용자 랭킹 body-->
     <v-row class="mt-2 mb-2">
       <v-col cols="10">
-        <p class="text-h7 font-weight-black">사용자 랭킹</p>
+        <p class="text-h6 font-weight-black">사용자 랭킹</p>
       </v-col>
       <v-col cols="2"><v-icon icon="mdi-plus"></v-icon></v-col>
     </v-row>
@@ -180,12 +190,12 @@
                       </td>
                     </v-col>
                     <v-col cols="6">
-                      <td class="text-body2 font-bold" color="#0000008F">
+                      <td class="text-body-2 font-weight-bold" color="#0000008F">
                         {{ item.userId }}
                       </td>
                     </v-col>
                     <v-col cols="2"
-                      ><td class="text-caption">
+                      ><td class="text-caption font-0000008F">
                         <img
                           src="@/assets/images/icons/icon_message-circle.png"
                         />{{ item.comment }}
@@ -217,12 +227,12 @@
                       </td>
                     </v-col>
                     <v-col cols="6">
-                      <td class="text-body2 font-bold" color="#0000008F">
+                      <td class="text-body-2 font-weight-bold" color="#0000008F">
                         {{ item.userId }}
                       </td>
                     </v-col>
                     <v-col cols="2"
-                      ><td class="text-caption">
+                      ><td class="text-caption font-0000008F">
                         <img
                           src="@/assets/images/icons/icon_message-circle.png"
                         />{{ item.comment }}

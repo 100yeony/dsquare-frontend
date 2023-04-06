@@ -271,22 +271,22 @@
 
 .pph-50{
   padding-left: 50% !important;
-  padding-right: 50% !important; 
+  padding-right: 50% !important;
 }
 
 .pph-25{
   padding-left: 50% !important;
-  padding-right: 50% !important; 
+  padding-right: 50% !important;
 }
 
 .pph-10{
   padding-left: 10% !important;
-  padding-right: 10% !important; 
+  padding-right: 10% !important;
 }
 
 .ppv-5{
   padding-top: 5% !important;
-  padding-bottom: 5% !important; 
+  padding-bottom: 5% !important;
 }
 
 .p-5 {
@@ -700,6 +700,12 @@
   border-bottom: 2px solid #eee;
 }
 
+.back-white {
+  background: white;
+}
+.back-DDDDDD {
+  background: #DDDDDD;
+}
 .pointer {
   cursor: pointer;
 }
@@ -1032,3 +1038,8 @@ $bottom-navigation-content-font-size : var(--font-size-v-xxs);
   text-decoration: none;
 }
 
+.center-container {
+  display: flex;
+  align-items: center;
+  justify-items: center;
+}

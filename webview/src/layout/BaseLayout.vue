@@ -7,7 +7,7 @@
         <SideMenu v-if="isMobile === false" />
       </v-container>
     </v-main>
-    <Footer v-if="isMobile === true"/>
+    <!-- <Footer v-if="isMobile === true"/> 디자인 변경으로 disable처리.-->
   </div>
 </template>
 

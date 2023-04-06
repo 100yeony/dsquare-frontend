@@ -19,19 +19,20 @@ export default [
         component: () => import("@/pages/home"),
       },
       {
-        path: process.env.VUE_APP_BOARD,
-        name: "board",
+        path: process.env.VUE_APP_BOARD_QNA,
+        name: "qna",
         meta: {
-          title: "게시판",
+          title: "궁금해요",
+          back: process.env.VUE_APP_BOARD
         },
-        component: () => import("@/pages/board"),
+        component: () => import("@/pages/board/qna/index"),
       },
       {
         path: process.env.VUE_APP_BOARD_QNA_WRITE,
         name: "qna-write",
         meta: {
-          title: "Q&A작성",
-          back: process.env.VUE_APP_BOARD
+          title: "궁금해요 작성",
+          back: process.env.VUE_APP_BOARD_QNA
         },
         component: () => import("@/pages/board/qna/editor"),
       },
@@ -39,28 +40,91 @@ export default [
 				path:  process.env.VUE_APP_BOARD_QNA_DETAIL,
 				name: "qna-detail",
 				meta: {
-          title: "Q&A상세",
-          back: process.env.VUE_APP_BOARD
+          title: "궁금해요 상세",
+          back: process.env.VUE_APP_BOARD_QNA
 				},
 				component: () => import("@/pages/board/qna/_id"),
 			},
-			{
-				path:  process.env.VUE_APP_BOARD_FREE_WRITE,
-				name: "free-write",
-				meta: {
-          title: "자유게시판 작성",
+      {
+        path: process.env.VUE_APP_BOARD_COMMUNICATION,
+        name: "communication",
+        meta: {
+          title: "소통해요",
           back: process.env.VUE_APP_BOARD
+        },
+        component: () => import("@/pages/board/communication/index"),
+      },
+      {
+        path: process.env.VUE_APP_BOARD_COMMUNICATION_WRITE,
+        name: "communication-write",
+        meta: {
+          title: "소통해요 작성",
+          back: process.env.VUE_APP_BOARD_COMMUNICATION
+        },
+        component: () => import("@/pages/board/communication/editor"),
+      },
+			{
+				path:  process.env.VUE_APP_BOARD_COMMUNICATION_DETAIL,
+				name: "communication-detail",
+				meta: {
+          title: "소통해요 상세",
+          back: process.env.VUE_APP_BOARD_COMMUNICATION
 				},
-				component: () => import("@/pages/board/free/editor"),
+				component: () => import("@/pages/board/communication/_id"),
 			},
-			{
-				path:  process.env.VUE_APP_BOARD_FREE_DETAIL,
-				name: "free-detail",
-				meta: {
-          title: "자유게시판 상세",
+      {
+        path: process.env.VUE_APP_BOARD_DEAL,
+        name: "deal",
+        meta: {
+          title: "당근해요",
           back: process.env.VUE_APP_BOARD
+        },
+        component: () => import("@/pages/board/deal/index"),
+      },
+      {
+        path: process.env.VUE_APP_BOARD_DEAL_WRITE,
+        name: "deal-write",
+        meta: {
+          title: "당근해요 작성",
+          back: process.env.VUE_APP_BOARD_COMMUNICATION
+        },
+        component: () => import("@/pages/board/deal/editor"),
+      },
+			{
+				path:  process.env.VUE_APP_BOARD_DEAL_DETAIL,
+				name: "deal-detail",
+				meta: {
+          title: "당근해요 상세",
+          back: process.env.VUE_APP_BOARD_COMMUNICATION
 				},
-				component: () => import("@/pages/board/free/_id"),
+				component: () => import("@/pages/board/deal/_id"),
+			},
+      {
+        path: process.env.VUE_APP_BOARD_CARD,
+        name: "card",
+        meta: {
+          title: "카드주세요",
+          back: process.env.VUE_APP_BOARD
+        },
+        component: () => import("@/pages/board/card/index"),
+      },
+      {
+        path: process.env.VUE_APP_BOARD_CARD_WRITE,
+        name: "card-write",
+        meta: {
+          title: "카드주세요 작성",
+          back: process.env.VUE_APP_BOARD_COMMUNICATION
+        },
+        component: () => import("@/pages/board/card/editor"),
+      },
+			{
+				path:  process.env.VUE_APP_BOARD_CARD_DETAIL,
+				name: "card-detail",
+				meta: {
+          title: "카드주세요 상세",
+          back: process.env.VUE_APP_BOARD_COMMUNICATION
+				},
+				component: () => import("@/pages/board/card/_id"),
 			},
       {
         path: process.env.VUE_APP_MYPAGE,
@@ -69,6 +133,38 @@ export default [
           title: "마이페이지",
         },
         component: () => import("@/pages/mypage"),
+      },
+      {
+        path: process.env.VUE_APP_MYPAGE_MYPOST,
+        name: "mypage-mypost",
+        meta: {
+          title: "내가 등록 한 글",
+        },
+        component: () => import("@/pages/mypage/myPost"),
+      },
+      {
+        path: process.env.VUE_APP_MYPAGE_MYCOMMENT,
+        name: "mypage-mycomment",
+        meta: {
+          title: "내 답변/댓글",
+        },
+        component: () => import("@/pages/mypage/myComment"),
+      },
+      {
+        path: process.env.VUE_APP_MYPAGE_MYMENTION,
+        name: "mypage-mymention",
+        meta: {
+          title: "Mention",
+        },
+        component: () => import("@/pages/mypage/myMention"),
+      },
+      {
+        path: process.env.VUE_APP_MYPAGE_MYINFO,
+        name: "mypage-info",
+        meta: {
+          title: "회원정보 관리",
+        },
+        component: () => import("@/pages/mypage/myInfo"),
       },
     ],
   },

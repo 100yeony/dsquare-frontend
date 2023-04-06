@@ -8,6 +8,10 @@ export default {
     ckeditor: CKEditor.component,
   },
 
+  setup() {
+    let work = ref(false);
+    return { work };
+  },
   data() {
     return {
       editor: ClassicEditor,
@@ -20,6 +24,11 @@ export default {
     };
   },
   mounted(){
+    console.log(this.$route.query.work)
+    if(!this.$route.query.work) { // work 값이 없으면.
+      this.$router.replace(process.env.VUE_APP_BOARD)
+    }
+    this.work = this.$route.query.work;
   },
   methods: {
     uploader(editor) {
@@ -38,6 +47,9 @@ export default {
         <div class="card">
           <div class="card-body">
             <h4 class="card-title">제목 넣기 : </h4>
+            <h4 v-if="work">담당자</h4>
+            첨부파일.
+            <!-- 첨부파일은 직접 넣어보세요. -->
             <p class="card-title-desc">
             </p>
             <!-- Editor -->

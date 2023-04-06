@@ -1,0 +1,57 @@
+<template>
+  <v-card
+    class="mx-auto justify-center"
+    variant="outlined"
+    @click="handleCardClicked"
+  >
+    <v-card-item>
+      <div>
+        <div class="text-h7">
+          <span class="font-74CEBE">Q </span>{{ props?.data?.title }}
+        </div>
+        <div class="text-caption font-0000008F">{{ props?.data?.date }}</div>
+      </div>
+      <v-slide-group>
+        <v-slide-group-item
+          v-for="(chip, index) in props?.data?.hash"
+          :key="index"
+        >
+          <v-chip class="ma-2">#{{ chip }}</v-chip>
+        </v-slide-group-item>
+      </v-slide-group>
+      <v-row>
+        <v-col cols="8">
+          <v-chip class="ma-2" color="#74CEBE" v-if="props?.data?.success">
+            <v-icon start icon="mdi-account-check"></v-icon>
+            담당자 답변완료</v-chip
+          >
+        </v-col>
+        <v-col cols="2" class="center-container"
+          ><img src="@/assets/images/icons/icon_heart.png" /><span
+            class="text-caption font-0000008F"
+            >{{ props?.data?.like }}</span
+          ></v-col
+        >
+        <v-col cols="2" class="center-container"
+          ><img src="@/assets/images/icons/icon_message-circle.png" /><span
+            class="text-caption font-0000008F"
+            >{{ props?.data?.comment }}</span
+          ></v-col
+        >
+      </v-row>
+    </v-card-item>
+  </v-card>
+</template>
+<script setup>
+const props = defineProps({
+  data: Object,
+});
+const emit = defineEmits(["handle-card-clicked"]);
+
+// console.log(props.data);
+
+function handleCardClicked() {
+  // emit은 dom을 이용하므로 대소문자 구별이 불가능함.
+  emit("handle-card-clicked", props.data);
+}
+</script>
