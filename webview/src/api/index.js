@@ -44,18 +44,16 @@ function setAxiosInterceptor(instance) {
 }
 
 function createInstance() {
-  let apiUrl = ''// process.env.VUE_APP_API
+  //let apiUrl = ''// process.env.VUE_APP_API
   apiInstance = axios.create({
-    headers: {
-      'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8',
-    },
+    baseURL: 'http://localhost:8090',
   })
   vocInstance = axios.create({
     headers: {
       'Content-Type': 'text/html;charset=UTF-8'
     },
   })
-  setAxiosInterceptor(apiInstance)
+  //setAxiosInterceptor(apiInstance)
   return fn
 }
 
@@ -125,7 +123,7 @@ const fn = {
     try {
       console.log('[POST]', uri, params)
       console.log('auth :::::::::::::::', headers)
-      const res = await apiInstance.post(`${prefix + uri}`, params, { headers }, { withCredentials: true })
+      const res = await apiInstance.post(`${prefix + uri}`, params, { headers: headers})
       return this.ResponsePayload(res)
     } catch (err) {
       return this.ErrorPayload(err)

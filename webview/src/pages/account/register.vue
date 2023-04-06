@@ -4,6 +4,7 @@ import { useVuelidate } from "@vuelidate/core";
 import { required, email } from "@vuelidate/validators";
 import axios from 'axios';
 import signup from "@/assets/test_data/signup_response.json" // ******* TEST *******
+import api from '@/api'
 
 const ktEmailValidator = (email) => email == "" || new RegExp("[A-Za-z0-9]+@kt.com").test(email);
 
@@ -65,7 +66,7 @@ export default {
   methods: {
     // Try to register the user in with the email, username
     // and password they provided.
-    tryToRegisterIn() {
+    async tryToRegisterIn() {
       this.submitted = true;
       // stop here if form is invalid
       this.v$.$touch();
@@ -73,15 +74,22 @@ export default {
       if (!this.v$.$error) {
         // api 통신 필요.
         // register 하기.
-        this.user.teamId = 1
-        axios.post('https://dsquare.kt.co.kr/account/singup', this.user)
-          .then(response => {
-            console.log('state code:'+ response.data.common.code)
-            if (response.data.common.code === 200){
-              this.stepper = 2;
-            } 
-          })
-          .catch(error => console.log(this.user));
+        // this.user.teamId = 1
+        // axios.post('/account/signup', this.user)
+        //   .then(response => {
+        //     if (response.status === 200) {
+        //       this.stepper = 2;
+        //     }
+        //   })
+        //   .catch(error => {
+        //     console.log('error=>' + this.user)
+        //   });
+
+        const res = await api.post('/account/signup', this.user)
+        if (res.status === 200){
+          this.stepper = 2;
+        }
+
       }
     },
     onLogin() {
@@ -120,14 +128,14 @@ export default {
                     "서비스"이용에 따른 이용조건 및 절차 등 기타 필요한 제반사항을 규정함을 목적으로 합니다.
                   </p>
 
-                  <h3>
-                    제 2 조 (약관의 효력 및 개정)
-                  </h3>
-                  <p class="mb-3">
-                    ① 본 약관의 내용은 서비스 화면에 게시하거나 기타의 방법으로 회원에게 공시하고, 이에 동의한 회원이 서비스에 가입함으로써 효력이 발생합니다.<br />
-                    ② 회사는 본 약관의 내용과 회사의 상호, 영업소 소재지, 대표자 성명, 사업자 등록번호, 연락처(전화, 팩스, 전자우편주소 등)등을 회원이 알 수 있도록 서비스 초기 화면에
-                    게시합니다.<br />
-                    ③ 본 약관은 회사가 필요하다고 인정되는 경우 대한민국 법령의 범위 내에서 개정할 수 있으며, 회사가 약관을 개정할 경우에는 적용예정일 및 개정사유를 명시하여 현행 약관과 함께
+                <h3>
+                  제 2 조 (약관의 효력 및 개정)
+                </h3>
+                <p class="mb-3">
+                  ① 본 약관의 내용은 서비스 화면에 게시하거나 기타의 방법으로 회원에게 공시하고, 이에 동의한 회원이 서비스에 가입함으로써 효력이 발생합니다.<br />
+                  ② 회사는 본 약관의 내용과 회사의 상호, 영업소 소재지, 대표자 성명, 사업자 등록번호, 연락처(전화, 팩스, 전자우편주소 등)등을 회원이 알 수 있도록 서비스 초기 화면에
+                  게시합니다.<br />
+                  ③ 본 약관은 회사가 필요하다고 인정되는 경우 대한민국 법령의 범위 내에서 개정할 수 있으며, 회사가 약관을 개정할 경우에는 적용예정일 및 개정사유를 명시하여 현행 약관과 함께
                   서비스 초기화면에 그
                   적용예정일 7일 전부터 공지합니다. 다만, 회원에게 불리하게 약관내용을 변경하는 경우에는 최소한 30일 이상의 사전 유예기간을 두 고 공지하는 것 외에 이메일 발송 등 전자적
                   수단을 통해 별도로
@@ -137,15 +145,15 @@ export default {
                   개정된 약관에 동의 한다는 것으로 본다는 뜻을 명확하게 공지 또는 통지 하였음에도 회원이 명시적으로 거부의사를 표시하지 않거나 이용계약을 해지 하지 않은 경우 회원이 개정약관에
                   동의한 것으로
                   봅니다.<br />
-                  ⑤ 회사는 개별 서비스에 대해서는 별도의 이용약관 및 규정, 세부 이용지침 등을 둘 수 있으며, 해당 내용이 본 약관과 상충할 경우에는 개별서비스 약관이 우선하여 적용됩니다.
-                </p>
+                    ⑤ 회사는 개별 서비스에 대해서는 별도의 이용약관 및 규정, 세부 이용지침 등을 둘 수 있으며, 해당 내용이 본 약관과 상충할 경우에는 개별서비스 약관이 우선하여 적용됩니다.
+                  </p>
 
 
-                <h3>
-                  제 3 조 (약관외 준칙)
-                </h3>
-                <p class="mb-3">
-                  본 약관에 명시되지 않은 사항은 전기통신기본법, 전기통신사업법 및 전자거래기본법, 전자상거래 등에서의 소비자보호에 관한 법률 등 관계법령 또는 상관례에 따릅니다.
+                  <h3>
+                    제 3 조 (약관외 준칙)
+                  </h3>
+                  <p class="mb-3">
+                    본 약관에 명시되지 않은 사항은 전기통신기본법, 전기통신사업법 및 전자거래기본법, 전자상거래 등에서의 소비자보호에 관한 법률 등 관계법령 또는 상관례에 따릅니다.
                   </p>
 
                   <h3>
@@ -216,24 +224,24 @@ export default {
               </v-expansion-panel>
 
               <!-- 
-                        <v-expansion-panel>
-                          <v-expansion-panel-title @click="terms[3] = true">
-                            디스퀘어 개인정보 처리방침 선택 동의(선택)
-                            <template v-slot:actions="{ expanded }">
-                              <v-icon
-                                :color="terms[3] === false ? '' : 'teal'"
-                                :icon="terms[3] === false ? 'mdi-pencil' : 'mdi-check'"
-                              ></v-icon>
-                            </template>
-                          </v-expansion-panel-title>
-                          <v-expansion-panel-text class="wrap__agree">
-                            개인정보의 수집항목 및 수집/이용 목적 1. 회사는 회원가입, 상담, 서비스
-                            제공 등을 위하여 필요한 범위에서 최소한의 개인정보만을 수집합니다. 2.
-                            회사가 수집하는 개인정보 항목과 수집/이용하는 목적은 다음과 같습니다.
-                            \n\n회원가입 및 로그인에서...........
-                          </v-expansion-panel-text>
-                        </v-expansion-panel> 
-                  -->
+                          <v-expansion-panel>
+                            <v-expansion-panel-title @click="terms[3] = true">
+                              디스퀘어 개인정보 처리방침 선택 동의(선택)
+                              <template v-slot:actions="{ expanded }">
+                                <v-icon
+                                  :color="terms[3] === false ? '' : 'teal'"
+                                  :icon="terms[3] === false ? 'mdi-pencil' : 'mdi-check'"
+                                ></v-icon>
+                              </template>
+                            </v-expansion-panel-title>
+                            <v-expansion-panel-text class="wrap__agree">
+                              개인정보의 수집항목 및 수집/이용 목적 1. 회사는 회원가입, 상담, 서비스
+                              제공 등을 위하여 필요한 범위에서 최소한의 개인정보만을 수집합니다. 2.
+                              회사가 수집하는 개인정보 항목과 수집/이용하는 목적은 다음과 같습니다.
+                              \n\n회원가입 및 로그인에서...........
+                            </v-expansion-panel-text>
+                          </v-expansion-panel> 
+                    -->
             </v-expansion-panels>
           </v-col>
           <v-btn :disabled="!(terms[0] && terms[1] && terms[2])" block @click="stepper = 1" class="mt-5 font-sm">회원가입
@@ -265,7 +273,7 @@ export default {
 
                 <v-form-group id="pw-group" label="Pw" label-for="pw">
                   <v-text-field id="pw" v-model="user.pw" type="password" label="비밀번호" :class="{
-                    'is-invalid': submitted && v$.user.password.$error,
+                    'is-invalid': submitted && v$.user.pw.$error,
                   }" hide-details=true></v-text-field>
                   <div class="invalid-feedback error mb-3">
                     <template v-if="submitted && v$.user.pw.required.$invalid">비밀번호를 입력해주세요.</template>
