@@ -2,12 +2,13 @@
 import { computed, onMounted, ref } from "vue";
 import { useVuelidate } from "@vuelidate/core";
 import { required, email } from "@vuelidate/validators";
-import axios from 'axios';
 import signup from "@/assets/test_data/signup_response.json" // ******* TEST *******
 import api from '@/api'
+import regex from "@/utils/regex"
 
 const ktEmailValidator = (email) => email == "" || new RegExp("[A-Za-z0-9]+@kt.com").test(email);
-
+const contactValidator = (contact) => contact == "" || regex.phoneRegexCheck(contact);
+const pwValidator = (pw) => pw == "" || new RegExp("^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,20}$").test(pw);
 
 export default {
   setup() {
@@ -33,6 +34,12 @@ export default {
       signupData: signup.data,  // ******* TEST *******
     };
   },
+  // computed: {
+  //   computedContact: function () {
+  //     return ''
+  //   }
+
+  // },
   validations() {
     return {
       user: {
@@ -42,6 +49,7 @@ export default {
         },
         pw: {
           required,
+          pwValidator
         },
         nickname: {
           required,
@@ -51,6 +59,7 @@ export default {
         },
         contact: {
           required,
+          contactValidator
         },
         teamId: {
           required,
@@ -72,6 +81,7 @@ export default {
     async tryToRegisterIn() {
       this.submitted = true;
       // stop here if form is invalid
+
       this.v$.$touch();
 
       if (!this.v$.$error) {
@@ -89,7 +99,7 @@ export default {
         //   });
 
         const res = await api.post('/account/signup', this.user)
-        if (res.status === 200){
+        if (res.status === 200) {
           this.stepper = 2;
         }
 
@@ -98,11 +108,10 @@ export default {
     onLogin() {
       this.$router.replace('/account/login');
     }
-  },
+  }
 };
 </script>
 <template class="font-sm">
-  <!-- 더 꾸며보세요.-->
   <v-container class="ph-65 pw-100">
     <v-row class="ph-100">
       <v-col class="pw-100" align-self="center" v-if="stepper === 0">
@@ -111,25 +120,25 @@ export default {
           <div class="pph-10 text-center font-sm mb-7 font_gray">
             회원 가입을 진행하시려면 아래의 약관에 동의해주세요.
           </div>
-          
+
           <v-expansion-panels class="mt-4 button_white" variant="">
-            <v-expansion-panel>
-              <v-expansion-panel-title class="font-sm" @click="terms[0] = true">
-                DSquare 이용약관(필수)
-                <template v-slot:actions="{ expanded }">
-                  <v-icon :color="terms[0] === false ? '#ABABAB' : 'teal'"
-                    :icon="terms[0] === false ? 'mdi-checkbox-blank-outline' : 'mdi-check'"></v-icon>
-                </template>
-              </v-expansion-panel-title>
-              <v-expansion-panel-text class="wrap__agree font-xs">
-                <h3>
-                  제1장 총칙 제 1 조(목적)
-                </h3>
-                <p class="mb-3">
-                  본 약관은 회원이 주식회사 케이티(이하 "회사"라 합니다)가 제공하는 "디스퀘어"(이하 "서비스"라 합니다.)를 이용함에 있어 불필요한 "회사"와 "회원"간의 권리, 의무 및
-                  책임사항,
-                  "서비스"이용에 따른 이용조건 및 절차 등 기타 필요한 제반사항을 규정함을 목적으로 합니다.
-                </p>
+          <v-expansion-panel>
+            <v-expansion-panel-title class="font-sm" @click="terms[0] = true">
+              DSquare 이용약관(필수)
+              <template v-slot:actions="{ expanded }">
+                <v-icon :color="terms[0] === false ? '#ABABAB' : 'teal'"
+                  :icon="terms[0] === false ? 'mdi-checkbox-blank-outline' : 'mdi-check'"></v-icon>
+              </template>
+            </v-expansion-panel-title>
+            <v-expansion-panel-text class="wrap__agree font-xs">
+              <h3>
+                제1장 총칙 제 1 조(목적)
+              </h3>
+              <p class="mb-3">
+                본 약관은 회원이 주식회사 케이티(이하 "회사"라 합니다)가 제공하는 "디스퀘어"(이하 "서비스"라 합니다.)를 이용함에 있어 불필요한 "회사"와 "회원"간의 권리, 의무 및
+                책임사항,
+                "서비스"이용에 따른 이용조건 및 절차 등 기타 필요한 제반사항을 규정함을 목적으로 합니다.
+              </p>
 
                 <h3>
                   제 2 조 (약관의 효력 및 개정)
@@ -139,24 +148,24 @@ export default {
                   ② 회사는 본 약관의 내용과 회사의 상호, 영업소 소재지, 대표자 성명, 사업자 등록번호, 연락처(전화, 팩스, 전자우편주소 등)등을 회원이 알 수 있도록 서비스 초기 화면에
                   게시합니다.<br />
                   ③ 본 약관은 회사가 필요하다고 인정되는 경우 대한민국 법령의 범위 내에서 개정할 수 있으며, 회사가 약관을 개정할 경우에는 적용예정일 및 개정사유를 명시하여 현행 약관과 함께
-                서비스 초기화면에 그
-                적용예정일 7일 전부터 공지합니다. 다만, 회원에게 불리하게 약관내용을 변경하는 경우에는 최소한 30일 이상의 사전 유예기간을 두 고 공지하는 것 외에 이메일 발송 등 전자적
-                수단을 통해 별도로
-                통지합니다.<br />
-                ④ 회원은 개정된 약관에 대해 동의하지 않을 권리가 있으며, 개정된 약관에 동의하지 않을 경우 이용계약을 해지할 수 있습니다. 단 회사가 전항에서 정한 사전 유예기간 내에
-                의사표시를 하지 않으면
-                개정된 약관에 동의 한다는 것으로 본다는 뜻을 명확하게 공지 또는 통지 하였음에도 회원이 명시적으로 거부의사를 표시하지 않거나 이용계약을 해지 하지 않은 경우 회원이 개정약관에
-                동의한 것으로
-                봅니다.<br />
-                ⑤ 회사는 개별 서비스에 대해서는 별도의 이용약관 및 규정, 세부 이용지침 등을 둘 수 있으며, 해당 내용이 본 약관과 상충할 경우에는 개별서비스 약관이 우선하여 적용됩니다.
-              </p>
+                  서비스 초기화면에 그
+                  적용예정일 7일 전부터 공지합니다. 다만, 회원에게 불리하게 약관내용을 변경하는 경우에는 최소한 30일 이상의 사전 유예기간을 두 고 공지하는 것 외에 이메일 발송 등 전자적
+                  수단을 통해 별도로
+                  통지합니다.<br />
+                  ④ 회원은 개정된 약관에 대해 동의하지 않을 권리가 있으며, 개정된 약관에 동의하지 않을 경우 이용계약을 해지할 수 있습니다. 단 회사가 전항에서 정한 사전 유예기간 내에
+                  의사표시를 하지 않으면
+                  개정된 약관에 동의 한다는 것으로 본다는 뜻을 명확하게 공지 또는 통지 하였음에도 회원이 명시적으로 거부의사를 표시하지 않거나 이용계약을 해지 하지 않은 경우 회원이 개정약관에
+                  동의한 것으로
+                  봅니다.<br />
+                  ⑤ 회사는 개별 서비스에 대해서는 별도의 이용약관 및 규정, 세부 이용지침 등을 둘 수 있으며, 해당 내용이 본 약관과 상충할 경우에는 개별서비스 약관이 우선하여 적용됩니다.
+                </p>
 
 
-              <h3>
-                제 3 조 (약관외 준칙)
-              </h3>
-              <p class="mb-3">
-                본 약관에 명시되지 않은 사항은 전기통신기본법, 전기통신사업법 및 전자거래기본법, 전자상거래 등에서의 소비자보호에 관한 법률 등 관계법령 또는 상관례에 따릅니다.
+                <h3>
+                  제 3 조 (약관외 준칙)
+                </h3>
+                <p class="mb-3">
+                  본 약관에 명시되지 않은 사항은 전기통신기본법, 전기통신사업법 및 전자거래기본법, 전자상거래 등에서의 소비자보호에 관한 법률 등 관계법령 또는 상관례에 따릅니다.
                 </p>
 
                 <h3>
@@ -227,28 +236,28 @@ export default {
             </v-expansion-panel>
 
             <!-- 
-                      <v-expansion-panel>
-                        <v-expansion-panel-title @click="terms[3] = true">
-                          디스퀘어 개인정보 처리방침 선택 동의(선택)
-                          <template v-slot:actions="{ expanded }">
-                            <v-icon
-                              :color="terms[3] === false ? '' : 'teal'"
-                              :icon="terms[3] === false ? 'mdi-pencil' : 'mdi-check'"
-                            ></v-icon>
-                          </template>
-                        </v-expansion-panel-title>
-                        <v-expansion-panel-text class="wrap__agree">
-                          개인정보의 수집항목 및 수집/이용 목적 1. 회사는 회원가입, 상담, 서비스
-                          제공 등을 위하여 필요한 범위에서 최소한의 개인정보만을 수집합니다. 2.
-                          회사가 수집하는 개인정보 항목과 수집/이용하는 목적은 다음과 같습니다.
-                          \n\n회원가입 및 로그인에서...........
-                        </v-expansion-panel-text>
-                      </v-expansion-panel> 
-                -->
+                              <v-expansion-panel>
+                                <v-expansion-panel-title @click="terms[3] = true">
+                                  디스퀘어 개인정보 처리방침 선택 동의(선택)
+                                  <template v-slot:actions="{ expanded }">
+                                    <v-icon
+                                      :color="terms[3] === false ? '' : 'teal'"
+                                      :icon="terms[3] === false ? 'mdi-pencil' : 'mdi-check'"
+                                    ></v-icon>
+                                  </template>
+                                </v-expansion-panel-title>
+                                <v-expansion-panel-text class="wrap__agree">
+                                  개인정보의 수집항목 및 수집/이용 목적 1. 회사는 회원가입, 상담, 서비스
+                                  제공 등을 위하여 필요한 범위에서 최소한의 개인정보만을 수집합니다. 2.
+                                  회사가 수집하는 개인정보 항목과 수집/이용하는 목적은 다음과 같습니다.
+                                  \n\n회원가입 및 로그인에서...........
+                                </v-expansion-panel-text>
+                              </v-expansion-panel> 
+                        -->
           </v-expansion-panels>
-          
-          <v-btn :disabled="!(terms[0] && terms[1] && terms[2])" block @click="stepper = 1" 
-          class="mt-30 mb-5 font-sm button_main font-medium" variant="">회원가입 하기</v-btn>
+
+          <v-btn :disabled="!(terms[0] && terms[1] && terms[2])" block @click="stepper = 1"
+            class="mt-30 mb-5 font-sm button_main font-medium" variant="">회원가입 하기</v-btn>
 
           <div style="float: center;" class="font-sm text-center">
             이미 회원이신가요?
@@ -264,122 +273,123 @@ export default {
         </div>
 
         <v-form @submit.prevent="tryToRegisterIn" class="overflow-show">
-            <v-container class="pw-95 max-pw">
-                <v-form-group id="email-group" label="Email" label-for="email" class="">
-                  <label for="useremail" class="font-sm font-medium">아이디(이메일)</label>
-                  <v-text-field type="email" v-model="user.email" variant="outlined"
-                    single-line hide-details
-                    id="useremail" density="compact"
-                    :class="{ 'is-invalid': submitted && v$.user.email.$error }" class="font-sm">
-                  </v-text-field>
-                  <div v-if="submitted && v$.user.email.$error" class="invalid-feedback">
-                    <v-icon size="x-small" color="red">mdi-close-circle-outline</v-icon>
-                    <span v-if="v$.user.email.required.$invalid" class="font-xs font_red">아이디(이메일)를 입력해주세요.</span>
-                    <span v-if="v$.user.email.email.$invalid" class="font-xs font_red">올바르지 않은 이메일입니다.</span>
-                  </div>
-                </v-form-group>
-                
-                <div class="mb-20"></div>
+          <v-container class="pw-95 max-pw">
+            <v-form-group id="email-group" label="Email" label-for="email" class="">
+              <label for="useremail" class="font-sm font-medium">아이디(이메일)</label>
+              <v-text-field type="text" v-model="user.email" variant="outlined" single-line hide-details id="useremail"
+                density="compact" :class="{ 'is-invalid': submitted && v$.user.email.$error }" class="font-sm">
+              </v-text-field>
+              <div v-if="submitted && v$.user.email.$error" class="invalid-feedback">
+                <v-icon size="x-small" color="red">mdi-close-circle-outline</v-icon>
+                <span v-if="v$.user.email.required.$invalid" class="font-xs font_red">아이디(이메일)를 입력해주세요.</span>
+                <span v-if="v$.user.email.email.$invalid" class="font-xs font_red">올바르지 않은 이메일입니다.</span>
+              </div>
+            </v-form-group>
 
-                <v-form-group id="pw-group" label="Pw" label-for="pw">
-                  <label for="password" class="font-sm font-medium"> 비밀번호</label>
-                  <v-text-field type="password" v-model="user.pw" variant="outlined"
-                    single-line hide-details
-                    id="password" density="compact"
-                    :class="{ 'is-invalid': submitted && v$.user.pw.$error }" class="font-sm">
-                  </v-text-field>
-                  <div v-if="submitted && v$.user.pw.required.$invalid" class="invalid-feedback">
-                    <v-icon size="x-small" color="red">mdi-close-circle-outline</v-icon>
-                    <span class="font-xs font_red">비밀번호를 입력해주세요.</span>
-                  </div>
-                </v-form-group>
+            <div class="mb-20"></div>
 
-                <div class="mb-20"></div>
+            <v-form-group id="pw-group" label="Pw" label-for="pw">
+              <label for="password" class="font-sm font-medium"> 비밀번호</label>
+              <v-text-field type="password" v-model="user.pw" variant="outlined" single-line hide-details id="password"
+                density="compact" :class="{ 'is-invalid': submitted && v$.user.pw.$error }" class="font-sm">
+              </v-text-field>
 
-                <v-form-group id="nickname-group" label="Nickname" label-for="nickname">
-                  <label for="nickname" class="font-medium font-sm">닉네임</label>
-                  <v-text-field type="text" v-model="user.nickname" variant="outlined"
-                    single-line hide-details
-                    class="form-control font-sm mt-2" id="nickname" density="compact" :class="{
-                      'is-invalid': submitted && v$.user.nickname.$error,
-                    }" />
-                  <div v-if="submitted && v$.user.nickname.required.$invalid" class="invalid-feedback">
-                    <v-icon size="x-small" color="red">mdi-close-circle-outline</v-icon>
-                    <span class="font-xs font_red">닉네임을 입력해주세요.</span>
-                  </div>
-                </v-form-group>
+              <div v-if="submitted && v$.user.pw.$error">
+                <v-icon size="x-small" color="red">mdi-close-circle-outline</v-icon>
+                <span v-if="v$.user.pw.required.$invalid" class="font-xs font_red">비밀번호를 입력해주세요.</span>
+                <span v-if="v$.user.pw.pwValidator.$invalid" class="font-xs font_red">비밀번호는 최소 8자, 최대 20자, 영문 대소문자 최소 하나
+                  이상, 특수문자 최소 하나 이상</span>
 
-                <div class="mb-20"></div>
+              </div>
+            </v-form-group>
 
-                <v-form-group id="name-group" label="Name" label-for="name">
-                  <label for="name" class="font-medium font-sm">이름</label>
-                  <v-text-field type="text" v-model="user.name" variant="outlined"
-                    single-line hide-details
-                    class="form-control font-sm mt-2" id="name" density="compact" :class="{
-                      'is-invalid': submitted && v$.user.name.$error,
-                    }" />
-                  <div v-if="submitted && v$.user.name.required.$invalid" class="invalid-feedback">
-                    <v-icon size="x-small" color="red">mdi-close-circle-outline</v-icon>
-                    <span class="font-xs font_red">이름을 입력해주세요.</span>
-                  </div>
-                </v-form-group>
+            <div class="mb-20"></div>
 
-                <div class="mb-20"></div>
+            <v-form-group id="nickname-group" label="Nickname" label-for="nickname">
+              <label for="nickname" class="font-medium font-sm">닉네임</label>
+              <v-text-field type="text" v-model="user.nickname" variant="outlined" single-line hide-details
+                class="form-control font-sm mt-2" id="nickname" density="compact" :class="{
+                  'is-invalid': submitted && v$.user.nickname.$error,
+                }" />
+              <div v-if="submitted && v$.user.nickname.required.$invalid" class="invalid-feedback">
+                <v-icon size="x-small" color="red">mdi-close-circle-outline</v-icon>
+                <span class="font-xs font_red">닉네임을 입력해주세요.</span>
+              </div>
+            </v-form-group>
 
-                <v-form-group id="contact-group" label="Contact" label-for="contact">
-                  <label for="contact" class="font-medium font-sm">연락처</label>
-                  <v-text-field type="text" v-model="user.contact" variant="outlined"
-                    single-line hide-details
-                    class="form-control font-sm mt-2" id="contact" density="compact" :class="{
-                      'is-invalid': submitted && v$.user.contact.$error,
-                    }" />
-                  <div v-if="submitted && v$.user.contact.required.$invalid" class="invalid-feedback">
-                    <v-icon size="x-small" color="red">mdi-close-circle-outline</v-icon>
-                    <span class="font-xs font_red">연락처를 입력해주세요.</span>
-                  </div>
-                </v-form-group>
+            <div class="mb-20"></div>
 
-                <div class="mb-20"></div>
+            <v-form-group id="name-group" label="Name" label-for="name">
+              <label for="name" class="font-medium font-sm">이름</label>
+              <v-text-field type="text" v-model="user.name" variant="outlined" single-line hide-details
+                class="form-control font-sm mt-2" id="name" density="compact" :class="{
+                  'is-invalid': submitted && v$.user.name.$error,
+                }" />
+              <div v-if="submitted && v$.user.name.required.$invalid" class="invalid-feedback">
+                <v-icon size="x-small" color="red">mdi-close-circle-outline</v-icon>
+                <span class="font-xs font_red">이름을 입력해주세요.</span>
+              </div>
+            </v-form-group>
 
-                <v-form-group id="teamId-group" label="TeamId" label-for="teamId">
-                  <label for="teamId" class="font-medium font-sm">소속팀</label>
-                  <v-text-field type="text" v-model="user.teamId" variant="outlined"
-                    single-line hide-details
-                    class="form-control font-sm mt-2" id="teamId" density="compact" :class="{
-                      'is-invalid': submitted && v$.user.teamId.$error,
-                    }" />
-                  <div v-if="submitted && v$.user.teamId.required.$invalid" class="invalid-feedback">
-                    <v-icon size="x-small" color="red">mdi-close-circle-outline</v-icon>
-                    <span class="font-xs font_red">소속팀을 입력해주세요.</span>
-                  </div>
-                </v-form-group>
+            <div class="mb-20"></div>
 
-                <div class="mb-20"></div>
+            <v-form-group id="contact-group" label="Contact" label-for="contact">
+              <label for="contact" class="font-medium font-sm">연락처</label>
+              <v-text-field type="text" v-model="user.contact" variant="outlined" single-line hide-details
+                class="form-control font-sm mt-2" id="contact" density="compact" :class="{
+                  'is-invalid': submitted && v$.user.contact.$error,
+                }" />
 
-                <v-form-group id="email-group" label="KtMmail" label-for="ktMail">
-                  <label for="ktMail" class="font-medium font-sm">사내메일</label>
-                  <v-text-field type="email" v-model="user.ktMail" variant="outlined"
-                    single-line hide-details
-                    class="form-control font-sm mt-2" id="ktMail" density="compact" :class="{
-                      'is-invalid': submitted && v$.user.ktMail.$error,
-                    }" />
-                  
-                  <div v-if="submitted && v$.user.ktMail.$error" class="invalid-feedback">
-                    <v-icon size="x-small" color="red">mdi-close-circle-outline</v-icon>
-                    <span v-if="v$.user.ktMail.required.$invalid" class="font-xs font_red">사내메일을 입력해주세요.</span>
-                    <span v-if="v$.user.ktMail.ktEmailValidator.$invalid" class="font-xs font_red">올바르지 않은 사내메일입니다.</span>
-                  </div>
-                </v-form-group>
+              <div v-if="submitted && v$.user.contact.$error">
+                <v-icon size="x-small" color="red">mdi-close-circle-outline</v-icon>
+                <span v-if="v$.user.contact.required.$invalid" class="font-xs font_red">연락처를 입력해주세요.</span>
+                <span v-if="v$.user.contact.contactValidator.$invalid" class="font-xs font_red">-를 제외한 010xxxxxxx 형태로
+                  입력해주세요.</span>
 
-                <v-btn class="pph-25 font-sm button_main font-medium mt-30 mb-5" type="submit" variant="">
-                  회원가입
-                </v-btn>
+              </div>
 
-                <div style="float: center;" class="font-sm text-center mb-50">
-                  이미 회원이신가요?
-                  <router-link to="/account/login/" class="text-primary font-sm n_td">로그인</router-link>
-                </div>
-            </v-container>
+
+            </v-form-group>
+
+            <div class="mb-20"></div>
+
+            <v-form-group id="teamId-group" label="TeamId" label-for="teamId">
+              <label for="teamId" class="font-medium font-sm">소속팀</label>
+              <v-text-field type="text" v-model="user.teamId" variant="outlined" single-line hide-details
+                class="form-control font-sm mt-2" id="teamId" density="compact" :class="{
+                  'is-invalid': submitted && v$.user.teamId.$error,
+                }" />
+              <div v-if="submitted && v$.user.teamId.required.$invalid" class="invalid-feedback">
+                <v-icon size="x-small" color="red">mdi-close-circle-outline</v-icon>
+                <span class="font-xs font_red">소속팀을 입력해주세요.</span>
+              </div>
+            </v-form-group>
+
+            <div class="mb-20"></div>
+
+            <v-form-group id="email-group" label="KtMmail" label-for="ktMail">
+              <label for="ktMail" class="font-medium font-sm">사내메일</label>
+              <v-text-field type="text" v-model="user.ktMail" variant="outlined" single-line hide-details
+                class="form-control font-sm mt-2" id="ktMail" density="compact" :class="{
+                  'is-invalid': submitted && v$.user.ktMail.$error,
+                }" />
+
+              <div v-if="submitted && v$.user.ktMail.$error">
+                <v-icon size="x-small" color="red">mdi-close-circle-outline</v-icon>
+                <span v-if="v$.user.ktMail.required.$invalid" class="font-xs font_red">사내메일을 입력해주세요.</span>
+                <span v-if="v$.user.ktMail.ktEmailValidator.$invalid" class="font-xs font_red">올바르지 않은 사내메일입니다.</span>
+              </div>
+            </v-form-group>
+
+            <v-btn class="pph-25 font-sm button_main font-medium mt-30 mb-5" type="submit" variant="">
+              회원가입
+            </v-btn>
+
+            <div style="float: center;" class="font-sm text-center mb-50">
+              이미 회원이신가요?
+              <router-link to="/account/login/" class="text-primary font-sm n_td">로그인</router-link>
+            </div>
+          </v-container>
         </v-form>
       </v-col>
       <v-col class="pw-100 ph-70" align-self="center" v-else>
@@ -433,8 +443,8 @@ export default {
   width: 95% !important;
 }
 
-span{
-  padding: 0px 5px !important; 
+span {
+  padding: 0px 5px !important;
 }
 </style>
 
