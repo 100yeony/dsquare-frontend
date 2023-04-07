@@ -7,6 +7,7 @@ export default {
     cancel() {
       this.$store.dispatch('info/setInfoToken', 'ABCDEFG');
       this.$router.push(process.env.VUE_APP_HOME);
+      // this.$router.push(process.env.VUE_APP_LOGIN);
     },
 
     changepass(){
