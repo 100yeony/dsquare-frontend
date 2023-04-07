@@ -192,6 +192,22 @@ export default [
         component: () => import("@/pages/account/changepass"),
       },
       {
+        path: process.env.VUE_APP_CHANGEPASS_OK,
+        name: "changepass_ok",
+        meta: {
+          title: "비밀번호변경 완료",
+        },
+        component: () => import("@/pages/account/changepass_ok"),
+      },
+      {
+        path: process.env.VUE_APP_CHANGEPASS_ALERT,
+        name: "changepass_alert",
+        meta: {
+          title: "비밀번호변경 안내",
+        },
+        component: () => import("@/pages/account/changepass_alert"),
+      },
+      {
         path: process.env.VUE_APP_FINDPASS,
         name: "findpass",
         meta: {
