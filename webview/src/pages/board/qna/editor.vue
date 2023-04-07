@@ -3,6 +3,8 @@ import CKEditor from "@ckeditor/ckeditor5-vue";
 import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
 import FileUploadAdapter from "@/utils/fileUploaderAdapter";
 import { computed, onMounted, ref } from "vue";
+import api from '@/api'
+
 export default {
   components: {
     ckeditor: CKEditor.component,
@@ -18,7 +20,7 @@ export default {
   data() {
     return {
       editor: ClassicEditor,
-      editorData: "<h3>안녕하세요!</h3>",
+      editorData: "",
       editorConfig: {
         // 상세 수정은 https://ckeditor.com
         extraPlugins: [this.uploader],
@@ -35,6 +37,12 @@ export default {
     this.work = this.$route.query.work;
   },
   methods: {
+    async write(editorData) {
+      console.log(editorData);
+      const res = await api.post('/board/questions', {
+        content: editorData,
+      });
+    },
     uploader(editor) {
       editor.plugins.get("FileRepository").createUploadAdapter = (loader) => {
         return new FileUploadAdapter(loader);
@@ -119,7 +127,7 @@ export default {
 
     <v-row class="mb-2" align="center">
       <v-col cols="6">
-        <v-btn block color="#ADE4EB">저장</v-btn>
+        <v-btn @click="write(editorData)" block color="#ADE4EB">저장</v-btn>
       </v-col>
       <v-col cols="6">
         <v-btn block>취소</v-btn>
