@@ -4,6 +4,7 @@ import { useVuelidate } from "@vuelidate/core";
 import { required, email } from "@vuelidate/validators";
 import axios from 'axios';
 import signup from "@/assets/test_data/signup_response.json" // ******* TEST *******
+import api from '@/api'
 
 const ktEmailValidator = (email) => email == "" || new RegExp("[A-Za-z0-9]+@kt.com").test(email);
 
@@ -68,7 +69,7 @@ export default {
     },
     // Try to register the user in with the email, username
     // and password they provided.
-    tryToRegisterIn() {
+    async tryToRegisterIn() {
       this.submitted = true;
       // stop here if form is invalid
       this.v$.$touch();
@@ -76,11 +77,22 @@ export default {
       if (!this.v$.$error) {
         // api 통신 필요.
         // register 하기.
-        axios.post('api_url', this.user)
-          .then()
-          .catch(error => console.log(this.user));
+        // this.user.teamId = 1
+        // axios.post('/account/signup', this.user)
+        //   .then(response => {
+        //     if (response.status === 200) {
+        //       this.stepper = 2;
+        //     }
+        //   })
+        //   .catch(error => {
+        //     console.log('error=>' + this.user)
+        //   });
 
-        this.stepper = 2;
+        const res = await api.post('/account/signup', this.user)
+        if (res.status === 200){
+          this.stepper = 2;
+        }
+
       }
     },
     onLogin() {
@@ -270,6 +282,12 @@ export default {
                 <div class="mb-20"></div>
 
                 <v-form-group id="pw-group" label="Pw" label-for="pw">
+                  <v-text-field id="pw" v-model="user.pw" type="password" label="비밀번호" :class="{
+                    'is-invalid': submitted && v$.user.pw.$error,
+                  }" hide-details=true></v-text-field>
+                  <div class="invalid-feedback error mb-3">
+                    <template v-if="submitted && v$.user.pw.required.$invalid">비밀번호를 입력해주세요.</template>
+                    <template v-else>&nbsp;</template>
                   <label for="password" class="font-sm font-medium"> 비밀번호</label>
                   <v-text-field type="password" v-model="user.pw" variant="outlined"
                     single-line hide-details
