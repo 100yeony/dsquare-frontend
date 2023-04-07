@@ -20,7 +20,8 @@ const router = createRouter({
  * Vue router의 권한 및 title을 설정해주는 script 입니다.
  */
 // 로그인이 되지 않았을때만 들어가져야합니다.
-const notLogged = [process.env.VUE_APP_LOGIN, process.env.VUE_APP_REGISTER, process.env.VUE_APP_CHANGEPASS, process.env.VUE_APP_FINDPASS, process.env.VUE_APP_FINDPASS_OK];
+const notLogged = [process.env.VUE_APP_LOGIN, process.env.VUE_APP_REGISTER, process.env.VUE_APP_CHANGEPASS, 
+	process.env.VUE_APP_CHANGEPASS_OK, process.env.VUE_APP_CHANGEPASS_ALERT, process.env.VUE_APP_FINDPASS, process.env.VUE_APP_FINDPASS_OK];
 router.beforeEach(async (to, from, next) => {
 	let token = store.getters["info/infoToken"]; // 좀 더 복잡하게 가질 수 있지만, 현재는 토큰의 유무 정도로 로그인의 유무를 확인한다고 생각합니다.
 	let path = to?.matched[to?.matched?.length - 1].path ?? to.path; //절대 위치 path값 가져오기.
