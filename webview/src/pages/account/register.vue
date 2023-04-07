@@ -282,12 +282,6 @@ export default {
                 <div class="mb-20"></div>
 
                 <v-form-group id="pw-group" label="Pw" label-for="pw">
-                  <v-text-field id="pw" v-model="user.pw" type="password" label="비밀번호" :class="{
-                    'is-invalid': submitted && v$.user.pw.$error,
-                  }" hide-details=true></v-text-field>
-                  <div class="invalid-feedback error mb-3">
-                    <template v-if="submitted && v$.user.pw.required.$invalid">비밀번호를 입력해주세요.</template>
-                    <template v-else>&nbsp;</template>
                   <label for="password" class="font-sm font-medium"> 비밀번호</label>
                   <v-text-field type="password" v-model="user.pw" variant="outlined"
                     single-line hide-details

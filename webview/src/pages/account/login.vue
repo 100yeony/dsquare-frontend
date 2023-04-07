@@ -33,8 +33,6 @@ export default {
     }
   },
   mounted() {
-    this.apiPostTest();
-    this.apiGetTest();
   },
   methods: {
     async tryToLogIn() {
