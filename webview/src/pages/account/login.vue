@@ -4,6 +4,10 @@ import { required, email } from '@vuelidate/validators'
 import dialogUtils from '@/utils/dialogUtils'
 import Footer from "@/components/FooterAuth"
 import api from '@/api'
+
+import {NativeValueDto} from "@/class/NativeValueDto"
+import bridgeUtils from "@/utils/bridgeUtils"
+
 /**
  * Login component
  */
@@ -41,6 +45,23 @@ export default {
       // stop here if form is invalid
       this.v$.$touch();
       if (!this.v$.$error) {
+        // 이후에는 이 nativeDto를 실 토큰처럼 쓰도록 구현하세요.
+        // 지금은 개발중인걸ㄹ 보이니 disable 처리만 해둡니다.
+        /*let testAccessTokenValue = 'ABCDEFG';
+        let accessTokenNativeDto = new NativeValueDto({"key": 'accessToken', "value": testAccessTokenValue , "type":'P', "preference": 'pref_key_access_token'});
+        this.$store.dispatch('info/setInfoValue',accessTokenNativeDto);
+        bridgeUtils.saveAccessToken(testAccessTokenValue);
+        
+        let testRefreshTokenValue = 'ABCDEFG';
+        let refreshTokenNativeDto = new NativeValueDto({"key": 'refreshToken', "value": testRefreshTokenValue, "type":'P', "preference": 'pref_key_refresh_token'});
+        this.$store.dispatch('info/setInfoValue',refreshTokenNativeDto);
+        bridgeUtils.saveRefreshToken(testRefreshTokenValue);
+        
+        this.$store.dispatch('info/setInfoToken', 'ABCDEFG'); // 테스트로 토큰을 'ABCDEFG' 로 넣습니다. 이건 router에서 확인과 연관이 있습니다.
+        this.$router.push('/');
+        return;*/
+
+
         this.$router.push('/account/change-pass-alert');
         return;
         /**
