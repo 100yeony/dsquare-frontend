@@ -32,24 +32,11 @@ export default {
       }
     }
   },
-  mounted(){
+  mounted() {
     this.apiPostTest();
     this.apiGetTest();
   },
   methods: {
-    async apiPostTest(){ // CRUD 전체를 담당.
-      let postParam = {};
-      let url = 'https://jsonplaceholder.typicode.com/comments'
-      const res = await api.post(url , postParam)
-      console.log('[res] apiPostTest : \n', res)
-    },
-    async apiGetTest(){ // R 위주로 담당.
-      let getParam = {};
-      getParam.postId=1
-      let url = 'https://jsonplaceholder.typicode.com/comments'
-      const res = await api.get(url , getParam)
-      console.log('[res] apiGetTest : \n', res)
-    },
     async tryToLogIn() {
       // 기초적 로그인 로직.
       this.submitted = true;
@@ -60,6 +47,21 @@ export default {
         90일 암호 변경과 같은 로직은 정상적으로 api에서 로그인에서 특정 code로 던져줄 경우 보내주면 됩니다. 아래 주석을 푸시면 findpass로 가는 팝업으로 갑니다.
         다만 지금 figma에선 one button으로 무조건 암호 변경을 가는 로직일텐데, 2버튼으로 하여 권장으로 하여 암호 변경을 하지 않는 로직도 추가하시는걸 추천드립니다.
         */
+
+        /**
+          * api 연동 테스트
+          */
+        let postParam = {};
+        postParam.email = this.email
+        postParam.pw = this.password
+        const res = await api.post('login', postParam)
+        
+        // const res = await api.post(url, postParam, {
+        //   Authorization : 'Bearer ' + $store.getters["info/infoToken"]
+        // })
+
+        console.log(res)
+        //this.$store.dispatch('info/setInfoToken', res.accessToken);
         const result = await dialogUtils.dialogMsgConfirm(this,
           "암호를 변경하신 지 90일이 지나, 암호를 변경하시는 것을 권장드립니다.\n암호를 변경하시도록, 하시겠습니까?",
           "안내");
@@ -67,13 +69,11 @@ export default {
           this.$router.push(process.env.VUE_APP_CHANGEPASS);
           return;
         } else { // 취소 버튼을 누른 경우, 정상적으로 로그인 되며 서버에 고객이 90일동안 추가적으로 미변경을 요청한걸 알려줘야함.
-          this.$store.dispatch('info/setInfoToken', 'ABCDEFG'); // 테스트로 토큰을 'ABCDEFG' 로 넣습니다. 이건 router에서 확인과 연관이 있습니다.
+
           this.$router.push(process.env.VUE_APP_HOME);
           return;
         }
-        // this.$store.dispatch('info/setInfoToken', 'ABCDEFG'); // 테스트로 토큰을 'ABCDEFG' 로 넣습니다. 이건 router에서 확인과 연관이 있습니다.
         // this.$router.push('/');
-        // return;
       }
     }
   },
