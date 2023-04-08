@@ -14,17 +14,19 @@ export default {
 
 
 <template>
-  <v-container class="ph-100 pw-100">
+  <v-container class="ph-50 pw-100">
         <v-row class="ph-100">
           <v-col class="pw-100" align-self="center">
-            <div class="text-center">
+            <v-container>
+              <center>
               <img src="@/assets/images/check.png" width="55" height="55">
-              <h2 class="text-primary mt-20">example@gmail.com</h2>
-              <h2>으로 임시 비밀번호를 <br> 발급해드렸습니다.</h2>
-            </div>
+              </center>
+              <h2 class="text-primary text-center mt-20 font-bold">example@gmail.com</h2>
+              <h3 class="text-center font-bold">으로 임시 비밀번호를 발급해드렸습니다.</h3>
+            </v-container>
             <div class="text-center">
-              <div class="col-12 mt-30">
-                <v-btn type="submit" class="text-white" color="rgb(var(--v-theme-primary))" @click="login">
+              <div class="col-12 mt-20">
+                <v-btn max-width="180" type="submit" class="pw-50 font-medium button_main" variant="" @click="login">
                   로그인
                 </v-btn>
               </div>
@@ -34,6 +36,14 @@ export default {
       </v-container>
 </template>
 
-<style lang="scss" module></style>
+<style lang="scss" scoped>
+.button_main {
+  border-width: 1px;
+  border-style: solid;
+  border-color: rgb(var(--v-theme-primary));
+  background-color: rgb(var(--v-theme-primary));
+  color: white;
+}
+</style>
 
 

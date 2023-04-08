@@ -29,7 +29,10 @@ $v-font-xxl : 1.5rem;
     font-size: $v-font-xxl
 }
 .font-bold {
-  font-weight: bold;
+  font-family: 'NotoSans BD' !important;
+}
+.font-medium {
+  font-family: 'NotoSans MD' !important;
 }
 
 .m-em-1 {

@@ -1,5 +1,5 @@
 <template>
-  <h4>자유게시판 상세</h4>
+  <h4>Q&A 상세</h4>
   <h4>제목 : </h4>
   <h6>번호 : {{qnaId}} </h6>
   <body>내용 넣으세요</body>
@@ -10,7 +10,7 @@ export default {
     },
     data() {
       return {
-        freeId: '',
+        qnaId: '',
       };
     },
   mounted(){
