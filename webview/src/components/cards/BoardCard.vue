@@ -7,7 +7,7 @@
     <v-card-item>
       <div>
         <div class="text-h7">
-          <span class="font-74CEBE">Q </span>{{ props?.data?.title }}
+          <span class="text-primary">Q </span>{{ props?.data?.title }}
         </div>
         <div class="text-caption font-0000008F">{{ props?.data?.date }}</div>
       </div>
@@ -21,7 +21,7 @@
       </v-slide-group>
       <v-row>
         <v-col cols="8">
-          <v-chip class="ma-2" color="#74CEBE" v-if="props?.data?.success">
+          <v-chip class="ma-2" color="primary" v-if="props?.data?.success">
             <v-icon start icon="mdi-account-check"></v-icon>
             담당자 답변완료</v-chip
           >
