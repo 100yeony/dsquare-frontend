@@ -10,7 +10,7 @@
         {{ qnaTabTitle[index] }}
       </v-tab>
     </v-tabs>
-    <v-window v-model="qnaTab">
+    <v-window v-model="qnaTab" :touch="false">
       <!-- ***** 업무 ***** -->
       <v-window-item :value="0">
         <!-- 검색 -->
@@ -30,14 +30,14 @@
               </v-row>
               <v-row>
                 <v-col cols="4" class="pr-0 pt-0">
-                  <v-select placeholder="구분" variant="outlined" density="compact"
-                    :items="['전체', '제목', '내용', '작성자']"></v-select>
+                  <v-select placeholder="구분" class="text-truncate" variant="outlined" density="compact"
+                    :items="['전체', '제목 + 내용', '작성자']"></v-select>
                 </v-col>
                 <v-col cols="8" class="pl-0 pt-0">
-                  <v-text-field placeholder="텍스트 입력" variant="outlined" density="compact" />
+                  <v-text-field v-model="searchContent" placeholder="검색어" variant="outlined" density="compact" />
                 </v-col>
               </v-row>
-              <v-btn color="shades-black" block>검색</v-btn>
+              <v-btn color="shades-black" @click="search(true)" block>검색</v-btn>
             </v-expansion-panel-text>
           </v-expansion-panel>
         </v-expansion-panels>
@@ -58,13 +58,13 @@
               <v-row>
                 <v-col cols="4" class="pr-0">
                   <v-select placeholder="구분" variant="outlined" density="compact"
-                    :items="['전체', '제목', '내용', '작성자']"></v-select>
+                    :items="['전체', '제목 + 내용', '작성자']"></v-select>
                 </v-col>
                 <v-col cols="8" class="pl-0">
                   <v-text-field placeholder="텍스트 입력" variant="outlined" density="compact" />
                 </v-col>
               </v-row>
-              <v-btn color="shades-black" block>검색</v-btn>
+              <v-btn color="shades-black" @click="search(false)" block>검색</v-btn>
             </v-expansion-panel-text>
           </v-expansion-panel>
         </v-expansion-panels>
@@ -92,6 +92,8 @@
 import { computed, onMounted, ref } from "vue";
 import { useStore } from "vuex";
 import BoardCard from "@/components/cards/BoardCard";
+import api from '@/api'
+
 export default {
   name: "qnaBoard",
   components: {
@@ -99,9 +101,9 @@ export default {
   },
   setup() {
     let qnaTab = ref(0);
-    let qnaTabTitle = ref(["업무", "비업무"]);
-    let categoryItems = ref(['컨설팅', '아키텍처', '개발', '운영']);
-    let subcategoryFullList = ref([
+    let qnaTabTitle = ["업무", "비업무"];
+    let categoryItems = ['컨설팅', '아키텍처', '개발', '운영'];
+    let subcategoryFullList = [
       ["IT컨설팅"],
       ["SW아키텍처", "IT관리", "품질관리", "PM"],
       ["Biz분석/설계", "응용SW개발", "UI/UX", "데이터분석"],
@@ -109,50 +111,76 @@ export default {
         "금융결제DX플랫폼팀", "인증DX플랫폼팀", "미디어플랫폼팀", "AI서비스팀", 
         "AICC서비스팀", "Safety플랫폼팀", "AgileCore팀", "AICC딜리버리팀"
       ]
-    ]);
+    ];
+    var categoriesAll = [].concat(qnaTabTitle);
+    var i;
+    for (i = 0; i < categoryItems.length; i++) {
+      categoriesAll.push(categoryItems[i]);
+      categoriesAll = categoriesAll.concat(subcategoryFullList[i]);
+    }
+    let cidData = {};
+    categoriesAll.forEach((value, index) => cidData[value] = index + 1);
+    
+
+    let searchUri = "/board/questions";
 
     let boardCardData = ref([
       {
         id: 0,
-        title: "안녕하세요 궁금한 것이 있어 질문드립니다. 안..",
+        category: "응용SW개발",
+        title: "OpenWeatherAPI 날씨 이미지가 가져와지지 않습니다.",
+        name: "변상진",
+        team: "메시징DX플랫폼팀",
         date: "2023-04-01",
-        hash: ["백엔드", "springboot", "springboot"],
+        hash: ["jsp", "js", "jquery"],
         success: true,
         like: "999+",
         comment: "999+",
       },
       {
         id: 1,
-        title: "안녕하세요 궁금한 것이 있어 질문드립니다. 안..",
+        category: "응용SW개발",
+        title: "docker로 github actions deploy 할 때 에러 - ocker run [OPTIONS] IMAGE [COMMAND] [ARG...]",
+        name: "강소미",
+        team: "메시징DX플랫폼팀",
         date: "2023-04-01",
-        hash: ["백엔드", "springboot", "springboot"],
+        hash: ["githubactions", "docker"],
         success: false,
         like: "327",
         comment: "3",
       },
       {
         id: 2,
-        title: "안녕하세요 궁금한 것이 있어 질문드립니다. 안..",
+        category: "데이터분석",
+        title: "이 두가지 쿼리의 차이가 뭘까요 ?",
+        name: "남진욱",
+        team: "메시징DX플랫폼팀",
         date: "2023-04-01",
-        hash: ["백엔드", "springboot", "springboot"],
+        hash: ["sql"],
         success: false,
         like: "300",
         comment: "3",
       },
       {
         id: 3,
-        title: "안녕하세요 궁금한 것이 있어 질문드립니다. 안..",
+        category: "응용SW개발",
+        title: "크롬 개발자 도구에서 출력값 차이 원인 (선언문, 할당문 관련)",
+        name: "김순재",
+        team: "메시징DX플랫폼팀",
         date: "2023-04-01",
-        hash: ["백엔드", "springboot", "springboot"],
+        hash: ["자바스크립트", "선언문", "할당문", "완료값"],
         success: false,
         like: "200",
         comment: "3",
       },
       {
         id: 4,
-        title: "안녕하세요 궁금한 것이 있어 질문드립니다. 안..",
+        category: "응용SW개발",
+        title: "왜 자꾸 No faces detected 오류가 뜨는지 모르겠습니다.",
+        name: "최철준",
+        team: "메시징DX플랫폼팀",
         date: "2023-04-01",
-        hash: ["백엔드", "springboot", "springboot"],
+        hash: ["안드로이드스튜디오", "안드로이드", "얼굴인식"],
         success: false,
         like: "127",
         comment: "3",
@@ -164,6 +192,8 @@ export default {
       qnaTabTitle,
       categoryItems,
       subcategoryFullList,
+      cidData,
+      searchUri,
       boardCardData,
     };
   },
@@ -172,13 +202,22 @@ export default {
       category: [],
       subcategory: [],
       subcategoryItems: [],
+      searchContent: '',
     };
   },
   methods: {
     categoryChanged() {
       var categoryIndex = this.categoryItems.indexOf(this.category);
       this.subcategoryItems = this.subcategoryFullList[categoryIndex];
-      this.subcategory = '';
+      this.subcategory = [];
+    },
+    async search(workYn) {
+      let params = {};
+      let headers = {};
+      params.workYn = workYn;
+      params.cid = this.cidData[this.subcategory];
+      params.content = this.searchContent;
+      const res = await api.get(this.searchUri, params, headers);
     },
     handleCardClicked(item) {
       console.log("[handleCardClicked]", item);
@@ -186,6 +225,7 @@ export default {
         //상세 화면으로 이동.
         this.$router.replace({
           path: process.env.VUE_APP_BOARD_QNA_DETAIL,
+          title: item?.title,
           query: item?.id ?? {},
         });
       }

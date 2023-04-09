@@ -206,5 +206,29 @@ const fn = {
       return this.ErrorPayload(err)
     }
   },
+
+  async get(uri) {
+    try {
+      console.log('[GET]', uri);
+      const res = await apiInstance.get(uri);
+      return this.ResponsePayload(res)
+    } catch (err) {
+      return this.ErrorPayload(err)
+    }
+  },
+
+  async get(uri, params, headers) {
+    try {
+      console.log('[GET]', uri, params)
+      if (!headers) headers = {}
+      headers['Authorization'] = localStorage.getItem('Authorization')
+      headers['routPath'] = location.pathname
+      headers['routName'] = router.currentRoute.name
+      const res = await apiInstance.get(`${prefix + uri}`, { params, headers }, { withCredentials: true })
+      return this.ResponsePayload(res)
+    } catch (err) {
+      return this.ErrorPayload(err)
+    }
+  },
 }
 export default createInstance()

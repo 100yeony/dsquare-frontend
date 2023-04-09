@@ -7,9 +7,9 @@
     <v-card-item>
       <div>
         <div class="text-h7">
-          <span class="text-primary">Q </span>{{ props?.data?.title }}
+          <span class="text-primary">{{ props?.data?.category }}:</span> {{ props?.data?.title }}
         </div>
-        <div class="text-caption font-0000008F">{{ props?.data?.date }}</div>
+        <div class="text-caption font-0000008F">{{props?.data?.name}} ({{props?.data?.team}}) · {{props?.data?.date}}</div>
       </div>
       <v-slide-group>
         <v-slide-group-item
