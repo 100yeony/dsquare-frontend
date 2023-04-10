@@ -3,7 +3,10 @@ export const info = {
   state: () => ({
       token: '',
       list: [],
-      managerList: [],
+      area: {
+        areaList: [],
+        subAreaList: []
+      },
   }),
   mutations: {
     SET_INFO_TOKEN(state,value){
@@ -25,9 +28,10 @@ export const info = {
         state.list.push(value)
       }
     },
-    SET_INFO_MANAGER(state, value){
+    SET_INFO_AREA(state, value){
       //추후 api 와 연동
-      state.managerList = value;
+      state.area.areaList = value.value1;
+      state.area.subAreaList = value.value2;
     }
   },
   getters: {
@@ -38,8 +42,8 @@ export const info = {
       console.log(key)
       return state.list.find(item => item.key === key)
     },
-    infoManagerList(state){
-      return state.managerList;
+    infoArea(state){
+      return state.area;
     }
   },
   actions: {
@@ -51,9 +55,9 @@ export const info = {
       console.log(value)
       commit('SET_INFO_VALUE', value)
     },
-    setInfoManager({state, commit, rootState}, value) {
+    setInfoArea({state, commit, rootState}, value) {
       //추후 api 와 연동
-      commit('SET_INFO_MANAGER', value)
+      commit('SET_INFO_AREA', value)
     }
   }
 };
