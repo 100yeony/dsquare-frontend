@@ -3,6 +3,7 @@ export const info = {
   state: () => ({
       token: '',
       list: [],
+      managerList: [],
   }),
   mutations: {
     SET_INFO_TOKEN(state,value){
@@ -23,6 +24,10 @@ export const info = {
       if(!isEdit){
         state.list.push(value)
       }
+    },
+    SET_INFO_MANAGER(state, value){
+      //추후 api 와 연동
+      state.managerList = value;
     }
   },
   getters: {
@@ -33,6 +38,9 @@ export const info = {
       console.log(key)
       return state.list.find(item => item.key === key)
     },
+    infoManagerList(state){
+      return state.managerList;
+    }
   },
   actions: {
     setInfoToken({state, commit, rootState}, value) {
@@ -43,5 +51,9 @@ export const info = {
       console.log(value)
       commit('SET_INFO_VALUE', value)
     },
+    setInfoManager({state, commit, rootState}, value) {
+      //추후 api 와 연동
+      commit('SET_INFO_MANAGER', value)
+    }
   }
 };

@@ -2,8 +2,9 @@
 import CKEditor from "@ckeditor/ckeditor5-vue";
 import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
 import FileUploadAdapter from "@/utils/fileUploaderAdapter";
-import { computed, onMounted, ref } from "vue";
-import api from '@/api'
+import { watch, onMounted, ref } from "vue";
+import api from '@/api';
+import store from "@/store";
 
 export default {
   components: {
@@ -26,9 +27,20 @@ export default {
         extraPlugins: [this.uploader],
         removePlugins: ["ImageCaption"],
       },
+      items: [],
+      selectedManager: ''
+
     };
   },
+  watch: {
+    selectedManager: function (newVal, oldVal) {
+      console.log(newVal)
+      console.log(oldVal)
+    }
+  },
   mounted() {
+    store.dispatch('info/setInfoManager', ['카테고리1', '카테고리2', '카테고리3', '카테고리4', '카테고리5', '카테고리6', '카테고리7', '카테고리8'])
+    this.items = store.getters["info/infoManagerList"]
     console.log(this.$route.query.work);
     if (!this.$route.query.work) {
       // work 값이 없으면.
@@ -77,10 +89,12 @@ export default {
     />
     <div class="text-body-2 font-weight-bold">분야지정</div>
     <v-select
+      v-model="selectedManager"
       placeholder="분야"
       variant="outlined"
       density="compact"
-      :items="['아키텍처', '분야1', '분야2', '분야3']"
+      :items="this.items"
+      :scrollable="true"
     ></v-select>
     <v-row class="mb-2" align="center">
       <v-col cols="2">
