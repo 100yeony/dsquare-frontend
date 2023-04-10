@@ -72,6 +72,41 @@ export default {
       },
     };
   },
+  computed: {
+    pwCaution() {
+      if (this.submitted && this.v$.user.pw.required.$invalid) {
+        return '비밀번호를 입력해주세요.';
+      } else if (this.submitted && this.v$.user.pw.pwValidator.$invalid) {
+        return '비밀번호는 최소 8자, 최대 20자, 영문 대소문자 최소 하나 이상, 특수문자 최소 하나 이상'
+      }
+      return '';
+    },
+    emailCaution() {
+      if (this.submitted && this.v$.user.email.required.$invalid) {
+        return '아이디(이메일)를 입력해주세요.';
+      } else if (this.submitted && this.v$.user.email.email.$invalid) {
+        return '올바르지 않은 이메일입니다.'
+      }
+      return '';
+    },
+    contactCaution() {
+      if (this.submitted && this.v$.user.contact.required.$invalid) {
+        return '연락처를 입력해주세요.';
+      } else if (this.submitted && this.v$.user.contact.contactValidator.$invalid) {
+        return '-를 제외한 010xxxxxxx 형태로 입력해주세요.'
+      }
+      return '';
+    },
+    ktEmailCaution() {
+      if (this.submitted && this.v$.user.ktMail.required.$invalid) {
+        return '사내메일을 입력해주세요.';
+      } else if (this.submitted && this.v$.user.ktMail.ktEmailValidator.$invalid) {
+        return '올바르지 않은 사내메일입니다.'
+      }
+      return '';
+    },
+
+  },
   methods: {
     cancel() {
       this.$router.push(process.env.VUE_APP_LOGIN);
@@ -103,10 +138,15 @@ export default {
           this.stepper = 2;
         }
 
+      } else {
+        this.moveToTopTextFieldScroll();
       }
     },
     onLogin() {
       this.$router.replace('/account/login');
+    },
+    moveToTopTextFieldScroll() {
+      this.$refs.emailTextField.scrollIntoView();
     }
   }
 };
@@ -122,23 +162,23 @@ export default {
           </div>
 
           <v-expansion-panels class="mt-4 button_white" variant="">
-          <v-expansion-panel>
-            <v-expansion-panel-title class="font-sm" @click="terms[0] = true">
-              DSquare 이용약관(필수)
-              <template v-slot:actions="{ expanded }">
-                <v-icon :color="terms[0] === false ? '#ABABAB' : 'teal'"
-                  :icon="terms[0] === false ? 'mdi-checkbox-blank-outline' : 'mdi-check'"></v-icon>
-              </template>
-            </v-expansion-panel-title>
-            <v-expansion-panel-text class="wrap__agree font-xs">
-              <h3>
-                제1장 총칙 제 1 조(목적)
-              </h3>
-              <p class="mb-3">
-                본 약관은 회원이 주식회사 케이티(이하 "회사"라 합니다)가 제공하는 "디스퀘어"(이하 "서비스"라 합니다.)를 이용함에 있어 불필요한 "회사"와 "회원"간의 권리, 의무 및
-                책임사항,
-                "서비스"이용에 따른 이용조건 및 절차 등 기타 필요한 제반사항을 규정함을 목적으로 합니다.
-              </p>
+            <v-expansion-panel>
+              <v-expansion-panel-title class="font-sm" @click="terms[0] = true">
+                DSquare 이용약관(필수)
+                <template v-slot:actions="{ expanded }">
+                  <v-icon :color="terms[0] === false ? '#ABABAB' : 'teal'"
+                    :icon="terms[0] === false ? 'mdi-checkbox-blank-outline' : 'mdi-check'"></v-icon>
+                </template>
+              </v-expansion-panel-title>
+              <v-expansion-panel-text class="wrap__agree font-xs">
+                <h3>
+                  제1장 총칙 제 1 조(목적)
+                </h3>
+                <p class="mb-3">
+                  본 약관은 회원이 주식회사 케이티(이하 "회사"라 합니다)가 제공하는 "디스퀘어"(이하 "서비스"라 합니다.)를 이용함에 있어 불필요한 "회사"와 "회원"간의 권리, 의무 및
+                  책임사항,
+                  "서비스"이용에 따른 이용조건 및 절차 등 기타 필요한 제반사항을 규정함을 목적으로 합니다.
+                </p>
 
                 <h3>
                   제 2 조 (약관의 효력 및 개정)
@@ -236,24 +276,24 @@ export default {
             </v-expansion-panel>
 
             <!-- 
-                              <v-expansion-panel>
-                                <v-expansion-panel-title @click="terms[3] = true">
-                                  디스퀘어 개인정보 처리방침 선택 동의(선택)
-                                  <template v-slot:actions="{ expanded }">
-                                    <v-icon
-                                      :color="terms[3] === false ? '' : 'teal'"
-                                      :icon="terms[3] === false ? 'mdi-pencil' : 'mdi-check'"
-                                    ></v-icon>
-                                  </template>
-                                </v-expansion-panel-title>
-                                <v-expansion-panel-text class="wrap__agree">
-                                  개인정보의 수집항목 및 수집/이용 목적 1. 회사는 회원가입, 상담, 서비스
-                                  제공 등을 위하여 필요한 범위에서 최소한의 개인정보만을 수집합니다. 2.
-                                  회사가 수집하는 개인정보 항목과 수집/이용하는 목적은 다음과 같습니다.
-                                  \n\n회원가입 및 로그인에서...........
-                                </v-expansion-panel-text>
-                              </v-expansion-panel> 
-                        -->
+                                      <v-expansion-panel>
+                                        <v-expansion-panel-title @click="terms[3] = true">
+                                          디스퀘어 개인정보 처리방침 선택 동의(선택)
+                                          <template v-slot:actions="{ expanded }">
+                                            <v-icon
+                                              :color="terms[3] === false ? '' : 'teal'"
+                                              :icon="terms[3] === false ? 'mdi-pencil' : 'mdi-check'"
+                                            ></v-icon>
+                                          </template>
+                                        </v-expansion-panel-title>
+                                        <v-expansion-panel-text class="wrap__agree">
+                                          개인정보의 수집항목 및 수집/이용 목적 1. 회사는 회원가입, 상담, 서비스
+                                          제공 등을 위하여 필요한 범위에서 최소한의 개인정보만을 수집합니다. 2.
+                                          회사가 수집하는 개인정보 항목과 수집/이용하는 목적은 다음과 같습니다.
+                                          \n\n회원가입 및 로그인에서...........
+                                        </v-expansion-panel-text>
+                                      </v-expansion-panel> 
+                                -->
           </v-expansion-panels>
 
           <v-btn :disabled="!(terms[0] && terms[1] && terms[2])" block @click="stepper = 1"
@@ -275,14 +315,13 @@ export default {
         <v-form @submit.prevent="tryToRegisterIn" class="overflow-show">
           <v-container class="pw-95 max-pw">
             <v-form-group id="email-group" label="Email" label-for="email" class="">
-              <label for="useremail" class="font-sm font-medium">아이디(이메일)</label>
+              <label for="useremail" class="font-sm font-medium" ref="emailTextField">아이디(이메일)</label>
               <v-text-field type="text" v-model="user.email" variant="outlined" single-line hide-details id="useremail"
                 density="compact" :class="{ 'is-invalid': submitted && v$.user.email.$error }" class="font-sm">
               </v-text-field>
               <div v-if="submitted && v$.user.email.$error" class="invalid-feedback">
                 <v-icon size="x-small" color="red">mdi-close-circle-outline</v-icon>
-                <span v-if="v$.user.email.required.$invalid" class="font-xs font_red">아이디(이메일)를 입력해주세요.</span>
-                <span v-if="v$.user.email.email.$invalid" class="font-xs font_red">올바르지 않은 이메일입니다.</span>
+                <span class="font-xs font_red">{{ emailCaution }}</span>
               </div>
             </v-form-group>
 
@@ -296,11 +335,9 @@ export default {
 
               <div v-if="submitted && v$.user.pw.$error">
                 <v-icon size="x-small" color="red">mdi-close-circle-outline</v-icon>
-                <span v-if="v$.user.pw.required.$invalid" class="font-xs font_red">비밀번호를 입력해주세요.</span>
-                <span v-if="v$.user.pw.pwValidator.$invalid" class="font-xs font_red">비밀번호는 최소 8자, 최대 20자, 영문 대소문자 최소 하나
-                  이상, 특수문자 최소 하나 이상</span>
-
+                <span class="font-xs font_red">{{ pwCaution }}</span>
               </div>
+
             </v-form-group>
 
             <div class="mb-20"></div>
@@ -342,10 +379,7 @@ export default {
 
               <div v-if="submitted && v$.user.contact.$error">
                 <v-icon size="x-small" color="red">mdi-close-circle-outline</v-icon>
-                <span v-if="v$.user.contact.required.$invalid" class="font-xs font_red">연락처를 입력해주세요.</span>
-                <span v-if="v$.user.contact.contactValidator.$invalid" class="font-xs font_red">-를 제외한 010xxxxxxx 형태로
-                  입력해주세요.</span>
-
+                <span class="font-xs font_red">{{ contactCaution }}</span>
               </div>
 
 
@@ -376,8 +410,7 @@ export default {
 
               <div v-if="submitted && v$.user.ktMail.$error">
                 <v-icon size="x-small" color="red">mdi-close-circle-outline</v-icon>
-                <span v-if="v$.user.ktMail.required.$invalid" class="font-xs font_red">사내메일을 입력해주세요.</span>
-                <span v-if="v$.user.ktMail.ktEmailValidator.$invalid" class="font-xs font_red">올바르지 않은 사내메일입니다.</span>
+                <span class="font-xs font_red">{{ ktEmailCaution }}</span>
               </div>
             </v-form-group>
 
