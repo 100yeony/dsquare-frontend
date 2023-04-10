@@ -3,6 +3,7 @@ import CKEditor from "@ckeditor/ckeditor5-vue";
 import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
 import FileUploadAdapter from "@/utils/fileUploaderAdapter";
 import { watch, onMounted, ref } from "vue";
+//import { generateKey } from "crypto";
 import api from '@/api';
 import store from "@/store";
 
@@ -21,7 +22,7 @@ export default {
   data() {
     return {
       editor: ClassicEditor,
-      editorData: "",
+      editorData: "<h3>안녕하세요!</h3>",
       editorConfig: {
         // 상세 수정은 https://ckeditor.com
         extraPlugins: [this.uploader],
@@ -82,54 +83,32 @@ export default {
 
 <template>
   <div>
-    <v-text-field
-      placeholder="제목을 입력해 주세요"
-      variant="outlined"
-      density="compact"
-    />
-    <div class="text-body-2 font-weight-bold">분야지정</div>
-    <v-select
-      v-model="selectedManager"
-      placeholder="분야"
-      variant="outlined"
-      density="compact"
-      :items="this.items"
-      :scrollable="true"
-    ></v-select>
-    <v-row class="mb-2" align="center">
-      <v-col cols="2">
-        <v-avatar color="grey">유저</v-avatar>
+    <div class="font-sm font-medium mt-2">제목</div>
+    <v-text-field placeholder="제목을 입력해주세요." variant="outlined" density="compact" hide-details class="mt-2" />
+
+    <v-row align="center" class="mt-2">
+      <v-col>
+        <label for="select1" class="font-sm font-medium">분야</label>
+        <v-select v-model="selectedManager" placeholder="분야 선택" variant="outlined" density="compact" :items="this.items"
+          id="select1" :scrollable="true" hide-details class="mt-2" onchange="areaChange(this)"></v-select>
       </v-col>
-      <v-col cols="5">
-        <div class="text-body font-bold">작성자</div>
-      </v-col>
-      <v-col cols="3">
-        <div class="text-caption font-0000008F">2023-04-01</div>
-      </v-col>
-      <v-col cols="2">
-        <v-icon>mdi-dots-horizontal</v-icon>
+
+      <v-col>
+        <label for="select1" class="font-sm font-medium">업무</label>
+        <v-select v-model="selectedManager" placeholder="업무 선택" variant="outlined" density="compact" :items="this.items"
+          id="select1" :scrollable="true" hide-details class="mt-2"></v-select>
       </v-col>
     </v-row>
-    <ckeditor
-      v-model="editorData"
-      :editor="editor"
-      :config="editorConfig"
-      height="80vh"
-    ></ckeditor>
 
-    <div class="text-text-body-2 font-weight-bold">Tags</div>
+    <div class="font-sm font-medium mt-7 mb-2">본문</div>
+    <ckeditor v-model="editorData" :editor="editor" :config="editorConfig" height="200"></ckeditor>
 
-    <v-text-field
-      placeholder="Tag를 입력해 주세요."
-      v-model="chipText"
-      variant="outlined"
-      density="compact"
-    >
+    <div class="font-sm font-medium mt-7 mb-2">태그</div>
+
+    <v-text-field placeholder="태그를 입력해주세요." v-model="chipText" variant="outlined" density="compact" hide-details>
       <template v-slot:append>
-        <v-btn icon @click="addChips"
-          ><v-icon>mdi-magnify</v-icon></v-btn
-        ></template
-      >
+        <v-btn icon @click="addChips" variant="" class="mr-5 ml-2"><img src="@/assets/images/tag.png" width="25"
+            height="25"></v-btn></template>
       <template v-slot:prepend-inner>
         <div v-for="(chipDataText, index) in chipData" :key="index">
           <v-chip class="ma-1" closable @click:close="deleteChip(chipDataText)">{{
@@ -139,13 +118,39 @@ export default {
       </template>
     </v-text-field>
 
-    <v-row class="mb-2" align="center">
+    <v-row class="mt-5" align="center">
       <v-col cols="6">
-        <v-btn @click="write(editorData)" block color="#ADE4EB">저장</v-btn>
+        <v-btn block variant="" class="button_white font-medium">취소</v-btn>
       </v-col>
       <v-col cols="6">
-        <v-btn block>취소</v-btn>
+        <v-btn block variant="" class="button_main font-medium" @click="write(editorData)">저장</v-btn>
       </v-col>
     </v-row>
   </div>
 </template>
+
+<style lang="scss" scoped>
+.button_white {
+  border-width: 1px;
+  border-style: solid;
+  border-color: #ABABAB;
+  color: black;
+}
+
+.button_main {
+  border-width: 1px;
+  border-style: solid;
+  border-color: #ADE4EB;
+  background-color: #ADE4EB;
+  color: white;
+}
+
+.tag {
+  border-color: #ABABAB;
+}
+
+.v-btn--icon.v-btn--density-default {
+  height: 0px;
+  width: 0px;
+}
+</style>
