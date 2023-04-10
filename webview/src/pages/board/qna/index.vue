@@ -57,11 +57,11 @@
             <v-expansion-panel-text>
               <v-row>
                 <v-col cols="4" class="pr-0">
-                  <v-select placeholder="구분" variant="outlined" density="compact"
+                  <v-select placeholder="구분" class="text-truncate" variant="outlined" density="compact"
                     :items="['전체', '제목 + 내용', '작성자']"></v-select>
                 </v-col>
                 <v-col cols="8" class="pl-0">
-                  <v-text-field placeholder="텍스트 입력" variant="outlined" density="compact" />
+                  <v-text-field v-model="searchContent" placeholder="검색어" variant="outlined" density="compact" />
                 </v-col>
               </v-row>
               <v-btn color="shades-black" @click="search(false)" block>검색</v-btn>
@@ -100,7 +100,6 @@ export default {
     BoardCard,
   },
   setup() {
-    let qnaTab = ref(0);
     let qnaTabTitle = ["업무", "비업무"];
     let categoryItems = ['컨설팅', '아키텍처', '개발', '운영'];
     let subcategoryFullList = [
@@ -188,7 +187,6 @@ export default {
     ]);
 
     return {
-      qnaTab,
       qnaTabTitle,
       categoryItems,
       subcategoryFullList,
@@ -199,11 +197,17 @@ export default {
   },
   data() {
     return {
+      qnaTab: 0,
       category: [],
       subcategory: [],
       subcategoryItems: [],
       searchContent: '',
     };
+  },
+  watch: {
+    qnaTab(newVal, oldVal) {
+      this.tabChanged();
+    }
   },
   methods: {
     categoryChanged() {
@@ -215,9 +219,12 @@ export default {
       let params = {};
       let headers = {};
       params.workYn = workYn;
-      params.cid = this.cidData[this.subcategory];
+      params.cid = workYn ? this.cidData[this.subcategory] : null;
       params.content = this.searchContent;
       const res = await api.get(this.searchUri, params, headers);
+    },
+    tabChanged() {
+      this.searchContent = '';
     },
     handleCardClicked(item) {
       console.log("[handleCardClicked]", item);
