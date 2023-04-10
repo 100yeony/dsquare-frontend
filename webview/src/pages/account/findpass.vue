@@ -1,6 +1,7 @@
 <script>
 import { useVuelidate } from '@vuelidate/core'
 import { required, email } from '@vuelidate/validators'
+import api from '@/api'
 /**
  * Forgot Password component
  */
@@ -32,24 +33,21 @@ export default {
     },
     // Try to register the user in with the email, fullname
     // and password they provided.
-    tryToReset() {
+    async tryToReset() {
       this.submitted = true;
       // stop here if form is invalid
       this.v$.$touch();
       if (!this.v$.$error) {
-        // api 통신 필요.
-        // 기초적인 스낵바 예제.
-        // this.$inform(
-        // {
-        //   text : "임시 비밀번호가 발급되었습니다.",
-        //   snackbarX : "center",
-        //   snackbarY : "center",
-        //   snackbarTimeout : 10000,
-        //   color : "#ECEFF1",
-        // }
-        // );
-        this.$router.push('/account/find-pass-ok');
-        return;
+        let postParam = {};
+        postParam.email = this.email
+        
+        const res = await api.post('/account/find-pw', postParam)
+        console.log(res)
+        if (res.status === 200) {
+          this.$router.push('/account/find-pass-ok');
+          return;
+        }
+      
       }
     },
   },
