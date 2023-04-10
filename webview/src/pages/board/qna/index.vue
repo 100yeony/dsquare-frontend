@@ -133,7 +133,16 @@ export default {
     },
     handleeWritePage() {
       console.log("handleeWritePage");
-      this.$router.replace(process.env.VUE_APP_BOARD_QNA_WRITE);
+      //this.$router.replace(process.env.VUE_APP_BOARD_QNA_WRITE);
+      console.log("---------------------------------");
+      console.log(process.env.VUE_APP_BOARD_QNA_WRITE);
+      this.$router.push({
+        path: process.env.VUE_APP_BOARD_QNA_WRITE,
+        query: {
+          work: true
+        }
+      });
+
     },
   },
 };
