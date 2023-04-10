@@ -49,7 +49,7 @@ export default {
         let accessTokenNativeDto = new NativeValueDto({"key": 'accessToken', "value": testAccessTokenValue , "type":'P', "preference": 'pref_key_access_token'});
         this.$store.dispatch('info/setInfoValue',accessTokenNativeDto);
         bridgeUtils.saveAccessToken(testAccessTokenValue);
-        
+
         let testRefreshTokenValue = 'ABCDEFG';
         let refreshTokenNativeDto = new NativeValueDto({"key": 'refreshToken', "value": testRefreshTokenValue, "type":'P', "preference": 'pref_key_refresh_token'});
         this.$store.dispatch('info/setInfoValue',refreshTokenNativeDto);
@@ -59,15 +59,21 @@ export default {
         postParam.email = this.email
         postParam.pw = this.password
         const res = await api.post('login', postParam)
-        
+
         // const res = await api.post(url, postParam, {
         //   Authorization : 'Bearer ' + $store.getters["info/infoToken"]
         // })
-
-        if (res.status===200){
+        if (res?.status===200){
           console.log(res)
           this.$store.dispatch('info/setInfoToken', res.data.accessToken);
           this.$router.push('/account/change-pass-alert');
+        } else {
+          this.$inform( {
+            text : "오류 메시지를 넣으세요.",
+            color : 'primary',
+            snackbarY : "center",
+              snackbarX : "center"
+          });
         }
       }
     }
@@ -79,6 +85,7 @@ export default {
 </script>
 
 <template>
+  <div>
   <v-container class="ph-60 pw-100">
     <v-row class="ph-100">
       <v-col class="pw-100" align-self="center">
@@ -98,7 +105,7 @@ export default {
                 <span v-if="v$.email.required.$invalid" class="font-xs font_red">이메일을 입력해주세요.</span>
                 <span v-if="v$.email.email.$invalid" class="font-xs font_red">올바르지 않은 이메일입니다.</span>
               </div>
-              
+
               <div class="mb-20"></div>
 
               <label for="password" class="font-sm font-medium"> 비밀번호</label>
@@ -111,7 +118,7 @@ export default {
                 <v-icon size="x-small" color="red">mdi-close-circle-outline</v-icon>
                 <span class="font-xs font_red">비밀번호를 입력해주세요.</span>
               </div>
-              
+
               <v-btn type="submit" class="pph-25 font-sm button_main mt-30 mb-5 font-medium" variant="">
                 로그인
               </v-btn>
@@ -130,6 +137,7 @@ export default {
     </v-row>
   </v-container>
   <Footer />
+  </div>
 </template>
 
 <style lang="scss" scoped>
@@ -146,9 +154,6 @@ export default {
 }
 
 span{
-  padding: 0px 5px !important; 
+  padding: 0px 5px !important;
 }
 </style>
-
-
-
