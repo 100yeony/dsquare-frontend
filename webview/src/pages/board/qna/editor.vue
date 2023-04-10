@@ -28,20 +28,26 @@ export default {
         extraPlugins: [this.uploader],
         removePlugins: ["ImageCaption"],
       },
-      items: [],
-      selectedManager: ''
+      area: {},
+      selectedArea: '',
+      selectedSubArea: '',
 
     };
   },
   watch: {
-    selectedManager: function (newVal, oldVal) {
+    selectedArea: function (newVal, oldVal) {
+      console.log(newVal)
+      console.log(oldVal)
+    },
+    selectedSubArea: function (newVal, oldVal) {
       console.log(newVal)
       console.log(oldVal)
     }
   },
   mounted() {
-    store.dispatch('info/setInfoManager', ['카테고리1', '카테고리2', '카테고리3', '카테고리4', '카테고리5', '카테고리6', '카테고리7', '카테고리8'])
-    this.items = store.getters["info/infoManagerList"]
+    store.dispatch('info/setInfoArea', { value1: ['카테고리1', '카테고리2', '카테고리3', '카테고리4', '카테고리5', '카테고리6', '카테고리7', '카테고리8'], value2: ['sub 카테고리1', 'sub 카테고리2', 'sub 카테고리3', 'sub 카테고리4', 'sub 카테고리5', 'sub 카테고리6', 'sub 카테고리7', 'sub 카테고리8']}
+    )
+    this.area = store.getters["info/infoArea"]
     console.log(this.$route.query.work);
     if (!this.$route.query.work) {
       // work 값이 없으면.
@@ -88,15 +94,15 @@ export default {
 
     <v-row align="center" class="mt-2">
       <v-col>
-        <label for="select1" class="font-sm font-medium">분야</label>
-        <v-select v-model="selectedManager" placeholder="분야 선택" variant="outlined" density="compact" :items="this.items"
-          id="select1" :scrollable="true" hide-details class="mt-2" onchange="areaChange(this)"></v-select>
+        <label class="font-sm font-medium">분야</label>
+        <v-select v-model="selectedArea" placeholder="분야 선택" variant="outlined" density="compact"
+          :items="this.area.areaList" :scrollable="true" hide-details class="mt-2"></v-select>
       </v-col>
 
       <v-col>
-        <label for="select1" class="font-sm font-medium">업무</label>
-        <v-select v-model="selectedManager" placeholder="업무 선택" variant="outlined" density="compact" :items="this.items"
-          id="select1" :scrollable="true" hide-details class="mt-2"></v-select>
+        <label class="font-sm font-medium">업무</label>
+        <v-select v-model="selectedSubArea" placeholder="업무 선택" variant="outlined" density="compact"
+          :items="this.area.subAreaList" :scrollable="true" hide-details class="mt-2"></v-select>
       </v-col>
     </v-row>
 
