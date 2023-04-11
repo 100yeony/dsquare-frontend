@@ -24,6 +24,7 @@ export default {
       authError: null,
       tryingToLogIn: false,
       isAuthError: false,
+      flag: false,
     }
   },
   validations() {
@@ -68,12 +69,7 @@ export default {
           this.$store.dispatch('info/setInfoToken', res.data.accessToken);
           this.$router.push('/account/change-pass-alert');
         } else {
-          this.$inform( {
-            text : "오류 메시지를 넣으세요.",
-            color : 'primary',
-            snackbarY : "center",
-              snackbarX : "center"
-          });
+          this.flag = !this.flag; 
         }
       }
     }
@@ -88,7 +84,7 @@ export default {
   <div>
   <v-container class="ph-60 pw-100">
     <v-row class="ph-100">
-      <v-col class="pw-100" align-self="center">
+      <v-col class="pw-100 ph-60" align-self="center">
         <h1 class="text-primary text-center mb-20 font-bold">DSquare</h1>
         <div class="p-2 mt-4">
           <v-alert v-model="isAuthError" variant="danger" class="mt-3" dismissible>{{ authError }}</v-alert>
@@ -123,21 +119,33 @@ export default {
                 로그인
               </v-btn>
 
-              <div style="float: left;">
-                <router-link to="/account/register/" class="text-primary font-sm n_td">회원가입</router-link>
+              <div class="flex justify-space-between">
+                <div class="mb-5">
+                  <router-link to="/account/register/" class="text-primary font-sm n_td">회원가입</router-link>
+                </div>
+                <div class="mb-5">
+                  <router-link to="/account/find-pass/" class="text-primary font-sm n_td">비밀번호 찾기</router-link>
+                </div>
               </div>
-              <div style="float: right;">
-                <router-link to="/account/find-pass/" class="text-primary font-sm n_td">비밀번호 찾기</router-link>
-              </div>
-            </v-container>
 
+              <div class="alert" v-if="flag">
+                <div class="flex">
+                  <div><v-icon size="small" color="#B91C1C" class="mr-3 mt-5 ml-5">mdi-information</v-icon></div>
+                  <div>
+                    <h3 class="font-sm font-B91C1C mt-5">로그인 실패</h3>
+                    <div class="font-sm font-B91C1C mt-2 mb-5 mr-5">등록되지 않은 아이디이거나 비밀번호가 일치하지 않습니다.</div>
+                  </div>
+                </div>
+              </div>
+              
+            </v-container>
           </v-form>
         </div>
       </v-col>
     </v-row>
   </v-container>
-  <Footer />
   </div>
+  <Footer />
 </template>
 
 <style lang="scss" scoped>
@@ -156,4 +164,13 @@ export default {
 span{
   padding: 0px 5px !important;
 }
+
+.alert{
+  border-width: 0.1px;
+  border-style: solid;
+  border-color: white;
+  border-radius: 0.375rem;
+  background-color: #F5EFFA;
+}
+
 </style>
