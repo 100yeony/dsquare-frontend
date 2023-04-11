@@ -74,7 +74,7 @@ export default {
       };
     },
     addChips() {
-      let item = this.chipText.trim() 
+      let item = this.chipText.trim()
       if (item !== "" && this.chipData.size < 3){
         if (item.startsWith('#')) {
           this.chipData.add(item)
@@ -141,11 +141,11 @@ export default {
 
 
     <div class="font-sm font-medium mt-7 mb-2">태그</div>
-    <v-row> 
+    <v-row>
       <v-chip-group v-for="(chipDataText, index) in tags" :key="index">
-          <v-chip class="ma-1 mt-5" @click="deleteChip($event, chipDataText)">{{
+          <v-chip class="ma-1 mt-5">{{
             chipDataText
-          }}</v-chip>
+          }}<v-icon icon="mdi-close-circle" @click="deleteChip($event, chipDataText)"></v-icon></v-chip>
         </v-chip-group>
     </v-row>
     <v-text-field placeholder="태그를 입력해주세요." v-model="chipText" variant="underlined" density="compact" @input="handleInput"
