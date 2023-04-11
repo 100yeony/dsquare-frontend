@@ -37,7 +37,7 @@
                   <v-text-field v-model="searchContent" placeholder="검색어" variant="outlined" density="compact" />
                 </v-col>
               </v-row>
-              <v-btn color="shades-black" @click="search(true)" block>검색</v-btn>
+              <v-btn color="shades-black" @click="search()" block>검색</v-btn>
             </v-expansion-panel-text>
           </v-expansion-panel>
         </v-expansion-panels>
@@ -65,7 +65,7 @@
                   <v-text-field v-model="searchContent" placeholder="검색어" variant="outlined" density="compact" />
                 </v-col>
               </v-row>
-              <v-btn color="shades-black" @click="search(false)" block>검색</v-btn>
+              <v-btn color="shades-black" @click="search()" block>검색</v-btn>
             </v-expansion-panel-text>
           </v-expansion-panel>
         </v-expansion-panels>
@@ -125,8 +125,34 @@ export default {
     
 
     let searchUri = "/board/questions";
+    // const page = ref(1);
 
-    let boardCardData = ref([
+    // const loadMore = async () => {
+    //   page.value += 1;
+    //   console.log(page.value)
+    // };
+
+    return {
+      qnaTabTitle,
+      categoryItems,
+      subcategoryFullList,
+      cidData,
+      searchUri,
+    };
+  },
+  data() {
+    return {
+      qnaTab: 0,
+      category: [],
+      subcategory: [],
+      subcategoryItems: [],
+      searchContent: '',
+      page: 1,
+      boardCardData: [],
+    };
+  },
+  mounted(){
+    this.boardCardData = [   //나중에 search 대신 들어감.
       {
         id: 0,
         category: "응용SW개발",
@@ -187,32 +213,7 @@ export default {
         like: "127",
         comment: "3",
       },
-    ]);
-    // const page = ref(1);
-
-    // const loadMore = async () => {
-    //   page.value += 1;
-    //   console.log(page.value)
-    // };
-
-    return {
-      qnaTabTitle,
-      categoryItems,
-      subcategoryFullList,
-      cidData,
-      searchUri,
-      boardCardData,
-    };
-  },
-  data() {
-    return {
-      qnaTab: 0,
-      category: [],
-      subcategory: [],
-      subcategoryItems: [],
-      searchContent: '',
-      page: 1,
-    };
+    ]
   },
   watch: {
     qnaTab(newVal, oldVal) {
@@ -227,16 +228,33 @@ export default {
       this.subcategoryItems = this.subcategoryFullList[categoryIndex];
       this.subcategory = [];
     },
-    async search(workYn) {
+    async search() {
       let params = {};
       let headers = {};
-      params.workYn = workYn;
-      params.cid = workYn ? this.cidData[this.subcategory] : null;
+      let work = (this.qnaTab == 0) ? true : false
+      params.workYn = work;
+      params.cid = work ? this.cidData[this.subcategory] : null;
       params.content = this.searchContent;
-      const res = await api.get(this.searchUri, params, headers);
+      console.log('------request-------')
+      console.log(params.workYn)
+      console.log(params.cid)
+      console.log(params.content)
+      console.log('------request end-------')
+
+      /**
+       * api 연동 부분
+       */
+
+      //const res = await api.get(this.searchUri, params, headers);
+
+      //search 한 값으로 변경
+    },
+    async request() {
+
     },
     tabChanged() {
       this.searchContent = '';
+      this.request(); //request 한 값으로 변경
     },
     handleCardClicked(item) {
       console.log("[handleCardClicked]", item);
@@ -265,6 +283,8 @@ export default {
     loadMore() {
       this.page += 1;
       console.log(this.page)
+      this.request()
+      // request 한 값을 추가
     }
   },
 };
