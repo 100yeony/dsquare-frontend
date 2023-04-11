@@ -46,6 +46,7 @@
         <div v-for="(item, index) in boardCardData" :value="item.id">
           <BoardCard class="mt-2" :data="item" @handle-card-clicked="handleCardClicked" />
         </div>
+        <Observe @triggerIntersected="loadMore"/>
       </v-window-item>
 
       <!-- ***** 비업무 ***** -->
@@ -73,6 +74,7 @@
         <div v-for="(item, index) in boardCardData" :value="item.id">
           <BoardCard class="mt-2" :data="item" @handle-card-clicked="handleCardClicked" />
         </div>
+        <Observe @triggerIntersected="loadMore"/>
       </v-window-item>
     </v-window>
   </div>
@@ -90,14 +92,15 @@
 
 <script>
 import { computed, onMounted, ref } from "vue";
-import { useStore } from "vuex";
 import BoardCard from "@/components/cards/BoardCard";
-import api from '@/api'
+import Observe from "@/components/Observer";
+import api from '@/api';
 
 export default {
   name: "qnaBoard",
   components: {
     BoardCard,
+    Observe
   },
   setup() {
     let qnaTabTitle = ["업무", "비업무"];
@@ -185,6 +188,12 @@ export default {
         comment: "3",
       },
     ]);
+    // const page = ref(1);
+
+    // const loadMore = async () => {
+    //   page.value += 1;
+    //   console.log(page.value)
+    // };
 
     return {
       qnaTabTitle,
@@ -202,10 +211,12 @@ export default {
       subcategory: [],
       subcategoryItems: [],
       searchContent: '',
+      page: 1,
     };
   },
   watch: {
     qnaTab(newVal, oldVal) {
+      this.page = 1;
       this.tabChanged();
     }
   },
@@ -250,6 +261,10 @@ export default {
       });
 
     },
+    loadMore() {
+      this.page += 1;
+      console.log(this.page)
+    }
   },
 };
 </script>
