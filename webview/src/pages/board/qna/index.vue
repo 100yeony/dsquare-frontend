@@ -217,6 +217,7 @@ export default {
   watch: {
     qnaTab(newVal, oldVal) {
       this.page = 1;
+      console.log(newVal)
       this.tabChanged();
     }
   },
@@ -256,7 +257,7 @@ export default {
       this.$router.push({
         path: process.env.VUE_APP_BOARD_QNA_WRITE,
         query: {
-          work: true
+          work: (this.qnaTab == 0) ? true : false
         }
       });
 

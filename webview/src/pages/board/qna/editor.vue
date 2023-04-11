@@ -13,11 +13,10 @@ export default {
   },
 
   setup() {
-    let work = ref(false);
     let chipData = ref(new Set());
     let chipText = ref("");
 
-    return { work, chipData, chipText };
+    return {chipData, chipText };
   },
   data() {
     return {
@@ -32,6 +31,7 @@ export default {
       selectedArea: '',
       selectedSubArea: '',
       placeholderText: '',
+      isWork: true,
 
     };
   },
@@ -63,11 +63,13 @@ export default {
     )
     this.area = store.getters["info/infoArea"]
     console.log(this.$route.query.work);
-    if (!this.$route.query.work) {
+    if (this.$route.query.work==='false') {
       // work 값이 없으면.
-      this.$router.replace(process.env.VUE_APP_BOARD);
+      //this.$router.replace(process.env.VUE_APP_BOARD);
+      this.isWork=false;
+      console.log(this.isWork)
     }
-    this.work = this.$route.query.work;
+    //this.work = this.$route.query.work;
   },
   methods: {
     async write(editorData) {
@@ -113,7 +115,7 @@ export default {
     <div class="font-sm font-medium mt-2">제목</div>
     <v-text-field placeholder="제목을 입력해주세요." variant="outlined" density="compact" hide-details class="mt-2" />
 
-    <v-row align="center" class="mt-2">
+    <v-row v-if="this.isWork" align="center" class="mt-2">
       <v-col>
         <label class="font-sm font-medium">분야</label>
         <v-select v-model="selectedArea" placeholder="분야 선택" variant="outlined" density="compact"
