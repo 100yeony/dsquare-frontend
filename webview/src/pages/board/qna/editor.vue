@@ -31,6 +31,7 @@ export default {
       area: {},
       selectedArea: '',
       selectedSubArea: '',
+      placeholderText: '',
 
     };
   },
@@ -47,6 +48,13 @@ export default {
   computed: {
     tags() {
       return Array.from(this.chipData);
+    },
+    placeholderText() {
+      if (this.chipData.size === 0) {
+        return '태그를 입력해주세요.'
+      } else {
+        return ''
+      }
     }
 
   },
@@ -74,8 +82,8 @@ export default {
       };
     },
     addChips() {
-      let item = this.chipText.trim() 
-      if (item !== "" && this.chipData.size < 3){
+      let item = this.chipText.trim()
+      if (item !== "" && this.chipData.size < 3) {
         if (item.startsWith('#')) {
           this.chipData.add(item)
         } else {
@@ -85,14 +93,6 @@ export default {
       this.chipText = "";
     },
     deleteChip(event, item) {
-      // if (this.chipData && item) {
-      //   for (let i = 0; i < this.chipData.length; i++) {
-      //     if (this.chipData[i] === item) {
-      //       this.chipData.splice(i, 1);
-      //       break;
-      //     }
-      //   }
-      // }
       event.preventDefault();
       event.stopPropagation();
       this.chipData.delete(item);
@@ -101,17 +101,8 @@ export default {
     handleInput(event) {
       var inputValue = event.target.value;
       if (inputValue.endsWith(' ')) {
-        console.log("spaceKeyDown")
         this.addChips();
       }
-      // if (event.keyCode === 32) {
-      //   console.log("spaceKeyDown")
-      //   this.addChips();
-      // const tag = this.tagInput.trim();
-      // if (tag !== "") { // 빈 문자열은 처리하지 않음
-      //   this.tagList.push(tag);
-      //   this.tagInput = ""; // 입력란을 초기화함
-      // }
     }
   },
 };
@@ -141,21 +132,34 @@ export default {
 
 
     <div class="font-sm font-medium mt-7 mb-2">태그</div>
-    <v-row> 
-      <v-chip-group v-for="(chipDataText, index) in tags" :key="index">
-          <v-chip class="ma-1 mt-5" @click="deleteChip($event, chipDataText)">{{
-            chipDataText
-          }}</v-chip>
-        </v-chip-group>
+
+    <v-row justify="center">
+      <v-col cols="12" sm="7" md="6" lg="5">
+        <v-sheet elevation="1" rounded="xl">
+          <div class="pa-4">
+            <v-chip-group column>
+              <v-chip v-for="tag in tags" :key="tag">
+                {{ tag }}
+                <v-icon icon="mdi-close-circle" @click="deleteChip($event, tag)"></v-icon>
+              </v-chip>
+            </v-chip-group>
+
+          </div>
+          <v-container>
+            <v-row>
+              <v-col cols="11" align-self="end">
+                <v-text-field :placeholder=placeholderText v-model="chipText" variant="underlined" density="compact"
+                  @input="handleInput" hide-details class="mt-10 pw-90"></v-text-field>
+              </v-col>
+              <v-col cols="1" align-self="end">
+                <v-icon icon="mdi-tag-plus" @click="addChips"></v-icon>
+              </v-col>
+            </v-row>
+
+          </v-container>
+        </v-sheet>
+      </v-col>
     </v-row>
-    <v-text-field placeholder="태그를 입력해주세요." v-model="chipText" variant="underlined" density="compact" @input="handleInput"
-      hide-details class="mt-10">
-      <!-- <template v-slot:append>
-        <v-btn icon @click="addChips" variant="" class="mr-5 ml-2"><img src="@/assets/images/tag.png" width="25"
-            height="25"></v-btn></template>
-      <template v-slot:prepend-inner>
-      </template> -->
-    </v-text-field>
 
     <v-row class="mt-5" align="center">
       <v-col cols="6">
