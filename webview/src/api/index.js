@@ -165,7 +165,7 @@ var apiInstance
 
 function createInstance() {
   apiInstance = axios.create({
-    baseURL: 'http://localhost:8090',
+    baseURL: 'http://20.214.201.199:8090',
   })
 
   return fn
@@ -201,6 +201,30 @@ const fn = {
       console.log('[POST]', uri, params)
       console.log('auth :::::::::::::::', headers)
       const res = await apiInstance.post(`${prefix + uri}`, params, { headers: headers})
+      return this.ResponsePayload(res)
+    } catch (err) {
+      return this.ErrorPayload(err)
+    }
+  },
+
+  async get(uri) {
+    try {
+      console.log('[GET]', uri);
+      const res = await apiInstance.get(uri);
+      return this.ResponsePayload(res)
+    } catch (err) {
+      return this.ErrorPayload(err)
+    }
+  },
+
+  async get(uri, params, headers) {
+    try {
+      console.log('[GET]', uri, params)
+      if (!headers) headers = {}
+      headers['Authorization'] = localStorage.getItem('Authorization')
+      headers['routPath'] = location.pathname
+      headers['routName'] = router.currentRoute.name
+      const res = await apiInstance.get(`${prefix + uri}`, { params, headers }, { withCredentials: true })
       return this.ResponsePayload(res)
     } catch (err) {
       return this.ErrorPayload(err)
