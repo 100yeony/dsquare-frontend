@@ -1043,3 +1043,7 @@ $bottom-navigation-content-font-size : var(--font-size-v-xxs);
   align-items: center;
   justify-items: center;
 }
+.ck-editor__editable_inline {
+  min-height: 200px;
+  max-height: 200px;
+}
