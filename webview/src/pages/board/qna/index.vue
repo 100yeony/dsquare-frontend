@@ -95,6 +95,7 @@ import { computed, onMounted, ref } from "vue";
 import BoardCard from "@/components/cards/BoardCard";
 import Observe from "@/components/Observer";
 import api from '@/api';
+import store from "@/store";
 
 export default {
   name: "qnaBoard",
@@ -104,16 +105,9 @@ export default {
   },
   setup() {
     let qnaTabTitle = ["업무", "비업무"];
-    let categoryItems = ['컨설팅', '아키텍처', '개발', '운영'];
-    let subcategoryFullList = [
-      ["IT컨설팅"],
-      ["SW아키텍처", "IT관리", "품질관리", "PM"],
-      ["Biz분석/설계", "응용SW개발", "UI/UX", "데이터분석"],
-      ["플랫폼품질혁신TF", "플랫폼IT컨설팅vTF", "메시징DX플랫폼팀", "서비스플랫폼팀", 
-        "금융결제DX플랫폼팀", "인증DX플랫폼팀", "미디어플랫폼팀", "AI서비스팀", 
-        "AICC서비스팀", "Safety플랫폼팀", "AgileCore팀", "AICC딜리버리팀"
-      ]
-    ];
+    let area = store.getters["info/infoArea"];
+    let categoryItems = area.areaList; 
+    let subcategoryFullList = area.subAreaList; 
     var categoriesAll = [].concat(qnaTabTitle);
     var i;
     for (i = 0; i < categoryItems.length; i++) {
