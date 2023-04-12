@@ -1,7 +1,10 @@
 export const info = {
   namespaced: true,
   state: () => ({
-      token: '',
+      token: {
+        accessToken: '',
+        refreshToken: ''
+      },
       list: [],
       area: {
         areaList: [],
