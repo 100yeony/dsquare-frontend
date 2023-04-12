@@ -21,7 +21,7 @@ export default {
   data() {
     return {
       editor: ClassicEditor,
-      editorData: "<h3>안녕하세요!</h3>",
+      editorData: "<h6>내용을 입력해주세요.</h6>",
       editorConfig: {
         // 상세 수정은 https://ckeditor.com
         extraPlugins: [this.uploader],
@@ -107,6 +107,9 @@ export default {
         this.addChips();
       }
     },
+    cancle(){
+      this.$router.push(process.env.VUE_APP_BOARD_QNA);
+    },
     categoryChanged() {
       var areaIndex = this.area.areaList.indexOf(this.selectedArea);
       this.subAreaItems = this.area.subAreaList[areaIndex];
@@ -140,6 +143,14 @@ export default {
 
 
     <div class="font-sm font-medium mt-7 mb-2">태그</div>
+<<<<<<< webview/src/pages/board/qna/editor.vue
+    <v-row>
+      <v-chip-group v-for="(chipDataText, index) in tags" :key="index">
+          <v-chip class="ma-1 mt-5">{{
+            chipDataText
+          }}<v-icon icon="mdi-close-circle" @click="deleteChip($event, chipDataText)"></v-icon></v-chip>
+        </v-chip-group>
+=======
 
     <v-row justify="center">
       <v-col cols="12" sm="7" md="6" lg="5">
@@ -167,11 +178,12 @@ export default {
           </v-container>
         </v-sheet>
       </v-col>
+>>>>>>> webview/src/pages/board/qna/editor.vue
     </v-row>
 
     <v-row class="mt-5" align="center">
       <v-col cols="6">
-        <v-btn block variant="" class="button_white font-medium">취소</v-btn>
+        <v-btn block variant="" class="button_white font-medium" @click="cancle">취소</v-btn>
       </v-col>
       <v-col cols="6">
         <v-btn block variant="" class="button_main font-medium" @click="write(editorData)">저장</v-btn>

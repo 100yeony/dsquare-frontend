@@ -1044,6 +1044,11 @@ $bottom-navigation-content-font-size : var(--font-size-v-xxs);
   justify-items: center;
 }
 
+.ck-editor__editable_inline {
+  min-height: 200px;
+  max-height: 200px;
+}
+
 .topbar {
   position: fixed;
   top: 0;
