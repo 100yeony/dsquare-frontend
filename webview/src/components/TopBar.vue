@@ -104,7 +104,7 @@ export default {
 </script>
 <style>
 .right-navigation-drawer {
-  width: 60%;
+  width: 70%;
   max-width: 400px; 
 }
 </style>
