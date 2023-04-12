@@ -1043,3 +1043,11 @@ $bottom-navigation-content-font-size : var(--font-size-v-xxs);
   align-items: center;
   justify-items: center;
 }
+
+.topbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 2;
+}

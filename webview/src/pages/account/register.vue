@@ -30,8 +30,6 @@ export default {
       submitted: false,
       tryingToRegister: false,
       isRegisterError: false,
-
-      signupData: signup.data,  // ******* TEST *******
     };
   },
   // computed: {
@@ -122,7 +120,9 @@ export default {
       if (!this.v$.$error) {
         // api 통신 필요.
         // register 하기.
-        // this.user.teamId = 1
+
+        this.user.teamId = 1 // 추후에 input 값에 따라 매칭 시켜야됨
+
         // axios.post('/account/signup', this.user)
         //   .then(response => {
         //     if (response.status === 200) {
@@ -276,24 +276,24 @@ export default {
             </v-expansion-panel>
 
             <!-- 
-                                      <v-expansion-panel>
-                                        <v-expansion-panel-title @click="terms[3] = true">
-                                          디스퀘어 개인정보 처리방침 선택 동의(선택)
-                                          <template v-slot:actions="{ expanded }">
-                                            <v-icon
-                                              :color="terms[3] === false ? '' : 'teal'"
-                                              :icon="terms[3] === false ? 'mdi-pencil' : 'mdi-check'"
-                                            ></v-icon>
-                                          </template>
-                                        </v-expansion-panel-title>
-                                        <v-expansion-panel-text class="wrap__agree">
-                                          개인정보의 수집항목 및 수집/이용 목적 1. 회사는 회원가입, 상담, 서비스
-                                          제공 등을 위하여 필요한 범위에서 최소한의 개인정보만을 수집합니다. 2.
-                                          회사가 수집하는 개인정보 항목과 수집/이용하는 목적은 다음과 같습니다.
-                                          \n\n회원가입 및 로그인에서...........
-                                        </v-expansion-panel-text>
-                                      </v-expansion-panel> 
-                                -->
+                                        <v-expansion-panel>
+                                          <v-expansion-panel-title @click="terms[3] = true">
+                                            디스퀘어 개인정보 처리방침 선택 동의(선택)
+                                            <template v-slot:actions="{ expanded }">
+                                              <v-icon
+                                                :color="terms[3] === false ? '' : 'teal'"
+                                                :icon="terms[3] === false ? 'mdi-pencil' : 'mdi-check'"
+                                              ></v-icon>
+                                            </template>
+                                          </v-expansion-panel-title>
+                                          <v-expansion-panel-text class="wrap__agree">
+                                            개인정보의 수집항목 및 수집/이용 목적 1. 회사는 회원가입, 상담, 서비스
+                                            제공 등을 위하여 필요한 범위에서 최소한의 개인정보만을 수집합니다. 2.
+                                            회사가 수집하는 개인정보 항목과 수집/이용하는 목적은 다음과 같습니다.
+                                            \n\n회원가입 및 로그인에서...........
+                                          </v-expansion-panel-text>
+                                        </v-expansion-panel> 
+                                  -->
           </v-expansion-panels>
 
           <v-btn :disabled="!(terms[0] && terms[1] && terms[2])" block @click="stepper = 1"
@@ -428,7 +428,7 @@ export default {
       <v-col class="pw-100 ph-70" align-self="center" v-else>
         <div class="text-center">
           <img src="@/assets/images/celebration.png" width="90" height="90">
-          <h2 class="text-primary mt-20 font-bold">{{ signupData.value.id }} 님</h2>
+          <h2 class="text-primary mt-20 font-bold">{{ this.user.email }} 님</h2>
           <h2 class="font-bold">환영합니다!</h2>
         </div>
         <div class="text-center">

@@ -37,7 +37,7 @@
                   <v-text-field v-model="searchContent" placeholder="검색어" variant="outlined" density="compact" />
                 </v-col>
               </v-row>
-              <v-btn color="shades-black" @click="search(true)" block>검색</v-btn>
+              <v-btn color="shades-black" @click="search()" block>검색</v-btn>
             </v-expansion-panel-text>
           </v-expansion-panel>
         </v-expansion-panels>
@@ -46,6 +46,7 @@
         <div v-for="(item, index) in boardCardData" :value="item.id">
           <BoardCard class="mt-2" :data="item" @handle-card-clicked="handleCardClicked" />
         </div>
+        <Observe @triggerIntersected="loadMore"/>
       </v-window-item>
 
       <!-- ***** 비업무 ***** -->
@@ -64,7 +65,7 @@
                   <v-text-field v-model="searchContent" placeholder="검색어" variant="outlined" density="compact" />
                 </v-col>
               </v-row>
-              <v-btn color="shades-black" @click="search(false)" block>검색</v-btn>
+              <v-btn color="shades-black" @click="search()" block>검색</v-btn>
             </v-expansion-panel-text>
           </v-expansion-panel>
         </v-expansion-panels>
@@ -73,6 +74,7 @@
         <div v-for="(item, index) in boardCardData" :value="item.id">
           <BoardCard class="mt-2" :data="item" @handle-card-clicked="handleCardClicked" />
         </div>
+        <Observe @triggerIntersected="loadMore"/>
       </v-window-item>
     </v-window>
   </div>
@@ -90,27 +92,22 @@
 
 <script>
 import { computed, onMounted, ref } from "vue";
-import { useStore } from "vuex";
 import BoardCard from "@/components/cards/BoardCard";
-import api from '@/api'
+import Observe from "@/components/Observer";
+import api from '@/api';
+import store from "@/store";
 
 export default {
   name: "qnaBoard",
   components: {
     BoardCard,
+    Observe
   },
   setup() {
     let qnaTabTitle = ["업무", "비업무"];
-    let categoryItems = ['컨설팅', '아키텍처', '개발', '운영'];
-    let subcategoryFullList = [
-      ["IT컨설팅"],
-      ["SW아키텍처", "IT관리", "품질관리", "PM"],
-      ["Biz분석/설계", "응용SW개발", "UI/UX", "데이터분석"],
-      ["플랫폼품질혁신TF", "플랫폼IT컨설팅vTF", "메시징DX플랫폼팀", "서비스플랫폼팀", 
-        "금융결제DX플랫폼팀", "인증DX플랫폼팀", "미디어플랫폼팀", "AI서비스팀", 
-        "AICC서비스팀", "Safety플랫폼팀", "AgileCore팀", "AICC딜리버리팀"
-      ]
-    ];
+    let area = store.getters["info/infoArea"];
+    let categoryItems = area.areaList; 
+    let subcategoryFullList = area.subAreaList; 
     var categoriesAll = [].concat(qnaTabTitle);
     var i;
     for (i = 0; i < categoryItems.length; i++) {
@@ -122,8 +119,34 @@ export default {
     
 
     let searchUri = "/board/questions";
+    // const page = ref(1);
 
-    let boardCardData = ref([
+    // const loadMore = async () => {
+    //   page.value += 1;
+    //   console.log(page.value)
+    // };
+
+    return {
+      qnaTabTitle,
+      categoryItems,
+      subcategoryFullList,
+      cidData,
+      searchUri,
+    };
+  },
+  data() {
+    return {
+      qnaTab: 0,
+      category: [],
+      subcategory: [],
+      subcategoryItems: [],
+      searchContent: '',
+      page: 1,
+      boardCardData: [],
+    };
+  },
+  mounted(){
+    this.boardCardData = [   //나중에 search 대신 들어감.
       {
         id: 0,
         category: "응용SW개발",
@@ -184,28 +207,12 @@ export default {
         like: "127",
         comment: "3",
       },
-    ]);
-
-    return {
-      qnaTabTitle,
-      categoryItems,
-      subcategoryFullList,
-      cidData,
-      searchUri,
-      boardCardData,
-    };
-  },
-  data() {
-    return {
-      qnaTab: 0,
-      category: [],
-      subcategory: [],
-      subcategoryItems: [],
-      searchContent: '',
-    };
+    ]
   },
   watch: {
     qnaTab(newVal, oldVal) {
+      this.page = 1;
+      console.log(newVal)
       this.tabChanged();
     }
   },
@@ -215,16 +222,33 @@ export default {
       this.subcategoryItems = this.subcategoryFullList[categoryIndex];
       this.subcategory = [];
     },
-    async search(workYn) {
+    async search() {
       let params = {};
       let headers = {};
-      params.workYn = workYn;
-      params.cid = workYn ? this.cidData[this.subcategory] : null;
+      let work = (this.qnaTab == 0) ? true : false
+      params.workYn = work;
+      params.cid = work ? this.cidData[this.subcategory] : null;
       params.content = this.searchContent;
-      const res = await api.get(this.searchUri, params, headers);
+      console.log('------request-------')
+      console.log(params.workYn)
+      console.log(params.cid)
+      console.log(params.content)
+      console.log('------request end-------')
+
+      /**
+       * api 연동 부분
+       */
+
+      //const res = await api.get(this.searchUri, params, headers);
+
+      //search 한 값으로 변경
+    },
+    async request() {
+
     },
     tabChanged() {
       this.searchContent = '';
+      this.request(); //request 한 값으로 변경
     },
     handleCardClicked(item) {
       console.log("[handleCardClicked]", item);
@@ -245,11 +269,17 @@ export default {
       this.$router.push({
         path: process.env.VUE_APP_BOARD_QNA_WRITE,
         query: {
-          work: true
+          work: (this.qnaTab == 0) ? true : false
         }
       });
 
     },
+    loadMore() {
+      this.page += 1;
+      console.log(this.page)
+      this.request()
+      // request 한 값을 추가
+    }
   },
 };
 </script>

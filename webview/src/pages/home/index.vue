@@ -61,20 +61,9 @@
       <v-col cols="2"><v-icon icon="mdi-plus"></v-icon></v-col>
     </v-row>
     <v-card>
-      <v-tabs
-        bg-color="shades-black"
-        color="shades-white"
-        align-tabs="title"
-        height="2rem"
-        selected-class="shades-white"
-        v-model="hallOfFameTab"
-      >
-        <v-tab
-          v-for="(i, index) in hallOfFameTabTitle.length"
-          :key="index"
-          :value="index"
-          selected-class="shades-white"
-        >
+      <v-tabs bg-color="shades-black" color="shades-white" align-tabs="title" height="2rem" selected-class="shades-white"
+        v-model="hallOfFameTab">
+        <v-tab v-for="(i, index) in hallOfFameTabTitle.length" :key="index" :value="index" selected-class="shades-white">
           {{ hallOfFameTabTitle[index] }}
         </v-tab>
       </v-tabs>
@@ -90,20 +79,18 @@
                         {{ item.title }}
                       </td>
                     </v-col>
-                    <v-col cols="2"
-                      ><td class="text-caption font-0000008F">
+                    <v-col cols="2">
+                      <td class="text-caption font-0000008F">
                         <img src="@/assets/images/icons/icon_heart.png" />{{
                           item.like
                         }}
-                      </td></v-col
-                    >
-                    <v-col cols="2"
-                      ><td class="text-caption font-0000008F">
-                        <img
-                          src="@/assets/images/icons/icon_message-circle.png"
-                        />{{ item.comment }}
-                      </td></v-col
-                    >
+                      </td>
+                    </v-col>
+                    <v-col cols="2">
+                      <td class="text-caption font-0000008F">
+                        <img src="@/assets/images/icons/icon_message-circle.png" />{{ item.comment }}
+                      </td>
+                    </v-col>
                   </v-row>
                 </tr>
               </tbody>
@@ -119,20 +106,18 @@
                         {{ item.title }}
                       </td>
                     </v-col>
-                    <v-col cols="2"
-                      ><td class="text-caption font-0000008F">
+                    <v-col cols="2">
+                      <td class="text-caption font-0000008F">
                         <img src="@/assets/images/icons/icon_heart.png" />{{
                           item.like
                         }}
-                      </td></v-col
-                    >
-                    <v-col cols="2"
-                      ><td class="text-caption font-0000008F">
-                        <img
-                          src="@/assets/images/icons/icon_message-circle.png"
-                        />{{ item.comment }}
-                      </td></v-col
-                    >
+                      </td>
+                    </v-col>
+                    <v-col cols="2">
+                      <td class="text-caption font-0000008F">
+                        <img src="@/assets/images/icons/icon_message-circle.png" />{{ item.comment }}
+                      </td>
+                    </v-col>
                   </v-row>
                 </tr>
               </tbody>
@@ -150,20 +135,9 @@
     </v-row>
 
     <v-card>
-      <v-tabs
-        bg-color="shades-black"
-        color="shades-white"
-        align-tabs="title"
-        height="2rem"
-        selected-class="shades-white"
-        v-model="userRankingTab"
-      >
-        <v-tab
-          v-for="(i, index) in userRankingTabTitle.length"
-          :key="index"
-          :value="index"
-          selected-class="shades-white"
-        >
+      <v-tabs bg-color="shades-black" color="shades-white" align-tabs="title" height="2rem" selected-class="shades-white"
+        v-model="userRankingTab">
+        <v-tab v-for="(i, index) in userRankingTabTitle.length" :key="index" :value="index" selected-class="shades-white">
           {{ userRankingTabTitle[index] }}
         </v-tab>
       </v-tabs>
@@ -194,13 +168,11 @@
                         {{ item.userId }}
                       </td>
                     </v-col>
-                    <v-col cols="2"
-                      ><td class="text-caption font-0000008F">
-                        <img
-                          src="@/assets/images/icons/icon_message-circle.png"
-                        />{{ item.comment }}
-                      </td></v-col
-                    >
+                    <v-col cols="2">
+                      <td class="text-caption font-0000008F">
+                        <img src="@/assets/images/icons/icon_message-circle.png" />{{ item.comment }}
+                      </td>
+                    </v-col>
                   </v-row>
                 </tr>
               </tbody>
@@ -231,13 +203,11 @@
                         {{ item.userId }}
                       </td>
                     </v-col>
-                    <v-col cols="2"
-                      ><td class="text-caption font-0000008F">
-                        <img
-                          src="@/assets/images/icons/icon_message-circle.png"
-                        />{{ item.comment }}
-                      </td></v-col
-                    >
+                    <v-col cols="2">
+                      <td class="text-caption font-0000008F">
+                        <img src="@/assets/images/icons/icon_message-circle.png" />{{ item.comment }}
+                      </td>
+                    </v-col>
                   </v-row>
                 </tr>
               </tbody>
@@ -251,6 +221,7 @@
 <script>
 import { computed, ref, watch, toRef } from "vue";
 import { useStore } from "vuex";
+import store from "@/store";
 import samplePng from "@/assets/images/users/avatar_sample.png";
 export default {
   name: "DashboardPage",
@@ -413,8 +384,21 @@ export default {
     };
   },
   methods: {
-    init() {},
+    init() { },
   },
+  mounted() {
+    store.dispatch('info/setInfoArea', {
+      value1: ['컨설팅', '아키텍처', '개발', '운영']
+      , value2: [["IT컨설팅"],
+      ["SW아키텍처", "IT관리", "품질관리", "PM"],
+      ["Biz분석/설계", "응용SW개발", "UI/UX", "데이터분석"],
+      ["플랫폼품질혁신TF", "플랫폼IT컨설팅vTF", "메시징DX플랫폼팀", "서비스플랫폼팀",
+        "금융결제DX플랫폼팀", "인증DX플랫폼팀", "미디어플랫폼팀", "AI서비스팀",
+        "AICC서비스팀", "Safety플랫폼팀", "AgileCore팀", "AICC딜리버리팀"
+      ]]
+    }
+    )
+  }
 };
 </script>
 <style>
@@ -422,6 +406,7 @@ export default {
   -webkit-margin-start: 0;
   margin-inline-start: 0;
 }
+
 .v-tab.v-tab {
   min-width: 50%;
 }
