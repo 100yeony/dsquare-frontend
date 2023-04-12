@@ -16,7 +16,7 @@ import iconUsers from "@/assets/images/icons/icon_users.png";
 export const menuItems = [
   {
     type: "subheader",
-    title: "DSquare에 오신것을 환영합니다!",
+    title: "DSquare",
     url: "",
   },
   {

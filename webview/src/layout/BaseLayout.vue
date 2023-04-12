@@ -4,7 +4,7 @@
     <v-main>
       <v-container>
         <router-view />
-        <SideMenu v-if="isMobile === false" />
+        <!-- <SideMenu v-if="isMobile === false" /> -->
       </v-container>
     </v-main>
     <!-- <Footer v-if="isMobile === true"/> 디자인 변경으로 disable처리.-->
