@@ -389,7 +389,7 @@ export default {
   },
   mounted() {
     store.dispatch('info/setInfoArea', {
-      value1: ['컨설팅', '아키텍처', '개발', '운영']
+      value1: ['전체', '컨설팅', '아키텍처', '개발', '운영']
       , value2: [["IT컨설팅"],
       ["SW아키텍처", "IT관리", "품질관리", "PM"],
       ["Biz분석/설계", "응용SW개발", "UI/UX", "데이터분석"],

@@ -25,13 +25,13 @@
                 </v-col>
                 <v-col cols="6" class="mb-0 pb-0">
                   <v-select v-model="subcategory" class="text-truncate" placeholder="소분야" variant="outlined" density="compact"
-                    :items="subcategoryItems" :disabled="!category.length"></v-select>
+                    :items="subcategoryItems" :disabled="!subcategoryItems.length"></v-select>
                 </v-col>
               </v-row>
               <v-row>
                 <v-col cols="4" class="pr-0 pt-0">
                   <v-select placeholder="구분" class="text-truncate" variant="outlined" density="compact"
-                    :items="['전체', '제목 + 내용', '작성자']"></v-select>
+                    :items="['제목 + 내용', '작성자']"></v-select>
                 </v-col>
                 <v-col cols="8" class="pl-0 pt-0">
                   <v-text-field v-model="searchContent" placeholder="검색어" variant="outlined" density="compact" />
@@ -59,7 +59,7 @@
               <v-row>
                 <v-col cols="4" class="pr-0">
                   <v-select placeholder="구분" class="text-truncate" variant="outlined" density="compact"
-                    :items="['전체', '제목 + 내용', '작성자']"></v-select>
+                    :items="['제목 + 내용', '작성자']"></v-select>
                 </v-col>
                 <v-col cols="8" class="pl-0">
                   <v-text-field v-model="searchContent" placeholder="검색어" variant="outlined" density="compact" />
@@ -112,7 +112,9 @@ export default {
     var i;
     for (i = 0; i < categoryItems.length; i++) {
       categoriesAll.push(categoryItems[i]);
-      categoriesAll = categoriesAll.concat(subcategoryFullList[i]);
+      if (categoryItems[i] != '전체') {
+        categoriesAll = categoriesAll.concat(subcategoryFullList[i]);
+      }
     }
     let cidData = {};
     categoriesAll.forEach((value, index) => cidData[value] = index + 1);
@@ -219,8 +221,8 @@ export default {
   methods: {
     categoryChanged() {
       var categoryIndex = this.categoryItems.indexOf(this.category);
-      this.subcategoryItems = this.subcategoryFullList[categoryIndex];
       this.subcategory = [];
+      this.subcategoryItems = 1 <= categoryIndex ? this.subcategoryFullList[categoryIndex-1] : [];
     },
     async search() {
       let params = {};
