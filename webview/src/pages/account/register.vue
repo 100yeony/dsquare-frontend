@@ -34,7 +34,7 @@ export default {
         nickname: "",
         name: "",
         contact: "",
-        teamId: "",
+        tid: "",
         ktMail: "",
       },
       category: [],
@@ -66,7 +66,7 @@ export default {
           required,
           contactValidator
         },
-        teamId: {
+        tid: {
           required,
         },
         ktMail: {
@@ -133,35 +133,35 @@ export default {
     category(newVal, oldVal) {
       console.log(newVal)
       if (newVal === '플랫폼품질혁신TF') {
-        this.user.teamId = 16;
+        this.user.tid = 16;
       } else if (oldVal === '플랫폼IT컨설팅vTF') {
-        this.user.teamId = 17;
+        this.user.tid = 17;
       }
     },
     subcategory(newVal, oldVal) {
       console.log(newVal)
       if (newVal === '메시징DX플랫폼팀') {
-        this.user.teamId = 21;
+        this.user.tid = 21;
       } else if (newVal === '서비스플랫폼팀') {
-        this.user.teamId = 22;
+        this.user.tid = 22;
       } else if (newVal === '금융결제DX플랫폼팀') {
-        this.user.teamId = 23;
+        this.user.tid = 23;
       } else if (newVal === '인증DX플랫폼팀') {
-        this.user.teamId = 24;
+        this.user.tid = 24;
       } else if (newVal === '미디어플랫폼팀') {
-        this.user.teamId = 25;
+        this.user.tid = 25;
       } else if (newVal === 'AI서비스팀') {
-        this.user.teamId = 26;
+        this.user.tid = 26;
       } else if (newVal === 'AICC서비스팀') {
-        this.user.teamId = 27;
+        this.user.tid = 27;
       } else if (newVal === 'Safety플랫폼팀') {
-        this.user.teamId = 28;
+        this.user.tid = 28;
       } else if (newVal === 'AgileCore팀') {
-        this.user.teamId = 29;
+        this.user.tid = 29;
       } else if (newVal === 'Digico사업수행팀') {
-        this.user.teamId = 30;
+        this.user.tid = 30;
       } else if (newVal === 'AICC딜리버리팀') {
-        this.user.teamId = 31;
+        this.user.tid = 31;
       }
     }
   },
@@ -182,7 +182,7 @@ export default {
         // api 통신 필요.
         // register 하기.
 
-        // this.user.teamId = 1 // 추후에 input 값에 따라 매칭 시켜야됨
+        // this.user.tid = 1 // 추후에 input 값에 따라 매칭 시켜야됨
 
         // axios.post('/account/signup', this.user)
         //   .then(response => {
@@ -193,7 +193,6 @@ export default {
         //   .catch(error => {
         //     console.log('error=>' + this.user)
         //   });
-        this.getTeamId;
         const res = await api.post('/account/signup', this.user)
         if (res.status === 200) {
           this.stepper = 2;
@@ -480,7 +479,7 @@ export default {
                     hide-details></v-select>
                 </v-col>
               </v-row>
-              <div v-if="submitted && v$.user.teamId.required.$invalid" class="invalid-feedback">
+              <div v-if="submitted && v$.user.tid.required.$invalid" class="invalid-feedback">
                 <v-icon size="x-small" color="red">mdi-close-circle-outline</v-icon>
                 <span class="font-xs font_red">부서와 소속팀을 선택해주세요.</span>
               </div>
