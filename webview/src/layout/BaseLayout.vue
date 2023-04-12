@@ -1,6 +1,6 @@
 <template>
   <div>
-    <TopBar />
+    <TopBar/>
     <v-main>
       <v-container>
         <router-view />
@@ -45,4 +45,4 @@ export default {
 };
 </script>
 
-<style></style>
+<style lang="scss" scoped></style>

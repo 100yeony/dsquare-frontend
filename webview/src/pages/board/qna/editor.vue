@@ -13,11 +13,10 @@ export default {
   },
 
   setup() {
-    let work = ref(false);
     let chipData = ref(new Set());
     let chipText = ref("");
 
-    return { work, chipData, chipText };
+    return {chipData, chipText };
   },
   data() {
     return {
@@ -29,8 +28,11 @@ export default {
         removePlugins: ["ImageCaption"],
       },
       area: {},
+      subAreaItems: [],
       selectedArea: '',
       selectedSubArea: '',
+      placeholderText: '',
+      isWork: true,
 
     };
   },
@@ -47,19 +49,28 @@ export default {
   computed: {
     tags() {
       return Array.from(this.chipData);
+    },
+    placeholderText() {
+      if (this.chipData.size === 0) {
+        return '태그를 입력해주세요.'
+      } else {
+        return ''
+      }
     }
 
   },
   mounted() {
-    store.dispatch('info/setInfoArea', { value1: ['카테고리1', '카테고리2', '카테고리3', '카테고리4', '카테고리5', '카테고리6', '카테고리7', '카테고리8'], value2: ['sub 카테고리1', 'sub 카테고리2', 'sub 카테고리3', 'sub 카테고리4', 'sub 카테고리5', 'sub 카테고리6', 'sub 카테고리7', 'sub 카테고리8'] }
-    )
+    // store.dispatch('info/setInfoArea', { value1: ['카테고리1', '카테고리2', '카테고리3', '카테고리4', '카테고리5', '카테고리6', '카테고리7', '카테고리8'], value2: ['sub 카테고리1', 'sub 카테고리2', 'sub 카테고리3', 'sub 카테고리4', 'sub 카테고리5', 'sub 카테고리6', 'sub 카테고리7', 'sub 카테고리8'] }
+    // )
     this.area = store.getters["info/infoArea"]
     console.log(this.$route.query.work);
-    if (!this.$route.query.work) {
+    if (this.$route.query.work==='false') {
       // work 값이 없으면.
-      this.$router.replace(process.env.VUE_APP_BOARD);
+      //this.$router.replace(process.env.VUE_APP_BOARD);
+      this.isWork=false;
+      console.log(this.isWork)
     }
-    this.work = this.$route.query.work;
+    //this.work = this.$route.query.work;
   },
   methods: {
     async write(editorData) {
@@ -75,7 +86,7 @@ export default {
     },
     addChips() {
       let item = this.chipText.trim()
-      if (item !== "" && this.chipData.size < 3){
+      if (item !== "" && this.chipData.size < 3) {
         if (item.startsWith('#')) {
           this.chipData.add(item)
         } else {
@@ -85,14 +96,6 @@ export default {
       this.chipText = "";
     },
     deleteChip(event, item) {
-      // if (this.chipData && item) {
-      //   for (let i = 0; i < this.chipData.length; i++) {
-      //     if (this.chipData[i] === item) {
-      //       this.chipData.splice(i, 1);
-      //       break;
-      //     }
-      //   }
-      // }
       event.preventDefault();
       event.stopPropagation();
       this.chipData.delete(item);
@@ -101,21 +104,17 @@ export default {
     handleInput(event) {
       var inputValue = event.target.value;
       if (inputValue.endsWith(' ')) {
-        console.log("spaceKeyDown")
         this.addChips();
       }
-      // if (event.keyCode === 32) {
-      //   console.log("spaceKeyDown")
-      //   this.addChips();
-      // const tag = this.tagInput.trim();
-      // if (tag !== "") { // 빈 문자열은 처리하지 않음
-      //   this.tagList.push(tag);
-      //   this.tagInput = ""; // 입력란을 초기화함
-      // }
     },
     cancle(){
       this.$router.push(process.env.VUE_APP_BOARD_QNA);
-    }
+    },
+    categoryChanged() {
+      var areaIndex = this.area.areaList.indexOf(this.selectedArea);
+      this.subAreaItems = this.area.subAreaList[areaIndex];
+      this.selectedSubArea = '';
+    },
   },
 };
 </script>
@@ -125,17 +124,17 @@ export default {
     <div class="font-sm font-medium mt-2">제목</div>
     <v-text-field placeholder="제목을 입력해주세요." variant="outlined" density="compact" hide-details class="mt-2" />
 
-    <v-row align="center" class="mt-2">
+    <v-row v-if="this.isWork" align="center" class="mt-2">
       <v-col>
         <label class="font-sm font-medium">분야</label>
         <v-select v-model="selectedArea" placeholder="분야 선택" variant="outlined" density="compact"
-          :items="this.area.areaList" :scrollable="true" hide-details class="mt-2"></v-select>
+          :items="area.areaList" :scrollable="true" hide-details @update:modelValue="categoryChanged" class="mt-2"></v-select>
       </v-col>
 
       <v-col>
         <label class="font-sm font-medium">업무</label>
         <v-select v-model="selectedSubArea" placeholder="업무 선택" variant="outlined" density="compact"
-          :items="this.area.subAreaList" :scrollable="true" hide-details class="mt-2"></v-select>
+          :items="subAreaItems" :scrollable="true" hide-details :disabled="!selectedArea.length" class="mt-2"></v-select>
       </v-col>
     </v-row>
 
@@ -144,21 +143,43 @@ export default {
 
 
     <div class="font-sm font-medium mt-7 mb-2">태그</div>
+<<<<<<< webview/src/pages/board/qna/editor.vue
     <v-row>
       <v-chip-group v-for="(chipDataText, index) in tags" :key="index">
           <v-chip class="ma-1 mt-5">{{
             chipDataText
           }}<v-icon icon="mdi-close-circle" @click="deleteChip($event, chipDataText)"></v-icon></v-chip>
         </v-chip-group>
+=======
+
+    <v-row justify="center">
+      <v-col cols="12" sm="7" md="6" lg="5">
+        <v-sheet elevation="1" rounded="xl">
+          <div class="pa-4">
+            <v-chip-group column>
+              <v-chip v-for="tag in tags" :key="tag">
+                {{ tag }}
+                <v-icon icon="mdi-close-circle" @click="deleteChip($event, tag)"></v-icon>
+              </v-chip>
+            </v-chip-group>
+
+          </div>
+          <v-container>
+            <v-row>
+              <v-col cols="11" align-self="end">
+                <v-text-field :placeholder=placeholderText v-model="chipText" variant="underlined" density="compact"
+                  @input="handleInput" hide-details class="mt-10 pw-90"></v-text-field>
+              </v-col>
+              <v-col cols="1" align-self="end">
+                <v-icon icon="mdi-tag-plus" @click="addChips"></v-icon>
+              </v-col>
+            </v-row>
+
+          </v-container>
+        </v-sheet>
+      </v-col>
+>>>>>>> webview/src/pages/board/qna/editor.vue
     </v-row>
-    <v-text-field placeholder="태그를 입력해주세요." v-model="chipText" variant="underlined" density="compact" @input="handleInput"
-      hide-details class="mt-10">
-      <!-- <template v-slot:append>
-        <v-btn icon @click="addChips" variant="" class="mr-5 ml-2"><img src="@/assets/images/tag.png" width="25"
-            height="25"></v-btn></template>
-      <template v-slot:prepend-inner>
-      </template> -->
-    </v-text-field>
 
     <v-row class="mt-5" align="center">
       <v-col cols="6">
