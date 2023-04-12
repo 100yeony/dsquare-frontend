@@ -14,7 +14,18 @@ export default {
   setup() {
     let terms = ref([false, false, false, false]);
     let stepper = ref(0);
-    return { terms, stepper, v$: useVuelidate() };
+    let categoryItems = ['플랫폼품질혁신TF', '플랫폼IT컨설팅vTF', '플랫폼서비스담당',
+                         'Digico서비스담당', 'Digico개발센터'];
+    let subcategoryFullList = [
+      [],
+      [],
+      ["메시징DX플랫폼팀", "서비스플랫폼팀", 
+        "금융결제DX플랫폼팀", "인증DX플랫폼팀"],
+      ["미디어플랫폼팀", "AI서비스팀", 
+        "AICC서비스팀", "Safety플랫폼팀"],
+      ["AgileCore팀", "Digico사업수행팀", "AICC딜리버리팀"],
+    ];
+    return { terms, stepper, v$: useVuelidate(), categoryItems, subcategoryFullList };
   },
   data() {
     return {
@@ -27,6 +38,9 @@ export default {
         teamId: "",
         ktMail: "",
       },
+      category: [],
+      subcategory: [], 
+      subcategoryItems: [],
       submitted: false,
       tryingToRegister: false,
       isRegisterError: false,
@@ -68,14 +82,20 @@ export default {
           email,
         },
       },
+      category:{
+        required,
+      },
+      subcategory:{
+        required,
+      },
     };
   },
   computed: {
     pwCaution() {
       if (this.submitted && this.v$.user.pw.required.$invalid) {
-        return '비밀번호를 입력해주세요.';
+        return '비밀번호는 최소 8자 이상 입력하세요.';
       } else if (this.submitted && this.v$.user.pw.pwValidator.$invalid) {
-        return '비밀번호는 최소 8자, 최대 20자, 영문 대소문자 최소 하나 이상, 특수문자 최소 하나 이상'
+        return '알파벳 대소문자, 숫자, 특수문자를 조합한 비밀번호를 입력하세요.'
       }
       return '';
     },
@@ -83,7 +103,7 @@ export default {
       if (this.submitted && this.v$.user.email.required.$invalid) {
         return '아이디(이메일)를 입력해주세요.';
       } else if (this.submitted && this.v$.user.email.email.$invalid) {
-        return '올바르지 않은 이메일입니다.'
+        return '올바른 이메일 형식이 아닙니다.'
       }
       return '';
     },
@@ -91,7 +111,7 @@ export default {
       if (this.submitted && this.v$.user.contact.required.$invalid) {
         return '연락처를 입력해주세요.';
       } else if (this.submitted && this.v$.user.contact.contactValidator.$invalid) {
-        return '-를 제외한 010xxxxxxx 형태로 입력해주세요.'
+        return '올바른 연락처 형식이 아닙니다.'
       }
       return '';
     },
@@ -99,11 +119,55 @@ export default {
       if (this.submitted && this.v$.user.ktMail.required.$invalid) {
         return '사내메일을 입력해주세요.';
       } else if (this.submitted && this.v$.user.ktMail.ktEmailValidator.$invalid) {
-        return '올바르지 않은 사내메일입니다.'
+        return '올바른 사내메일 형식이 아닙니다.'
       }
       return '';
     },
-
+    teamCaution() {
+      if (this.category === '플랫폼품질혁신TF' || this.category === '플랫폼IT컨설팅vTF'){
+          return true; 
+      } else {
+        return false; 
+      }
+    },
+   
+    // let subcategoryFullList = [
+    //   [],
+    //   [],
+    //   ["메시징DX플랫폼팀", "서비스플랫폼팀", 
+    //     "금융결제DX플랫폼팀", "인증DX플랫폼팀"],
+    //   ["미디어플랫폼팀", "AI서비스팀", 
+    //     "AICC서비스팀", "Safety플랫폼팀"],
+    //   ["AgileCore팀", "Digico사업수행팀", "AICC딜리버리팀"],
+    getTeamId() {
+      if (this.category === '플랫폼품질혁신TF') {
+        this.teamId = 16;
+      } else if (this.category === '플랫폼IT컨설팅vTF') {
+        this.teamId = 17; 
+      } else if (this.subcategory === '메시징DX플랫폼팀') {
+        this.teamId = 21; 
+      } else if (this.subcategory === '서비스플랫폼팀') {
+        this.teamId = 22;  
+      } else if (this.subcategory === '금융결제DX플랫폼팀') {
+        this.teamId = 23;
+      } else if (this.subcategory === '인증DX플랫폼팀') {
+        this.teamId = 24; 
+      } else if (this.subcategory === '미디어플랫폼팀') {
+        this.teamId = 25; 
+      } else if (this.subcategory === 'AI서비스팀') {
+        this.teamId = 26; 
+      } else if (this.subcategory === 'AICC서비스팀') {
+        this.teamId = 27; 
+      } else if (this.subcategory === 'Safety플랫폼팀') {
+        this.teamId = 28; 
+      } else if (this.subcategory === 'AgileCore팀') {
+        this.teamId = 29; 
+      } else if (this.subcategory === 'Digico사업수행팀') {
+        this.teamId = 30; 
+      } else {
+        this.teamId = 31; 
+      }
+    },
   },
   methods: {
     cancel() {
@@ -121,7 +185,7 @@ export default {
         // api 통신 필요.
         // register 하기.
 
-        this.user.teamId = 1 // 추후에 input 값에 따라 매칭 시켜야됨
+        // this.user.teamId = 1 // 추후에 input 값에 따라 매칭 시켜야됨
 
         // axios.post('/account/signup', this.user)
         //   .then(response => {
@@ -147,7 +211,17 @@ export default {
     },
     moveToTopTextFieldScroll() {
       this.$refs.emailTextField.scrollIntoView();
-    }
+    },
+    categoryChanged() {
+      this.subcategory = [];
+      var categoryIndex = this.categoryItems.indexOf(this.category);
+      if (categoryIndex != 0) {
+        this.subcategoryItems = this.subcategoryFullList[categoryIndex];
+      }
+      else {
+        this.subcategoryItems = [];
+      }
+    },
   }
 };
 </script>
@@ -317,7 +391,8 @@ export default {
             <v-form-group id="email-group" label="Email" label-for="email" class="">
               <label for="useremail" class="font-sm font-medium" ref="emailTextField">아이디(이메일)</label>
               <v-text-field type="text" v-model="user.email" variant="outlined" single-line hide-details id="useremail"
-                density="compact" :class="{ 'is-invalid': submitted && v$.user.email.$error }" class="font-sm">
+                density="compact" :class="{ 'is-invalid': submitted && v$.user.email.$error }" class="font-sm"
+                placeholder="gildonghong@dspace.kr">
               </v-text-field>
               <div v-if="submitted && v$.user.email.$error" class="invalid-feedback">
                 <v-icon size="x-small" color="red">mdi-close-circle-outline</v-icon>
@@ -330,7 +405,8 @@ export default {
             <v-form-group id="pw-group" label="Pw" label-for="pw">
               <label for="password" class="font-sm font-medium"> 비밀번호</label>
               <v-text-field type="password" v-model="user.pw" variant="outlined" single-line hide-details id="password"
-                density="compact" :class="{ 'is-invalid': submitted && v$.user.pw.$error }" class="font-sm">
+                density="compact" :class="{ 'is-invalid': submitted && v$.user.pw.$error }" class="font-sm"
+                placeholder="8~20자 이내로 입력해주세요">
               </v-text-field>
 
               <div v-if="submitted && v$.user.pw.$error">
@@ -347,7 +423,7 @@ export default {
               <v-text-field type="text" v-model="user.nickname" variant="outlined" single-line hide-details
                 class="form-control font-sm mt-2" id="nickname" density="compact" :class="{
                   'is-invalid': submitted && v$.user.nickname.$error,
-                }" />
+                }" placeholder="닉네임1"/>
               <div v-if="submitted && v$.user.nickname.required.$invalid" class="invalid-feedback">
                 <v-icon size="x-small" color="red">mdi-close-circle-outline</v-icon>
                 <span class="font-xs font_red">닉네임을 입력해주세요.</span>
@@ -361,7 +437,7 @@ export default {
               <v-text-field type="text" v-model="user.name" variant="outlined" single-line hide-details
                 class="form-control font-sm mt-2" id="name" density="compact" :class="{
                   'is-invalid': submitted && v$.user.name.$error,
-                }" />
+                }" placeholder="홍길동"/>
               <div v-if="submitted && v$.user.name.required.$invalid" class="invalid-feedback">
                 <v-icon size="x-small" color="red">mdi-close-circle-outline</v-icon>
                 <span class="font-xs font_red">이름을 입력해주세요.</span>
@@ -375,7 +451,7 @@ export default {
               <v-text-field type="text" v-model="user.contact" variant="outlined" single-line hide-details
                 class="form-control font-sm mt-2" id="contact" density="compact" :class="{
                   'is-invalid': submitted && v$.user.contact.$error,
-                }" />
+                }" placeholder="01012345678"/>
 
               <div v-if="submitted && v$.user.contact.$error">
                 <v-icon size="x-small" color="red">mdi-close-circle-outline</v-icon>
@@ -388,14 +464,25 @@ export default {
             <div class="mb-20"></div>
 
             <v-form-group id="teamId-group" label="TeamId" label-for="teamId">
-              <label for="teamId" class="font-medium font-sm">소속팀</label>
-              <v-text-field type="text" v-model="user.teamId" variant="outlined" single-line hide-details
+              <!-- <v-text-field type="text" v-model="user.teamId" variant="outlined" single-line hide-details
                 class="form-control font-sm mt-2" id="teamId" density="compact" :class="{
                   'is-invalid': submitted && v$.user.teamId.$error,
-                }" />
-              <div v-if="submitted && v$.user.teamId.required.$invalid" class="invalid-feedback">
+                }" /> -->
+              <v-row justify="center">
+                <v-col>
+                  <label for="category" class="font-medium font-sm">부서</label>
+                  <v-select v-model="category" class="text-truncate" placeholder="부서" variant="outlined" density="compact"
+                    :items="categoryItems" @update:modelValue="categoryChanged" id="category" hide-details></v-select>
+                </v-col>
+                <v-col>
+                  <label for="subcategory" class="font-medium font-sm">소속팀</label>
+                  <v-select v-model="subcategory" class="text-truncate" placeholder="소속팀" variant="outlined" density="compact"
+                    :items="subcategoryItems" :disabled="!subcategoryItems.length" id="subcategory" hide-details></v-select>
+                </v-col>
+              </v-row>
+              <div v-if="submitted && v$.subcategory.required.$invalid && !teamCaution" class="invalid-feedback">
                 <v-icon size="x-small" color="red">mdi-close-circle-outline</v-icon>
-                <span class="font-xs font_red">소속팀을 입력해주세요.</span>
+                <span class="font-xs font_red">부서와 소속팀을 선택해주세요.</span>
               </div>
             </v-form-group>
 
@@ -406,7 +493,7 @@ export default {
               <v-text-field type="text" v-model="user.ktMail" variant="outlined" single-line hide-details
                 class="form-control font-sm mt-2" id="ktMail" density="compact" :class="{
                   'is-invalid': submitted && v$.user.ktMail.$error,
-                }" />
+                }" placeholder="gildonghong@kt.com"/>
 
               <div v-if="submitted && v$.user.ktMail.$error">
                 <v-icon size="x-small" color="red">mdi-close-circle-outline</v-icon>
