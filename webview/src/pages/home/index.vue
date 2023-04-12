@@ -223,6 +223,7 @@ import { computed, ref, watch, toRef } from "vue";
 import { useStore } from "vuex";
 import store from "@/store";
 import samplePng from "@/assets/images/users/avatar_sample.png";
+import api from '@/api'
 export default {
   name: "DashboardPage",
   setup() {
@@ -396,8 +397,8 @@ export default {
         "금융결제DX플랫폼팀", "인증DX플랫폼팀", "미디어플랫폼팀", "AI서비스팀",
         "AICC서비스팀", "Safety플랫폼팀", "AgileCore팀", "AICC딜리버리팀"
       ]]
-    }
-    )
+    });
+    console.log(store.getters["info/infoToken"])
   }
 };
 </script>
