@@ -1,4 +1,5 @@
 import axios from 'axios'
+import store from "@/store";
 // import router from '@/router/index'
 // import dayjs from "dayjs";
 // import { v4 } from 'uuid';
@@ -164,8 +165,11 @@ const prefix = ''
 var apiInstance
 
 function createInstance() {
+  var token = store.getters["info/infoToken"]
+  console.log("createInstance" + token.accessToken)
   apiInstance = axios.create({
     baseURL: 'http://localhost:8090',
+    headers: { Authorization: 'Bearer ' + token.accessToken}
   })
 
   return fn
@@ -189,6 +193,7 @@ const fn = {
   getBaseUrl() {
     return apiInstance.defaults.baseURL
   },
+
   setDefaultToken(token) {
     apiInstance.defaults.headers = {
       Pragma: 'no-cache',
@@ -220,11 +225,11 @@ const fn = {
   async get(uri, params, headers) {
     try {
       console.log('[GET]', uri, params)
-      if (!headers) headers = {}
-      headers['Authorization'] = localStorage.getItem('Authorization')
-      headers['routPath'] = location.pathname
-      headers['routName'] = router.currentRoute.name
-      const res = await apiInstance.get(`${prefix + uri}`, { params, headers }, { withCredentials: true })
+      // if (!headers) headers = {}
+      // headers['Authorization'] = localStorage.getItem('Authorization')
+      // headers['routPath'] = location.pathname
+      // headers['routName'] = router.currentRoute.name
+      const res = await apiInstance.get(`${prefix + uri}`, params, { headers: headers })
       return this.ResponsePayload(res)
     } catch (err) {
       return this.ErrorPayload(err)
