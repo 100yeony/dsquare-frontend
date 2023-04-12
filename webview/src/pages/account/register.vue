@@ -2,7 +2,6 @@
 import { computed, onMounted, ref } from "vue";
 import { useVuelidate } from "@vuelidate/core";
 import { required, email } from "@vuelidate/validators";
-import signup from "@/assets/test_data/signup_response.json" // ******* TEST *******
 import api from '@/api'
 import regex from "@/utils/regex"
 
@@ -15,13 +14,13 @@ export default {
     let terms = ref([false, false, false, false]);
     let stepper = ref(0);
     let categoryItems = ['플랫폼품질혁신TF', '플랫폼IT컨설팅vTF', '플랫폼서비스담당',
-                         'Digico서비스담당', 'Digico개발센터'];
+      'Digico서비스담당', 'Digico개발센터'];
     let subcategoryFullList = [
       [],
       [],
-      ["메시징DX플랫폼팀", "서비스플랫폼팀", 
+      ["메시징DX플랫폼팀", "서비스플랫폼팀",
         "금융결제DX플랫폼팀", "인증DX플랫폼팀"],
-      ["미디어플랫폼팀", "AI서비스팀", 
+      ["미디어플랫폼팀", "AI서비스팀",
         "AICC서비스팀", "Safety플랫폼팀"],
       ["AgileCore팀", "Digico사업수행팀", "AICC딜리버리팀"],
     ];
@@ -39,19 +38,13 @@ export default {
         ktMail: "",
       },
       category: [],
-      subcategory: [], 
+      subcategory: [],
       subcategoryItems: [],
       submitted: false,
       tryingToRegister: false,
       isRegisterError: false,
     };
   },
-  // computed: {
-  //   computedContact: function () {
-  //     return ''
-  //   }
-
-  // },
   validations() {
     return {
       user: {
@@ -81,12 +74,6 @@ export default {
           ktEmailValidator,
           email,
         },
-      },
-      category:{
-        required,
-      },
-      subcategory:{
-        required,
       },
     };
   },
@@ -123,43 +110,60 @@ export default {
       }
       return '';
     },
-    teamCaution() {
-      if (this.category === '플랫폼품질혁신TF' || this.category === '플랫폼IT컨설팅vTF'){
-          return true; 
-      } else {
-        return false; 
-      }
-    },
-   
-    getTeamId() {
-      if (this.category === '플랫폼품질혁신TF') {
+    // teamCaution() {
+
+    //   if (this.category === '플랫폼품질혁신TF' || this.category === '플랫폼IT컨설팅vTF') {
+    //     return true;
+    //   } else {
+    //     return false;
+    //   }
+    // },
+
+    // let subcategoryFullList = [
+    //   [],
+    //   [],
+    //   ["메시징DX플랫폼팀", "서비스플랫폼팀", 
+    //     "금융결제DX플랫폼팀", "인증DX플랫폼팀"],
+    //   ["미디어플랫폼팀", "AI서비스팀", 
+    //     "AICC서비스팀", "Safety플랫폼팀"],
+    //   ["AgileCore팀", "Digico사업수행팀", "AICC딜리버리팀"],
+
+  },
+  watch: {
+    category(newVal, oldVal) {
+      console.log(newVal)
+      if (newVal === '플랫폼품질혁신TF') {
         this.user.teamId = 16;
-      } else if (this.category === '플랫폼IT컨설팅vTF') {
-        this.user.teamId = 17; 
-      } else if (this.subcategory === '메시징DX플랫폼팀') {
-        this.user.teamId = 21; 
-      } else if (this.subcategory === '서비스플랫폼팀') {
-        this.user.teamId = 22;  
-      } else if (this.subcategory === '금융결제DX플랫폼팀') {
-        this.user.teamId = 23;
-      } else if (this.subcategory === '인증DX플랫폼팀') {
-        this.user.teamId = 24; 
-      } else if (this.subcategory === '미디어플랫폼팀') {
-        this.user.teamId = 25; 
-      } else if (this.subcategory === 'AI서비스팀') {
-        this.user.teamId = 26; 
-      } else if (this.subcategory === 'AICC서비스팀') {
-        this.user.teamId = 27; 
-      } else if (this.subcategory === 'Safety플랫폼팀') {
-        this.user.teamId = 28; 
-      } else if (this.subcategory === 'AgileCore팀') {
-        this.user.teamId = 29; 
-      } else if (this.subcategory === 'Digico사업수행팀') {
-        this.user.teamId = 30; 
-      } else {
-        this.user.teamId = 31; 
+      } else if (oldVal === '플랫폼IT컨설팅vTF') {
+        this.user.teamId = 17;
       }
     },
+    subcategory(newVal, oldVal) {
+      console.log(newVal)
+      if (newVal === '메시징DX플랫폼팀') {
+        this.user.teamId = 21;
+      } else if (newVal === '서비스플랫폼팀') {
+        this.user.teamId = 22;
+      } else if (newVal === '금융결제DX플랫폼팀') {
+        this.user.teamId = 23;
+      } else if (newVal === '인증DX플랫폼팀') {
+        this.user.teamId = 24;
+      } else if (newVal === '미디어플랫폼팀') {
+        this.user.teamId = 25;
+      } else if (newVal === 'AI서비스팀') {
+        this.user.teamId = 26;
+      } else if (newVal === 'AICC서비스팀') {
+        this.user.teamId = 27;
+      } else if (newVal === 'Safety플랫폼팀') {
+        this.user.teamId = 28;
+      } else if (newVal === 'AgileCore팀') {
+        this.user.teamId = 29;
+      } else if (newVal === 'Digico사업수행팀') {
+        this.user.teamId = 30;
+      } else if (newVal === 'AICC딜리버리팀') {
+        this.user.teamId = 31;
+      }
+    }
   },
   methods: {
     cancel() {
@@ -168,6 +172,7 @@ export default {
     // Try to register the user in with the email, username
     // and password they provided.
     async tryToRegisterIn() {
+      console.log("registerregister")
       this.submitted = true;
       // stop here if form is invalid
 
@@ -188,7 +193,7 @@ export default {
         //   .catch(error => {
         //     console.log('error=>' + this.user)
         //   });
-        this.getTeamId; 
+        this.getTeamId;
         const res = await api.post('/account/signup', this.user)
         if (res.status === 200) {
           this.stepper = 2;
@@ -205,6 +210,7 @@ export default {
       this.$refs.emailTextField.scrollIntoView();
     },
     categoryChanged() {
+      console.log("categoryChanged")
       this.subcategory = [];
       var categoryIndex = this.categoryItems.indexOf(this.category);
       if (categoryIndex != 0) {
@@ -215,7 +221,7 @@ export default {
       }
     },
   }
-};
+}
 </script>
 <template class="font-sm">
   <v-container class="ph-65 pw-100">
@@ -232,9 +238,9 @@ export default {
               <v-expansion-panel-title class="font-sm" @click="terms[0] = true">
                 DSquare 이용약관(필수)
                 <template v-slot:actions="{ expanded }">
-                  <v-icon :color="terms[0] === false ? '#ABABAB' : 'teal'"
-                    :icon="terms[0] === false ? 'mdi-checkbox-blank-outline' : 'mdi-check'"></v-icon>
-                </template>
+                <v-icon :color="terms[0] === false ? '#ABABAB' : 'teal'"
+                  :icon="terms[0] === false ? 'mdi-checkbox-blank-outline' : 'mdi-check'"></v-icon>
+              </template>
               </v-expansion-panel-title>
               <v-expansion-panel-text class="wrap__agree font-xs">
                 <h3>
@@ -342,24 +348,24 @@ export default {
             </v-expansion-panel>
 
             <!-- 
-                                        <v-expansion-panel>
-                                          <v-expansion-panel-title @click="terms[3] = true">
-                                            디스퀘어 개인정보 처리방침 선택 동의(선택)
-                                            <template v-slot:actions="{ expanded }">
-                                              <v-icon
-                                                :color="terms[3] === false ? '' : 'teal'"
-                                                :icon="terms[3] === false ? 'mdi-pencil' : 'mdi-check'"
-                                              ></v-icon>
-                                            </template>
-                                          </v-expansion-panel-title>
-                                          <v-expansion-panel-text class="wrap__agree">
-                                            개인정보의 수집항목 및 수집/이용 목적 1. 회사는 회원가입, 상담, 서비스
-                                            제공 등을 위하여 필요한 범위에서 최소한의 개인정보만을 수집합니다. 2.
-                                            회사가 수집하는 개인정보 항목과 수집/이용하는 목적은 다음과 같습니다.
-                                            \n\n회원가입 및 로그인에서...........
-                                          </v-expansion-panel-text>
-                                        </v-expansion-panel> 
-                                  -->
+                                              <v-expansion-panel>
+                                                <v-expansion-panel-title @click="terms[3] = true">
+                                                  디스퀘어 개인정보 처리방침 선택 동의(선택)
+                                                  <template v-slot:actions="{ expanded }">
+                                                    <v-icon
+                                                      :color="terms[3] === false ? '' : 'teal'"
+                                                      :icon="terms[3] === false ? 'mdi-pencil' : 'mdi-check'"
+                                                    ></v-icon>
+                                                  </template>
+                                                </v-expansion-panel-title>
+                                                <v-expansion-panel-text class="wrap__agree">
+                                                  개인정보의 수집항목 및 수집/이용 목적 1. 회사는 회원가입, 상담, 서비스
+                                                  제공 등을 위하여 필요한 범위에서 최소한의 개인정보만을 수집합니다. 2.
+                                                  회사가 수집하는 개인정보 항목과 수집/이용하는 목적은 다음과 같습니다.
+                                                  \n\n회원가입 및 로그인에서...........
+                                                </v-expansion-panel-text>
+                                              </v-expansion-panel> 
+                                        -->
           </v-expansion-panels>
 
           <v-btn :disabled="!(terms[0] && terms[1] && terms[2])" block @click="stepper = 1"
@@ -415,7 +421,7 @@ export default {
               <v-text-field type="text" v-model="user.nickname" variant="outlined" single-line hide-details
                 class="form-control font-sm mt-2" id="nickname" density="compact" :class="{
                   'is-invalid': submitted && v$.user.nickname.$error,
-                }" placeholder="닉네임1"/>
+                }" placeholder="닉네임1" />
               <div v-if="submitted && v$.user.nickname.required.$invalid" class="invalid-feedback">
                 <v-icon size="x-small" color="red">mdi-close-circle-outline</v-icon>
                 <span class="font-xs font_red">닉네임을 입력해주세요.</span>
@@ -429,7 +435,7 @@ export default {
               <v-text-field type="text" v-model="user.name" variant="outlined" single-line hide-details
                 class="form-control font-sm mt-2" id="name" density="compact" :class="{
                   'is-invalid': submitted && v$.user.name.$error,
-                }" placeholder="홍길동"/>
+                }" placeholder="홍길동" />
               <div v-if="submitted && v$.user.name.required.$invalid" class="invalid-feedback">
                 <v-icon size="x-small" color="red">mdi-close-circle-outline</v-icon>
                 <span class="font-xs font_red">이름을 입력해주세요.</span>
@@ -443,7 +449,7 @@ export default {
               <v-text-field type="text" v-model="user.contact" variant="outlined" single-line hide-details
                 class="form-control font-sm mt-2" id="contact" density="compact" :class="{
                   'is-invalid': submitted && v$.user.contact.$error,
-                }" placeholder="01012345678"/>
+                }" placeholder="01012345678" />
 
               <div v-if="submitted && v$.user.contact.$error">
                 <v-icon size="x-small" color="red">mdi-close-circle-outline</v-icon>
@@ -457,22 +463,24 @@ export default {
 
             <v-form-group id="teamId-group" label="TeamId" label-for="teamId">
               <!-- <v-text-field type="text" v-model="user.teamId" variant="outlined" single-line hide-details
-                class="form-control font-sm mt-2" id="teamId" density="compact" :class="{
-                  'is-invalid': submitted && v$.user.teamId.$error,
-                }" /> -->
+                      class="form-control font-sm mt-2" id="teamId" density="compact" :class="{
+                        'is-invalid': submitted && v$.user.teamId.$error,
+                      }" /> -->
               <v-row justify="center">
                 <v-col>
                   <label for="category" class="font-medium font-sm">부서</label>
-                  <v-select v-model="category" class="text-truncate mt-2" placeholder="부서" variant="outlined" density="compact"
-                    :items="categoryItems" @update:modelValue="categoryChanged" id="category" hide-details></v-select>
+                  <v-select v-model="category" class="text-truncate mt-2" placeholder="부서" variant="outlined"
+                    density="compact" :items="categoryItems" @update:modelValue="categoryChanged" id="category"
+                    hide-details></v-select>
                 </v-col>
                 <v-col>
                   <label for="subcategory" class="font-medium font-sm">소속팀</label>
-                  <v-select v-model="subcategory" class="text-truncate mt-2" placeholder="소속팀" variant="outlined" density="compact"
-                    :items="subcategoryItems" :disabled="!subcategoryItems.length" id="subcategory" hide-details></v-select>
+                  <v-select v-model="subcategory" class="text-truncate mt-2" placeholder="소속팀" variant="outlined"
+                    density="compact" :items="subcategoryItems" :disabled="!subcategoryItems.length" id="subcategory"
+                    hide-details></v-select>
                 </v-col>
               </v-row>
-              <div v-if="submitted && v$.subcategory.required.$invalid && !teamCaution" class="invalid-feedback">
+              <div v-if="submitted && v$.user.teamId.required.$invalid" class="invalid-feedback">
                 <v-icon size="x-small" color="red">mdi-close-circle-outline</v-icon>
                 <span class="font-xs font_red">부서와 소속팀을 선택해주세요.</span>
               </div>
@@ -485,7 +493,7 @@ export default {
               <v-text-field type="text" v-model="user.ktMail" variant="outlined" single-line hide-details
                 class="form-control font-sm mt-2" id="ktMail" density="compact" :class="{
                   'is-invalid': submitted && v$.user.ktMail.$error,
-                }" placeholder="gildonghong@kt.com"/>
+                }" placeholder="gildonghong@kt.com" />
 
               <div v-if="submitted && v$.user.ktMail.$error">
                 <v-icon size="x-small" color="red">mdi-close-circle-outline</v-icon>
