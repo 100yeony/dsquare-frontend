@@ -16,7 +16,7 @@ export default {
     let chipData = ref(new Set());
     let chipText = ref("");
 
-    return {chipData, chipText };
+    return { chipData, chipText };
   },
   data() {
     return {
@@ -64,10 +64,10 @@ export default {
     // )
     this.area = store.getters["info/infoArea"]
     console.log(this.$route.query.work);
-    if (this.$route.query.work==='false') {
+    if (this.$route.query.work === 'false') {
       // work 값이 없으면.
       //this.$router.replace(process.env.VUE_APP_BOARD);
-      this.isWork=false;
+      this.isWork = false;
       console.log(this.isWork)
     }
     //this.work = this.$route.query.work;
@@ -107,7 +107,7 @@ export default {
         this.addChips();
       }
     },
-    cancle(){
+    cancle() {
       this.$router.push(process.env.VUE_APP_BOARD_QNA);
     },
     categoryChanged() {
@@ -127,14 +127,14 @@ export default {
     <v-row v-if="this.isWork" align="center" class="mt-2">
       <v-col>
         <label class="font-sm font-medium">분야</label>
-        <v-select v-model="selectedArea" placeholder="분야 선택" variant="outlined" density="compact"
-          :items="area.areaList" :scrollable="true" hide-details @update:modelValue="categoryChanged" class="mt-2"></v-select>
+        <v-select v-model="selectedArea" placeholder="분야 선택" variant="outlined" density="compact" :items="area.areaList"
+          :scrollable="true" hide-details @update:modelValue="categoryChanged" class="mt-2"></v-select>
       </v-col>
 
       <v-col>
         <label class="font-sm font-medium">업무</label>
-        <v-select v-model="selectedSubArea" placeholder="업무 선택" variant="outlined" density="compact"
-          :items="subAreaItems" :scrollable="true" hide-details :disabled="!selectedArea.length" class="mt-2"></v-select>
+        <v-select v-model="selectedSubArea" placeholder="업무 선택" variant="outlined" density="compact" :items="subAreaItems"
+          :scrollable="true" hide-details :disabled="!selectedArea.length" class="mt-2"></v-select>
       </v-col>
     </v-row>
 
@@ -143,14 +143,6 @@ export default {
 
 
     <div class="font-sm font-medium mt-7 mb-2">태그</div>
-<<<<<<< webview/src/pages/board/qna/editor.vue
-    <v-row>
-      <v-chip-group v-for="(chipDataText, index) in tags" :key="index">
-          <v-chip class="ma-1 mt-5">{{
-            chipDataText
-          }}<v-icon icon="mdi-close-circle" @click="deleteChip($event, chipDataText)"></v-icon></v-chip>
-        </v-chip-group>
-=======
 
     <v-row justify="center">
       <v-col cols="12" sm="7" md="6" lg="5">
@@ -178,7 +170,6 @@ export default {
           </v-container>
         </v-sheet>
       </v-col>
->>>>>>> webview/src/pages/board/qna/editor.vue
     </v-row>
 
     <v-row class="mt-5" align="center">
