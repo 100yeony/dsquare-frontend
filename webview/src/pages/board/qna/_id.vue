@@ -22,7 +22,7 @@
               </v-btn>
             </template>
             <v-list>
-              <v-list-item v-for="(menu, index) in questionMenu" :key="id" :value="id">
+              <v-list-item v-for="(menu, index) in questionMenu" :key="id" :value="id" @click="editPost(index)">
                 <v-list-item-title>{{ menu.title }}</v-list-item-title>
               </v-list-item>
             </v-list>
@@ -269,6 +269,15 @@ export default {
   methods: {
     answer(){
       this.$router.push(process.env.VUE_APP_BOARD_QNA_ANSWER);
+    },
+    editPost(index){
+      console.log(index)
+      if (index===0){
+        console.log("수정하기")
+        this.$router.push(process.env.VUE_APP_BOARD_QNA_EDIT)
+      } else if (index===1){
+        console.log("삭제하기")
+      }
     }
   }
 };
