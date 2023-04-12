@@ -144,10 +144,10 @@ export default {
 
     <div class="font-sm font-medium mt-7 mb-2">태그</div>
 
-    <v-row justify="center">
-      <v-col cols="12" sm="7" md="6" lg="5">
+    <v-row justify="center" class="mt-2">
+      <v-col cols="12" class="pw-100 ">
         <v-sheet elevation="1" rounded="xl">
-          <div class="pa-4">
+          <div class="pa-2">
             <v-chip-group column>
               <v-chip v-for="tag in tags" :key="tag">
                 {{ tag }}
@@ -160,7 +160,7 @@ export default {
             <v-row>
               <v-col cols="11" align-self="end">
                 <v-text-field :placeholder=placeholderText v-model="chipText" variant="underlined" density="compact"
-                  @input="handleInput" hide-details class="mt-10 pw-90"></v-text-field>
+                  @input="handleInput" hide-details class="pw-90"></v-text-field>
               </v-col>
               <v-col cols="1" align-self="end">
                 <v-icon icon="mdi-tag-plus" @click="addChips"></v-icon>
