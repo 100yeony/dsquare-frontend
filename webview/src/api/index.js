@@ -165,7 +165,7 @@ var apiInstance
 
 function createInstance() {
   apiInstance = axios.create({
-    baseURL: 'http://20.214.201.199:8090',
+    baseURL: 'http://localhost:8090',
   })
 
   return fn

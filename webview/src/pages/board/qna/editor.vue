@@ -22,7 +22,7 @@ export default {
   data() {
     return {
       editor: ClassicEditor,
-      editorData: "<h3>안녕하세요!</h3>",
+      editorData: "<h6>내용을 입력해주세요.</h6>",
       editorConfig: {
         // 상세 수정은 https://ckeditor.com
         extraPlugins: [this.uploader],
@@ -112,6 +112,9 @@ export default {
       //   this.tagList.push(tag);
       //   this.tagInput = ""; // 입력란을 초기화함
       // }
+    },
+    cancle(){
+      this.$router.push(process.env.VUE_APP_BOARD_QNA);
     }
   },
 };
@@ -159,7 +162,7 @@ export default {
 
     <v-row class="mt-5" align="center">
       <v-col cols="6">
-        <v-btn block variant="" class="button_white font-medium">취소</v-btn>
+        <v-btn block variant="" class="button_white font-medium" @click="cancle">취소</v-btn>
       </v-col>
       <v-col cols="6">
         <v-btn block variant="" class="button_main font-medium" @click="write(editorData)">저장</v-btn>
