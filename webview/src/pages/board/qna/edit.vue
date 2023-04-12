@@ -63,13 +63,13 @@ export default {
     // store.dispatch('info/setInfoArea', { value1: ['카테고리1', '카테고리2', '카테고리3', '카테고리4', '카테고리5', '카테고리6', '카테고리7', '카테고리8'], value2: ['sub 카테고리1', 'sub 카테고리2', 'sub 카테고리3', 'sub 카테고리4', 'sub 카테고리5', 'sub 카테고리6', 'sub 카테고리7', 'sub 카테고리8'] }
     // )
     this.area = store.getters["info/infoArea"]
-    console.log(this.$route.query.work);
-    if (this.$route.query.work === 'false') {
-      // work 값이 없으면.
-      //this.$router.replace(process.env.VUE_APP_BOARD);
-      this.isWork = false;
-      console.log(this.isWork)
-    }
+    //console.log(this.$route.query.work);
+    // if (this.$route.query.work === 'false') {
+    //   // work 값이 없으면.
+    //   //this.$router.replace(process.env.VUE_APP_BOARD);
+    //   this.isWork = false;
+    //   console.log(this.isWork)
+    // }
     //this.work = this.$route.query.work;
   },
   methods: {
@@ -124,7 +124,7 @@ export default {
     <div class="font-sm font-medium mt-2">제목</div>
     <v-text-field placeholder="제목을 입력해주세요." variant="outlined" density="compact" hide-details class="mt-2" />
 
-    <v-row v-if="this.isWork" align="center" class="mt-2">
+    <!-- <v-row v-if="this.isWork" align="center" class="mt-2">
       <v-col>
         <label class="font-sm font-medium">분야</label>
         <v-select v-model="selectedArea" placeholder="분야 선택" variant="outlined" density="compact" :items="area.areaList"
@@ -136,7 +136,7 @@ export default {
         <v-select v-model="selectedSubArea" placeholder="업무 선택" variant="outlined" density="compact" :items="subAreaItems"
           :scrollable="true" hide-details :disabled="!selectedArea.length" class="mt-2"></v-select>
       </v-col>
-    </v-row>
+    </v-row> -->
 
     <div class="font-sm font-medium mt-7 mb-2">본문</div>
     <ckeditor v-model="editorData" :editor="editor" :config="editorConfig" height="200"></ckeditor>

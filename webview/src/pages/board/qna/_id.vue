@@ -1,4 +1,7 @@
 <template>
+  <div>
+    <DeleteDialog :showDialog="showDialog" @click-confirm="onConfirm" @click-cancel="onCancel"/>
+  </div>
   <v-card>
     <v-card-item>
       <v-row class="mb-2" align="center">
@@ -22,7 +25,7 @@
               </v-btn>
             </template>
             <v-list>
-              <v-list-item v-for="(menu, index) in questionMenu" :key="id" :value="id">
+              <v-list-item v-for="(menu, index) in questionMenu" :key="id" :value="id" @click="editPost(index)">
                 <v-list-item-title>{{ menu.title }}</v-list-item-title>
               </v-list-item>
             </v-list>
@@ -205,8 +208,11 @@
   </v-card> -->
 </template>
 <script>
+import DeleteDialog from '@/components/DeleteDialog';
 export default {
-  components: {},
+  components: {
+    DeleteDialog
+  },
   data() {
     return {
       qnaId: this.$route.query.id,
@@ -257,6 +263,7 @@ export default {
         { title: "수정", id: 0 },
         { title: "삭제", id: 1 },
       ],
+      showDialog: false
     };
   },
   mounted() {
@@ -269,6 +276,24 @@ export default {
   methods: {
     answer(){
       this.$router.push(process.env.VUE_APP_BOARD_QNA_ANSWER);
+    },
+    editPost(index){
+      console.log(index)
+      if (index===0){
+        console.log("수정하기")
+        this.$router.push(process.env.VUE_APP_BOARD_QNA_EDIT)
+      } else if (index===1){
+        console.log("삭제하기")
+        this.showDialog = true;
+      }
+    },
+    onConfirm(payload) {
+      console.log('confirm payload:', payload);
+      this.showDialog = false;
+    },
+    onCancel() {
+      console.log('cancel');
+      this.showDialog = false;
     }
   }
 };
