@@ -131,41 +131,33 @@ export default {
       }
     },
    
-    // let subcategoryFullList = [
-    //   [],
-    //   [],
-    //   ["메시징DX플랫폼팀", "서비스플랫폼팀", 
-    //     "금융결제DX플랫폼팀", "인증DX플랫폼팀"],
-    //   ["미디어플랫폼팀", "AI서비스팀", 
-    //     "AICC서비스팀", "Safety플랫폼팀"],
-    //   ["AgileCore팀", "Digico사업수행팀", "AICC딜리버리팀"],
     getTeamId() {
       if (this.category === '플랫폼품질혁신TF') {
-        this.teamId = 16;
+        this.user.teamId = 16;
       } else if (this.category === '플랫폼IT컨설팅vTF') {
-        this.teamId = 17; 
+        this.user.teamId = 17; 
       } else if (this.subcategory === '메시징DX플랫폼팀') {
-        this.teamId = 21; 
+        this.user.teamId = 21; 
       } else if (this.subcategory === '서비스플랫폼팀') {
-        this.teamId = 22;  
+        this.user.teamId = 22;  
       } else if (this.subcategory === '금융결제DX플랫폼팀') {
-        this.teamId = 23;
+        this.user.teamId = 23;
       } else if (this.subcategory === '인증DX플랫폼팀') {
-        this.teamId = 24; 
+        this.user.teamId = 24; 
       } else if (this.subcategory === '미디어플랫폼팀') {
-        this.teamId = 25; 
+        this.user.teamId = 25; 
       } else if (this.subcategory === 'AI서비스팀') {
-        this.teamId = 26; 
+        this.user.teamId = 26; 
       } else if (this.subcategory === 'AICC서비스팀') {
-        this.teamId = 27; 
+        this.user.teamId = 27; 
       } else if (this.subcategory === 'Safety플랫폼팀') {
-        this.teamId = 28; 
+        this.user.teamId = 28; 
       } else if (this.subcategory === 'AgileCore팀') {
-        this.teamId = 29; 
+        this.user.teamId = 29; 
       } else if (this.subcategory === 'Digico사업수행팀') {
-        this.teamId = 30; 
+        this.user.teamId = 30; 
       } else {
-        this.teamId = 31; 
+        this.user.teamId = 31; 
       }
     },
   },
@@ -196,7 +188,7 @@ export default {
         //   .catch(error => {
         //     console.log('error=>' + this.user)
         //   });
-
+        this.getTeamId; 
         const res = await api.post('/account/signup', this.user)
         if (res.status === 200) {
           this.stepper = 2;
@@ -391,7 +383,7 @@ export default {
             <v-form-group id="email-group" label="Email" label-for="email" class="">
               <label for="useremail" class="font-sm font-medium" ref="emailTextField">아이디(이메일)</label>
               <v-text-field type="text" v-model="user.email" variant="outlined" single-line hide-details id="useremail"
-                density="compact" :class="{ 'is-invalid': submitted && v$.user.email.$error }" class="font-sm"
+                density="compact" :class="{ 'is-invalid': submitted && v$.user.email.$error }" class="font-sm mt-2"
                 placeholder="gildonghong@dspace.kr">
               </v-text-field>
               <div v-if="submitted && v$.user.email.$error" class="invalid-feedback">
@@ -405,7 +397,7 @@ export default {
             <v-form-group id="pw-group" label="Pw" label-for="pw">
               <label for="password" class="font-sm font-medium"> 비밀번호</label>
               <v-text-field type="password" v-model="user.pw" variant="outlined" single-line hide-details id="password"
-                density="compact" :class="{ 'is-invalid': submitted && v$.user.pw.$error }" class="font-sm"
+                density="compact" :class="{ 'is-invalid': submitted && v$.user.pw.$error }" class="font-sm mt-2"
                 placeholder="8~20자 이내로 입력해주세요">
               </v-text-field>
 
@@ -471,12 +463,12 @@ export default {
               <v-row justify="center">
                 <v-col>
                   <label for="category" class="font-medium font-sm">부서</label>
-                  <v-select v-model="category" class="text-truncate" placeholder="부서" variant="outlined" density="compact"
+                  <v-select v-model="category" class="text-truncate mt-2" placeholder="부서" variant="outlined" density="compact"
                     :items="categoryItems" @update:modelValue="categoryChanged" id="category" hide-details></v-select>
                 </v-col>
                 <v-col>
                   <label for="subcategory" class="font-medium font-sm">소속팀</label>
-                  <v-select v-model="subcategory" class="text-truncate" placeholder="소속팀" variant="outlined" density="compact"
+                  <v-select v-model="subcategory" class="text-truncate mt-2" placeholder="소속팀" variant="outlined" density="compact"
                     :items="subcategoryItems" :disabled="!subcategoryItems.length" id="subcategory" hide-details></v-select>
                 </v-col>
               </v-row>
