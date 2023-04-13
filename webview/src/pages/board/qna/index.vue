@@ -270,8 +270,9 @@ export default {
         this.$router.push({
           path: process.env.VUE_APP_BOARD_QNA_DETAIL,
           title: item?.title,
-          query: item?.id ?? {},
-          qid: item?.qid 
+          query: {
+            qid: item?.qid 
+          }
         });
       }
     },
