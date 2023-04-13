@@ -281,7 +281,12 @@ export default {
       console.log(index)
       if (index===0){
         console.log("수정하기")
-        this.$router.push(process.env.VUE_APP_BOARD_QNA_EDIT)
+        this.$router.push({
+          path: process.env.VUE_APP_BOARD_QNA_EDIT,
+          query: {
+            qid: this.$route.query.qid,
+          }
+        });
       } else if (index===1){
         console.log("삭제하기")
         this.showDialog = true;
