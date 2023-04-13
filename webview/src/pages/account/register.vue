@@ -133,35 +133,37 @@ export default {
     category(newVal, oldVal) {
       console.log(newVal)
       if (newVal === '플랫폼품질혁신TF') {
-        this.user.tid = 16;
-      } else if (oldVal === '플랫폼IT컨설팅vTF') {
-        this.user.tid = 17;
+        this.user.tid = 1;
+      } else if (newVal === '플랫폼IT컨설팅vTF') {
+        this.user.tid = 2;
+      } else {
+        this.user.tid = '';
       }
     },
     subcategory(newVal, oldVal) {
       console.log(newVal)
       if (newVal === '메시징DX플랫폼팀') {
-        this.user.tid = 21;
+        this.user.tid = 6;
       } else if (newVal === '서비스플랫폼팀') {
-        this.user.tid = 22;
+        this.user.tid = 7;
       } else if (newVal === '금융결제DX플랫폼팀') {
-        this.user.tid = 23;
+        this.user.tid = 8;
       } else if (newVal === '인증DX플랫폼팀') {
-        this.user.tid = 24;
+        this.user.tid = 9;
       } else if (newVal === '미디어플랫폼팀') {
-        this.user.tid = 25;
+        this.user.tid = 10;
       } else if (newVal === 'AI서비스팀') {
-        this.user.tid = 26;
+        this.user.tid = 11;
       } else if (newVal === 'AICC서비스팀') {
-        this.user.tid = 27;
+        this.user.tid = 12;
       } else if (newVal === 'Safety플랫폼팀') {
-        this.user.tid = 28;
+        this.user.tid = 13;
       } else if (newVal === 'AgileCore팀') {
-        this.user.tid = 29;
+        this.user.tid = 14;
       } else if (newVal === 'Digico사업수행팀') {
-        this.user.tid = 30;
+        this.user.tid = 15;
       } else if (newVal === 'AICC딜리버리팀') {
-        this.user.tid = 31;
+        this.user.tid = 16;
       }
     }
   },
