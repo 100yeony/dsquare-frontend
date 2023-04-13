@@ -30,7 +30,7 @@
               </v-row>
               <v-row>
                 <v-col cols="4" class="pr-0 pt-0">
-                  <v-select placeholder="구분" class="text-truncate" variant="outlined" density="compact"
+                  <v-select v-model="searchKey" placeholder="구분" class="text-truncate" variant="outlined" density="compact"
                     :items="['제목 + 내용', '작성자']"></v-select>
                 </v-col>
                 <v-col cols="8" class="pl-0 pt-0">
@@ -43,7 +43,7 @@
         </v-expansion-panels>
 
         <!-- 질문 카드 -->
-        <div v-for="(item, index) in boardCardData" :value="item.id">
+        <div v-for="(item, index) in boardCardData" :value="item.qid">
           <BoardCard class="mt-2" :data="item" @handle-card-clicked="handleCardClicked" />
         </div>
         <Observe @triggerIntersected="loadMore"/>
@@ -58,7 +58,7 @@
             <v-expansion-panel-text>
               <v-row>
                 <v-col cols="4" class="pr-0">
-                  <v-select placeholder="구분" class="text-truncate" variant="outlined" density="compact"
+                  <v-select v-model="searchKey" placeholder="구분" class="text-truncate" variant="outlined" density="compact"
                     :items="['제목 + 내용', '작성자']"></v-select>
                 </v-col>
                 <v-col cols="8" class="pl-0">
@@ -71,7 +71,7 @@
         </v-expansion-panels>
 
         <!-- 질문 카드 -->
-        <div v-for="(item, index) in boardCardData" :value="item.id">
+        <div v-for="(item, index) in boardCardData" :value="item.qid">
           <BoardCard class="mt-2" :data="item" @handle-card-clicked="handleCardClicked" />
         </div>
         <Observe @triggerIntersected="loadMore"/>
@@ -110,11 +110,9 @@ export default {
     let subcategoryFullList = area.subAreaList; 
     var categoriesAll = [].concat(qnaTabTitle);
     var i;
-    for (i = 0; i < categoryItems.length; i++) {
+    for (i = 1; i < categoryItems.length; i++) {
       categoriesAll.push(categoryItems[i]);
-      if (categoryItems[i] != '전체') {
-        categoriesAll = categoriesAll.concat(subcategoryFullList[i]);
-      }
+      categoriesAll = categoriesAll.concat(subcategoryFullList[i-1]);
     }
     let cidData = {};
     categoriesAll.forEach((value, index) => cidData[value] = index + 1);
@@ -143,73 +141,75 @@ export default {
       subcategory: [],
       subcategoryItems: [],
       searchContent: '',
+      searchKey: '',
       page: 1,
-      boardCardData: [],
+      boardCardData: [], 
     };
-  },
+  }, 
   mounted(){
-    this.boardCardData = [   //나중에 search 대신 들어감.
-      {
-        id: 0,
-        category: "응용SW개발",
-        title: "OpenWeatherAPI 날씨 이미지가 가져와지지 않습니다.",
-        name: "변상진",
-        team: "메시징DX플랫폼팀",
-        date: "2023-04-01",
-        hash: ["jsp", "js", "jquery"],
-        success: true,
-        like: "999+",
-        comment: "999+",
-      },
-      {
-        id: 1,
-        category: "응용SW개발",
-        title: "docker로 github actions deploy 할 때 에러 - ocker run [OPTIONS] IMAGE [COMMAND] [ARG...]",
-        name: "강소미",
-        team: "메시징DX플랫폼팀",
-        date: "2023-04-01",
-        hash: ["githubactions", "docker"],
-        success: false,
-        like: "327",
-        comment: "3",
-      },
-      {
-        id: 2,
-        category: "데이터분석",
-        title: "이 두가지 쿼리의 차이가 뭘까요 ?",
-        name: "남진욱",
-        team: "메시징DX플랫폼팀",
-        date: "2023-04-01",
-        hash: ["sql"],
-        success: false,
-        like: "300",
-        comment: "3",
-      },
-      {
-        id: 3,
-        category: "응용SW개발",
-        title: "크롬 개발자 도구에서 출력값 차이 원인 (선언문, 할당문 관련)",
-        name: "김순재",
-        team: "메시징DX플랫폼팀",
-        date: "2023-04-01",
-        hash: ["자바스크립트", "선언문", "할당문", "완료값"],
-        success: false,
-        like: "200",
-        comment: "3",
-      },
-      {
-        id: 4,
-        category: "응용SW개발",
-        title: "왜 자꾸 No faces detected 오류가 뜨는지 모르겠습니다.",
-        name: "최철준",
-        team: "메시징DX플랫폼팀",
-        date: "2023-04-01",
-        hash: ["안드로이드스튜디오", "안드로이드", "얼굴인식"],
-        success: false,
-        like: "127",
-        comment: "3",
-      },
-    ]
+    var res = this.requestAllWork();
+    // this.boardCardData = [   //나중에 search 대신 들어감.
+    //   {
+    //     id: 0,
+    //     category: "응용SW개발",
+    //     title: "OpenWeatherAPI 날씨 이미지가 가져와지지 않습니다.",
+    //     name: "변상진",
+    //     team: "메시징DX플랫폼팀",
+    //     date: "2023-04-01",
+    //     hash: ["jsp", "js", "jquery"],
+    //     success: true,
+    //     like: "999+",
+    //     comment: "999+",
+    //   },
+    //   {
+    //     id: 1,
+    //     category: "응용SW개발",
+    //     title: "docker로 github actions deploy 할 때 에러 - ocker run [OPTIONS] IMAGE [COMMAND] [ARG...]",
+    //     name: "강소미",
+    //     team: "메시징DX플랫폼팀",
+    //     date: "2023-04-01",
+    //     hash: ["githubactions", "docker"],
+    //     success: false,
+    //     like: "327",
+    //     comment: "3",
+    //   },
+    //   {
+    //     id: 2,
+    //     category: "데이터분석",
+    //     title: "이 두가지 쿼리의 차이가 뭘까요 ?",
+    //     name: "남진욱",
+    //     team: "메시징DX플랫폼팀",
+    //     date: "2023-04-01",
+    //     hash: ["sql"],
+    //     success: false,
+    //     like: "300",
+    //     comment: "3",
+    //   },
+    //   {
+    //     id: 3,
+    //     category: "응용SW개발",
+    //     title: "크롬 개발자 도구에서 출력값 차이 원인 (선언문, 할당문 관련)",
+    //     name: "김순재",
+    //     team: "메시징DX플랫폼팀",
+    //     date: "2023-04-01",
+    //     hash: ["자바스크립트", "선언문", "할당문", "완료값"],
+    //     success: false,
+    //     like: "200",
+    //     comment: "3",
+    //   },
+    //   {
+    //     id: 4,
+    //     category: "응용SW개발",
+    //     title: "왜 자꾸 No faces detected 오류가 뜨는지 모르겠습니다.",
+    //     name: "최철준",
+    //     team: "메시징DX플랫폼팀",
+    //     date: "2023-04-01",
+    //     hash: ["안드로이드스튜디오", "안드로이드", "얼굴인식"],
+    //     success: false,
+    //     like: "127",
+    //     comment: "3",
+    //   },
+    // ]
   },
   watch: {
     qnaTab(newVal, oldVal) {
@@ -225,41 +225,54 @@ export default {
       this.subcategoryItems = 1 <= categoryIndex ? this.subcategoryFullList[categoryIndex-1] : [];
     },
     async search() {
-      let params = {};
-      let headers = {};
-      let work = (this.qnaTab == 0) ? true : false
-      params.workYn = work;
-      params.cid = work ? this.cidData[this.subcategory] : null;
-      params.content = this.searchContent;
-      console.log('------request-------')
-      console.log(params.workYn)
-      console.log(params.cid)
-      console.log(params.content)
-      console.log('------request end-------')
-
-      /**
-       * api 연동 부분
-       */
-
-      //const res = await api.get(this.searchUri, params, headers);
-
-      //search 한 값으로 변경
+      // let params = {};
+      // let work = (this.qnaTab == 0) ? true : false
+      // //params.workYn = work;
+      // params.cid = work ? this.cidData[this.subcategory] : 2;
+      // params.key = this.searchKey
+      // params.value = this.searchContent
+      // var res = await api.get('board/questions/search', params)
+      // res.data.forEach((d) => {
+      //   d.lastUpdateDate = this.exportDateFromTimeStamp(d.lastUpdateDate) 
+      // });
+      // this.boardCardData = res.data
     },
-    async request() {
-
+    async requestAllWork() {
+      console.log(store.getters["info/infoToken"].accessToken)
+      var res = await api.get('board/questions', '')
+      res.data.forEach((d) => {
+        d.lastUpdateDate = this.exportDateFromTimeStamp(d.lastUpdateDate) 
+      });
+      this.boardCardData = res.data
     },
+
+    async requestAllNoneWork() {
+      console.log(store.getters["info/infoToken"].accessToken)
+      var res = await api.get('board/questions', '')
+      res.data.forEach((d) => {
+        d.lastUpdateDate = this.exportDateFromTimeStamp(d.lastUpdateDate) 
+      });
+      this.boardCardData = res.data
+    },
+
     tabChanged() {
       this.searchContent = '';
-      this.request(); //request 한 값으로 변경
+      if (this.qnaTab === 0){
+        this.requestAllWork()
+      } else {
+        this.requestAllNoneWork()
+      }
     },
     handleCardClicked(item) {
       console.log("[handleCardClicked]", item);
       if (item) {
         //상세 화면으로 이동.
-        this.$router.replace({
+        this.$router.push({
           path: process.env.VUE_APP_BOARD_QNA_DETAIL,
           title: item?.title,
-          query: item?.id ?? {},
+          query: {
+            qid: item?.qid 
+          }
         });
       }
     },
@@ -279,8 +292,19 @@ export default {
     loadMore() {
       this.page += 1;
       console.log(this.page)
-      this.request()
+      //this.request()
       // request 한 값을 추가
+    },
+    exportDateFromTimeStamp(timeStamp) {
+      var date = new Date(timeStamp)
+      const year = date.getFullYear();
+      const month = date.getMonth() + 1; // 월은 0부터 시작하므로 1을 더해줍니다.
+      const day = date.getDate();
+      const hour = date.getHours();
+      const minute = date.getMinutes();
+
+      return year + "-" + month + "-" + day + " " + hour + ":" + minute 
+
     }
   },
 };

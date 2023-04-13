@@ -70,12 +70,15 @@ export default {
             accessToken: res.data.accessToken,
             refreshToken: res.data.refreshToken
           });
+          console.log('11111212121212')
+          console.log(this.$store.getters["info/infoToken"])
+          api.setDefaultToken();
           this.$router.push('/account/change-pass-alert');
         } else {
           this.flag = !this.flag;
         }
       }
-    }
+    },
   },
   components: {
     Footer

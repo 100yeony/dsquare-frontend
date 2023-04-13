@@ -13,15 +13,22 @@ export default {
   },
 
   setup() {
+    var qid = this.$route.query.qid;
+    var questionData = api.get()
+
     let chipData = ref(new Set());
     let chipText = ref("");
 
-    return { chipData, chipText };
+    return { qid, chipData, chipText };
   },
+
   data() {
+    
+
     return {
+      
       editor: ClassicEditor,
-      editorData: "<h6>내용을 입력해주세요.</h6>",
+      
       editorConfig: {
         // 상세 수정은 https://ckeditor.com
         extraPlugins: [this.uploader],
@@ -29,7 +36,14 @@ export default {
       },
       placeholderText: '',
       isWork: true,
-
+      
+      // 데이터 가져와서 
+      title: '',
+      editorData: '',
+      categoryName : '',
+      content: '',
+      tags : [],
+      atc: '',
     };
   },
   watch: {
@@ -52,7 +66,7 @@ export default {
       } else {
         return ''
       }
-    }
+    },
 
   },
   mounted() {
@@ -60,8 +74,14 @@ export default {
   methods: {
     async write(editorData) {
       console.log(editorData);
-      const res = await api.post('/board/questions', {
+      var uri = '/board/questions/' + this.qid;
+      const res = await api.post(uri, {
+        title: this.title,
         content: editorData,
+        categoryName: this.categoryName,
+        tags: this.tags,
+        atc: this.atc,
+        // atc
       });
     },
     uploader(editor) {
@@ -103,7 +123,7 @@ export default {
 <template>
   <div>
     <div class="font-sm font-medium mt-2">제목</div>
-    <v-text-field placeholder="제목을 입력해주세요." variant="outlined" density="compact" hide-details class="mt-2" />
+    <v-text-field v-model="title" placeholder="제목을 입력해주세요." variant="outlined" density="compact" hide-details class="mt-2" />
 
     <div class="font-sm font-medium mt-7 mb-2">본문</div>
     <ckeditor v-model="editorData" :editor="editor" :config="editorConfig" height="200"></ckeditor>

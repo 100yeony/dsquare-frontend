@@ -15,7 +15,7 @@
           </div>
         </v-col>
         <v-col cols="4">
-          <div class="text-caption font-0000008F">{{ questionData.lastUpdateDate }}</div>
+          <div class="text-caption font-0000008F">{{ qData.lastUpdateDate }}</div>
         </v-col>
         <v-col cols="2">
           <v-menu>
@@ -33,16 +33,16 @@
         </v-col>
       </v-row>
       <h2 class="mb-3">
-        <span class="text-primary">{{ questionData.category }}: </span>{{ questionData.title }}
+        <span class="text-primary">{{ cName }}: </span>{{ qData.title }}
       </h2>
-      <div v-html="questionData.content"></div> <!-- v-html: HTML 코드를 템플릿에 삽입 -->
-      <v-row v-if="'atc' in questionData">
+      <div v-html="qData.content"></div> <!-- v-html: HTML 코드를 템플릿에 삽입 -->
+      <!-- <v-row v-if="'atc' in questionData">
         <v-card variant="outlined" class="ml-3" color="grey">
           <v-card-item class="text-caption pa-1 pr-2 font-0000008F" density="compact">
             <v-icon size="large">mdi-paperclip</v-icon> {{ questionData.atc.fileUrl.split("/").pop() }}
           </v-card-item>
         </v-card>
-      </v-row>
+      </v-row> -->
       <v-row>
         <v-col cols="2" class="center-container"><v-icon size="small">mdi-heart-outline</v-icon><span
             class="text-caption font-0000008F ml-1">{{ questionData.likes }}</span></v-col>
@@ -59,7 +59,7 @@
 
   <v-card class="mt-4">
     <v-card-item>
-      <div class="font-m text-center mb-3">답변을 남기고 채택을 받아보세요!</div>
+      <div class="font-m text-center mb-3">답변을 남기고 좋아요를 받아보세요!</div>
       <v-btn block color="shades-black" @click="answer">등록</v-btn>
     </v-card-item>
   </v-card>
@@ -159,56 +159,11 @@
     </v-card>
   </div>
 
-  <!-- <v-card color="#E8F2E1" class="mt-4">
-    <v-card-title class="font-6DAE43"><v-icon class="mr-2">mdi-checkbox-marked-circle-outline</v-icon>담당자
-      답변 완료</v-card-title>
-    <v-card-item> -->
-  <!-- 답변자 -->
-  <!--      <v-row class="mb-2" align="center">
-        <v-col cols="2">
-          <v-avatar color="grey">유저</v-avatar>
-        </v-col>
-        <v-col cols="10">
-          <div class="text-body font-bold">김경란</div>
-        </v-col>
-      </v-row>
-      <div class="text-caption font-0000008F">
-        답변답변 답변 답변답변 답변 답변답변 답변 답변답변 답변 답변답변 답변
-        답변답변 답변
-      </div>
--->
-  <!-- <div class="back-white mt-4">
-        <v-row class="mb-2" align="center">
-          <v-col cols="2">
-            <v-avatar color="grey">유저</v-avatar>
-          </v-col>
-          <v-col cols="10">
-            <div class="text-body font-bold">변상진</div>
-          </v-col>
-        </v-row>
-        <div class="text-caption font-0000008F">
-          <span class="font-1C4EFE">@김경란</span>테스트 데이터
-        </div>
-      </div>
-
-      <div class="back-white mt-4">
-        <v-row class="mb-2" align="center">
-          <v-col cols="2">
-            <v-avatar color="grey">유저</v-avatar>
-          </v-col>
-          <v-col cols="10">
-            <div class="text-body font-bold"></div>
-          </v-col>
-        </v-row>
-        <div class="text-caption font-0000008F">
-          테스트 데이터
-        </div>
-      </div>
-    </v-card-item>
-  </v-card> -->
+ 
 </template>
 <script>
 import DeleteDialog from '@/components/DeleteDialog';
+import api from '@/api'
 export default {
   components: {
     DeleteDialog
@@ -216,6 +171,10 @@ export default {
   data() {
     return {
       qnaId: this.$route.query.id,
+      qData: {
+
+      },
+      cName: '',
       questionData: {
         name: "변상진",
         team: "메시징DX플랫폼",
@@ -267,7 +226,11 @@ export default {
     };
   },
   mounted() {
-    console.log(this.$route.query.id);
+    console.log("--mounted")
+    console.log(this.$route.query.qid);
+    this.requestQuestionData()
+    //this.qData = 
+    
     // if (!this.$route.query.id) {
     //   // work 값이 없으면.
     //   this.$router.replace(process.env.VUE_APP_BOARD);
@@ -281,7 +244,12 @@ export default {
       console.log(index)
       if (index===0){
         console.log("수정하기")
-        this.$router.push(process.env.VUE_APP_BOARD_QNA_EDIT)
+        this.$router.push({
+          path: process.env.VUE_APP_BOARD_QNA_EDIT,
+          query: {
+            qid: this.qData.qid,
+          }
+        });
       } else if (index===1){
         console.log("삭제하기")
         this.showDialog = true;
@@ -294,6 +262,26 @@ export default {
     onCancel() {
       console.log('cancel');
       this.showDialog = false;
+    },
+    async requestQuestionData(){
+      var res = await api.get('board/questions/'+this.$route.query.qid, '')
+      console.log(res)
+      
+      res.data.lastUpdateDate = this.exportDateFromTimeStamp(res.data.lastUpdateDate) 
+      this.qData = res.data
+      console.log(this.qData.cid.name)
+      this.cName = this.qData.cid.name
+    },
+    exportDateFromTimeStamp(timeStamp) {
+      var date = new Date(timeStamp)
+      const year = date.getFullYear();
+      const month = date.getMonth() + 1; // 월은 0부터 시작하므로 1을 더해줍니다.
+      const day = date.getDate();
+      const hour = date.getHours();
+      const minute = date.getMinutes();
+
+      return year + "-" + month + "-" + day + " " + hour + ":" + minute 
+
     }
   }
 };
