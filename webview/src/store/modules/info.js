@@ -1,3 +1,4 @@
+
 export const info = {
   namespaced: true,
   state: () => ({
@@ -10,6 +11,9 @@ export const info = {
         areaList: [],
         subAreaList: []
       },
+      user: {
+        userId: ''
+      }
   }),
   mutations: {
     SET_INFO_TOKEN(state,value){
@@ -35,6 +39,9 @@ export const info = {
       //추후 api 와 연동
       state.area.areaList = value.value1;
       state.area.subAreaList = value.value2;
+    },
+    SET_INFO_USER(state, value){
+      state.user = value 
     }
   },
   getters: {
@@ -47,6 +54,9 @@ export const info = {
     },
     infoArea(state){
       return state.area;
+    },
+    infoUser(state){
+      return state.user;
     }
   },
   actions: {
@@ -61,6 +71,9 @@ export const info = {
     setInfoArea({state, commit, rootState}, value) {
       //추후 api 와 연동
       commit('SET_INFO_AREA', value)
+    },
+    setInfoUser({state, commit, rootState}, value) {
+      commit('SET_INFO_USER', value)
     }
   }
 };
