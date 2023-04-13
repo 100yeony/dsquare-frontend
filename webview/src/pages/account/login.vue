@@ -97,18 +97,18 @@ export default {
                 <label for="useremail" class="font-sm font-medium"> 이메일</label>
                 <v-text-field type="text" v-model="email" variant="outlined" single-line hide-details id="useremail"
                   density="compact" :class="{ 'is-invalid': submitted && v$.email.$error }"
-                  class="font-sm"></v-text-field>
+                  class="font-sm mt-2"></v-text-field>
                 <div v-if="submitted && v$.email.$error" class="invalid-feedback">
                   <v-icon size="x-small" color="red">mdi-close-circle-outline</v-icon>
                   <span v-if="v$.email.required.$invalid" class="font-xs font_red">이메일을 입력해주세요.</span>
-                  <span v-if="v$.email.email.$invalid" class="font-xs font_red">올바르지 않은 이메일입니다.</span>
+                  <span v-if="v$.email.email.$invalid" class="font-xs font_red">올바른 이메일 형식이 아닙니다.</span>
                 </div>
 
                 <div class="mb-20"></div>
 
                 <label for="password" class="font-sm font-medium"> 비밀번호</label>
                 <v-text-field type="password" v-model="password" variant="outlined" single-line hide-details id="password"
-                  density="compact" :class="{ 'is-invalid': submitted && v$.password.$error }" class="font-sm">
+                  density="compact" :class="{ 'is-invalid': submitted && v$.password.$error }" class="font-sm mt-2">
                 </v-text-field>
                 <div v-if="submitted && v$.password.required.$invalid" class="invalid-feedback">
                   <v-icon size="x-small" color="red">mdi-close-circle-outline</v-icon>
