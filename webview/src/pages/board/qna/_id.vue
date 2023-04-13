@@ -59,7 +59,7 @@
 
   <v-card class="mt-4">
     <v-card-item>
-      <div class="font-m text-center mb-3">답변을 남기고 채택을 받아보세요!</div>
+      <div class="font-m text-center mb-3">답변을 남기고 좋아요를 받아보세요!</div>
       <v-btn block color="shades-black" @click="answer">등록</v-btn>
     </v-card-item>
   </v-card>
