@@ -30,7 +30,7 @@
               </v-row>
               <v-row>
                 <v-col cols="4" class="pr-0 pt-0">
-                  <v-select placeholder="구분" class="text-truncate" variant="outlined" density="compact"
+                  <v-select v-model="searchKey" placeholder="구분" class="text-truncate" variant="outlined" density="compact"
                     :items="['제목 + 내용', '작성자']"></v-select>
                 </v-col>
                 <v-col cols="8" class="pl-0 pt-0">
@@ -58,7 +58,7 @@
             <v-expansion-panel-text>
               <v-row>
                 <v-col cols="4" class="pr-0">
-                  <v-select placeholder="구분" class="text-truncate" variant="outlined" density="compact"
+                  <v-select v-model="searchKey" placeholder="구분" class="text-truncate" variant="outlined" density="compact"
                     :items="['제목 + 내용', '작성자']"></v-select>
                 </v-col>
                 <v-col cols="8" class="pl-0">
@@ -110,11 +110,9 @@ export default {
     let subcategoryFullList = area.subAreaList; 
     var categoriesAll = [].concat(qnaTabTitle);
     var i;
-    for (i = 0; i < categoryItems.length; i++) {
+    for (i = 1; i < categoryItems.length; i++) {
       categoriesAll.push(categoryItems[i]);
-      if (categoryItems[i] != '전체') {
-        categoriesAll = categoriesAll.concat(subcategoryFullList[i]);
-      }
+      categoriesAll = categoriesAll.concat(subcategoryFullList[i-1]);
     }
     let cidData = {};
     categoriesAll.forEach((value, index) => cidData[value] = index + 1);
@@ -143,8 +141,9 @@ export default {
       subcategory: [],
       subcategoryItems: [],
       searchContent: '',
+      searchKey: '',
       page: 1,
-      boardCardData: [],
+      boardCardData: [], 
     };
   }, 
   mounted(){
@@ -226,28 +225,17 @@ export default {
       this.subcategoryItems = 1 <= categoryIndex ? this.subcategoryFullList[categoryIndex-1] : [];
     },
     async search() {
-      let params = {};
-      let headers = {};
-      let work = (this.qnaTab == 0) ? true : false
-      params.workYn = work;
-      params.cid = work ? this.cidData[this.subcategory] : null;
-      params.content = this.searchContent;
-      console.log('------request-------')
-      console.log(params.workYn)
-      console.log(params.cid)
-      console.log(params.content)
-      console.log('------request end-------')
-
-      /**
-       * api 연동 부분
-       */
-
-      //const res = await api.get(this.searchUri, params, headers);
-
-      //search 한 값으로 변경
-    },
-    async request() {
-      api.get('board/questions', {})
+      // let params = {};
+      // let work = (this.qnaTab == 0) ? true : false
+      // //params.workYn = work;
+      // params.cid = work ? this.cidData[this.subcategory] : 2;
+      // params.key = this.searchKey
+      // params.value = this.searchContent
+      // var res = await api.get('board/questions/search', params)
+      // res.data.forEach((d) => {
+      //   d.lastUpdateDate = this.exportDateFromTimeStamp(d.lastUpdateDate) 
+      // });
+      // this.boardCardData = res.data
     },
     async requestAllWork() {
       console.log(store.getters["info/infoToken"].accessToken)
@@ -279,10 +267,11 @@ export default {
       console.log("[handleCardClicked]", item);
       if (item) {
         //상세 화면으로 이동.
-        this.$router.replace({
+        this.$router.push({
           path: process.env.VUE_APP_BOARD_QNA_DETAIL,
           title: item?.title,
           query: item?.id ?? {},
+          qid: item?.qid 
         });
       }
     },
@@ -302,7 +291,7 @@ export default {
     loadMore() {
       this.page += 1;
       console.log(this.page)
-      this.request()
+      //this.request()
       // request 한 값을 추가
     },
     exportDateFromTimeStamp(timeStamp) {
