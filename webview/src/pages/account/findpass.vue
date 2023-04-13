@@ -74,7 +74,7 @@ export default {
             <div v-if="submitted && v$.email.$error" class="invalid-feedback">
               <v-icon size="x-small" color="red">mdi-close-circle-outline</v-icon>
               <span v-if="v$.email.required.$invalid" class="font-xs font_red">이메일을 입력해주세요.</span>
-              <span v-if="v$.email.email.$invalid" class="font-xs font_red">올바르지 않은 이메일입니다.</span>
+              <span v-if="v$.email.email.$invalid" class="font-xs font_red">올바른 이메일 형식이 아닙니다.</span>
             </div>
           
             <v-row align="center" class="mt-5">
