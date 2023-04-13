@@ -1,6 +1,6 @@
 <template>
   <div>
-    <DeleteDialog :showDialog="showDialog" @click-confirm="onConfirm" @click-cancel="onCancel"/>
+    <DeleteDialog :showDialog="showDialog" @click-confirm="onConfirm" @click-cancel="onCancel" />
   </div>
   <v-card>
     <v-card-item>
@@ -10,15 +10,15 @@
         </v-col>
         <v-col cols="4">
           <div class="text-body font-bold">
-            <v-row>{{ questionData.name }}</v-row>
-            <v-row class="text-caption font-0000008F">{{ questionData.team }}</v-row>
+            <v-row>{{ qData.name }}</v-row>
+            <v-row class="text-caption font-0000008F">{{ qData.team }}</v-row>
           </div>
         </v-col>
         <v-col cols="4">
           <div class="text-caption font-0000008F">{{ qData.lastUpdateDate }}</div>
         </v-col>
         <v-col cols="2">
-          <v-menu>
+          <v-menu v-if="isWriter">
             <template v-slot:activator="{ props }">
               <v-btn icon flat rounded="0" v-bind="props" color="transparent">
                 <v-icon>mdi-dots-horizontal</v-icon>
@@ -33,7 +33,7 @@
         </v-col>
       </v-row>
       <h2 class="mb-3">
-        <span class="text-primary">{{ cName }}: </span>{{ qData.title }}
+        <span class="text-primary">{{ qData.cname }}: </span>{{ qData.title }}
       </h2>
       <div v-html="qData.content"></div> <!-- v-html: HTML 코드를 템플릿에 삽입 -->
       <!-- <v-row v-if="'atc' in questionData">
@@ -45,12 +45,12 @@
       </v-row> -->
       <v-row>
         <v-col cols="2" class="center-container"><v-icon size="small">mdi-heart-outline</v-icon><span
-            class="text-caption font-0000008F ml-1">{{ questionData.likes }}</span></v-col>
+            class="text-caption font-0000008F ml-1">{{ qData.likes }}</span></v-col>
         <v-col cols="2" class="center-container"><v-icon size="small">mdi-message-text-outline</v-icon><span
-            class="text-caption font-0000008F ml-1">{{ questionData.commentList.length }}</span></v-col>
+            class="text-caption font-0000008F ml-1">{{ qData.commentList.length }}</span></v-col>
       </v-row>
       <v-slide-group>
-        <v-slide-group-item v-for="(chip, index) in questionData.tags" :key="index">
+        <v-slide-group-item v-for="(chip, index) in qData.tags" :key="index">
           <v-chip class="ma-2">#{{ chip }}</v-chip>
         </v-slide-group-item>
       </v-slide-group>
@@ -65,9 +65,9 @@
   </v-card>
 
   <!-- ***** 답변 ***** -->
-  <div v-for="(item, index) in questionData.answerList" :value="item.id">
-    <v-card :color="item.writerId == questionData.managerId ? '#E8F2E1' : ''" class="mt-4">
-      <v-card-title v-if="item.writerId == questionData.managerId" class="font-6DAE43">
+  <div v-for="(item, index) in qData.answerList" :value="item.id">
+    <v-card :color="item.writerId == qData.managerId ? '#E8F2E1' : ''" class="mt-4">
+      <v-card-title v-if="item.writerId == qData.managerId" class="font-6DAE43">
         <v-icon class="mr-2">mdi-checkbox-marked-circle-outline</v-icon>담당자 답변 완료
       </v-card-title>
       <v-card-item>
@@ -158,33 +158,112 @@
       </v-card-item>
     </v-card>
   </div>
-
- 
 </template>
 <script>
 import DeleteDialog from '@/components/DeleteDialog';
 import api from '@/api'
+import store from '@/store'
 export default {
   components: {
     DeleteDialog
   },
   data() {
     return {
-      qnaId: this.$route.query.id,
+      qnaId: 0,
       qData: {
-
+        name: "",
+        team: "",
+        atc: {
+          atcId: 0,
+          fileUrl: "",
+          extension: "",
+          createDate: "",
+          fileSize: 0,
+        },
+        cname: '',
+        title: '',
+        content: '',
+        lastUpdateDate: '',
+        viewCnt: 0,
+        likes: 0,
+        tags: [],
+        writerId: 0,
+        managerId: 0,
+        commentList: [],
+        answerList: [],
       },
-      cName: '',
-      questionData: {
+      questionMenu: [
+        { title: "수정", id: 0 },
+        { title: "삭제", id: 1 },
+      ],
+      showDialog: false,
+      isWriter: false,
+
+    };
+  },
+  mounted() {
+    console.log("--mounted")
+    console.log(this.$route.query.qid);
+    const user = store.getters["info/infoUser"]
+    const questionData = this.requestQuestionData()
+    questionData.then(
+      (response) => {
+        this.qData = this.parseToQData(response.data)
+        if (user.userId === response.data.writerId) {
+          this.isWriter = true;
+        }
+      }
+    )
+  },
+  methods: {
+    answer() {
+      this.$router.push(process.env.VUE_APP_BOARD_QNA_ANSWER);
+    },
+    editPost(index) {
+      console.log(index)
+      if (index === 0) {
+        console.log("수정하기")
+        this.$router.push({
+          path: process.env.VUE_APP_BOARD_QNA_EDIT,
+          query: {
+            qid: this.qData.qid,
+          }
+        });
+      } else if (index === 1) {
+        console.log("삭제하기")
+        this.showDialog = true;
+      }
+    },
+    onConfirm(payload) {
+      console.log('confirm payload:', payload);
+      this.showDialog = false;
+    },
+    onCancel() {
+      console.log('cancel');
+      this.showDialog = false;
+    },
+    async requestQuestionData() {
+      var res = await api.get('board/questions/' + this.$route.query.qid, '')
+      console.log(res)
+      return res
+    },
+    exportDateFromTimeStamp(timeStamp) {
+      var date = new Date(timeStamp)
+      const year = date.getFullYear();
+      const month = date.getMonth() + 1;
+      const day = date.getDate();
+      const hour = date.getHours();
+      const minute = date.getMinutes();
+
+      return year + "-" + month + "-" + day + " " + hour + ":" + minute
+    },
+    parseToQData(data) {
+
+      console.log("parse_data:  ", data)
+      console.log("parse_cid  :", data.cid)
+      return {
         name: "변상진",
         team: "메시징DX플랫폼",
-        category: "응용SW개발",
-        managerId: 3,
-        title: "OpenWeatherAPI 날씨 이미지가 가져와지지 않습니다.",
-        content: '<ul column-span="none"><li><p column-span="none">현재 openweather에서 API를 가져와서 데이터 값을 넣고 있는중이다.<br>나의 오류 중 하나는 <code spellcheck="false">box</code>에 <code spellcheck="false">backgroundImage</code>를 넣어서 맑음이면<br>해 사진이 보이고, 흐름이면 구름 사진을 넣으려고 한다.</p></li><li><p column-span="none">문제점 : 배경 이미지를 불러 오는 과정에서 에러가 나온다.<br>그래서 <code spellcheck="false">placehodler</code>를 넣었더니 배경 이미지에는 잘들어간다.<br><div class="remirror-resizable-view" contenteditable="false" draggable="true" style="position: relative; max-width: 100%; min-width: 50px; vertical-align: bottom; display: inline-block; line-height: 0; transition: width 0.15s ease-out 0s, height 0.15s ease-out 0s;"><div style="position: absolute; pointer-events: auto; display: flex; align-items: center; justify-content: center; z-index: 100; right: 0px; top: 0px; height: 100%; width: 15px; cursor: col-resize;"><div data-dragging="" style="opacity: 0; transition: opacity 300ms ease-in 0s; width: 4px; height: 36px; max-height: 50%; box-sizing: content-box; background: rgba(0, 0, 0, 0.65); border: 1px solid rgba(255, 255, 255, 0.5); border-radius: 6px;"></div></div><div style="position: absolute; pointer-events: auto; display: flex; align-items: center; justify-content: center; z-index: 100; left: 0px; top: 0px; height: 100%; width: 15px; cursor: col-resize;"><div data-dragging="" style="opacity: 0; transition: opacity 300ms ease-in 0s; width: 4px; height: 36px; max-height: 50%; box-sizing: content-box; background: rgba(0, 0, 0, 0.65); border: 1px solid rgba(255, 255, 255, 0.5); border-radius: 6px;"></div></div></div><br class="ProseMirror-trailingBreak"></p></li></ul>',
-        likes: 1,
-        tags: ["jsp", "js", "jquery"],
-        lastUpdateDate: "2023-04-01",
         atc: {
           atcId: 1,
           fileUrl: "https://ktds.dsquare.co.kr/테스트파일.xlsx",
@@ -192,6 +271,15 @@ export default {
           createDate: "2023-03-23 21:02:12",
           fileSize: 512345,
         },
+        cname: data.cid.name,
+        title: data.title,
+        content: data.content,
+        lastUpdateDate: this.exportDateFromTimeStamp(data.lastUpdateDate),
+        viewCnt: data.viewCnt,
+        likes: 1,
+        tags: ["jsp", "js", "jquery"],
+        writerId: data.writerId,
+        managerId: 3,
         commentList: [],
         answerList: [
           {
@@ -217,72 +305,9 @@ export default {
             deleteYn: false
           }
         ],
-      },
-      questionMenu: [
-        { title: "수정", id: 0 },
-        { title: "삭제", id: 1 },
-      ],
-      showDialog: false
-    };
-  },
-  mounted() {
-    console.log("--mounted")
-    console.log(this.$route.query.qid);
-    this.requestQuestionData()
-    //this.qData = 
-    
-    // if (!this.$route.query.id) {
-    //   // work 값이 없으면.
-    //   this.$router.replace(process.env.VUE_APP_BOARD);
-    // }
-  },
-  methods: {
-    answer(){
-      this.$router.push(process.env.VUE_APP_BOARD_QNA_ANSWER);
-    },
-    editPost(index){
-      console.log(index)
-      if (index===0){
-        console.log("수정하기")
-        this.$router.push({
-          path: process.env.VUE_APP_BOARD_QNA_EDIT,
-          query: {
-            qid: this.qData.qid,
-          }
-        });
-      } else if (index===1){
-        console.log("삭제하기")
-        this.showDialog = true;
       }
-    },
-    onConfirm(payload) {
-      console.log('confirm payload:', payload);
-      this.showDialog = false;
-    },
-    onCancel() {
-      console.log('cancel');
-      this.showDialog = false;
-    },
-    async requestQuestionData(){
-      var res = await api.get('board/questions/'+this.$route.query.qid, '')
-      console.log(res)
-      
-      res.data.lastUpdateDate = this.exportDateFromTimeStamp(res.data.lastUpdateDate) 
-      this.qData = res.data
-      console.log(this.qData.cid.name)
-      this.cName = this.qData.cid.name
-    },
-    exportDateFromTimeStamp(timeStamp) {
-      var date = new Date(timeStamp)
-      const year = date.getFullYear();
-      const month = date.getMonth() + 1; // 월은 0부터 시작하므로 1을 더해줍니다.
-      const day = date.getDate();
-      const hour = date.getHours();
-      const minute = date.getMinutes();
-
-      return year + "-" + month + "-" + day + " " + hour + ":" + minute 
-
     }
-  }
+  },
+
 };
 </script>

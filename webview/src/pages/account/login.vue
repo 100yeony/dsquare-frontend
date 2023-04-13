@@ -70,7 +70,12 @@ export default {
             accessToken: res.data.accessToken,
             refreshToken: res.data.refreshToken
           });
-          console.log('11111212121212')
+
+          const jwt = require("jsonwebtoken");
+          const decodedToken = jwt.decode(res.data.accessToken);
+          console.log(decodedToken);
+          this.$store.dispatch('info/setInfoUser', {userId: decodedToken.id});
+
           console.log(this.$store.getters["info/infoToken"])
           api.setDefaultToken();
           this.$router.push('/account/change-pass-alert');
