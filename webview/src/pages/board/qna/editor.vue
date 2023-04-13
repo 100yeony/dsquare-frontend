@@ -143,8 +143,16 @@ export default {
     <div class="font-sm font-medium mt-7 mb-2">본문</div>
     <ckeditor v-model="editorData" :editor="editor" :config="editorConfig" height="200"></ckeditor>
 
+    <v-file-input 
+      label="파일을 첨부해주세요."
+      chips
+      class="mt-5"
+      variant="outlined"
+      density="compact"
+    >
+    </v-file-input>
 
-    <div class="font-sm font-medium mt-7">태그</div>
+    <div class="font-sm font-medium">태그</div>
 
     <v-row justify="center">
       <v-col cols="12" class="pw-100 ">

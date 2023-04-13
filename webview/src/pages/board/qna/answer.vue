@@ -69,6 +69,16 @@ export default {
     <div class="font-sm font-medium mt-7 mb-2">답변</div>
     <ckeditor v-model="editorData" :editor="editor" :config="editorConfig" height="200"></ckeditor>
 
+    <v-file-input 
+      label="파일을 첨부해주세요."
+      chips
+      class="mt-5"
+      variant="outlined"
+      density="compact"
+      hide-details
+    >
+    </v-file-input>
+
     <v-row class="mt-5" align="center">
       <v-col cols="6">
         <v-btn block variant="" class="button_white font-medium" @click="cancle">취소</v-btn>
@@ -96,12 +106,12 @@ export default {
   color: white;
 }
 
-.tag {
-  border-color: #ABABAB;
-}
-
 .v-btn--icon.v-btn--density-default {
   height: 0px;
   width: 0px;
+}
+
+::v-deep .v-icon{
+  opacity: initial !important;
 }
 </style>
