@@ -194,13 +194,14 @@ const fn = {
     return apiInstance.defaults.baseURL
   },
 
-  setDefaultToken(token) {
-    apiInstance.defaults.headers = {
-      Pragma: 'no-cache',
-      'X-AUTH-TOKEN': token,
-    }
+  setDefaultToken() {
+    var token = store.getters["info/infoToken"]
+    console.log('setDefaultToken=> ' + token.accessToken)
+    apiInstance = axios.create({
+      baseURL: 'http://localhost:8090',
+      headers: { Authorization: 'Bearer ' + token.accessToken}
+    })
   },
-
   async post(uri, params, headers) {
     try {
       console.log('[POST]', uri, params)
