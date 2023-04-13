@@ -144,32 +144,26 @@ export default {
     <ckeditor v-model="editorData" :editor="editor" :config="editorConfig" height="200"></ckeditor>
 
 
-    <div class="font-sm font-medium mt-7 mb-2">태그</div>
+    <div class="font-sm font-medium mt-7">태그</div>
 
-    <v-row justify="center" class="mt-2">
+    <v-row justify="center">
       <v-col cols="12" class="pw-100 ">
-        <v-sheet elevation="1" rounded="xl">
-          <div class="pa-2">
+        <v-sheet>
+          <div>
             <v-chip-group column>
               <v-chip v-for="tag in tags" :key="tag">
                 {{ tag }}
-                <v-icon icon="mdi-close-circle" @click="deleteChip($event, tag)"></v-icon>
+                <v-icon class="ml-2" icon="mdi-close-circle" @click="deleteChip($event, tag)"></v-icon>
               </v-chip>
             </v-chip-group>
 
           </div>
-          <v-container>
-            <v-row>
-              <v-col cols="11" align-self="end">
-                <v-text-field :placeholder=placeholderText v-model="chipText" variant="underlined" density="compact"
-                  @input="handleInput" hide-details class="pw-90"></v-text-field>
-              </v-col>
-              <v-col cols="1" align-self="end">
-                <v-icon icon="mdi-tag-plus" @click="addChips"></v-icon>
-              </v-col>
-            </v-row>
-
-          </v-container>
+          <v-row>
+            <v-col>
+              <v-text-field :placeholder=placeholderText v-model="chipText" variant="outlined" density="compact"
+                @input="handleInput" hide-details append-icon="mdi-tag-plus" @click:append="addChips"></v-text-field>
+            </v-col>
+          </v-row>
         </v-sheet>
       </v-col>
     </v-row>
@@ -201,12 +195,18 @@ export default {
   color: white;
 }
 
-.tag {
-  border-color: #ABABAB;
-}
-
 .v-btn--icon.v-btn--density-default {
   height: 0px;
   width: 0px;
+}
+
+::v-deep .v-input__append{
+  margin-inline-start: 12px !important;
+  margin-inline-end: 10px !important;
+}
+
+::v-deep .v-icon{
+  color: black !important;
+  opacity: initial !important;
 }
 </style>
