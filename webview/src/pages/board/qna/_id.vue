@@ -237,10 +237,19 @@ export default {
     onConfirm(payload) {
       console.log('confirm payload:', payload);
       this.showDialog = false;
+      this.requestDelQuestion();
     },
     onCancel() {
       console.log('cancel');
       this.showDialog = false;
+    },
+    async requestDelQuestion() {
+      const res = await api.del('board/questions/' + this.$route.query.qid, '').then(
+        (response)=>{
+          console.log(response)
+          this.$router.push(process.env.VUE_APP_BOARD_QNA);
+        }
+      )
     },
     async requestQuestionData() {
       var res = await api.get('board/questions/' + this.$route.query.qid, '')

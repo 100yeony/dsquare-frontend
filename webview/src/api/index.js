@@ -169,7 +169,7 @@ function createInstance() {
   console.log("createInstance" + token.accessToken)
   apiInstance = axios.create({
     baseURL: 'http://localhost:8090',
-    headers: { Authorization: 'Bearer ' + token.accessToken}
+    headers: { Authorization: 'Bearer ' + token.accessToken }
   })
 
   return fn
@@ -199,24 +199,14 @@ const fn = {
     console.log('setDefaultToken=> ' + token.accessToken)
     apiInstance = axios.create({
       baseURL: 'http://localhost:8090',
-      headers: { Authorization: 'Bearer ' + token.accessToken}
+      headers: { Authorization: 'Bearer ' + token.accessToken }
     })
   },
   async post(uri, params, headers) {
     try {
       console.log('[POST]', uri, params)
       console.log('auth :::::::::::::::', headers)
-      const res = await apiInstance.post(`${prefix + uri}`, params, { headers: headers})
-      return this.ResponsePayload(res)
-    } catch (err) {
-      return this.ErrorPayload(err)
-    }
-  },
-
-  async get(uri) {
-    try {
-      console.log('[GET]', uri);
-      const res = await apiInstance.get(uri);
+      const res = await apiInstance.post(`${prefix + uri}`, params, { headers: headers })
       return this.ResponsePayload(res)
     } catch (err) {
       return this.ErrorPayload(err)
@@ -231,6 +221,16 @@ const fn = {
       // headers['routPath'] = location.pathname
       // headers['routName'] = router.currentRoute.name
       const res = await apiInstance.get(`${prefix + uri}`, params, { headers: headers })
+      return this.ResponsePayload(res)
+    } catch (err) {
+      return this.ErrorPayload(err)
+    }
+  },
+
+  async del(uri, params, headers) {
+    try {
+      console.log('[DEL]', uri, params)
+      const res = await apiInstance.delete(`${prefix + uri}`, params, { headers: headers })
       return this.ResponsePayload(res)
     } catch (err) {
       return this.ErrorPayload(err)
