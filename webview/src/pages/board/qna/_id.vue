@@ -181,6 +181,8 @@ export default {
           fileSize: 0,
         },
         cname: '',
+        cid: 0,
+        upid: 0,
         title: '',
         content: '',
         lastUpdateDate: '',
@@ -202,6 +204,7 @@ export default {
     };
   },
   mounted() {
+    this.qnaId = this.$route.query.qid
     console.log("--mounted")
     console.log(this.$route.query.qid);
     const user = store.getters["info/infoUser"]
@@ -226,8 +229,14 @@ export default {
         this.$router.push({
           path: process.env.VUE_APP_BOARD_QNA_EDIT,
           query: {
-            qid: this.qData.qid,
+            qid: this.qnaId,
+            title: this.qData.title,
+            content: this.qData.content,
+            upid: this.qData.upid,
+            cid: this.qData.cid,
+            atcid: this.qData.atc.atcId
           }
+
         });
       } else if (index === 1) {
         console.log("삭제하기")
@@ -253,7 +262,6 @@ export default {
     },
     async requestQuestionData() {
       var res = await api.get('board/questions/' + this.$route.query.qid, '')
-      console.log(res)
       return res
     },
     exportDateFromTimeStamp(timeStamp) {
@@ -281,6 +289,8 @@ export default {
           fileSize: 512345,
         },
         cname: data.cid.name,
+        upid: Number(data.cid.upId),
+        cid: data.cid.cid,
         title: data.title,
         content: data.content,
         lastUpdateDate: this.exportDateFromTimeStamp(data.lastUpdateDate),
