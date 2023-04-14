@@ -47,7 +47,7 @@
         <v-col cols="2" class="center-container"><v-icon size="small">mdi-heart-outline</v-icon><span
             class="text-caption font-0000008F ml-1">{{ qData.likes }}</span></v-col>
         <v-col cols="2" class="center-container"><v-icon size="small">mdi-message-text-outline</v-icon><span
-            class="text-caption font-0000008F ml-1">{{ qData.commentList.length }}</span></v-col>
+            class="text-caption font-0000008F ml-1">{{ commentList.length }}</span></v-col>
       </v-row>
       <v-slide-group>
         <v-slide-group-item v-for="(chip, index) in qData.tags" :key="index">
@@ -57,7 +57,7 @@
     </v-card-item>
   </v-card>
 
-  <v-card class="mt-4">
+  <v-card v-if="!isWriter" class="mt-4">
     <v-card-item>
       <div class="font-m text-center mb-3">답변을 남기고 좋아요를 받아보세요!</div>
       <v-btn block color="shades-black" @click="answer">등록</v-btn>
@@ -65,7 +65,7 @@
   </v-card>
 
   <!-- ***** 답변 ***** -->
-  <div v-for="(item, index) in qData.answerList" :value="item.id">
+  <div v-for="(item, index) in answerList" :value="item.id">
     <v-card :color="item.writerId == qData.managerId ? '#E8F2E1' : ''" class="mt-4">
       <v-card-title v-if="item.writerId == qData.managerId" class="font-6DAE43">
         <v-icon class="mr-2">mdi-checkbox-marked-circle-outline</v-icon>담당자 답변 완료
@@ -78,8 +78,8 @@
           </v-col>
           <v-col cols="8">
             <div class="text-body font-bold">
-              <v-row>{{ item.name }}</v-row>
-              <v-row class="text-caption font-0000008F">{{ item.team }}</v-row>
+              <v-row> 홍길동 </v-row>
+              <v-row class="text-caption font-0000008F"> --팀 </v-row>
             </div>
           </v-col>
           <v-col cols="2">
@@ -90,16 +90,14 @@
                 </v-btn>
               </template>
               <v-list>
-                <v-list-item v-for="(menu, index) in questionMenu" :key="id" :value="id">
+                <v-list-item v-for="(menu, index) in questionMenu" :key="id" :value="id" @click="editAnswer(index)">
                   <v-list-item-title>{{ menu.title }}</v-list-item-title>
                 </v-list-item>
               </v-list>
             </v-menu>
           </v-col>
         </v-row>
-        <div class="text-caption font-0000008F">
-          {{ item.content }}
-        </div>
+        <div v-html="item.content" class="text-caption font-0000008F"></div>
 
         <!-- 
         답변 댓글 데이터 생기면 이 코드 사용
@@ -191,9 +189,10 @@ export default {
         tags: [],
         writerId: 0,
         managerId: 0,
-        commentList: [],
-        answerList: [],
       },
+      commentList: [],
+      answerList: [
+      ],
       questionMenu: [
         { title: "수정", id: 0 },
         { title: "삭제", id: 1 },
@@ -217,10 +216,16 @@ export default {
         }
       }
     )
+    this.requestAnswerData()
   },
   methods: {
     answer() {
-      this.$router.push(process.env.VUE_APP_BOARD_QNA_ANSWER);
+      this.$router.push({
+        path: process.env.VUE_APP_BOARD_QNA_ANSWER,
+        query: {
+          qid: this.$route.query.qid
+        }
+      });
     },
     editPost(index) {
       console.log(index)
@@ -243,6 +248,26 @@ export default {
         this.showDialog = true;
       }
     },
+    editAnswer(index){
+      if (index === 0) {
+        // console.log("수정하기")
+        // this.$router.push({
+        //   path: process.env.VUE_APP_BOARD_QNA_EDIT,
+        //   query: {
+        //     qid: this.qnaId,
+        //     title: this.qData.title,
+        //     content: this.qData.content,
+        //     upid: this.qData.upid,
+        //     cid: this.qData.cid,
+        //     atcid: this.qData.atc.atcId
+        //   }
+
+        // });
+      } else if (index === 1) {
+        // console.log("삭제하기")
+        // this.showDialog = true;
+      }
+    },
     onConfirm(payload) {
       console.log('confirm payload:', payload);
       this.showDialog = false;
@@ -254,7 +279,7 @@ export default {
     },
     async requestDelQuestion() {
       const res = await api.del('board/questions/' + this.$route.query.qid, '').then(
-        (response)=>{
+        (response) => {
           console.log(response)
           this.$router.push(process.env.VUE_APP_BOARD_QNA);
         }
@@ -298,35 +323,26 @@ export default {
         likes: 1,
         tags: ["jsp", "js", "jquery"],
         writerId: data.writerId,
-        managerId: 3,
-        commentList: [],
-        answerList: [
-          {
-            id: 1,
-            writerId: 1,
-            name: "이상진",
-            team: "메시징DX플랫폼",
-            content: "답변 내용 1 입니다.",
-            createDate: "2023-03-31T13:20:12.548107",
-            lastUpdateDate: "2023-03-31T13:20:12.548136",
-            atcId: 1,
-            deleteYn: false
-          },
-          {
-            id: 2,
-            writerId: 3,  // 담당자의 답변
-            name: "김상진",
-            team: "메시징DX플랫폼",
-            content: "답변 내용 2 입니다.",
-            createDate: "2023-03-31T13:20:14.109683",
-            lastUpdateDate: "2023-03-31T13:20:14.109718",
-            atcId: 1,
-            deleteYn: false
-          }
-        ],
+        managerId: 1,
       }
+    },
+    async requestAnswerData(){
+      var res = await api.get('board/questions/' + this.$route.query.qid + '/answers', '').then(//this.$route.query.qid
+        (response)=>{
+          console.log("answer: " + response.data)
+          this.answerList = response.data 
+        }
+      )
     }
   },
-
 };
 </script>
+<!-- {
+  "id": 1,
+  "writerId": 1,
+  "content": "답변글 내용입니다222.",
+  "createDate": "2023-04-14T15:08:32.221714",
+  "lastUpdateDate": null,
+  "atcId": null,
+  "deleteYn": false
+} -->
