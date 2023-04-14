@@ -12,19 +12,19 @@ export default {
   components: {
     ckeditor: CKEditor.component,
   },
-  validations() {
-    return {
-      title: {
-        required,
-      },
-      editorData: {
-        required,
-      },
-      cid: {
-        required,
-      },
-    };
-  },
+  // validations() {
+  //   return {
+  //     title: {
+  //       required,
+  //     },
+  //     editorData: {
+  //       required,
+  //     },
+  //     cid: {
+  //       required,
+  //     },
+  //   };
+  // },
   setup() {
     let chipData = ref(new Set());
     let chipText = ref("");
@@ -45,7 +45,7 @@ export default {
   data() {
     return {
       editor: ClassicEditor,
-      editorData: "<h6>내용을 입력해주세요.</h6>",
+      editorData: "",
       editorConfig: {
         // 상세 수정은 https://ckeditor.com
         extraPlugins: [this.uploader],
@@ -84,6 +84,13 @@ export default {
         return '태그를 입력해주세요.'
       } else {
         return ''
+      }
+    },
+    editorValidation(){
+      if (this.cid.length !== 0 && this.title.length !==0 && this.editorData.length !== 0){
+        return true; 
+      } else{
+        return false; 
       }
     }
   },
@@ -233,7 +240,7 @@ export default {
           <v-btn block variant="" class="button_white font-medium" @click="cancle">취소</v-btn>
         </v-col>
         <v-col cols="6">
-          <v-btn block variant="" class="button_main font-medium" type="submit">저장</v-btn>
+          <v-btn block variant="" class="button_main font-medium" type="submit" :disabled="!editorValidation">저장</v-btn>
         </v-col>
       </v-row>
     </div>
@@ -251,8 +258,8 @@ export default {
 .button_main {
   border-width: 1px;
   border-style: solid;
-  border-color: #ADE4EB;
-  background-color: #ADE4EB;
+  border-color: rgb(var(--v-theme-primary));
+  background-color: rgb(var(--v-theme-primary));
   color: white;
 }
 
