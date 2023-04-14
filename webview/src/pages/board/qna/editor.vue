@@ -2,6 +2,7 @@
 import CKEditor from "@ckeditor/ckeditor5-vue";
 import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
 import FileUploadAdapter from "@/utils/fileUploaderAdapter";
+import { required } from "@vuelidate/validators";
 import { watch, onMounted, ref } from "vue";
 //import { generateKey } from "crypto";
 import api from '@/api';
@@ -11,12 +12,35 @@ export default {
   components: {
     ckeditor: CKEditor.component,
   },
-
+  validations() {
+    return {
+      title: {
+        required,
+      },
+      editorData: {
+        required,
+      },
+      cid: {
+        required,
+      },
+    };
+  },
   setup() {
     let chipData = ref(new Set());
     let chipText = ref("");
+    let area = store.getters["info/infoArea"];
+    let categoryItems = area.areaList;
+    let subcategoryFullList = area.subAreaList;
+    var categoriesAll = [].concat(["업무", "비업무"]);
+    var i;
+    for (i = 1; i < categoryItems.length; i++) {
+      categoriesAll.push(categoryItems[i]);
+      categoriesAll = categoriesAll.concat(subcategoryFullList[i - 1]);
+    }
+    let cidData = {};
+    categoriesAll.forEach((value, index) => cidData[value] = index + 1);
 
-    return { chipData, chipText };
+    return { chipData, chipText, cidData };
   },
   data() {
     return {
@@ -34,7 +58,10 @@ export default {
       selectedSubArea: [],
       placeholderText: '',
       isWork: true,
-
+      title: '',
+      tags: [],
+      cid: '',
+      submitted: false,
     };
   },
   watch: {
@@ -45,6 +72,7 @@ export default {
     selectedSubArea: function (newVal, oldVal) {
       console.log(newVal)
       console.log(oldVal)
+      this.cid = this.cidData[newVal]
     }
   },
   computed: {
@@ -58,28 +86,43 @@ export default {
         return ''
       }
     }
-
   },
   mounted() {
-    // store.dispatch('info/setInfoArea', { value1: ['카테고리1', '카테고리2', '카테고리3', '카테고리4', '카테고리5', '카테고리6', '카테고리7', '카테고리8'], value2: ['sub 카테고리1', 'sub 카테고리2', 'sub 카테고리3', 'sub 카테고리4', 'sub 카테고리5', 'sub 카테고리6', 'sub 카테고리7', 'sub 카테고리8'] }
-    // )
     this.area = store.getters["info/infoArea"]
     this.areaItems = this.area.areaList.slice(1)
     console.log(this.$route.query.work);
     if (this.$route.query.work === 'false') {
-      // work 값이 없으면.
-      //this.$router.replace(process.env.VUE_APP_BOARD);
       this.isWork = false;
+      this.cid = 2;
       console.log(this.isWork)
     }
-    //this.work = this.$route.query.work;
   },
   methods: {
     async write(editorData) {
-      console.log(editorData);
-      const res = await api.post('/board/questions', {
-        content: editorData,
-      });
+      this.submitted = true;
+
+      //this.v$.$touch();
+
+      //if (!this.v$.$error) {
+        console.log(editorData)
+        const res = await api.post('board/questions', {
+          writerId: store.getters["info/infoUser"].userId,
+          cid: this.cid,
+          content: editorData,
+          title: this.title,
+          tags: this.tags,
+          atc: {
+            originFileName: '원본파일명',
+            extension: 'png',
+            fileSize: 51239
+          }
+
+        }).then((response) => {
+          console.log(response)
+          this.$router.push(process.env.VUE_APP_BOARD_QNA);
+        });
+      //}
+
     },
     uploader(editor) {
       editor.plugins.get("FileRepository").createUploadAdapter = (loader) => {
@@ -117,74 +160,84 @@ export default {
       this.subAreaItems = this.area.subAreaList[areaIndex];
       this.selectedSubArea = [];
     },
-  },
+  }
 };
 </script>
 
 <template>
-  <div>
-    <div class="font-sm font-medium mt-2">제목</div>
-    <v-text-field placeholder="제목을 입력해주세요." variant="outlined" density="compact" hide-details class="mt-2" />
+  <v-form @submit.prevent="write(editorData)" class="overflow-show">
+    <div>
+      <div class="font-sm font-medium mt-2">제목</div>
+      <v-text-field v-model="title" placeholder="제목을 입력해주세요." variant="outlined" density="compact" hide-details
+        class="mt-2" />
+      <!-- <div v-if="submitted && title.required.invalid" class="invalid-feedback">
+        <v-icon size="x-small" color="red">mdi-close-circle-outline</v-icon>
+        <span class="font-xs font_red">제목을 입력해주세요.</span>
+      </div> -->
 
-    <v-row v-if="this.isWork" align="center" class="mt-2">
-      <v-col>
-        <label class="font-sm font-medium">분야</label>
-        <v-select v-model="selectedArea" placeholder="분야 선택" variant="outlined" density="compact" :items="areaItems"
-          :scrollable="true" hide-details @update:modelValue="categoryChanged" class="mt-2"></v-select>
-      </v-col>
+      <v-row v-if="this.isWork" align="center" class="mt-2">
+        <v-col>
+          <label class="font-sm font-medium">분야</label>
+          <v-select v-model="selectedArea" placeholder="분야 선택" variant="outlined" density="compact" :items="areaItems"
+            :scrollable="true" hide-details @update:modelValue="categoryChanged" class="mt-2"></v-select>
+        </v-col>
 
-      <v-col>
-        <label class="font-sm font-medium">업무</label>
-        <v-select v-model="selectedSubArea" placeholder="업무 선택" variant="outlined" density="compact" :items="subAreaItems"
-          :scrollable="true" hide-details :disabled="!selectedArea.length" class="mt-2"></v-select>
-      </v-col>
-    </v-row>
+        <v-col>
+          <label class="font-sm font-medium">업무</label>
+          <v-select v-model="selectedSubArea" placeholder="업무 선택" variant="outlined" density="compact"
+            :items="subAreaItems" :scrollable="true" hide-details :disabled="!selectedArea.length"
+            class="mt-2"></v-select>
+        </v-col>
+      </v-row>
+      <!-- <div v-if="submitted && v$.cid.required.$invalid" class="invalid-feedback">
+        <v-icon size="x-small" color="red">mdi-close-circle-outline</v-icon>
+        <span class="font-xs font_red">분야를 선택해주세요.</span>
+      </div> -->
 
-    <div class="font-sm font-medium mt-7 mb-2">본문</div>
-    <ckeditor v-model="editorData" :editor="editor" :config="editorConfig" height="200"></ckeditor>
+      <div class="font-sm font-medium mt-7 mb-2">본문</div>
+      <ckeditor v-model="editorData" :editor="editor" :config="editorConfig" height="200"></ckeditor>
+      <!-- <div v-if="submitted && v$.editorData.required.$invalid" class="invalid-feedback">
+        <v-icon size="x-small" color="red">mdi-close-circle-outline</v-icon>
+        <span class="font-xs font_red">내용을 입력해주세요.</span>
+      </div> -->
 
-    <v-file-input 
-      label="파일을 첨부해주세요."
-      chips
-      class="mt-5"
-      variant="outlined"
-      density="compact"
-    >
-    </v-file-input>
+      <v-file-input label="파일을 첨부해주세요." chips class="mt-5" variant="outlined" density="compact">
+      </v-file-input>
 
-    <div class="font-sm font-medium">태그</div>
+      <div class="font-sm font-medium">태그</div>
 
-    <v-row justify="center">
-      <v-col cols="12" class="pw-100 ">
-        <v-sheet>
-          <div>
-            <v-chip-group column>
-              <v-chip v-for="tag in tags" :key="tag">
-                {{ tag }}
-                <v-icon class="ml-2" icon="mdi-close-circle" @click="deleteChip($event, tag)"></v-icon>
-              </v-chip>
-            </v-chip-group>
+      <v-row justify="center">
+        <v-col cols="12" class="pw-100 ">
+          <v-sheet>
+            <div>
+              <v-chip-group column>
+                <v-chip v-for="tag in tags" :key="tag">
+                  {{ tag }}
+                  <v-icon class="ml-2" icon="mdi-close-circle" @click="deleteChip($event, tag)"></v-icon>
+                </v-chip>
+              </v-chip-group>
 
-          </div>
-          <v-row>
-            <v-col>
-              <v-text-field :placeholder=placeholderText v-model="chipText" variant="outlined" density="compact"
-                @input="handleInput" hide-details append-icon="mdi-tag-plus" @click:append="addChips"></v-text-field>
-            </v-col>
-          </v-row>
-        </v-sheet>
-      </v-col>
-    </v-row>
+            </div>
+            <v-row>
+              <v-col>
+                <v-text-field :placeholder=placeholderText v-model="chipText" variant="outlined" density="compact"
+                  @input="handleInput" hide-details append-icon="mdi-tag-plus" @click:append="addChips"></v-text-field>
+              </v-col>
+            </v-row>
+          </v-sheet>
+        </v-col>
+      </v-row>
 
-    <v-row class="mt-5" align="center">
-      <v-col cols="6">
-        <v-btn block variant="" class="button_white font-medium" @click="cancle">취소</v-btn>
-      </v-col>
-      <v-col cols="6">
-        <v-btn block variant="" class="button_main font-medium" @click="write(editorData)">저장</v-btn>
-      </v-col>
-    </v-row>
-  </div>
+      <v-row class="mt-5" align="center">
+        <v-col cols="6">
+          <v-btn block variant="" class="button_white font-medium" @click="cancle">취소</v-btn>
+        </v-col>
+        <v-col cols="6">
+          <v-btn block variant="" class="button_main font-medium" type="submit">저장</v-btn>
+        </v-col>
+      </v-row>
+    </div>
+  </v-form>
 </template>
 
 <style lang="scss" scoped>
@@ -208,12 +261,12 @@ export default {
   width: 0px;
 }
 
-::v-deep .v-input__append{
+::v-deep .v-input__append {
   margin-inline-start: 12px !important;
   margin-inline-end: 10px !important;
 }
 
-::v-deep .v-icon{
+::v-deep .v-icon {
   color: black !important;
   opacity: initial !important;
 }
