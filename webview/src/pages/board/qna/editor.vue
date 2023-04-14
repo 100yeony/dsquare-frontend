@@ -87,7 +87,7 @@ export default {
       }
     },
     editorValidation(){
-      if (this.cid.length !== 0 && this.title.length !==0 && this.editorData.length !== 0){
+      if (this.cid !== '' && this.title !=='' && this.editorData !== ''){
         return true; 
       } else{
         return false; 
