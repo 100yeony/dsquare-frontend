@@ -20,7 +20,7 @@ export default {
   data() {
     return {
       editor: ClassicEditor,
-      editorData: "<h6>내용을 입력해주세요.</h6>",
+      editorData: "",
       editorConfig: {
         // 상세 수정은 https://ckeditor.com
         extraPlugins: [this.uploader],
@@ -60,6 +60,15 @@ export default {
     }
   
   },
+  computed: {
+    answerValidation(){
+      if (this.editorData.length !== 0){
+        return true; 
+      } else{
+        return false; 
+      }
+    },
+  }
 };
 </script>
 
@@ -84,7 +93,8 @@ export default {
         <v-btn block variant="" class="button_white font-medium" @click="cancle">취소</v-btn>
       </v-col>
       <v-col cols="6">
-        <v-btn block variant="" class="button_main font-medium" @click="write(editorData)">저장</v-btn>
+        <v-btn block variant="" class="button_main font-medium" 
+        @click="write(editorData)" :disabled="!answerValidation">저장</v-btn>
       </v-col>
     </v-row>
   </div>
@@ -101,8 +111,8 @@ export default {
 .button_main {
   border-width: 1px;
   border-style: solid;
-  border-color: #ADE4EB;
-  background-color: #ADE4EB;
+  border-color: rgb(var(--v-theme-primary));
+  background-color: rgb(var(--v-theme-primary));
   color: white;
 }
 
