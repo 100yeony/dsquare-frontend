@@ -1,6 +1,6 @@
 <template>
   <div>
-    <DeleteDialog :showDialog="showDialog" @click-confirm="onConfirm" @click-cancel="onCancel" />
+    <DeleteDialog :isShow="isShow" :title="dialogTitle" @click-confirm="onConfirm(0)" @click-cancel="onCancel" />
   </div>
   <v-card>
     <v-card-item>
@@ -197,8 +197,9 @@ export default {
         { title: "수정", id: 0 },
         { title: "삭제", id: 1 },
       ],
-      showDialog: false,
+      isShow: false,
       isWriter: false,
+      dialogTitle: '',
 
     };
   },
@@ -245,7 +246,7 @@ export default {
         });
       } else if (index === 1) {
         console.log("삭제하기")
-        this.showDialog = true;
+        this.showDialog(0)
       }
     },
     editAnswer(index){
@@ -265,17 +266,29 @@ export default {
         // });
       } else if (index === 1) {
         // console.log("삭제하기")
-        // this.showDialog = true;
+        // this.isShow = true;
       }
     },
-    onConfirm(payload) {
-      console.log('confirm payload:', payload);
-      this.showDialog = false;
-      this.requestDelQuestion();
+    showDialog(num) {
+      if (num==0) {
+        this.dialogTitle = '게시물을 삭제하시겠습니까?';
+      } else if (num==1) {
+        this.dialogTitle = '답변을 삭제하시겠습니까?';
+      } else if (num==2) {
+        this.dialogTitle = '댓글을 삭제하시겠습니까?';
+      }
+      this.isShow = true;
+    },
+    onConfirm(num) {
+      console.log('confirm payload:');
+      this.isShow = false;
+      if (num==0) {
+        this.requestDelQuestion();
+      }
     },
     onCancel() {
       console.log('cancel');
-      this.showDialog = false;
+      this.isShow = false;
     },
     async requestDelQuestion() {
       const res = await api.del('board/questions/' + this.$route.query.qid, '').then(
