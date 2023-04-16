@@ -90,7 +90,7 @@
                 </v-btn>
               </template>
               <v-list>
-                <v-list-item v-for="(menu, index) in questionMenu" :key="id" :value="id" @click="editAnswer(index, item.id)">
+                <v-list-item v-for="(menu, index) in questionMenu" :key="id" :value="id" @click="editAnswer(index, item.id, item.content)">
                   <v-list-item-title>{{ menu.title }}</v-list-item-title>
                 </v-list-item>
               </v-list>
@@ -260,10 +260,18 @@ export default {
         this.showDialog(0)
       }
     },
-    editAnswer(index, id){
+    editAnswer(index, id, content){
       this.answerId = id;
       if (index == 0) {
         console.log("답변 수정하기")
+        this.$router.push({
+        path: process.env.VUE_APP_BOARD_QNA_ANSWER_EDIT,
+        query: {
+          qid: this.$route.query.qid,
+          id: id, 
+          content: content
+        }
+      });
       } else if (index == 1) {
         console.log("답변 삭제하기")
         this.showDialog(1)
