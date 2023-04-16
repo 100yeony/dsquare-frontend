@@ -1,6 +1,6 @@
 <template>
   <div>
-    <DeleteDialog :showDialog="showDialog" @click-confirm="onConfirm" @click-cancel="onCancel" />
+    <DeleteDialog :isShow="isShow" :title="dialogTitle" @click-confirm="onConfirm" @click-cancel="onCancel" />
   </div>
   <v-card>
     <v-card-item>
@@ -90,7 +90,7 @@
                 </v-btn>
               </template>
               <v-list>
-                <v-list-item v-for="(menu, index) in questionMenu" :key="id" :value="id" @click="editAnswer(index)">
+                <v-list-item v-for="(menu, index) in questionMenu" :key="id" :value="id" @click="editAnswer(index, item.id, item.content)">
                   <v-list-item-title>{{ menu.title }}</v-list-item-title>
                 </v-list-item>
               </v-list>
@@ -197,9 +197,10 @@ export default {
         { title: "수정", id: 0 },
         { title: "삭제", id: 1 },
       ],
-      showDialog: false,
+      isShow: false,
       isWriter: false,
-
+      selectedPostType: 0,
+      answerId: 0,
     };
   },
   mounted() {
@@ -217,6 +218,17 @@ export default {
       }
     )
     this.requestAnswerData()
+  },
+  computed: {
+    dialogTitle() {
+      if (this.selectedPostType==0) {
+        return '게시물을 삭제하시겠습니까?';
+      } else if(this.selectedPostType==1) {
+        return '답변을 삭제하시겠습니까?'
+      } else if(this.selectedPostType==2) {
+        return '게시글을 삭제하시겠습니까?'
+      }
+    }
   },
   methods: {
     answer() {
@@ -245,40 +257,55 @@ export default {
         });
       } else if (index === 1) {
         console.log("삭제하기")
-        this.showDialog = true;
+        this.showDialog(0)
       }
     },
-    editAnswer(index){
-      if (index === 0) {
-        // console.log("수정하기")
-        // this.$router.push({
-        //   path: process.env.VUE_APP_BOARD_QNA_EDIT,
-        //   query: {
-        //     qid: this.qnaId,
-        //     title: this.qData.title,
-        //     content: this.qData.content,
-        //     upid: this.qData.upid,
-        //     cid: this.qData.cid,
-        //     atcid: this.qData.atc.atcId
-        //   }
+    editAnswer(index, id, content){
+      this.answerId = id;
+      if (index == 0) {
+        console.log("답변 수정하기")
+        this.$router.push({
+        path: process.env.VUE_APP_BOARD_QNA_ANSWER_EDIT,
+        query: {
+          qid: this.$route.query.qid,
+          id: id, 
+          content: content
+        }
+      });
+      } else if (index == 1) {
+        console.log("답변 삭제하기")
+        this.showDialog(1)
+      }
+    },
+    showDialog(num) {
+      this.selectedPostType = num;
+      this.isShow = true;
+    },
+    onConfirm() {
+      console.log('confirm payload:');
+      this.isShow = false;
+      if (this.selectedPostType==0) {
+        this.requestDelQuestion();
+      } else if (this.selectedPostType==1) {
+        this.requestDelAnswer();
+      } else if (this.selectedPostType==2) {
 
-        // });
-      } else if (index === 1) {
-        // console.log("삭제하기")
-        // this.showDialog = true;
       }
-    },
-    onConfirm(payload) {
-      console.log('confirm payload:', payload);
-      this.showDialog = false;
-      this.requestDelQuestion();
     },
     onCancel() {
       console.log('cancel');
-      this.showDialog = false;
+      this.isShow = false;
     },
     async requestDelQuestion() {
       const res = await api.del('board/questions/' + this.$route.query.qid, '').then(
+        (response) => {
+          console.log(response)
+          this.$router.push(process.env.VUE_APP_BOARD_QNA);
+        }
+      )
+    },
+    async requestDelAnswer(num) {
+      const res = await api.del('board/questions/' + this.$route.query.qid + '/answers/' + this.answerId, '').then(
         (response) => {
           console.log(response)
           this.$router.push(process.env.VUE_APP_BOARD_QNA);
@@ -329,7 +356,8 @@ export default {
     async requestAnswerData(){
       var res = await api.get('board/questions/' + this.$route.query.qid + '/answers', '').then(//this.$route.query.qid
         (response)=>{
-          console.log("answer: " + response.data)
+          console.log("answer: ")
+          console.log(response.data)
           this.answerList = response.data 
         }
       )

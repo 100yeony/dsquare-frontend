@@ -55,6 +55,15 @@ export default [
         component: () => import("@/pages/board/qna/answer"),
       },
       {
+        path: process.env.VUE_APP_BOARD_QNA_ANSWER_EDIT, 
+        name: "qna-answer-edit",
+        meta: {
+          title: "궁금해요 답변 수정",
+          back: process.env.VUE_APP_BOARD_QNA_DETAIL
+        },
+        component: () => import("@/pages/board/qna/answer_edit"),
+      },
+      {
         path: process.env.VUE_APP_BOARD_QNA_EDIT, 
         name: "qna-edit",
         meta: {
