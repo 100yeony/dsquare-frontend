@@ -1,6 +1,6 @@
 <template>
   <div>
-    <DeleteDialog :isShow="isShow" :title="dialogTitle" @click-confirm="onConfirm(0)" @click-cancel="onCancel" />
+    <DeleteDialog :isShow="isShow" :title="dialogTitle" @click-confirm="onConfirm" @click-cancel="onCancel" />
   </div>
   <v-card>
     <v-card-item>
@@ -90,7 +90,7 @@
                 </v-btn>
               </template>
               <v-list>
-                <v-list-item v-for="(menu, index) in questionMenu" :key="id" :value="id" @click="editAnswer(index)">
+                <v-list-item v-for="(menu, index) in questionMenu" :key="id" :value="id" @click="editAnswer(index, item.id)">
                   <v-list-item-title>{{ menu.title }}</v-list-item-title>
                 </v-list-item>
               </v-list>
@@ -199,8 +199,8 @@ export default {
       ],
       isShow: false,
       isWriter: false,
-      dialogTitle: '',
-
+      selectedPostType: 0,
+      answerId: 0,
     };
   },
   mounted() {
@@ -218,6 +218,17 @@ export default {
       }
     )
     this.requestAnswerData()
+  },
+  computed: {
+    dialogTitle() {
+      if (this.selectedPostType==0) {
+        return '게시물을 삭제하시겠습니까?';
+      } else if(this.selectedPostType==1) {
+        return '답변을 삭제하시겠습니까?'
+      } else if(this.selectedPostType==2) {
+        return '게시글을 삭제하시겠습니까?'
+      }
+    }
   },
   methods: {
     answer() {
@@ -249,41 +260,28 @@ export default {
         this.showDialog(0)
       }
     },
-    editAnswer(index){
-      if (index === 0) {
-        // console.log("수정하기")
-        // this.$router.push({
-        //   path: process.env.VUE_APP_BOARD_QNA_EDIT,
-        //   query: {
-        //     qid: this.qnaId,
-        //     title: this.qData.title,
-        //     content: this.qData.content,
-        //     upid: this.qData.upid,
-        //     cid: this.qData.cid,
-        //     atcid: this.qData.atc.atcId
-        //   }
-
-        // });
-      } else if (index === 1) {
-        // console.log("삭제하기")
-        // this.isShow = true;
+    editAnswer(index, id){
+      this.answerId = id;
+      if (index == 0) {
+        console.log("답변 수정하기")
+      } else if (index == 1) {
+        console.log("답변 삭제하기")
+        this.showDialog(1)
       }
     },
     showDialog(num) {
-      if (num==0) {
-        this.dialogTitle = '게시물을 삭제하시겠습니까?';
-      } else if (num==1) {
-        this.dialogTitle = '답변을 삭제하시겠습니까?';
-      } else if (num==2) {
-        this.dialogTitle = '댓글을 삭제하시겠습니까?';
-      }
+      this.selectedPostType = num;
       this.isShow = true;
     },
-    onConfirm(num) {
+    onConfirm() {
       console.log('confirm payload:');
       this.isShow = false;
-      if (num==0) {
+      if (this.selectedPostType==0) {
         this.requestDelQuestion();
+      } else if (this.selectedPostType==1) {
+        this.requestDelAnswer();
+      } else if (this.selectedPostType==2) {
+
       }
     },
     onCancel() {
@@ -292,6 +290,14 @@ export default {
     },
     async requestDelQuestion() {
       const res = await api.del('board/questions/' + this.$route.query.qid, '').then(
+        (response) => {
+          console.log(response)
+          this.$router.push(process.env.VUE_APP_BOARD_QNA);
+        }
+      )
+    },
+    async requestDelAnswer(num) {
+      const res = await api.del('board/questions/' + this.$route.query.qid + '/answers/' + this.answerId, '').then(
         (response) => {
           console.log(response)
           this.$router.push(process.env.VUE_APP_BOARD_QNA);
@@ -342,7 +348,8 @@ export default {
     async requestAnswerData(){
       var res = await api.get('board/questions/' + this.$route.query.qid + '/answers', '').then(//this.$route.query.qid
         (response)=>{
-          console.log("answer: " + response.data)
+          console.log("answer: ")
+          console.log(response.data)
           this.answerList = response.data 
         }
       )
