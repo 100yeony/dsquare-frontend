@@ -100,6 +100,15 @@ export default [
 				component: () => import("@/pages/board/communication/_id"),
 			},
       {
+        path: process.env.VUE_APP_BOARD_COMMUNICATION_EDIT, 
+        name: "communication-edit",
+        meta: {
+          title: "소통해요 수정",
+          back: process.env.VUE_APP_BOARD_COMMUNICATION_DETAIL
+        },
+        component: () => import("@/pages/board/communication/edit"),
+      },
+      {
         path: process.env.VUE_APP_BOARD_DEAL,
         name: "deal",
         meta: {
@@ -113,7 +122,7 @@ export default [
         name: "deal-write",
         meta: {
           title: "당근해요 작성",
-          back: process.env.VUE_APP_BOARD_COMMUNICATION
+          back: process.env.VUE_APP_BOARD_DEAL
         },
         component: () => import("@/pages/board/deal/editor"),
       },
@@ -122,10 +131,19 @@ export default [
 				name: "deal-detail",
 				meta: {
           title: "당근해요 상세",
-          back: process.env.VUE_APP_BOARD_COMMUNICATION
+          back: process.env.VUE_APP_BOARD_DEAL
 				},
 				component: () => import("@/pages/board/deal/_id"),
 			},
+      {
+        path: process.env.VUE_APP_BOARD_DEAL_EDIT, 
+        name: "deal-edit",
+        meta: {
+          title: "당근해요 수정",
+          back: process.env.VUE_APP_BOARD_DEAL_DETAIL
+        },
+        component: () => import("@/pages/board/deal/edit"),
+      },
       {
         path: process.env.VUE_APP_BOARD_CARD,
         name: "card",
