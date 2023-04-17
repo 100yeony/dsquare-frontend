@@ -37,7 +37,7 @@ export default {
   methods: {
     async edit(editorData) {
       console.log(editorData);
-      const res = await api.post('/board/questions/' + this.$route.query.qid + '/answers/' + this.$route.query.id, {
+      const res = await api.post('board/questions/' + this.$route.query.qid + '/answers/' + this.$route.query.id, {
         content: this.editorData,
         atc: {
           "originFileName": "테스트파일",

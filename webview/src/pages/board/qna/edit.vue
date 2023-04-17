@@ -2,7 +2,6 @@
 import CKEditor from "@ckeditor/ckeditor5-vue";
 import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
 import FileUploadAdapter from "@/utils/fileUploaderAdapter";
-import { required } from "@vuelidate/validators";
 import { watch, onMounted, ref } from "vue";
 import api from '@/api';
 import store from "@/store";
@@ -12,19 +11,6 @@ import { useRoute, useRouter } from 'vue-router';
 export default {
   components: {
     ckeditor: CKEditor.component,
-  },
-  validations() {
-    return {
-      title: {
-        required,
-      },
-      editorData: {
-        required,
-      },
-      cid: {
-        required,
-      },
-    };
   },
   setup() {
     let chipData = ref(new Set());
@@ -51,7 +37,7 @@ export default {
   data() {
     return {
       editor: ClassicEditor,
-      editorData: "<h6>내용을 입력해주세요.</h6>",
+      editorData: this.$route.query.content,
       editorConfig: {
         // 상세 수정은 https://ckeditor.com
         extraPlugins: [this.uploader],
@@ -64,9 +50,9 @@ export default {
       selectedSubArea: [],
       placeholderText: '',
       isWork: true,
-      title: '',
+      title: this.$route.query.title,
       tags: [],
-      cid: '',
+      cid: this.$route.query.cid,
       submitted: false,
     };
   },
@@ -74,11 +60,18 @@ export default {
     selectedArea: function (newVal, oldVal) {
       console.log(newVal)
       console.log(oldVal)
+      if (typeof oldVal === 'string') {
+        console.log("----")
+        this.cid = ''
+      }
     },
     selectedSubArea: function (newVal, oldVal) {
       console.log(newVal)
       console.log(oldVal)
-      this.cid = this.cidData[newVal]
+      if (typeof newVal === 'string'){
+        this.cid = this.cidData[newVal]
+        console.log(this.cid)
+      }
     }
   },
   computed: {
@@ -91,9 +84,21 @@ export default {
       } else {
         return ''
       }
+    },
+    editorValidation(){
+      console.log("editorValidation:")
+      console.log(this.cid)
+      console.log(this.title)
+      console.log(this.editorData)
+      if (this.cid !== '' && this.title !=='' && this.editorData !== ''){
+        return true; 
+      } else{
+        return false; 
+      }
     }
   },
   mounted() {
+    console.log("mounted:")
     this.area = store.getters["info/infoArea"]
     this.areaItems = this.area.areaList.slice(1)
     this.cid = this.$route.query.cid
@@ -104,6 +109,8 @@ export default {
       this.isWork = false;
       console.log(this.isWork)
     } else {
+      console.log(this.categoriesAll)
+      console.log(this.$route.query.upid)
       this.selectedArea = this.categoriesAll[this.$route.query.upid - 1]
       this.selectedSubArea = this.categoriesAll[this.$route.query.cid - 1]
       this.subAreaItems = this.area.subAreaList[this.areaItems.indexOf(this.selectedArea)]
@@ -184,10 +191,6 @@ export default {
       <div class="font-sm font-medium mt-2">제목</div>
       <v-text-field v-model="title" placeholder="제목을 입력해주세요." variant="outlined" density="compact" hide-details
         class="mt-2" />
-      <!-- <div v-if="submitted && title.required.invalid" class="invalid-feedback">
-            <v-icon size="x-small" color="red">mdi-close-circle-outline</v-icon>
-            <span class="font-xs font_red">제목을 입력해주세요.</span>
-          </div> -->
 
       <v-row v-if="this.isWork" align="center" class="mt-2">
         <v-col>
@@ -203,25 +206,16 @@ export default {
             class="mt-2"></v-select>
         </v-col>
       </v-row>
-      <!-- <div v-if="submitted && v$.cid.required.$invalid" class="invalid-feedback">
-            <v-icon size="x-small" color="red">mdi-close-circle-outline</v-icon>
-            <span class="font-xs font_red">분야를 선택해주세요.</span>
-          </div> -->
 
       <div class="font-sm font-medium mt-7 mb-2">본문</div>
       <ckeditor v-model="editorData" :editor="editor" :config="editorConfig" height="200"></ckeditor>
-      <!-- <div v-if="submitted && v$.editorData.required.$invalid" class="invalid-feedback">
-            <v-icon size="x-small" color="red">mdi-close-circle-outline</v-icon>
-            <span class="font-xs font_red">내용을 입력해주세요.</span>
-          </div> -->
-
 
       <v-row class="mt-5" align="center">
         <v-col cols="6">
           <v-btn block variant="" class="button_white font-medium" @click="cancle">취소</v-btn>
         </v-col>
         <v-col cols="6">
-          <v-btn block variant="" class="button_main font-medium" type="submit">수정</v-btn>
+          <v-btn block variant="" class="button_main font-medium" type="submit" :disabled="!editorValidation">수정</v-btn>
         </v-col>
       </v-row>
     </div>

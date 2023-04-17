@@ -116,9 +116,7 @@ export default {
     }
     let cidData = {};
     categoriesAll.forEach((value, index) => cidData[value] = index + 1);
-    
-
-    let searchUri = "/board/questions";
+  
     // const page = ref(1);
 
     // const loadMore = async () => {
@@ -131,7 +129,6 @@ export default {
       categoryItems,
       subcategoryFullList,
       cidData,
-      searchUri,
     };
   },
   data() {

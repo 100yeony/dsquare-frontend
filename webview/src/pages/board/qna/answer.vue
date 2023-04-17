@@ -37,7 +37,7 @@ export default {
   methods: {
     async write(editorData) {
       console.log(editorData);
-      const res = await api.post('/board/questions/' + this.$route.query.qid + '/answers', {
+      const res = await api.post('board/questions/' + this.$route.query.qid + '/answers', {
         writerId: store.getters["info/infoUser"].userId,
         content: this.editorData,
         atc: {
