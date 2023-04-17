@@ -6,10 +6,17 @@ import { watch, onMounted, ref } from "vue";
 //import { generateKey } from "crypto";
 import api from '@/api';
 import store from "@/store";
+import { useRoute, useRouter } from 'vue-router';
 
 export default {
   components: {
     ckeditor: CKEditor.component,
+  },
+  setup(){
+    const route = useRoute();
+    console.log("setup__")
+    console.log(route.query.qid)
+    store.dispatch("url/setUrlQuery", { qid: route.query.qid })
   },
   data() {
     return {
@@ -30,7 +37,7 @@ export default {
   methods: {
     async edit(editorData) {
       console.log(editorData);
-      const res = await api.post('/board/questions/' + this.$route.query.qid + '/answers/' + this.$route.query.id, {
+      const res = await api.post('board/questions/' + this.$route.query.qid + '/answers/' + this.$route.query.id, {
         content: this.editorData,
         atc: {
           "originFileName": "테스트파일",
@@ -39,8 +46,7 @@ export default {
         }
       }).then(
         (response) => {
-          this.$router.push(process.env.VUE_APP_BOARD_QNA);
-          console.log(response)
+          this.cancle();
         }
       )
     },
@@ -50,7 +56,12 @@ export default {
       };
     },
     cancle() {
-      this.$router.push(process.env.VUE_APP_BOARD_QNA_DETAIL);
+      this.$router.replace({
+        path: process.env.VUE_APP_BOARD_QNA_DETAIL,
+        query: {
+          qid: this.$route.query.qid
+        }
+      });
     }
 
   },

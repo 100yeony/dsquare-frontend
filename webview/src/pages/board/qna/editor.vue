@@ -12,19 +12,6 @@ export default {
   components: {
     ckeditor: CKEditor.component,
   },
-  // validations() {
-  //   return {
-  //     title: {
-  //       required,
-  //     },
-  //     editorData: {
-  //       required,
-  //     },
-  //     cid: {
-  //       required,
-  //     },
-  //   };
-  // },
   setup() {
     let chipData = ref(new Set());
     let chipText = ref("");
@@ -66,13 +53,19 @@ export default {
   },
   watch: {
     selectedArea: function (newVal, oldVal) {
+      console.log("area: ")
       console.log(newVal)
       console.log(oldVal)
+      this.cid = ''
     },
     selectedSubArea: function (newVal, oldVal) {
+      console.log("sub area: ")
       console.log(newVal)
       console.log(oldVal)
-      this.cid = this.cidData[newVal]
+      if (typeof newVal === 'string'){
+        this.cid = this.cidData[newVal]
+        console.log(this.cid)
+      }
     }
   },
   computed: {
