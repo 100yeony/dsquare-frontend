@@ -90,7 +90,8 @@
                 </v-btn>
               </template>
               <v-list>
-                <v-list-item v-for="(menu, index) in questionMenu" :key="id" :value="id" @click="editAnswer(index, item.id, item.content)">
+                <v-list-item v-for="(menu, index) in questionMenu" :key="id" :value="id"
+                  @click="editAnswer(index, item.id, item.content)">
                   <v-list-item-title>{{ menu.title }}</v-list-item-title>
                 </v-list-item>
               </v-list>
@@ -221,11 +222,11 @@ export default {
   },
   computed: {
     dialogTitle() {
-      if (this.selectedPostType==0) {
+      if (this.selectedPostType == 0) {
         return '게시물을 삭제하시겠습니까?';
-      } else if(this.selectedPostType==1) {
+      } else if (this.selectedPostType == 1) {
         return '답변을 삭제하시겠습니까?'
-      } else if(this.selectedPostType==2) {
+      } else if (this.selectedPostType == 2) {
         return '게시글을 삭제하시겠습니까?'
       }
     }
@@ -257,21 +258,25 @@ export default {
         });
       } else if (index === 1) {
         console.log("삭제하기")
-        this.showDialog(0)
+        if (this.answerList.length==0){
+          this.showDialog(0)
+        } else {
+          console.log("답변이 있어 삭제 못함.")
+        }
       }
     },
-    editAnswer(index, id, content){
+    editAnswer(index, id, content) {
       this.answerId = id;
       if (index == 0) {
         console.log("답변 수정하기")
         this.$router.push({
-        path: process.env.VUE_APP_BOARD_QNA_ANSWER_EDIT,
-        query: {
-          qid: this.$route.query.qid,
-          id: id, 
-          content: content
-        }
-      });
+          path: process.env.VUE_APP_BOARD_QNA_ANSWER_EDIT,
+          query: {
+            qid: this.$route.query.qid,
+            id: id,
+            content: content
+          }
+        });
       } else if (index == 1) {
         console.log("답변 삭제하기")
         this.showDialog(1)
@@ -284,11 +289,11 @@ export default {
     onConfirm() {
       console.log('confirm payload:');
       this.isShow = false;
-      if (this.selectedPostType==0) {
+      if (this.selectedPostType == 0) {
         this.requestDelQuestion();
-      } else if (this.selectedPostType==1) {
+      } else if (this.selectedPostType == 1) {
         this.requestDelAnswer();
-      } else if (this.selectedPostType==2) {
+      } else if (this.selectedPostType == 2) {
 
       }
     },
@@ -308,7 +313,12 @@ export default {
       const res = await api.del('board/questions/' + this.$route.query.qid + '/answers/' + this.answerId, '').then(
         (response) => {
           console.log(response)
-          this.$router.push(process.env.VUE_APP_BOARD_QNA);
+          this.$router.replace({
+            path: process.env.VUE_APP_BOARD_QNA_DETAIL,
+            query: {
+              qid: this.$route.query.qid
+            }
+          });
         }
       )
     },
@@ -353,12 +363,12 @@ export default {
         managerId: 1,
       }
     },
-    async requestAnswerData(){
+    async requestAnswerData() {
       var res = await api.get('board/questions/' + this.$route.query.qid + '/answers', '').then(//this.$route.query.qid
-        (response)=>{
+        (response) => {
           console.log("answer: ")
           console.log(response.data)
-          this.answerList = response.data 
+          this.answerList = response.data
         }
       )
     }

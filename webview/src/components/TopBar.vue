@@ -74,7 +74,8 @@ export default {
     const store = useStore();
     const menuTitle = computed(() => store.getters["layout/menuTitle"]);
     const back = computed(() => store.getters["url/urlBack"]);
-    return { menuTitle, back };
+    const query = computed(() => store.getters["url/urlQuery"]);
+    return { menuTitle, back, query };
   },
   data: () => ({
     notifications: [
@@ -90,7 +91,10 @@ export default {
   methods: {
     onclickBackBtn() {
       if (!stringUtils.isEmptyBool(this.back)) {
-        this.$router.replace(this.back);
+        this.$router.replace({
+          path: this.back,
+          query: this.query
+        });
       }
     },
     onClickMenuItem(item) {

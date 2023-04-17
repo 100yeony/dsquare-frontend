@@ -6,6 +6,8 @@ import { required } from "@vuelidate/validators";
 import { watch, onMounted, ref } from "vue";
 import api from '@/api';
 import store from "@/store";
+import { useRoute, useRouter } from 'vue-router';
+
 
 export default {
   components: {
@@ -38,6 +40,11 @@ export default {
     }
     let cidData = {};
     categoriesAll.forEach((value, index) => cidData[value] = index + 1);
+
+    const route = useRoute();
+    console.log("setup__")
+    console.log(route.query.qid)
+    store.dispatch("url/setUrlQuery", { qid: route.query.qid })
 
     return { chipData, chipText, cidData, categoriesAll };
   },
@@ -97,11 +104,11 @@ export default {
       this.isWork = false;
       console.log(this.isWork)
     } else {
-      this.selectedArea = this.categoriesAll[this.$route.query.upid-1]
-      this.selectedSubArea = this.categoriesAll[this.$route.query.cid-1]
+      this.selectedArea = this.categoriesAll[this.$route.query.upid - 1]
+      this.selectedSubArea = this.categoriesAll[this.$route.query.cid - 1]
       this.subAreaItems = this.area.subAreaList[this.areaItems.indexOf(this.selectedArea)]
-      console.log("area: " + this.categoriesAll[this.$route.query.upid-1])
-      console.log("sub_area: " + this.categoriesAll[this.$route.query.cid-1])  
+      console.log("area: " + this.categoriesAll[this.$route.query.upid - 1])
+      console.log("sub_area: " + this.categoriesAll[this.$route.query.cid - 1])
     }
 
   },
@@ -112,17 +119,17 @@ export default {
       //this.v$.$touch();
 
       //if (!this.v$.$error) {
-        console.log("-----------")
-        console.log(this.$route.query.qid)
-        const res = await api.post('board/questions/'+this.$route.query.qid, {
-          cid: this.cid,
-          content: editorData,
-          title: this.title,
-          atcId: this.$route.query.atcid
-        }).then((response) => {
-          console.log(response)
-          this.$router.push(process.env.VUE_APP_BOARD_QNA);
-        });
+      console.log("-----------")
+      console.log(this.$route.query.qid)
+      const res = await api.post('board/questions/' + this.$route.query.qid, {
+        cid: this.cid,
+        content: editorData,
+        title: this.title,
+        atcId: this.$route.query.atcid
+      }).then((response) => {
+        console.log(response)
+        this.cancle()
+      });
       //}
 
     },
@@ -155,7 +162,12 @@ export default {
       }
     },
     cancle() {
-      this.$router.push(process.env.VUE_APP_BOARD_QNA);
+      this.$router.replace({
+        path: process.env.VUE_APP_BOARD_QNA_DETAIL,
+        query: {
+          qid: this.$route.query.qid
+        }
+      });
     },
     categoryChanged() {
       var areaIndex = this.areaItems.indexOf(this.selectedArea);
@@ -173,9 +185,9 @@ export default {
       <v-text-field v-model="title" placeholder="제목을 입력해주세요." variant="outlined" density="compact" hide-details
         class="mt-2" />
       <!-- <div v-if="submitted && title.required.invalid" class="invalid-feedback">
-        <v-icon size="x-small" color="red">mdi-close-circle-outline</v-icon>
-        <span class="font-xs font_red">제목을 입력해주세요.</span>
-      </div> -->
+            <v-icon size="x-small" color="red">mdi-close-circle-outline</v-icon>
+            <span class="font-xs font_red">제목을 입력해주세요.</span>
+          </div> -->
 
       <v-row v-if="this.isWork" align="center" class="mt-2">
         <v-col>
@@ -192,16 +204,16 @@ export default {
         </v-col>
       </v-row>
       <!-- <div v-if="submitted && v$.cid.required.$invalid" class="invalid-feedback">
-        <v-icon size="x-small" color="red">mdi-close-circle-outline</v-icon>
-        <span class="font-xs font_red">분야를 선택해주세요.</span>
-      </div> -->
+            <v-icon size="x-small" color="red">mdi-close-circle-outline</v-icon>
+            <span class="font-xs font_red">분야를 선택해주세요.</span>
+          </div> -->
 
       <div class="font-sm font-medium mt-7 mb-2">본문</div>
       <ckeditor v-model="editorData" :editor="editor" :config="editorConfig" height="200"></ckeditor>
       <!-- <div v-if="submitted && v$.editorData.required.$invalid" class="invalid-feedback">
-        <v-icon size="x-small" color="red">mdi-close-circle-outline</v-icon>
-        <span class="font-xs font_red">내용을 입력해주세요.</span>
-      </div> -->
+            <v-icon size="x-small" color="red">mdi-close-circle-outline</v-icon>
+            <span class="font-xs font_red">내용을 입력해주세요.</span>
+          </div> -->
 
 
       <v-row class="mt-5" align="center">
