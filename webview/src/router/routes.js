@@ -191,17 +191,9 @@ export default [
         path: process.env.VUE_APP_MYPAGE_MYCOMMENT,
         name: "mypage-mycomment",
         meta: {
-          title: "내 답변/댓글",
+          title: "내 답변",
         },
         component: () => import("@/pages/mypage/myComment"),
-      },
-      {
-        path: process.env.VUE_APP_MYPAGE_MYMENTION,
-        name: "mypage-mymention",
-        meta: {
-          title: "Mention",
-        },
-        component: () => import("@/pages/mypage/myMention"),
       },
       {
         path: process.env.VUE_APP_MYPAGE_MYINFO,
@@ -278,5 +270,13 @@ export default [
       title: "로그인",
     },
     component: () => import("@/pages/account/login"),
-  }
+  },
+  {
+    path: process.env.VUE_APP_DELETE_MEMBER,
+    name: "delete-member",
+    meta: {
+      title: "회원탈퇴",
+    },
+    component: () => import("@/pages/mypage/deleteMember"),
+  },
 ];

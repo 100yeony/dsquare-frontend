@@ -12,6 +12,7 @@ import iconLayoutList from "@/assets/images/icons/icon_layout-list.png";
 import iconSmile from "@/assets/images/icons/icon_smile.png";
 import iconAtSign from "@/assets/images/icons/icon_at_sign.png";
 import iconUsers from "@/assets/images/icons/icon_users.png";
+import iconLogout from "@/assets/images/icons/icon_logout.png";
 
 export const menuItems = [
   {
@@ -63,21 +64,24 @@ export const menuItems = [
   },
   {
     value: 6,
-    title: "내 답변/댓글",
+    title: "내 답변",
     icon: iconSmile,
     url: process.env.VUE_APP_MYPAGE_MYCOMMENT,
   },
   {
     value: 7,
-    title: "Mention",
-    icon: iconAtSign,
-    chip: 2,
-    url: process.env.VUE_APP_MYPAGE_MYMENTION,
-  },
-  {
-    value: 8,
     title: "회원정보 관리",
     icon: iconUsers,
     url: process.env.VUE_APP_MYPAGE_MYINFO,
+  },
+  {
+    type: "subheader",
+    title: "Logout",
+    url: "",
+  },
+  {
+    value: 8,
+    title: "로그아웃", 
+    icon: iconLogout,
   },
 ];
