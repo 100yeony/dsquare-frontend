@@ -1,5 +1,6 @@
 import axios from 'axios'
 import store from "@/store";
+import router from "@/router/index";
 // import router from '@/router/index'
 // import dayjs from "dayjs";
 // import { v4 } from 'uuid';
@@ -182,6 +183,7 @@ const fn = {
   },
   ErrorPayload(err) {
     console.log('ErrorPayload', err)
+    console.log(err.response.data)
     return {
       code: err?.code,
       msg: err?.msg || 'FAIL',
@@ -189,6 +191,22 @@ const fn = {
       messageInfo: '서비스 요청이 실패하였습니다.',
       resData: null,
     }
+  },
+  tokenErrorCheck(err) {
+    if (err?.response?.data?.code == '401001') {
+      console.log("it's token expired")
+      return true
+    } else {
+      return false
+    }
+  },
+  async requestRefresh() {
+    var token = store.getters["info/infoToken"]
+    apiInstance = axios.create({
+      baseURL: 'http://localhost:8090'
+    })
+    const res = await apiInstance.post('auth/refresh', { refreshToken: token.refreshToken })
+    return res
   },
   getBaseUrl() {
     return apiInstance.defaults.baseURL
@@ -202,6 +220,12 @@ const fn = {
       headers: { Authorization: 'Bearer ' + token.accessToken }
     })
   },
+  expiredToken() {
+    console.log("로그인 화면으로")
+    store.dispatch('info/setInfoToken', { accessToken: '', refreshToken: '' }); // 토큰값을 제거해줍니다.
+    router.push(process.env.VUE_APP_LOGIN);
+  }
+  ,
   async post(uri, params, headers) {
     try {
       console.log('[POST]', uri, params)
@@ -209,21 +233,61 @@ const fn = {
       const res = await apiInstance.post(`${prefix + uri}`, params, { headers: headers })
       return this.ResponsePayload(res)
     } catch (err) {
-      return this.ErrorPayload(err)
+      if (this.tokenErrorCheck(err)) {
+        var flag = await this.requestRefresh().then(
+          (res) => {
+            store.dispatch('info/setInfoToken', { accessToken: res.data.accessToken, refreshToken: res.data.refreshToken });
+            this.setDefaultToken()
+            console.log(res)
+            return true
+          }
+        ).catch(
+          (err) => {
+            return false
+          }
+        )
+        if (flag) {
+          const res = await apiInstance.post(`${prefix + uri}`, params, { headers: headers })
+          return this.ResponsePayload(res)
+        } else {
+          this.expiredToken()
+        }
+
+      } else {
+        return this.ErrorPayload(err)
+      }
     }
   },
 
   async get(uri, params, headers) {
     try {
       console.log('[GET]', uri, params)
-      // if (!headers) headers = {}
-      // headers['Authorization'] = localStorage.getItem('Authorization')
-      // headers['routPath'] = location.pathname
-      // headers['routName'] = router.currentRoute.name
       const res = await apiInstance.get(`${prefix + uri}`, params, { headers: headers })
       return this.ResponsePayload(res)
     } catch (err) {
-      return this.ErrorPayload(err)
+      if (this.tokenErrorCheck(err)) {
+        var flag = await this.requestRefresh().then(
+          (res) => {
+            store.dispatch('info/setInfoToken', { accessToken: res.data.accessToken, refreshToken: res.data.refreshToken });
+            this.setDefaultToken()
+            console.log(res)
+            return true
+          }
+        ).catch(
+          (err) => {
+            return false
+          }
+        )
+        if (flag) {
+          const res = await apiInstance.get(`${prefix + uri}`, params, { headers: headers })
+          return this.ResponsePayload(res)
+        } else {
+          this.expiredToken()
+        }
+
+      } else {
+        return this.ErrorPayload(err)
+      }
     }
   },
 
@@ -233,7 +297,29 @@ const fn = {
       const res = await apiInstance.delete(`${prefix + uri}`, params, { headers: headers })
       return this.ResponsePayload(res)
     } catch (err) {
-      return this.ErrorPayload(err)
+      if (this.tokenErrorCheck(err)) {
+        var flag = await this.requestRefresh().then(
+          (res) => {
+            store.dispatch('info/setInfoToken', { accessToken: res.data.accessToken, refreshToken: res.data.refreshToken });
+            this.setDefaultToken()
+            console.log(res)
+            return true
+          }
+        ).catch(
+          (err) => {
+            return false
+          }
+        )
+        if (flag) {
+          const res = await apiInstance.delete(`${prefix + uri}`, params, { headers: headers })
+          return this.ResponsePayload(res)
+        } else {
+          this.expiredToken()
+        }
+
+      } else {
+        return this.ErrorPayload(err)
+      }
     }
   },
 }
