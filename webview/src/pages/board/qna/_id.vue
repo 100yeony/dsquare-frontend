@@ -15,7 +15,7 @@
           </div>
         </v-col>
         <v-col cols="4">
-          <div class="text-caption font-0000008F">{{ qData.lastUpdateDate }}</div>
+          <div class="text-caption font-0000008F">{{ qData.createDate }}</div>
         </v-col>
         <v-col cols="2">
           <v-menu v-if="isWriter">
@@ -66,8 +66,8 @@
 
   <!-- ***** 답변 ***** -->
   <div v-for="(item, index) in answerList" :value="item.id">
-    <v-card :color="item.writerId == qData.managerId ? '#E8F2E1' : ''" class="mt-4">
-      <v-card-title v-if="item.writerId == qData.managerId" class="font-6DAE43">
+    <v-card :color="item.writerInfo.id == qData.managerId ? '#E8F2E1' : ''" class="mt-4">
+      <v-card-title v-if="item.writerInfo.id == qData.managerId" class="font-6DAE43">
         <v-icon class="mr-2">mdi-checkbox-marked-circle-outline</v-icon>담당자 답변 완료
       </v-card-title>
       <v-card-item>
@@ -78,12 +78,12 @@
           </v-col>
           <v-col cols="8">
             <div class="text-body font-bold">
-              <v-row> 홍길동 </v-row>
-              <v-row class="text-caption font-0000008F"> --팀 </v-row>
+              <v-row> {{ item.writerInfo.name }} </v-row>
+              <v-row class="text-caption font-0000008F"> {{ item.writerInfo.teamHierarchy[item.writerInfo.teamHierarchy.length - 1] }}</v-row>
             </div>
           </v-col>
           <v-col cols="2">
-            <v-menu>
+            <v-menu v-if="this.user.userId == item.writerInfo.id">
               <template v-slot:activator="{ props }">
                 <v-btn icon flat rounded="0" v-bind="props" color="transparent">
                   <v-icon>mdi-dots-horizontal</v-icon>
@@ -91,7 +91,7 @@
               </template>
               <v-list>
                 <v-list-item v-for="(menu, index) in questionMenu" :key="id" :value="id"
-                  @click="editAnswer(index, item.id, item.content)">
+                  @click="editAnswer(index, item.aid, item.content)">
                   <v-list-item-title>{{ menu.title }}</v-list-item-title>
                 </v-list-item>
               </v-list>
@@ -168,6 +168,7 @@ export default {
   },
   data() {
     return {
+      user: store.getters["info/infoUser"],
       qnaId: 0,
       qData: {
         name: "",
@@ -181,10 +182,10 @@ export default {
         },
         cname: '',
         cid: 0,
-        upid: 0,
+        upCategory: '',
         title: '',
         content: '',
-        lastUpdateDate: '',
+        createDate: '',
         viewCnt: 0,
         likes: 0,
         tags: [],
@@ -208,12 +209,12 @@ export default {
     this.qnaId = this.$route.query.qid
     console.log("--mounted")
     console.log(this.$route.query.qid);
-    const user = store.getters["info/infoUser"]
     const questionData = this.requestQuestionData()
     questionData.then(
       (response) => {
         this.qData = this.parseToQData(response.data)
-        if (user.userId === response.data.writerId) {
+        console.log(this.user.userId, response.data.writerId)
+        if (this.user.userId == response.data.writerInfo.id) {
           this.isWriter = true;
         }
       }
@@ -250,7 +251,7 @@ export default {
             qid: this.qnaId,
             title: this.qData.title,
             content: this.qData.content,
-            upid: this.qData.upid,
+            upCategory: this.qData.upCategory,
             cid: this.qData.cid,
             atcid: this.qData.atc.atcId
           }
@@ -312,13 +313,14 @@ export default {
     async requestDelAnswer(num) {
       const res = await api.del('board/questions/' + this.$route.query.qid + '/answers/' + this.answerId, '').then(
         (response) => {
-          console.log(response)
-          this.$router.replace({
-            path: process.env.VUE_APP_BOARD_QNA_DETAIL,
-            query: {
-              qid: this.$route.query.qid
-            }
-          });
+          // console.log(response)
+          // this.$router.replace({
+          //   path: process.env.VUE_APP_BOARD_QNA_DETAIL,
+          //   query: {
+          //     qid: this.$route.query.qid
+          //   }
+          // });
+          this.requestAnswerData()
         }
       )
     },
@@ -341,8 +343,8 @@ export default {
       console.log("parse_data:  ", data)
       console.log("parse_cid  :", data.cid)
       return {
-        name: "변상진",
-        team: "메시징DX플랫폼",
+        name: data.writerInfo.name,
+        team: data.writerInfo.teamHierarchy[data.writerInfo.teamHierarchy.length - 1],
         atc: {
           atcId: 1,
           fileUrl: "https://ktds.dsquare.co.kr/테스트파일.xlsx",
@@ -350,16 +352,16 @@ export default {
           createDate: "2023-03-23 21:02:12",
           fileSize: 512345,
         },
-        cname: data.cid.name,
-        upid: Number(data.cid.upId),
-        cid: data.cid.cid,
+        cname: data.category.name,
+        upCategory: data.category.categoryHierarchy[1],
+        cid: data.category.cid,
         title: data.title,
         content: data.content,
-        lastUpdateDate: this.exportDateFromTimeStamp(data.lastUpdateDate),
+        createDate: this.exportDateFromTimeStamp(data.createDate),
         viewCnt: data.viewCnt,
         likes: 1,
         tags: ["jsp", "js", "jquery"],
-        writerId: data.writerId,
+        writerId: data.writerInfo.id,
         managerId: 1,
       }
     },

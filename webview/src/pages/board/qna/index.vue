@@ -5,7 +5,8 @@
     <p class="text-caption my-3 font-0000008F">
       분야별 궁금한 부분을 질문해보세요. 각 분야의 담당자가 답변해드립니다.
     </p>
-    <v-tabs fixed-tabs class="mt-5" bg-color="shades-black" color="shades-white" selected-class="shades-white" v-model="qnaTab">
+    <v-tabs fixed-tabs class="mt-5" bg-color="shades-black" color="shades-white" selected-class="shades-white"
+      v-model="qnaTab">
       <v-tab v-for="(i, index) in qnaTabTitle.length" :key="index" :value="index" selected-class="shades-white">
         {{ qnaTabTitle[index] }}
       </v-tab>
@@ -24,20 +25,20 @@
                     :items="categoryItems" @update:modelValue="categoryChanged"></v-select>
                 </v-col>
                 <v-col cols="6" class="mb-0 pb-0">
-                  <v-select v-model="subcategory" class="text-truncate" placeholder="소분야" variant="outlined" density="compact"
-                    :items="subcategoryItems" :disabled="!subcategoryItems.length"></v-select>
+                  <v-select v-model="subcategory" class="text-truncate" placeholder="소분야" variant="outlined"
+                    density="compact" :items="subcategoryItems" :disabled="!subcategoryItems.length"></v-select>
                 </v-col>
               </v-row>
               <v-row>
                 <v-col cols="4" class="pr-0 pt-0">
-                  <v-select v-model="searchKey" placeholder="구분" class="text-truncate" variant="outlined" density="compact"
-                    :items="['제목 + 내용', '작성자']"></v-select>
+                  <v-select v-model="searchKey" placeholder="구분" class="text-truncate" variant="outlined"
+                    density="compact" :items="['제목 + 내용', '작성자']"></v-select>
                 </v-col>
                 <v-col cols="8" class="pl-0 pt-0">
                   <v-text-field v-model="searchContent" placeholder="검색어" variant="outlined" density="compact" />
                 </v-col>
               </v-row>
-              <v-btn color="shades-black" @click="search()" block>검색</v-btn>
+              <v-btn color="shades-black" @click="search()" block :disabled="!searchValidation">검색</v-btn>
             </v-expansion-panel-text>
           </v-expansion-panel>
         </v-expansion-panels>
@@ -46,7 +47,7 @@
         <div v-for="(item, index) in boardCardData" :value="item.qid">
           <BoardCard class="mt-2" :data="item" @handle-card-clicked="handleCardClicked" />
         </div>
-        <Observe @triggerIntersected="loadMore"/>
+        <Observe @triggerIntersected="loadMore" />
       </v-window-item>
 
       <!-- ***** 비업무 ***** -->
@@ -58,8 +59,8 @@
             <v-expansion-panel-text>
               <v-row>
                 <v-col cols="4" class="pr-0">
-                  <v-select v-model="searchKey" placeholder="구분" class="text-truncate" variant="outlined" density="compact"
-                    :items="['제목 + 내용', '작성자']"></v-select>
+                  <v-select v-model="searchKey" placeholder="구분" class="text-truncate" variant="outlined"
+                    density="compact" :items="['제목 + 내용', '작성자']"></v-select>
                 </v-col>
                 <v-col cols="8" class="pl-0">
                   <v-text-field v-model="searchContent" placeholder="검색어" variant="outlined" density="compact" />
@@ -74,7 +75,7 @@
         <div v-for="(item, index) in boardCardData" :value="item.qid">
           <BoardCard class="mt-2" :data="item" @handle-card-clicked="handleCardClicked" />
         </div>
-        <Observe @triggerIntersected="loadMore"/>
+        <Observe @triggerIntersected="loadMore" />
       </v-window-item>
     </v-window>
   </div>
@@ -106,17 +107,17 @@ export default {
   setup() {
     let qnaTabTitle = ["업무", "비업무"];
     let area = store.getters["info/infoArea"];
-    let categoryItems = area.areaList; 
-    let subcategoryFullList = area.subAreaList; 
+    let categoryItems = area.areaList;
+    let subcategoryFullList = area.subAreaList;
     var categoriesAll = [].concat(qnaTabTitle);
     var i;
     for (i = 1; i < categoryItems.length; i++) {
       categoriesAll.push(categoryItems[i]);
-      categoriesAll = categoriesAll.concat(subcategoryFullList[i-1]);
+      categoriesAll = categoriesAll.concat(subcategoryFullList[i - 1]);
     }
     let cidData = {};
     categoriesAll.forEach((value, index) => cidData[value] = index + 1);
-  
+
     // const page = ref(1);
 
     // const loadMore = async () => {
@@ -140,10 +141,32 @@ export default {
       searchContent: '',
       searchKey: '',
       page: 1,
-      boardCardData: [], 
+      boardCardData: [],
     };
-  }, 
-  mounted(){
+  },
+  computed: {
+    searchValidation() {
+      if (typeof this.subcategory == 'string') {
+        return true;
+      } else {
+        if (typeof this.category == 'string') {
+          if (this.category == '전체') {
+            if (this.searchKey != '' && this.searchContent != '') {
+              return true;
+            } else {
+              return false;
+            }
+          } else {
+            return false;
+          }
+        } else {
+          return false;
+        }
+      }
+    }
+
+  },
+  mounted() {
     var res = this.requestAllWork();
     // this.boardCardData = [   //나중에 search 대신 들어감.
     //   {
@@ -219,42 +242,127 @@ export default {
     categoryChanged() {
       var categoryIndex = this.categoryItems.indexOf(this.category);
       this.subcategory = [];
-      this.subcategoryItems = 1 <= categoryIndex ? this.subcategoryFullList[categoryIndex-1] : [];
+      this.subcategoryItems = 1 <= categoryIndex ? this.subcategoryFullList[categoryIndex - 1] : [];
     },
     async search() {
-      // let params = {};
-      // let work = (this.qnaTab == 0) ? true : false
-      // //params.workYn = work;
-      // params.cid = work ? this.cidData[this.subcategory] : 2;
-      // params.key = this.searchKey
-      // params.value = this.searchContent
-      // var res = await api.get('board/questions/search', params)
-      // res.data.forEach((d) => {
-      //   d.lastUpdateDate = this.exportDateFromTimeStamp(d.lastUpdateDate) 
-      // });
-      // this.boardCardData = res.data
+      if (this.qnaTab == 0) {
+        console.log('업무')
+        if (typeof this.subcategory == 'string') {
+          console.log('sub 있음')
+          if (this.searchKey != '' && this.searchContent != '') {
+            console.log('key, value')
+            var key = ''
+            if (this.searchKey == '제목 + 내용') {
+              key = 'titleAndContent'
+            } else if (this.searchKey == '작성자') {
+              key = 'member'
+            }
+            var res = await api.get('board/questions/search?workYn=true&cid='
+              + this.cidData[this.subcategory]
+              + '&key=' + key
+              + '&value=' + this.searchContent).then(
+                (response) => {
+                  response.data.forEach((d) => {
+                    d.createDate = this.exportDateFromTimeStamp(d.createDate)
+                  });
+                  this.boardCardData = response.data
+                }
+              )
+          } else {
+            console.log('key, value 없음')
+            var res = await api.get('board/questions/search?workYn=true&cid=' + this.cidData[this.subcategory]).then(
+              (response) => {
+                response.data.forEach((d) => {
+                  d.createDate = this.exportDateFromTimeStamp(d.createDate)
+                });
+                this.boardCardData = response.data
+              }
+            )
+          }
+        } else {
+          console.log('sub 없음')
+          if (this.searchKey != '' && this.searchContent != '') {
+            var key = ''
+            if (this.searchKey == '제목 + 내용') {
+              key = 'titleAndContent'
+            } else if (this.searchKey == '작성자') {
+              key = 'member'
+            }
+            var res = await api.get('board/questions/search?workYn=true'
+              + '&key=' + key
+              + '&value=' + this.searchContent).then(
+                (response) => {
+                  response.data.forEach((d) => {
+                    d.createDate = this.exportDateFromTimeStamp(d.createDate)
+                  });
+                  this.boardCardData = response.data
+                }
+              )
+          } else {
+            var res = await api.get('board/questions/search?workYn=true').then(
+              (response) => {
+                response.data.forEach((d) => {
+                  d.createDate = this.exportDateFromTimeStamp(d.createDate)
+                });
+                this.boardCardData = response.data
+              }
+            )
+          }
+        }
+      } else if (this.qnaTab == 1) {
+        console.log('비업무')
+        if (this.searchKey != '' && this.searchContent != '') {
+          console.log('key, value')
+          var key = ''
+          if (this.searchKey == '제목 + 내용') {
+            key = 'titleAndContent'
+          } else if (this.searchKey == '작성자') {
+            key = 'member'
+          }
+          var res = await api.get('board/questions/search?workYn=false'
+            + '&key=' + key
+            + '&value=' + this.searchContent).then(
+              (response) => {
+                response.data.forEach((d) => {
+                  d.createDate = this.exportDateFromTimeStamp(d.createDate)
+                });
+                this.boardCardData = response.data
+              }
+            )
+        } 
+      }
     },
     async requestAllWork() {
       console.log(store.getters["info/infoToken"].accessToken)
-      var res = await api.get('board/questions', '')
-      res.data.forEach((d) => {
-        d.lastUpdateDate = this.exportDateFromTimeStamp(d.lastUpdateDate) 
-      });
-      this.boardCardData = res.data
+      var res = await api.get('board/questions' + '?' + 'workYn=true').then(
+        (response) => {
+          response.data.forEach((d) => {
+            d.createDate = this.exportDateFromTimeStamp(d.createDate)
+          });
+          this.boardCardData = response.data
+        }
+      )
     },
 
     async requestAllNoneWork() {
       console.log(store.getters["info/infoToken"].accessToken)
-      var res = await api.get('board/questions', '')
-      res.data.forEach((d) => {
-        d.lastUpdateDate = this.exportDateFromTimeStamp(d.lastUpdateDate) 
-      });
-      this.boardCardData = res.data
+      var res = await api.get('board/questions' + '?' + 'workYn=false').then(
+        (response) => {
+          response.data.forEach((d) => {
+            d.createDate = this.exportDateFromTimeStamp(d.createDate)
+          });
+          this.boardCardData = response.data
+        }
+      )
     },
 
     tabChanged() {
+      this.category = []
+      this.subcategory = []
+      this.searchKey = ''
       this.searchContent = '';
-      if (this.qnaTab === 0){
+
+      if (this.qnaTab == 0) {
         this.requestAllWork()
       } else {
         this.requestAllNoneWork()
@@ -268,7 +376,7 @@ export default {
           path: process.env.VUE_APP_BOARD_QNA_DETAIL,
           title: item?.title,
           query: {
-            qid: item?.qid 
+            qid: item?.qid
           }
         });
       }
@@ -300,7 +408,7 @@ export default {
       const hour = date.getHours();
       const minute = date.getMinutes();
 
-      return year + "-" + month + "-" + day + " " + hour + ":" + minute 
+      return year + "-" + month + "-" + day + " " + hour + ":" + minute
 
     }
   },

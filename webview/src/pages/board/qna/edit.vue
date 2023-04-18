@@ -110,11 +110,11 @@ export default {
       console.log(this.isWork)
     } else {
       console.log(this.categoriesAll)
-      console.log(this.$route.query.upid)
-      this.selectedArea = this.categoriesAll[this.$route.query.upid - 1]
+      console.log(this.$route.query.upCategory)
+      this.selectedArea = this.$route.query.upCategory
       this.selectedSubArea = this.categoriesAll[this.$route.query.cid - 1]
       this.subAreaItems = this.area.subAreaList[this.areaItems.indexOf(this.selectedArea)]
-      console.log("area: " + this.categoriesAll[this.$route.query.upid - 1])
+      //console.log("area: " + this.categoriesAll[this.$route.query.upid - 1])
       console.log("sub_area: " + this.categoriesAll[this.$route.query.cid - 1])
     }
 
