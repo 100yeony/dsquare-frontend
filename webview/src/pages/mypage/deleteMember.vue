@@ -17,7 +17,7 @@ export default {
     },
     deleteMember(){
       this.stepper=1; 
-      this.$store.dispatch('info/setInfoToken', ''); // 토큰값을 제거해줍니다.
+      this.$store.dispatch('info/setInfoToken', {accessToken: '', refreshToken: ''})
     },
     goToLogin(){
       this.$router.push(process.env.VUE_APP_LOGIN);
