@@ -35,8 +35,8 @@ export default {
       editorData: "",
       editorConfig: {
         // 상세 수정은 https://ckeditor.com
-        extraPlugins: [this.uploader],
-        removePlugins: ["ImageCaption"],
+        //extraPlugins: [this.uploader],
+        removePlugins: ["ImageCaption", "ImageUpload", "EasyImage", "MediaEmbed"]
       },
       area: {},
       areaItems: [],
@@ -270,4 +270,5 @@ export default {
   color: black !important;
   opacity: initial !important;
 }
+
 </style>

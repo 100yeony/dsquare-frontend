@@ -895,10 +895,6 @@ pre code.hljs {
   vertical-align: middle;
 }
 
-.table {
-  border-bottom: 2px solid #f5f6f8;
-}
-
 .table-simple {
   border-color: #ddd;
 
@@ -1044,9 +1040,25 @@ $bottom-navigation-content-font-size : var(--font-size-v-xxs);
   justify-items: center;
 }
 
-.ck-editor__editable_inline {
-  min-height: 200px;
-  max-height: 200px;
+// .ck-editor__editable_inline {
+//   // min-height: 200px;
+//   // max-height: 200px;
+// }
+
+.none_ck-toolbar_border .ck-toolbar {
+  border: none !important;
+}
+
+.none_ck-toolbar_border .ck-editor__editable_inline {
+  border: none !important;
+}
+
+.ck-content ul {
+  margin-left: 20px;
+}
+
+.ck-content ol {
+  margin-left: 20px;
 }
 
 .topbar {

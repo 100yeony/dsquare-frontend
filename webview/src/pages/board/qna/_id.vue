@@ -1,106 +1,109 @@
 <template>
-  <div>
-    <DeleteDialog :isShow="isShow" :title="dialogTitle" @click-confirm="onConfirm" @click-cancel="onCancel" />
-  </div>
-  <v-card>
-    <v-card-item>
-      <v-row class="mb-2" align="center">
-        <v-col cols="2">
-          <v-avatar color="grey">😀</v-avatar>
-        </v-col>
-        <v-col cols="4">
-          <div class="text-body font-bold">
-            <v-row>{{ qData.name }}</v-row>
-            <v-row class="text-caption font-0000008F">{{ qData.team }}</v-row>
-          </div>
-        </v-col>
-        <v-col cols="4">
-          <div class="text-caption font-0000008F">{{ qData.createDate }}</div>
-        </v-col>
-        <v-col cols="2">
-          <v-menu v-if="isWriter">
-            <template v-slot:activator="{ props }">
-              <v-btn icon flat rounded="0" v-bind="props" color="transparent">
-                <v-icon>mdi-dots-horizontal</v-icon>
-              </v-btn>
-            </template>
-            <v-list>
-              <v-list-item v-for="(menu, index) in questionMenu" :key="id" :value="id" @click="editPost(index)">
-                <v-list-item-title>{{ menu.title }}</v-list-item-title>
-              </v-list-item>
-            </v-list>
-          </v-menu>
-        </v-col>
-      </v-row>
-      <h2 class="mb-3">
-        <span class="text-primary">{{ qData.cname }}: </span>{{ qData.title }}
-      </h2>
-      <div v-html="qData.content"></div> <!-- v-html: HTML 코드를 템플릿에 삽입 -->
-      <!-- <v-row v-if="'atc' in questionData">
-        <v-card variant="outlined" class="ml-3" color="grey">
-          <v-card-item class="text-caption pa-1 pr-2 font-0000008F" density="compact">
-            <v-icon size="large">mdi-paperclip</v-icon> {{ questionData.atc.fileUrl.split("/").pop() }}
-          </v-card-item>
-        </v-card>
-      </v-row> -->
-      <v-row>
-        <v-col cols="2" class="center-container"><v-icon size="small">mdi-heart-outline</v-icon><span
-            class="text-caption font-0000008F ml-1">{{ qData.likes }}</span></v-col>
-        <v-col cols="2" class="center-container"><v-icon size="small">mdi-message-text-outline</v-icon><span
-            class="text-caption font-0000008F ml-1">{{ commentList.length }}</span></v-col>
-      </v-row>
-      <v-slide-group>
-        <v-slide-group-item v-for="(chip, index) in qData.tags" :key="index">
-          <v-chip class="ma-2">#{{ chip }}</v-chip>
-        </v-slide-group-item>
-      </v-slide-group>
-    </v-card-item>
-  </v-card>
-
-  <v-card v-if="!isWriter" class="mt-4">
-    <v-card-item>
-      <div class="font-m text-center mb-3">답변을 남기고 좋아요를 받아보세요!</div>
-      <v-btn block color="shades-black" @click="answer">등록</v-btn>
-    </v-card-item>
-  </v-card>
-
-  <!-- ***** 답변 ***** -->
-  <div v-for="(item, index) in answerList" :value="item.id">
-    <v-card :color="item.writerInfo.id == qData.managerId ? '#E8F2E1' : ''" class="mt-4">
-      <v-card-title v-if="item.writerInfo.id == qData.managerId" class="font-6DAE43">
-        <v-icon class="mr-2">mdi-checkbox-marked-circle-outline</v-icon>담당자 답변 완료
-      </v-card-title>
+  <div class="none_ck-toolbar_border">
+    <div>
+      <DeleteDialog :isShow="isShow" :title="dialogTitle" @click-confirm="onConfirm" @click-cancel="onCancel" />
+    </div>
+    <v-card>
       <v-card-item>
-        <!-- 답변자 -->
         <v-row class="mb-2" align="center">
           <v-col cols="2">
             <v-avatar color="grey">😀</v-avatar>
           </v-col>
-          <v-col cols="8">
+          <v-col cols="4">
             <div class="text-body font-bold">
-              <v-row> {{ item.writerInfo.name }} </v-row>
-              <v-row class="text-caption font-0000008F"> {{ item.writerInfo.teamHierarchy[item.writerInfo.teamHierarchy.length - 1] }}</v-row>
+              <v-row>{{ qData.name }}</v-row>
+              <v-row class="text-caption font-0000008F">{{ qData.team }}</v-row>
             </div>
           </v-col>
+          <v-col cols="4">
+            <div class="text-caption font-0000008F">{{ qData.createDate }}</div>
+          </v-col>
           <v-col cols="2">
-            <v-menu v-if="this.user.userId == item.writerInfo.id">
+            <v-menu v-if="isWriter">
               <template v-slot:activator="{ props }">
                 <v-btn icon flat rounded="0" v-bind="props" color="transparent">
                   <v-icon>mdi-dots-horizontal</v-icon>
                 </v-btn>
               </template>
               <v-list>
-                <v-list-item v-for="(menu, index) in questionMenu" :key="id" :value="id"
-                  @click="editAnswer(index, item.aid, item.content)">
+                <v-list-item v-for="(menu, index) in questionMenu" :key="id" :value="id" @click="editPost(index)">
                   <v-list-item-title>{{ menu.title }}</v-list-item-title>
                 </v-list-item>
               </v-list>
             </v-menu>
           </v-col>
         </v-row>
-        <div v-html="item.content" class="text-caption font-0000008F"></div>
+        <h2 class="mb-3">
+          <span class="text-primary">{{ qData.cname }}: </span>{{ qData.title }}
+        </h2>
+        <ckeditor v-model="qData.content" :editor="editor" :config="editorConfig" :disabled="true"></ckeditor>
+        <!-- <v-row v-if="'atc' in questionData">
+        <v-card variant="outlined" class="ml-3" color="grey">
+          <v-card-item class="text-caption pa-1 pr-2 font-0000008F" density="compact">
+            <v-icon size="large">mdi-paperclip</v-icon> {{ questionData.atc.fileUrl.split("/").pop() }}
+          </v-card-item>
+        </v-card>
+      </v-row> -->
+        <v-row>
+          <v-col cols="2" class="center-container"><v-icon size="small">mdi-heart-outline</v-icon><span
+              class="text-caption font-0000008F ml-1">{{ qData.likes }}</span></v-col>
+          <v-col cols="2" class="center-container"><v-icon size="small">mdi-message-text-outline</v-icon><span
+              class="text-caption font-0000008F ml-1">{{ commentList.length }}</span></v-col>
+        </v-row>
+        <v-slide-group>
+          <v-slide-group-item v-for="(chip, index) in qData.tags" :key="index">
+            <v-chip class="ma-2">#{{ chip }}</v-chip>
+          </v-slide-group-item>
+        </v-slide-group>
+      </v-card-item>
+    </v-card>
 
-        <!-- 
+    <v-card v-if="!isWriter" class="mt-4">
+      <v-card-item>
+        <div class="font-m text-center mb-3">답변을 남기고 좋아요를 받아보세요!</div>
+        <v-btn block color="shades-black" @click="answer">등록</v-btn>
+      </v-card-item>
+    </v-card>
+
+    <!-- ***** 답변 ***** -->
+    <div v-for="(item, index) in answerList" :value="item.id">
+      <v-card :color="item.writerInfo.id == qData.managerId ? '#E8F2E1' : ''" class="mt-4">
+        <v-card-title v-if="item.writerInfo.id == qData.managerId" class="font-6DAE43">
+          <v-icon class="mr-2">mdi-checkbox-marked-circle-outline</v-icon>담당자 답변 완료
+        </v-card-title>
+        <v-card-item>
+          <!-- 답변자 -->
+          <v-row class="mb-2" align="center">
+            <v-col cols="2">
+              <v-avatar color="grey">😀</v-avatar>
+            </v-col>
+            <v-col cols="8">
+              <div class="text-body font-bold">
+                <v-row> {{ item.writerInfo.name }} </v-row>
+                <v-row class="text-caption font-0000008F"> {{
+                  item.writerInfo.teamHierarchy[item.writerInfo.teamHierarchy.length - 1] }}</v-row>
+              </div>
+            </v-col>
+            <v-col cols="2">
+              <v-menu v-if="this.user.userId == item.writerInfo.id">
+                <template v-slot:activator="{ props }">
+                  <v-btn icon flat rounded="0" v-bind="props" color="transparent">
+                    <v-icon>mdi-dots-horizontal</v-icon>
+                  </v-btn>
+                </template>
+                <v-list>
+                  <v-list-item v-for="(menu, index) in questionMenu" :key="id" :value="id"
+                    @click="editAnswer(index, item.aid, item.content)">
+                    <v-list-item-title>{{ menu.title }}</v-list-item-title>
+                  </v-list-item>
+                </v-list>
+              </v-menu>
+            </v-col>
+          </v-row>
+          <ckeditor v-model="item.content" :editor="editor" :config="editorConfig" :disabled="true"></ckeditor>
+          
+
+          <!-- 
         답변 댓글 데이터 생기면 이 코드 사용
         <div v-for="(comment, index) in item.commentList" :value="comment.id" class="back-white mt-4 pa-2">
           <v-row class="mb-2" align="center">
@@ -116,58 +119,70 @@
           </div>
         </div> 
 -->
-        <!-- ***** 답변 댓글 ***** -->
-        <v-card class="back-white mt-4">
-          <v-card-item>
-            <v-row class="mb-2" align="center">
-              <v-col cols="2">
-                <v-avatar color="grey">😀</v-avatar>
-              </v-col>
-              <v-col cols="10">
-                <div class="text-body font-bold">
-                  <v-row>변상진</v-row>
-                  <v-row class="text-caption font-0000008F">메시징DX플랫폼</v-row>
-                </div>
-              </v-col>
-            </v-row>
-            <div class="text-caption font-0000008F">
-              <span class="font-1C4EFE">@김경란</span>테스트 데이터
-            </div>
-          </v-card-item>
-        </v-card>
+          <!-- ***** 답변 댓글 ***** -->
+          <v-card class="back-white mt-4">
+            <v-card-item>
+              <v-row class="mb-2" align="center">
+                <v-col cols="2">
+                  <v-avatar color="grey">😀</v-avatar>
+                </v-col>
+                <v-col cols="10">
+                  <div class="text-body font-bold">
+                    <v-row>변상진</v-row>
+                    <v-row class="text-caption font-0000008F">메시징DX플랫폼</v-row>
+                  </div>
+                </v-col>
+              </v-row>
+              <div class="text-caption font-0000008F">
+                <span class="font-1C4EFE">@김경란</span>테스트 데이터
+              </div>
+            </v-card-item>
+          </v-card>
 
-        <v-card class="back-white mt-4">
-          <v-card-item>
-            <v-row class="mb-2" align="center">
-              <v-col cols="2">
-                <v-avatar color="grey">😀</v-avatar>
-              </v-col>
-              <v-col cols="10">
-                <div class="text-body font-bold">
-                  <v-row>이상진</v-row>
-                  <v-row class="text-caption font-0000008F">메시징DX플랫폼</v-row>
-                </div>
-              </v-col>
-            </v-row>
-            <div class="text-caption font-0000008F">
-              테스트 데이터
-            </div>
-          </v-card-item>
-        </v-card>
-      </v-card-item>
-    </v-card>
+          <v-card class="back-white mt-4">
+            <v-card-item>
+              <v-row class="mb-2" align="center">
+                <v-col cols="2">
+                  <v-avatar color="grey">😀</v-avatar>
+                </v-col>
+                <v-col cols="10">
+                  <div class="text-body font-bold">
+                    <v-row>이상진</v-row>
+                    <v-row class="text-caption font-0000008F">메시징DX플랫폼</v-row>
+                  </div>
+                </v-col>
+              </v-row>
+              <div class="text-caption font-0000008F">
+                테스트 데이터
+              </div>
+            </v-card-item>
+          </v-card>
+        </v-card-item>
+      </v-card>
+    </div>
   </div>
 </template>
 <script>
 import DeleteDialog from '@/components/DeleteDialog';
 import api from '@/api'
 import store from '@/store'
+import CKEditor from "@ckeditor/ckeditor5-vue";
+import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
 export default {
   components: {
-    DeleteDialog
+    DeleteDialog,
+    ckeditor: CKEditor.component,
   },
+
   data() {
     return {
+      editor: ClassicEditor,
+      editorData: "",
+      editorConfig: {
+        toolbar: [],
+        disabled: true,
+        removePlugins: ["ImageCaption", "ImageUpload", "EasyImage", "MediaEmbed"]
+      },
       user: store.getters["info/infoUser"],
       qnaId: 0,
       qData: {
@@ -259,7 +274,7 @@ export default {
         });
       } else if (index === 1) {
         console.log("삭제하기")
-        if (this.answerList.length==0){
+        if (this.answerList.length == 0) {
           this.showDialog(0)
         } else {
           console.log("답변이 있어 삭제 못함.")
@@ -377,6 +392,8 @@ export default {
   },
 };
 </script>
+<!-- <style lang="scss" scoped>
+</style> -->
 <!-- {
   "id": 1,
   "writerId": 1,
