@@ -33,7 +33,7 @@
         <v-btn icon size="x-large" @click="onclickBackBtn()" v-if="back">
           <v-icon>mdi-arrow-left</v-icon>
         </v-btn>
-        <v-toolbar-title>{{ menuTitle }}</v-toolbar-title>
+        <v-toolbar-title>Dsquare</v-toolbar-title>
         <!--
       아래 내용들을 이용해서, 검색, push를 custom 진행하세요.
        -->
@@ -101,6 +101,10 @@ export default {
       console.log("[onClickMenuItem] ", item);
       if (item && item.url) {
         this.$router.replace(item.url);
+      }
+      else if (item.value === 8){
+        this.$store.dispatch('info/setInfoToken', ''); // 토큰값을 제거해줍니다.
+        this.$router.push(process.env.VUE_APP_LOGIN);
       }
     },
   },
