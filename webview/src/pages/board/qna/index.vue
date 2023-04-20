@@ -5,9 +5,8 @@
     <p class="text-caption my-3 font-0000008F">
       분야별 궁금한 부분을 질문해보세요. 각 분야의 담당자가 답변해드립니다.
     </p>
-    <v-tabs fixed-tabs class="mt-5" bg-color="shades-black" color="shades-white" selected-class="shades-white"
-      v-model="qnaTab">
-      <v-tab v-for="(i, index) in qnaTabTitle.length" :key="index" :value="index" selected-class="shades-white">
+    <v-tabs fixed-tabs class="mt-5" color="primary" v-model="qnaTab">
+      <v-tab v-for="(i, index) in qnaTabTitle.length" :key="index" :value="index" slider-color="primary">
         {{ qnaTabTitle[index] }}
       </v-tab>
     </v-tabs>
