@@ -421,7 +421,6 @@ export default {
   position: fixed;
   top: 80vh;
   left: 80vw;
-  z-index: 99999;
 }
 
 .keep-all {
