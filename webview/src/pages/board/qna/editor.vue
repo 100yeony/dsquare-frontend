@@ -63,7 +63,7 @@ export default {
       console.log("sub area: ")
       console.log(newVal)
       console.log(oldVal)
-      if (typeof newVal === 'string'){
+      if (typeof newVal === 'string') {
         this.cid = this.cidData[newVal]
         console.log(this.cid)
       }
@@ -85,11 +85,11 @@ export default {
         return ''
       }
     },
-    editorValidation(){
-      if (this.cid !== '' && this.title !=='' && this.editorData !== ''){
-        return true; 
-      } else{
-        return false; 
+    editorValidation() {
+      if (this.cid !== '' && this.title !== '' && this.editorData !== '') {
+        return true;
+      } else {
+        return false;
       }
     }
   },
@@ -109,7 +109,7 @@ export default {
 
       //this.v$.$touch();
 
-      //if (!this.v$.$error) {
+      if (!this.v$.$error) {
         console.log(editorData)
         const res = await api.post('board/questions', {
           writerId: store.getters["info/infoUser"].userId,
@@ -127,7 +127,18 @@ export default {
           console.log(response)
           this.$router.push(process.env.VUE_APP_BOARD_QNA);
         });
-      //}
+      }
+
+      /**
+       * Test code for post file data
+       * 
+      console.log(this.selectedFile)
+      var formData = new FormData();
+      formData.append('file', this.selectedFile[0], this.selectedFile.name);
+      const res2 = await api.multiPartPost('file/upload', formData).then((response) => {
+        console.log(response)
+      })
+       */
 
     },
     uploader(editor) {
@@ -177,9 +188,9 @@ export default {
       <v-text-field v-model="title" placeholder="제목을 입력해주세요." variant="outlined" density="compact" hide-details
         class="mt-2" />
       <!-- <div v-if="submitted && title.required.invalid" class="invalid-feedback">
-        <v-icon size="x-small" color="red">mdi-close-circle-outline</v-icon>
-        <span class="font-xs font_red">제목을 입력해주세요.</span>
-      </div> -->
+          <v-icon size="x-small" color="red">mdi-close-circle-outline</v-icon>
+          <span class="font-xs font_red">제목을 입력해주세요.</span>
+        </div> -->
 
       <v-row v-if="this.isWork" align="center" class="mt-2">
         <v-col>
@@ -196,16 +207,16 @@ export default {
         </v-col>
       </v-row>
       <!-- <div v-if="submitted && v$.cid.required.$invalid" class="invalid-feedback">
-        <v-icon size="x-small" color="red">mdi-close-circle-outline</v-icon>
-        <span class="font-xs font_red">분야를 선택해주세요.</span>
-      </div> -->
+          <v-icon size="x-small" color="red">mdi-close-circle-outline</v-icon>
+          <span class="font-xs font_red">분야를 선택해주세요.</span>
+        </div> -->
 
       <div class="font-sm font-medium mt-7 mb-2">본문</div>
       <ckeditor v-model="editorData" :editor="editor" :config="editorConfig" height="200"></ckeditor>
       <!-- <div v-if="submitted && v$.editorData.required.$invalid" class="invalid-feedback">
-        <v-icon size="x-small" color="red">mdi-close-circle-outline</v-icon>
-        <span class="font-xs font_red">내용을 입력해주세요.</span>
-      </div> -->
+          <v-icon size="x-small" color="red">mdi-close-circle-outline</v-icon>
+          <span class="font-xs font_red">내용을 입력해주세요.</span>
+        </div> -->
 
       <v-file-input v-model="selectedFile" label="파일을 첨부해주세요." chips class="mt-5" variant="outlined" density="compact">
       </v-file-input>
@@ -276,5 +287,4 @@ export default {
   color: black !important;
   opacity: initial !important;
 }
-
 </style>

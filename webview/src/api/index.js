@@ -164,6 +164,7 @@ import router from "@/router/index";
 
 const prefix = ''
 var apiInstance
+var multiPartApiInstance
 
 function createInstance() {
   var token = store.getters["info/infoToken"]
@@ -171,6 +172,14 @@ function createInstance() {
   apiInstance = axios.create({
     baseURL: 'http://localhost:8090',
     headers: { Authorization: 'Bearer ' + token.accessToken }
+  })
+
+  multiPartApiInstance = axios.create({
+    baseURL: 'http://localhost:8090',
+    headers: {
+      Authorization: 'Bearer ' + token.accessToken,
+      'Content-Type': 'multipart/form-data'
+    }
   })
 
   return fn
@@ -219,6 +228,13 @@ const fn = {
       baseURL: 'http://localhost:8090',
       headers: { Authorization: 'Bearer ' + token.accessToken }
     })
+    multiPartApiInstance = axios.create({
+      baseURL: 'http://localhost:8090',
+      headers: {
+        Authorization: 'Bearer ' + token.accessToken,
+        'Content-Type': 'multipart/form-data'
+      }
+    })
   },
   expiredToken() {
     console.log("로그인 화면으로")
@@ -258,7 +274,38 @@ const fn = {
       }
     }
   },
+  async multiPartPost(uri, formData, headers) {
+    try {
+      console.log('[POST]', uri, formData)
+      console.log('auth :::::::::::::::', headers)
+      const res = await multiPartApiInstance.post(`${prefix + uri}`, formData, { headers: headers })
+      return this.ResponsePayload(res)
+    } catch (err) {
+      if (this.tokenErrorCheck(err)) {
+        var flag = await this.requestRefresh().then(
+          (res) => {
+            store.dispatch('info/setInfoToken', { accessToken: res.data.accessToken, refreshToken: res.data.refreshToken });
+            this.setDefaultToken()
+            console.log(res)
+            return true
+          }
+        ).catch(
+          (err) => {
+            return false
+          }
+        )
+        if (flag) {
+          const res = await multiPartApiInstance.post(`${prefix + uri}`, formData, { headers: headers })
+          return this.ResponsePayload(res)
+        } else {
+          this.expiredToken()
+        }
 
+      } else {
+        return this.ErrorPayload(err)
+      }
+    }
+  },
   async get(uri, params, headers) {
     try {
       console.log('[GET]', uri, params)
