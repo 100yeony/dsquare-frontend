@@ -1,4 +1,6 @@
 import fileUtils from "./fileUtils";
+import store from "@/store";
+import api from '@/api';
 
 export default class FileUploadAdapter {
 
@@ -13,72 +15,31 @@ export default class FileUploadAdapter {
       (file) =>
         new Promise((resolve, reject) => {
           console.log(file)
-          // 아래 reuqest, listner가 실제 서버 파일서버와 통신을 해야하지만, 지금은 없으므로 항상 editor로 정상 send되도록 한다.
-          this._initRequest();
-          this._initListeners(resolve, reject, file);
           console.log(fileUtils.isImage(file.name));
           console.log(fileUtils.isFileSizeLimit(file.size));
-          this._sendRequest(file);
+          this._sendRequest(resolve, reject, file);
         })
     );
   }
 
-  // Aborts the upload process.
   abort() {
-    if (this.xhr) {
-      this.xhr.abort();
-    }
+    // Cancle the upload process.
   }
 
-  // Initializes the XMLHttpRequest object using the URL passed to the constructor.
-  _initRequest() {
-    const xhr = (this.xhr = new XMLHttpRequest());
-
-    const BACKEND_TEST_URL = "http://localhost:8090/file/upload"
-    xhr.open("POST", BACKEND_TEST_URL, true); 
-    xhr.responseType = "json";
-  }
-
-  // Initializes XMLHttpRequest listeners.
-  _initListeners(resolve, reject, file) {
-    const xhr = this.xhr;
-    const loader = this.loader;
+    // 서버로부터 응답을 받기까지 화면을 invalid or 프로그레스 바 등 필요.
+  _sendRequest(resolve, reject, file) {
+    // Prepare the form data.
     const genericErrorText = `Couldn't upload file: ${file.name}.`;
 
-    xhr.addEventListener("error", () => reject(genericErrorText));
-    xhr.addEventListener("abort", () => reject());
-    xhr.addEventListener("load", () => {
-      const response = xhr.response;
+    const formData = new FormData();
+    formData.append("file", file, file.name);
 
-      if (!response || response.error) {
-        return reject(
-          response && response.error ? response.error.message : genericErrorText
-        );
-      }
-
-      resolve({
-        default: response.url,
-      });
-    });
-
-    if (xhr.upload) {
-      xhr.upload.addEventListener("progress", (evt) => {
-        if (evt.lengthComputable) {
-          loader.uploadTotal = evt.total;
-          loader.uploaded = evt.loaded;
-        }
-      });
-    }
-  }
-
-  // Prepares the data and sends the request.
-  _sendRequest(file) {
-    // Prepare the form data.
-    const data = new FormData();
-
-    data.append("file", file);
-
-    // Send the request.
-    this.xhr.send( data );
+    api.multiPartPost('file/upload', formData)     
+    .then((response) => {
+      console.log(response)
+      resolve({ default: response.data });
+    }).catch((error) => {
+      reject(response && response.error ? response.error.message : genericErrorText);
+    })
   }
 }
