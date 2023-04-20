@@ -404,7 +404,7 @@ export default {
   }
 };
 </script>
-<style>
+<style scoped>
 .v-tabs--align-tabs-title:not(.v-slide-group--has-affixes) .v-tab:first-child {
   -webkit-margin-start: 0;
   margin-inline-start: 0;
