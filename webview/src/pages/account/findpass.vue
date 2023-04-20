@@ -41,7 +41,7 @@ export default {
         let postParam = {};
         postParam.email = this.email
         
-        const res = await api.post('/account/find-pw', postParam)
+        const res = await api.noneTokenPost('/account/find-pw', postParam)
         console.log(res)
         if (res.status === 200) {
           this.$router.push('/account/find-pass-ok');

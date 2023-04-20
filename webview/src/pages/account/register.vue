@@ -195,7 +195,7 @@ export default {
         //   .catch(error => {
         //     console.log('error=>' + this.user)
         //   });
-        const res = await api.post('/account/signup', this.user)
+        const res = await api.noneTokenPost('/account/signup', this.user)
         if (res.status === 200) {
           this.stepper = 2;
         }

@@ -165,6 +165,7 @@ import router from "@/router/index";
 const prefix = ''
 var apiInstance
 var multiPartApiInstance
+var noneTokenApiInstance
 
 function createInstance() {
   var token = store.getters["info/infoToken"]
@@ -180,6 +181,10 @@ function createInstance() {
       Authorization: 'Bearer ' + token.accessToken,
       'Content-Type': 'multipart/form-data'
     }
+  })
+
+  noneTokenApiInstance = axios.create({
+    baseURL: 'http://localhost:8090'
   })
 
   return fn
@@ -306,6 +311,18 @@ const fn = {
       }
     }
   },
+
+  async noneTokenPost(uri, params, headers){
+    try {
+      console.log('[POST]', uri, params)
+      console.log('auth :::::::::::::::', headers)
+      const res = await noneTokenApiInstance.post(`${prefix + uri}`, params, { headers: headers })
+      return this.ResponsePayload(res)
+    } catch (err) {
+      return this.ErrorPayload(err)
+    }
+  },
+
   async get(uri, params, headers) {
     try {
       console.log('[GET]', uri, params)

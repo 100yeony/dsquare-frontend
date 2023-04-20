@@ -59,7 +59,7 @@ export default {
         let postParam = {};
         postParam.email = this.email
         postParam.pw = this.password
-        const res = await api.post('login', postParam)
+        const res = await api.noneTokenPost('login', postParam)
 
         // const res = await api.post(url, postParam, {
         //   Authorization : 'Bearer ' + $store.getters["info/infoToken"]
