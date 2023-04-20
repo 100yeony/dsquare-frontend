@@ -64,7 +64,7 @@ export const menuItems = [
   },
   {
     value: 6,
-    title: "내 답변",
+    title: "내 답변/댓글",
     icon: iconSmile,
     url: process.env.VUE_APP_MYPAGE_MYCOMMENT,
   },
