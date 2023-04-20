@@ -388,18 +388,25 @@ export default {
     init() { },
   },
   mounted() {
-    store.dispatch('info/setInfoArea', {
-      value1: ['전체', '컨설팅', '아키텍처', 'IT관리', '개발', '운영']
-      , value2: [
-      ["IT컨설팅"],
-      ["SW아키텍처"],
-      ["품질관리", "PM"],
-      ["Biz분석/설계", "응용SW개발", "UI/UX", "데이터분석"],
-      ["플랫폼품질혁신TF", "플랫폼IT컨설팅vTF", "메시징DX플랫폼팀", "서비스플랫폼팀",
-        "금융결제DX플랫폼팀", "인증DX플랫폼팀", "미디어플랫폼팀", "AI서비스팀",
-        "AICC서비스팀", "Safety플랫폼팀", "AgileCore팀", "AICC딜리버리팀"
-      ]]
+
+    const infoArea = {}
+    var categoryList = ['전체']
+    var subList = []
+    api.get('board/categories').then((response) => {
+      console.log("categories::")
+      response.data[0].childList.forEach((category) => {
+        categoryList.push(category.name)
+        var subs = []
+        category.childList.forEach((child) => {
+          subs.push(child.name)
+        })
+        subList.push(subs)
+      })
+      console.log(categoryList)
+      console.log(subList)
+      store.dispatch('info/setInfoArea', {value1: categoryList, value2: subList})
     });
+
     console.log(store.getters["info/infoToken"])
   }
 };
