@@ -14,8 +14,8 @@ export default class FileUploadAdapter {
         new Promise((resolve, reject) => {
           console.log(file)
           // 아래 reuqest, listner가 실제 서버 파일서버와 통신을 해야하지만, 지금은 없으므로 항상 editor로 정상 send되도록 한다.
-          //this._initRequest();
-          // this._initListeners(resolve, reject, file);
+          this._initRequest();
+          this._initListeners(resolve, reject, file);
           console.log(fileUtils.isImage(file.name));
           console.log(fileUtils.isFileSizeLimit(file.size));
           this._sendRequest(file);
@@ -34,7 +34,8 @@ export default class FileUploadAdapter {
   _initRequest() {
     const xhr = (this.xhr = new XMLHttpRequest());
 
-    xhr.open("POST", "<url here>", true);
+    const BACKEND_TEST_URL = "http://localhost:8090/file/upload"
+    xhr.open("POST", BACKEND_TEST_URL, true); 
     xhr.responseType = "json";
   }
 
@@ -75,9 +76,9 @@ export default class FileUploadAdapter {
     // Prepare the form data.
     const data = new FormData();
 
-    data.append("upload", file);
+    data.append("file", file);
 
     // Send the request.
-    //this.xhr.send( data );
+    this.xhr.send( data );
   }
 }

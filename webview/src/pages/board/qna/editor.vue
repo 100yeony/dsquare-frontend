@@ -31,12 +31,13 @@ export default {
   },
   data() {
     return {
+      selectedFile: null,
       editor: ClassicEditor,
       editorData: "",
       editorConfig: {
         // 상세 수정은 https://ckeditor.com
-        //extraPlugins: [this.uploader],
-        removePlugins: ["ImageCaption", "ImageUpload", "EasyImage", "MediaEmbed"]
+        extraPlugins: [this.uploader],
+        removePlugins: ["ImageCaption", "MediaEmbed"] //, "ImageUpload", "EasyImage"
       },
       area: {},
       areaItems: [],
@@ -66,6 +67,11 @@ export default {
         this.cid = this.cidData[newVal]
         console.log(this.cid)
       }
+    },
+    selectedFile: function (newVal, oldVal) {
+      console.log(newVal)
+      console.log(newVal[0])
+      console.log(typeof newVal[0])
     }
   },
   computed: {
@@ -201,7 +207,7 @@ export default {
         <span class="font-xs font_red">내용을 입력해주세요.</span>
       </div> -->
 
-      <v-file-input label="파일을 첨부해주세요." chips class="mt-5" variant="outlined" density="compact">
+      <v-file-input v-model="selectedFile" label="파일을 첨부해주세요." chips class="mt-5" variant="outlined" density="compact">
       </v-file-input>
 
       <div class="font-sm font-medium">태그</div>
