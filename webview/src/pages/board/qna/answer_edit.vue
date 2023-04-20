@@ -24,8 +24,8 @@ export default {
       editorData: '',
       editorConfig: {
         // 상세 수정은 https://ckeditor.com
-        //extraPlugins: [this.uploader],
-        removePlugins: ["ImageCaption", "ImageUpload", "EasyImage", "MediaEmbed"]
+        extraPlugins: [this.uploader],
+        removePlugins: ["ImageCaption", "MediaEmbed"]
      
       },
 
