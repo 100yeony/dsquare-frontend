@@ -2,7 +2,6 @@
 import CKEditor from "@ckeditor/ckeditor5-vue";
 import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
 import FileUploadAdapter from "@/utils/fileUploaderAdapter";
-import { required } from "@vuelidate/validators";
 import { watch, onMounted, ref } from "vue";
 //import { generateKey } from "crypto";
 import api from '@/api';
@@ -12,19 +11,6 @@ export default {
   components: {
     ckeditor: CKEditor.component,
   },
-  // validations() {
-  //   return {
-  //     title: {
-  //       required,
-  //     },
-  //     editorData: {
-  //       required,
-  //     },
-  //     cid: {
-  //       required,
-  //     },
-  //   };
-  // },
   setup() {
     let chipData = ref(new Set());
     let chipText = ref("");
@@ -61,7 +47,6 @@ export default {
       title: '',
       tags: [],
       cid: '',
-      submitted: false,
     };
   },
   watch: {
@@ -86,49 +71,42 @@ export default {
         return ''
       }
     },
-    editorValidation(){
-      if (this.cid !== '' && this.title !=='' && this.editorData !== ''){
-        return true; 
-      } else{
-        return false; 
+    editorValidation() {
+      if (this.cid !== '' && this.title !== '' && this.editorData !== '') {
+        return true;
+      } else {
+        return false;
       }
     }
   },
   mounted() {
     this.area = store.getters["info/infoArea"]
     this.areaItems = this.area.areaList.slice(1)
-    console.log(this.$route.query.work);
     if (this.$route.query.work === 'false') {
       this.isWork = false;
       this.cid = 2;
-      console.log(this.isWork)
     }
   },
   methods: {
     async write(editorData) {
-      this.submitted = true;
+      console.log(editorData)
+      const res = await api.post('board/questions', {
+        writerId: store.getters["info/infoUser"].userId,
+        cid: this.cid,
+        content: editorData,
+        title: this.title,
+        tags: this.tags,
+        atc: {
+          originFileName: '원본파일명',
+          extension: 'png',
+          fileSize: 51239
+        }
 
-      //this.v$.$touch();
+      }).then((response) => {
+        console.log(response)
+        this.$router.push(process.env.VUE_APP_BOARD_COMMUNICATION);
+      });
 
-      //if (!this.v$.$error) {
-        console.log(editorData)
-        const res = await api.post('board/questions', {
-          writerId: store.getters["info/infoUser"].userId,
-          cid: this.cid,
-          content: editorData,
-          title: this.title,
-          tags: this.tags,
-          atc: {
-            originFileName: '원본파일명',
-            extension: 'png',
-            fileSize: 51239
-          }
-
-        }).then((response) => {
-          console.log(response)
-          this.$router.push(process.env.VUE_APP_BOARD_COMMUNICATION);
-        });
-      //}
 
     },
     uploader(editor) {
@@ -177,22 +155,9 @@ export default {
       <div class="font-sm font-medium mt-2">제목</div>
       <v-text-field v-model="title" placeholder="제목을 입력해주세요." variant="outlined" density="compact" hide-details
         class="mt-2" />
-      <!-- <div v-if="submitted && title.required.invalid" class="invalid-feedback">
-        <v-icon size="x-small" color="red">mdi-close-circle-outline</v-icon>
-        <span class="font-xs font_red">제목을 입력해주세요.</span>
-      </div> -->
-
-      <!-- <div v-if="submitted && v$.cid.required.$invalid" class="invalid-feedback">
-        <v-icon size="x-small" color="red">mdi-close-circle-outline</v-icon>
-        <span class="font-xs font_red">분야를 선택해주세요.</span>
-      </div> -->
 
       <div class="font-sm font-medium mt-7 mb-2">본문</div>
       <ckeditor v-model="editorData" :editor="editor" :config="editorConfig" height="200"></ckeditor>
-      <!-- <div v-if="submitted && v$.editorData.required.$invalid" class="invalid-feedback">
-        <v-icon size="x-small" color="red">mdi-close-circle-outline</v-icon>
-        <span class="font-xs font_red">내용을 입력해주세요.</span>
-      </div> -->
 
       <v-file-input label="파일을 첨부해주세요." chips class="mt-5" variant="outlined" density="compact">
       </v-file-input>

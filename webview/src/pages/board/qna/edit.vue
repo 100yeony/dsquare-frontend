@@ -28,8 +28,6 @@ export default {
     categoriesAll.forEach((value, index) => cidData[value] = index + 1);
 
     const route = useRoute();
-    console.log("setup__")
-    console.log(route.query.qid)
     store.dispatch("url/setUrlQuery", { qid: route.query.qid })
 
     return { chipData, chipText, cidData, categoriesAll };
@@ -40,9 +38,9 @@ export default {
       editorData: this.$route.query.content,
       editorConfig: {
         // 상세 수정은 https://ckeditor.com
-        //extraPlugins: [this.uploader],
-        removePlugins: ["ImageCaption", "ImageUpload", "EasyImage", "MediaEmbed"]
-     
+        extraPlugins: [this.uploader],
+        removePlugins: ["ImageCaption", "MediaEmbed"]
+
       },
       area: {},
       areaItems: [],
@@ -54,7 +52,6 @@ export default {
       title: this.$route.query.title,
       tags: [],
       cid: this.$route.query.cid,
-      submitted: false,
     };
   },
   watch: {
@@ -62,16 +59,14 @@ export default {
       console.log(newVal)
       console.log(oldVal)
       if (typeof oldVal === 'string') {
-        console.log("----")
         this.cid = ''
       }
     },
     selectedSubArea: function (newVal, oldVal) {
       console.log(newVal)
       console.log(oldVal)
-      if (typeof newVal === 'string'){
+      if (typeof newVal === 'string') {
         this.cid = this.cidData[newVal]
-        console.log(this.cid)
       }
     }
   },
@@ -86,56 +81,40 @@ export default {
         return ''
       }
     },
-    editorValidation(){
-      console.log("editorValidation:")
-      console.log(this.cid)
-      console.log(this.title)
-      console.log(this.editorData)
-      if (this.cid !== '' && this.title !=='' && this.editorData !== ''){
-        return true; 
-      } else{
-        return false; 
+    editorValidation() {
+      if (this.cid !== '' && this.title !== '' && this.editorData !== '') {
+        return true;
+      } else {
+        return false;
       }
     }
   },
   mounted() {
-    console.log("mounted:")
     this.area = store.getters["info/infoArea"]
     this.areaItems = this.area.areaList.slice(1)
     this.cid = this.$route.query.cid
     this.title = this.$route.query.title
     this.editorData = this.$route.query.content
+    this.chipData = new Set(this.$route.query.chipData);
 
     if (this.cid == 2) {
       this.isWork = false;
-      console.log(this.isWork)
     } else {
-      console.log(this.categoriesAll)
-      console.log(this.$route.query.upCategory)
       this.selectedArea = this.$route.query.upCategory
       this.selectedSubArea = this.categoriesAll[this.$route.query.cid - 1]
       this.subAreaItems = this.area.subAreaList[this.areaItems.indexOf(this.selectedArea)]
-      //console.log("area: " + this.categoriesAll[this.$route.query.upid - 1])
-      console.log("sub_area: " + this.categoriesAll[this.$route.query.cid - 1])
     }
 
   },
   methods: {
     async edit(editorData) {
-      this.submitted = true;
-
-      //this.v$.$touch();
-
-      //if (!this.v$.$error) {
-      console.log("-----------")
-      console.log(this.$route.query.qid)
       const res = await api.post('board/questions/' + this.$route.query.qid, {
         cid: this.cid,
         content: editorData,
         title: this.title,
-        atcId: this.$route.query.atcid
+        atcId: this.$route.query.atcid,
+        tags: Array.from(this.chipData)
       }).then((response) => {
-        console.log(response)
         this.cancle()
       });
       //}
@@ -147,13 +126,9 @@ export default {
       };
     },
     addChips() {
-      let item = this.chipText.trim()
+      let item = this.chipText.trim().replaceAll('#', '')
       if (item !== "" && this.chipData.size < 3) {
-        if (item.startsWith('#')) {
-          this.chipData.add(item)
-        } else {
-          this.chipData.add('#' + this.chipText.trim())
-        }
+        this.chipData.add(item)
       }
       this.chipText = "";
     },
@@ -161,7 +136,6 @@ export default {
       event.preventDefault();
       event.stopPropagation();
       this.chipData.delete(item);
-      console.log(this.chipData)
     },
     handleInput(event) {
       var inputValue = event.target.value;
@@ -210,6 +184,30 @@ export default {
 
       <div class="font-sm font-medium mt-7 mb-2">본문</div>
       <ckeditor v-model="editorData" :editor="editor" :config="editorConfig" height="200"></ckeditor>
+
+      <div class="font-sm font-medium">태그</div>
+
+      <v-row justify="center">
+        <v-col cols="12" class="pw-100 ">
+          <v-sheet>
+            <div>
+              <v-chip-group column>
+                <v-chip v-for="tag in tags" :key="tag">
+                  #{{ tag }}
+                  <v-icon class="ml-2" icon="mdi-close-circle" @click="deleteChip($event, tag)"></v-icon>
+                </v-chip>
+              </v-chip-group>
+
+            </div>
+            <v-row>
+              <v-col>
+                <v-text-field :placeholder=placeholderText v-model="chipText" variant="outlined" density="compact"
+                  @input="handleInput" hide-details append-icon="mdi-tag-plus" @click:append="addChips"></v-text-field>
+              </v-col>
+            </v-row>
+          </v-sheet>
+        </v-col>
+      </v-row>
 
       <v-row class="mt-5" align="center">
         <v-col cols="6">

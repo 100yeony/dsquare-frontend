@@ -59,11 +59,8 @@ export default {
         let postParam = {};
         postParam.email = this.email
         postParam.pw = this.password
-        const res = await api.post('login', postParam)
+        const res = await api.noneTokenPost('login', postParam)
 
-        // const res = await api.post(url, postParam, {
-        //   Authorization : 'Bearer ' + $store.getters["info/infoToken"]
-        // })
         if (res?.status === 200) {
           console.log(res)
           this.$store.dispatch('info/setInfoToken', {
@@ -76,7 +73,6 @@ export default {
           console.log(decodedToken);
           this.$store.dispatch('info/setInfoUser', {userId: decodedToken.id});
 
-          console.log(this.$store.getters["info/infoToken"])
           api.setDefaultToken();
           this.$router.push('/account/change-pass-alert');
         } else {
