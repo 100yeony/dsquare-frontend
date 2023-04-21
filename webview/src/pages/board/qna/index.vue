@@ -117,13 +117,6 @@ export default {
     let cidData = {};
     categoriesAll.forEach((value, index) => cidData[value] = index + 1);
 
-    // const page = ref(1);
-
-    // const loadMore = async () => {
-    //   page.value += 1;
-    //   console.log(page.value)
-    // };
-
     return {
       qnaTabTitle,
       categoryItems,
@@ -167,68 +160,6 @@ export default {
   },
   mounted() {
     var res = this.requestAllWork();
-    // this.boardCardData = [   //나중에 search 대신 들어감.
-    //   {
-    //     id: 0,
-    //     category: "응용SW개발",
-    //     title: "OpenWeatherAPI 날씨 이미지가 가져와지지 않습니다.",
-    //     name: "변상진",
-    //     team: "메시징DX플랫폼팀",
-    //     date: "2023-04-01",
-    //     hash: ["jsp", "js", "jquery"],
-    //     success: true,
-    //     like: "999+",
-    //     comment: "999+",
-    //   },
-    //   {
-    //     id: 1,
-    //     category: "응용SW개발",
-    //     title: "docker로 github actions deploy 할 때 에러 - ocker run [OPTIONS] IMAGE [COMMAND] [ARG...]",
-    //     name: "강소미",
-    //     team: "메시징DX플랫폼팀",
-    //     date: "2023-04-01",
-    //     hash: ["githubactions", "docker"],
-    //     success: false,
-    //     like: "327",
-    //     comment: "3",
-    //   },
-    //   {
-    //     id: 2,
-    //     category: "데이터분석",
-    //     title: "이 두가지 쿼리의 차이가 뭘까요 ?",
-    //     name: "남진욱",
-    //     team: "메시징DX플랫폼팀",
-    //     date: "2023-04-01",
-    //     hash: ["sql"],
-    //     success: false,
-    //     like: "300",
-    //     comment: "3",
-    //   },
-    //   {
-    //     id: 3,
-    //     category: "응용SW개발",
-    //     title: "크롬 개발자 도구에서 출력값 차이 원인 (선언문, 할당문 관련)",
-    //     name: "김순재",
-    //     team: "메시징DX플랫폼팀",
-    //     date: "2023-04-01",
-    //     hash: ["자바스크립트", "선언문", "할당문", "완료값"],
-    //     success: false,
-    //     like: "200",
-    //     comment: "3",
-    //   },
-    //   {
-    //     id: 4,
-    //     category: "응용SW개발",
-    //     title: "왜 자꾸 No faces detected 오류가 뜨는지 모르겠습니다.",
-    //     name: "최철준",
-    //     team: "메시징DX플랫폼팀",
-    //     date: "2023-04-01",
-    //     hash: ["안드로이드스튜디오", "안드로이드", "얼굴인식"],
-    //     success: false,
-    //     like: "127",
-    //     comment: "3",
-    //   },
-    // ]
   },
   watch: {
     qnaTab(newVal, oldVal) {
@@ -245,11 +176,8 @@ export default {
     },
     async search() {
       if (this.qnaTab == 0) {
-        console.log('업무')
         if (typeof this.subcategory == 'string') {
-          console.log('sub 있음')
           if (this.searchKey != '' && this.searchContent != '') {
-            console.log('key, value')
             var key = ''
             if (this.searchKey == '제목 + 내용') {
               key = 'titleAndContent'
@@ -279,7 +207,6 @@ export default {
             )
           }
         } else {
-          console.log('sub 없음')
           if (this.searchKey != '' && this.searchContent != '') {
             var key = ''
             if (this.searchKey == '제목 + 내용') {
@@ -309,9 +236,7 @@ export default {
           }
         }
       } else if (this.qnaTab == 1) {
-        console.log('비업무')
         if (this.searchKey != '' && this.searchContent != '') {
-          console.log('key, value')
           var key = ''
           if (this.searchKey == '제목 + 내용') {
             key = 'titleAndContent'
@@ -332,7 +257,6 @@ export default {
       }
     },
     async requestAllWork() {
-      console.log(store.getters["info/infoToken"].accessToken)
       var res = await api.get('board/questions' + '?' + 'workYn=true').then(
         (response) => {
           response.data.forEach((d) => {
@@ -344,7 +268,6 @@ export default {
     },
 
     async requestAllNoneWork() {
-      console.log(store.getters["info/infoToken"].accessToken)
       var res = await api.get('board/questions' + '?' + 'workYn=false').then(
         (response) => {
           response.data.forEach((d) => {
@@ -368,9 +291,7 @@ export default {
       }
     },
     handleCardClicked(item) {
-      console.log("[handleCardClicked]", item);
       if (item) {
-        //상세 화면으로 이동.
         this.$router.push({
           path: process.env.VUE_APP_BOARD_QNA_DETAIL,
           title: item?.title,
@@ -381,10 +302,6 @@ export default {
       }
     },
     handleeWritePage() {
-      console.log("handleeWritePage");
-      //this.$router.replace(process.env.VUE_APP_BOARD_QNA_WRITE);
-      console.log("---------------------------------");
-      console.log(process.env.VUE_APP_BOARD_QNA_WRITE);
       this.$router.push({
         path: process.env.VUE_APP_BOARD_QNA_WRITE,
         query: {
@@ -396,8 +313,7 @@ export default {
     loadMore() {
       this.page += 1;
       console.log(this.page)
-      //this.request()
-      // request 한 값을 추가
+
     },
     exportDateFromTimeStamp(timeStamp) {
       var date = new Date(timeStamp)

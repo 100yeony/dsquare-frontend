@@ -28,8 +28,6 @@ export default {
     categoriesAll.forEach((value, index) => cidData[value] = index + 1);
 
     const route = useRoute();
-    console.log("setup__")
-    console.log(route.query.qid)
     store.dispatch("url/setUrlQuery", { qid: route.query.qid })
 
     return { chipData, chipText, cidData, categoriesAll };
@@ -54,7 +52,6 @@ export default {
       title: this.$route.query.title,
       tags: [],
       cid: this.$route.query.cid,
-      submitted: false,
     };
   },
   watch: {
@@ -62,7 +59,6 @@ export default {
       console.log(newVal)
       console.log(oldVal)
       if (typeof oldVal === 'string') {
-        console.log("----")
         this.cid = ''
       }
     },
@@ -71,7 +67,6 @@ export default {
       console.log(oldVal)
       if (typeof newVal === 'string'){
         this.cid = this.cidData[newVal]
-        console.log(this.cid)
       }
     }
   },
@@ -87,10 +82,6 @@ export default {
       }
     },
     editorValidation(){
-      console.log("editorValidation:")
-      console.log(this.cid)
-      console.log(this.title)
-      console.log(this.editorData)
       if (this.cid !== '' && this.title !=='' && this.editorData !== ''){
         return true; 
       } else{
@@ -99,7 +90,6 @@ export default {
     }
   },
   mounted() {
-    console.log("mounted:")
     this.area = store.getters["info/infoArea"]
     this.areaItems = this.area.areaList.slice(1)
     this.cid = this.$route.query.cid
@@ -108,34 +98,21 @@ export default {
 
     if (this.cid == 2) {
       this.isWork = false;
-      console.log(this.isWork)
     } else {
-      console.log(this.categoriesAll)
-      console.log(this.$route.query.upCategory)
       this.selectedArea = this.$route.query.upCategory
       this.selectedSubArea = this.categoriesAll[this.$route.query.cid - 1]
       this.subAreaItems = this.area.subAreaList[this.areaItems.indexOf(this.selectedArea)]
-      //console.log("area: " + this.categoriesAll[this.$route.query.upid - 1])
-      console.log("sub_area: " + this.categoriesAll[this.$route.query.cid - 1])
     }
 
   },
   methods: {
     async edit(editorData) {
-      this.submitted = true;
-
-      //this.v$.$touch();
-
-      //if (!this.v$.$error) {
-      console.log("-----------")
-      console.log(this.$route.query.qid)
       const res = await api.post('board/questions/' + this.$route.query.qid, {
         cid: this.cid,
         content: editorData,
         title: this.title,
         atcId: this.$route.query.atcid
       }).then((response) => {
-        console.log(response)
         this.cancle()
       });
       //}
@@ -161,7 +138,6 @@ export default {
       event.preventDefault();
       event.stopPropagation();
       this.chipData.delete(item);
-      console.log(this.chipData)
     },
     handleInput(event) {
       var inputValue = event.target.value;

@@ -392,14 +392,3 @@ export default {
   },
 };
 </script>
-<!-- <style lang="scss" scoped>
-</style> -->
-<!-- {
-  "id": 1,
-  "writerId": 1,
-  "content": "답변글 내용입니다222.",
-  "createDate": "2023-04-14T15:08:32.221714",
-  "lastUpdateDate": null,
-  "atcId": null,
-  "deleteYn": false
-} -->

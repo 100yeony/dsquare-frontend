@@ -23,7 +23,6 @@ export default [
         name: "qna",
         meta: {
           title: "궁금해요",
-          back: process.env.VUE_APP_BOARD
         },
         component: () => import("@/pages/board/qna/index"),
       },
@@ -77,7 +76,6 @@ export default [
         name: "communication",
         meta: {
           title: "소통해요",
-          back: process.env.VUE_APP_BOARD
         },
         component: () => import("@/pages/board/communication/index"),
       },
@@ -113,7 +111,6 @@ export default [
         name: "deal",
         meta: {
           title: "당근해요",
-          back: process.env.VUE_APP_BOARD
         },
         component: () => import("@/pages/board/deal/index"),
       },
@@ -149,7 +146,6 @@ export default [
         name: "card",
         meta: {
           title: "카드주세요",
-          back: process.env.VUE_APP_BOARD
         },
         component: () => import("@/pages/board/card/index"),
       },

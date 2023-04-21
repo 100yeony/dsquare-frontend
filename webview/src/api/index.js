@@ -169,7 +169,6 @@ var noneTokenApiInstance
 
 function createInstance() {
   var token = store.getters["info/infoToken"]
-  console.log("createInstance" + token.accessToken)
   apiInstance = axios.create({
     baseURL: 'http://localhost:8090',
     headers: { Authorization: 'Bearer ' + token.accessToken }
@@ -197,7 +196,6 @@ const fn = {
   },
   ErrorPayload(err) {
     console.log('ErrorPayload', err)
-    console.log(err.response.data)
     return {
       code: err?.code,
       msg: err?.msg || 'FAIL',
@@ -242,7 +240,6 @@ const fn = {
     })
   },
   expiredToken() {
-    console.log("로그인 화면으로")
     store.dispatch('info/setInfoToken', { accessToken: '', refreshToken: '' }); // 토큰값을 제거해줍니다.
     router.push(process.env.VUE_APP_LOGIN);
   }

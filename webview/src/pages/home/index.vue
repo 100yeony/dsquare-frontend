@@ -393,7 +393,6 @@ export default {
     var categoryList = ['전체']
     var subList = []
     api.get('board/categories').then((response) => {
-      console.log("categories::")
       response.data[0].childList.forEach((category) => {
         categoryList.push(category.name)
         var subs = []

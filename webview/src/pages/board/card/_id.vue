@@ -14,7 +14,6 @@ export default {
       };
     },
   mounted(){
-    console.log(this.$route.query.id)
     if(!this.$route.query.id) { // work 값이 없으면.
       this.$router.replace(process.env.VUE_APP_BOARD)
     }
