@@ -96,7 +96,7 @@ export default {
         cid: this.cid,
         content: editorData,
         title: this.title,
-        tags: this.tags,
+        tags: Array.from(this.chipData),
         atc: {
           originFileName: '원본파일명',
           extension: 'png',
@@ -126,13 +126,9 @@ export default {
       };
     },
     addChips() {
-      let item = this.chipText.trim()
+      let item = this.chipText.trim().replaceAll('#', '')
       if (item !== "" && this.chipData.size < 3) {
-        if (item.startsWith('#')) {
-          this.chipData.add(item)
-        } else {
-          this.chipData.add('#' + this.chipText.trim())
-        }
+        this.chipData.add(item)
       }
       this.chipText = "";
     },
@@ -195,7 +191,7 @@ export default {
             <div>
               <v-chip-group column>
                 <v-chip v-for="tag in tags" :key="tag">
-                  {{ tag }}
+                  #{{ tag }}
                   <v-icon class="ml-2" icon="mdi-close-circle" @click="deleteChip($event, tag)"></v-icon>
                 </v-chip>
               </v-chip-group>

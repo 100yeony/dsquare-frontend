@@ -268,7 +268,8 @@ export default {
             content: this.qData.content,
             upCategory: this.qData.upCategory,
             cid: this.qData.cid,
-            atcid: this.qData.atc.atcId
+            atcid: this.qData.atc.atcId,
+            chipData: this.qData.tags
           }
 
         });
@@ -356,7 +357,6 @@ export default {
     parseToQData(data) {
 
       console.log("parse_data:  ", data)
-      console.log("parse_cid  :", data.cid)
       return {
         name: data.writerInfo.name,
         team: data.writerInfo.teamHierarchy[data.writerInfo.teamHierarchy.length - 1],
@@ -375,7 +375,7 @@ export default {
         createDate: this.exportDateFromTimeStamp(data.createDate),
         viewCnt: data.viewCnt,
         likes: 1,
-        tags: ["jsp", "js", "jquery"],
+        tags: data.tags,
         writerId: data.writerInfo.id,
         managerId: 1,
       }

@@ -40,7 +40,7 @@ export default {
         // 상세 수정은 https://ckeditor.com
         extraPlugins: [this.uploader],
         removePlugins: ["ImageCaption", "MediaEmbed"]
-     
+
       },
       area: {},
       areaItems: [],
@@ -65,7 +65,7 @@ export default {
     selectedSubArea: function (newVal, oldVal) {
       console.log(newVal)
       console.log(oldVal)
-      if (typeof newVal === 'string'){
+      if (typeof newVal === 'string') {
         this.cid = this.cidData[newVal]
       }
     }
@@ -81,11 +81,11 @@ export default {
         return ''
       }
     },
-    editorValidation(){
-      if (this.cid !== '' && this.title !=='' && this.editorData !== ''){
-        return true; 
-      } else{
-        return false; 
+    editorValidation() {
+      if (this.cid !== '' && this.title !== '' && this.editorData !== '') {
+        return true;
+      } else {
+        return false;
       }
     }
   },
@@ -95,6 +95,7 @@ export default {
     this.cid = this.$route.query.cid
     this.title = this.$route.query.title
     this.editorData = this.$route.query.content
+    this.chipData = new Set(this.$route.query.chipData);
 
     if (this.cid == 2) {
       this.isWork = false;
@@ -111,7 +112,8 @@ export default {
         cid: this.cid,
         content: editorData,
         title: this.title,
-        atcId: this.$route.query.atcid
+        atcId: this.$route.query.atcid,
+        tags: Array.from(this.chipData)
       }).then((response) => {
         this.cancle()
       });
@@ -124,13 +126,9 @@ export default {
       };
     },
     addChips() {
-      let item = this.chipText.trim()
+      let item = this.chipText.trim().replaceAll('#', '')
       if (item !== "" && this.chipData.size < 3) {
-        if (item.startsWith('#')) {
-          this.chipData.add(item)
-        } else {
-          this.chipData.add('#' + this.chipText.trim())
-        }
+        this.chipData.add(item)
       }
       this.chipText = "";
     },
@@ -186,6 +184,30 @@ export default {
 
       <div class="font-sm font-medium mt-7 mb-2">본문</div>
       <ckeditor v-model="editorData" :editor="editor" :config="editorConfig" height="200"></ckeditor>
+
+      <div class="font-sm font-medium">태그</div>
+
+      <v-row justify="center">
+        <v-col cols="12" class="pw-100 ">
+          <v-sheet>
+            <div>
+              <v-chip-group column>
+                <v-chip v-for="tag in tags" :key="tag">
+                  #{{ tag }}
+                  <v-icon class="ml-2" icon="mdi-close-circle" @click="deleteChip($event, tag)"></v-icon>
+                </v-chip>
+              </v-chip-group>
+
+            </div>
+            <v-row>
+              <v-col>
+                <v-text-field :placeholder=placeholderText v-model="chipText" variant="outlined" density="compact"
+                  @input="handleInput" hide-details append-icon="mdi-tag-plus" @click:append="addChips"></v-text-field>
+              </v-col>
+            </v-row>
+          </v-sheet>
+        </v-col>
+      </v-row>
 
       <v-row class="mt-5" align="center">
         <v-col cols="6">
