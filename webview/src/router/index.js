@@ -3,7 +3,6 @@ import { createWebHistory, createRouter } from "vue-router";
 import store from "@/store";
 import routes from "./routes";
 
-import api from '@/api'
 import stringUtils from '@/utils/stringUtils';
 const router = createRouter({
 	history: createWebHistory(),
@@ -22,22 +21,21 @@ const router = createRouter({
 // 로그인이 되지 않았을때만 들어가져야합니다.
 const notLogged = [process.env.VUE_APP_LOGIN, process.env.VUE_APP_REGISTER,
 process.env.VUE_APP_CHANGEPASS_OK, process.env.VUE_APP_FINDPASS, process.env.VUE_APP_FINDPASS_OK];
-const notBack = [process.env.VUE_APP_BOARD_QNA, process.env.VUE_APP_BOARD_COMMUNICATION,
-process.env.VUE_APP_BOARD_DEAL, process.env.VUE_APP_BOARD_CARD]
+
 router.beforeEach(async (to, from, next) => {
 	let token = store.getters["info/infoToken"]; // 좀 더 복잡하게 가질 수 있지만, 현재는 토큰의 유무 정도로 로그인의 유무를 확인한다고 생각합니다.
 	//let path = to?.matched[to?.matched?.length - 1].path ?? to.path; //절대 위치 path값 가져오기.
 	const absolutePath = to.path.startsWith('/') ? to.path : `/${to.path}`
-	//console.log(path)
 	console.log(absolutePath)
 	let tokenRequired = !notLogged.includes(absolutePath); // 토큰이 필요한, 로그인이 필요한 페이지인지 확인해주는 value입니다.
 	let title = to?.meta?.title ?? ''
 	let back = to?.meta?.back ?? '' 
-	let backRequired = !notBack.includes(absolutePath);
-	console.log("---------" + backRequired)
-	console.log(back)
+	
 	store.dispatch("layout/setMenuTitle", title)
-	store.dispatch("url/setUrlBack", backRequired ? back:'')
+	store.dispatch("url/setUrlBack", back)
+	if (back == ''){
+		store.dispatch("url/setUrlQuery", {})
+	}
 
 	console.log(tokenRequired)
 	if(tokenRequired) { // 인증 필요 사이트

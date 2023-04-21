@@ -174,7 +174,6 @@ export default {
     // Try to register the user in with the email, username
     // and password they provided.
     async tryToRegisterIn() {
-      console.log("registerregister")
       this.submitted = true;
       // stop here if form is invalid
 
@@ -195,7 +194,7 @@ export default {
         //   .catch(error => {
         //     console.log('error=>' + this.user)
         //   });
-        const res = await api.post('/account/signup', this.user)
+        const res = await api.noneTokenPost('/account/signup', this.user)
         if (res.status === 200) {
           this.stepper = 2;
         }
@@ -211,7 +210,6 @@ export default {
       this.$refs.emailTextField.scrollIntoView();
     },
     categoryChanged() {
-      console.log("categoryChanged")
       this.subcategory = [];
       var categoryIndex = this.categoryItems.indexOf(this.category);
       if (categoryIndex != 0) {

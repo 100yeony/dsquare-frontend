@@ -2,7 +2,6 @@
 import CKEditor from "@ckeditor/ckeditor5-vue";
 import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
 import FileUploadAdapter from "@/utils/fileUploaderAdapter";
-import { required } from "@vuelidate/validators";
 import { watch, onMounted, ref } from "vue";
 //import { generateKey } from "crypto";
 import api from '@/api';
@@ -49,29 +48,18 @@ export default {
       title: '',
       tags: [],
       cid: '',
-      submitted: false,
     };
   },
   watch: {
     selectedArea: function (newVal, oldVal) {
-      console.log("area: ")
-      console.log(newVal)
-      console.log(oldVal)
       this.cid = ''
     },
     selectedSubArea: function (newVal, oldVal) {
-      console.log("sub area: ")
-      console.log(newVal)
-      console.log(oldVal)
       if (typeof newVal === 'string') {
         this.cid = this.cidData[newVal]
-        console.log(this.cid)
       }
     },
     selectedFile: function (newVal, oldVal) {
-      console.log(newVal)
-      console.log(newVal[0])
-      console.log(typeof newVal[0])
     }
   },
   computed: {
@@ -96,27 +84,19 @@ export default {
   mounted() {
     this.area = store.getters["info/infoArea"]
     this.areaItems = this.area.areaList.slice(1)
-    console.log(this.$route.query.work);
     if (this.$route.query.work === 'false') {
       this.isWork = false;
       this.cid = 2;
-      console.log(this.isWork)
     }
   },
   methods: {
     async write(editorData) {
-      this.submitted = true;
-
-      //this.v$.$touch();
-
-      //if (!this.v$.$error) {
-      console.log(editorData)
       const res = await api.post('board/questions', {
         writerId: store.getters["info/infoUser"].userId,
         cid: this.cid,
         content: editorData,
         title: this.title,
-        tags: this.tags,
+        tags: Array.from(this.chipData),
         atc: {
           originFileName: '원본파일명',
           extension: 'png',
@@ -124,7 +104,6 @@ export default {
         }
 
       }).then((response) => {
-        console.log(response)
         this.$router.push(process.env.VUE_APP_BOARD_QNA);
       });
       //}
@@ -147,13 +126,9 @@ export default {
       };
     },
     addChips() {
-      let item = this.chipText.trim()
+      let item = this.chipText.trim().replaceAll('#', '')
       if (item !== "" && this.chipData.size < 3) {
-        if (item.startsWith('#')) {
-          this.chipData.add(item)
-        } else {
-          this.chipData.add('#' + this.chipText.trim())
-        }
+        this.chipData.add(item)
       }
       this.chipText = "";
     },
@@ -161,7 +136,6 @@ export default {
       event.preventDefault();
       event.stopPropagation();
       this.chipData.delete(item);
-      console.log(this.chipData)
     },
     handleInput(event) {
       var inputValue = event.target.value;
@@ -187,10 +161,6 @@ export default {
       <div class="font-sm font-medium mt-2">제목</div>
       <v-text-field v-model="title" placeholder="제목을 입력해주세요." variant="outlined" density="compact" hide-details
         class="mt-2" />
-      <!-- <div v-if="submitted && title.required.invalid" class="invalid-feedback">
-            <v-icon size="x-small" color="red">mdi-close-circle-outline</v-icon>
-            <span class="font-xs font_red">제목을 입력해주세요.</span>
-          </div> -->
 
       <v-row v-if="this.isWork" align="center" class="mt-2">
         <v-col>
@@ -206,17 +176,9 @@ export default {
             class="mt-2"></v-select>
         </v-col>
       </v-row>
-      <!-- <div v-if="submitted && v$.cid.required.$invalid" class="invalid-feedback">
-            <v-icon size="x-small" color="red">mdi-close-circle-outline</v-icon>
-            <span class="font-xs font_red">분야를 선택해주세요.</span>
-          </div> -->
 
       <div class="font-sm font-medium mt-7 mb-2">본문</div>
       <ckeditor v-model="editorData" :editor="editor" :config="editorConfig" height="200"></ckeditor>
-      <!-- <div v-if="submitted && v$.editorData.required.$invalid" class="invalid-feedback">
-            <v-icon size="x-small" color="red">mdi-close-circle-outline</v-icon>
-            <span class="font-xs font_red">내용을 입력해주세요.</span>
-          </div> -->
 
       <v-file-input v-model="selectedFile" label="파일을 첨부해주세요." chips class="mt-5" variant="outlined" density="compact">
       </v-file-input>
@@ -229,7 +191,7 @@ export default {
             <div>
               <v-chip-group column>
                 <v-chip v-for="tag in tags" :key="tag">
-                  {{ tag }}
+                  #{{ tag }}
                   <v-icon class="ml-2" icon="mdi-close-circle" @click="deleteChip($event, tag)"></v-icon>
                 </v-chip>
               </v-chip-group>

@@ -268,7 +268,8 @@ export default {
             content: this.qData.content,
             upCategory: this.qData.upCategory,
             cid: this.qData.cid,
-            atcid: this.qData.atc.atcId
+            atcid: this.qData.atc.atcId,
+            chipData: this.qData.tags
           }
 
         });
@@ -356,7 +357,6 @@ export default {
     parseToQData(data) {
 
       console.log("parse_data:  ", data)
-      console.log("parse_cid  :", data.cid)
       return {
         name: data.writerInfo.name,
         team: data.writerInfo.teamHierarchy[data.writerInfo.teamHierarchy.length - 1],
@@ -375,7 +375,7 @@ export default {
         createDate: this.exportDateFromTimeStamp(data.createDate),
         viewCnt: data.viewCnt,
         likes: 1,
-        tags: ["jsp", "js", "jquery"],
+        tags: data.tags,
         writerId: data.writerInfo.id,
         managerId: 1,
       }
@@ -392,14 +392,3 @@ export default {
   },
 };
 </script>
-<!-- <style lang="scss" scoped>
-</style> -->
-<!-- {
-  "id": 1,
-  "writerId": 1,
-  "content": "답변글 내용입니다222.",
-  "createDate": "2023-04-14T15:08:32.221714",
-  "lastUpdateDate": null,
-  "atcId": null,
-  "deleteYn": false
-} -->

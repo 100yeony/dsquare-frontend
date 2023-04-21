@@ -97,11 +97,11 @@ export default {
       this.isWork = false;
       console.log(this.isWork)
     } else {
-      this.selectedArea = this.categoriesAll[this.$route.query.upid-1]
-      this.selectedSubArea = this.categoriesAll[this.$route.query.cid-1]
+      this.selectedArea = this.categoriesAll[this.$route.query.upid - 1]
+      this.selectedSubArea = this.categoriesAll[this.$route.query.cid - 1]
       this.subAreaItems = this.area.subAreaList[this.areaItems.indexOf(this.selectedArea)]
-      console.log("area: " + this.categoriesAll[this.$route.query.upid-1])
-      console.log("sub_area: " + this.categoriesAll[this.$route.query.cid-1])  
+      console.log("area: " + this.categoriesAll[this.$route.query.upid - 1])
+      console.log("sub_area: " + this.categoriesAll[this.$route.query.cid - 1])
     }
 
   },
@@ -109,21 +109,16 @@ export default {
     async edit(editorData) {
       this.submitted = true;
 
-      //this.v$.$touch();
+      const res = await api.post('board/questions/' + this.$route.query.qid, {
+        cid: this.cid,
+        content: editorData,
+        title: this.title,
+        atcId: this.$route.query.atcid
+      }).then((response) => {
+        console.log(response)
+        this.$router.push(process.env.VUE_APP_BOARD_QNA);
+      });
 
-      //if (!this.v$.$error) {
-        console.log("-----------")
-        console.log(this.$route.query.qid)
-        const res = await api.post('board/questions/'+this.$route.query.qid, {
-          cid: this.cid,
-          content: editorData,
-          title: this.title,
-          atcId: this.$route.query.atcid
-        }).then((response) => {
-          console.log(response)
-          this.$router.push(process.env.VUE_APP_BOARD_QNA);
-        });
-      //}
 
     },
     uploader(editor) {
@@ -146,7 +141,6 @@ export default {
       event.preventDefault();
       event.stopPropagation();
       this.chipData.delete(item);
-      console.log(this.chipData)
     },
     handleInput(event) {
       var inputValue = event.target.value;
@@ -172,22 +166,9 @@ export default {
       <div class="font-sm font-medium mt-2">제목</div>
       <v-text-field v-model="title" placeholder="제목을 입력해주세요." variant="outlined" density="compact" hide-details
         class="mt-2" />
-      <!-- <div v-if="submitted && title.required.invalid" class="invalid-feedback">
-        <v-icon size="x-small" color="red">mdi-close-circle-outline</v-icon>
-        <span class="font-xs font_red">제목을 입력해주세요.</span>
-      </div> -->
-
-      <!-- <div v-if="submitted && v$.cid.required.$invalid" class="invalid-feedback">
-        <v-icon size="x-small" color="red">mdi-close-circle-outline</v-icon>
-        <span class="font-xs font_red">분야를 선택해주세요.</span>
-      </div> -->
 
       <div class="font-sm font-medium mt-7 mb-2">본문</div>
       <ckeditor v-model="editorData" :editor="editor" :config="editorConfig" height="200"></ckeditor>
-      <!-- <div v-if="submitted && v$.editorData.required.$invalid" class="invalid-feedback">
-        <v-icon size="x-small" color="red">mdi-close-circle-outline</v-icon>
-        <span class="font-xs font_red">내용을 입력해주세요.</span>
-      </div> -->
 
 
       <v-row class="mt-5" align="center">

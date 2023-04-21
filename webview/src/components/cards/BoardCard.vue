@@ -33,8 +33,6 @@ const props = defineProps({
 });
 const emit = defineEmits(["handle-card-clicked"]);
 
-// console.log(props.data);
-
 function handleCardClicked() {
   // emit은 dom을 이용하므로 대소문자 구별이 불가능함.
   emit("handle-card-clicked", props.data);

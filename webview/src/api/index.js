@@ -165,10 +165,10 @@ import router from "@/router/index";
 const prefix = ''
 var apiInstance
 var multiPartApiInstance
+var noneTokenApiInstance
 
 function createInstance() {
   var token = store.getters["info/infoToken"]
-  console.log("createInstance" + token.accessToken)
   apiInstance = axios.create({
     baseURL: 'http://localhost:8090',
     headers: { Authorization: 'Bearer ' + token.accessToken }
@@ -182,6 +182,10 @@ function createInstance() {
     }
   })
 
+  noneTokenApiInstance = axios.create({
+    baseURL: 'http://localhost:8090'
+  })
+
   return fn
 }
 
@@ -192,7 +196,6 @@ const fn = {
   },
   ErrorPayload(err) {
     console.log('ErrorPayload', err)
-    console.log(err.response.data)
     return {
       code: err?.code,
       msg: err?.msg || 'FAIL',
@@ -237,7 +240,6 @@ const fn = {
     })
   },
   expiredToken() {
-    console.log("로그인 화면으로")
     store.dispatch('info/setInfoToken', { accessToken: '', refreshToken: '' }); // 토큰값을 제거해줍니다.
     router.push(process.env.VUE_APP_LOGIN);
   }
@@ -306,6 +308,18 @@ const fn = {
       }
     }
   },
+
+  async noneTokenPost(uri, params, headers){
+    try {
+      console.log('[POST]', uri, params)
+      console.log('auth :::::::::::::::', headers)
+      const res = await noneTokenApiInstance.post(`${prefix + uri}`, params, { headers: headers })
+      return this.ResponsePayload(res)
+    } catch (err) {
+      return this.ErrorPayload(err)
+    }
+  },
+
   async get(uri, params, headers) {
     try {
       console.log('[GET]', uri, params)
