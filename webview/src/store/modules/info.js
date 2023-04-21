@@ -13,6 +13,9 @@ export const info = {
       },
       user: {
         userId: ''
+      },
+      pageState: {
+
       }
   }),
   mutations: {
@@ -42,6 +45,9 @@ export const info = {
     },
     SET_INFO_USER(state, value){
       state.user = value 
+    },
+    SET_INFO_PAGE_STATE(state, value){
+      state.pageState = value
     }
   },
   getters: {
@@ -57,6 +63,9 @@ export const info = {
     },
     infoUser(state){
       return state.user;
+    },
+    infoPageState(state){
+      return state.pageState;
     }
   },
   actions: {
@@ -74,6 +83,9 @@ export const info = {
     },
     setInfoUser({state, commit, rootState}, value) {
       commit('SET_INFO_USER', value)
+    },
+    setPageState({state, commit, rootState}, value) {
+      commit('SET_INFO_PAGE_STATE', value)
     }
   }
 };

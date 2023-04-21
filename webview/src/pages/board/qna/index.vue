@@ -81,7 +81,7 @@
 
   <v-menu transition="slide-y-transition">
     <template v-slot:activator="{ props }">
-      <v-btn class="fixed_fab" size="large" icon color="primary" v-bind="props" @click="handleeWritePage">
+      <v-btn class="fixed_fab" size="large" icon color="primary" v-bind="props" @click="handleWritePage">
         <v-icon size="large">mdi-pencil-box-outline</v-icon>
       </v-btn>
     </template>
@@ -117,23 +117,56 @@ export default {
     let cidData = {};
     categoriesAll.forEach((value, index) => cidData[value] = index + 1);
 
+    function exportDateFromTimeStamp(timeStamp) {
+      var date = new Date(timeStamp)
+      const year = date.getFullYear();
+      const month = date.getMonth() + 1; // 월은 0부터 시작하므로 1을 더해줍니다.
+      const day = date.getDate();
+      const hour = date.getHours();
+      const minute = date.getMinutes();
+
+      return year + "-" + month + "-" + day + " " + hour + ":" + minute
+    }
+
+    let pageState = store.getters["info/infoPageState"]
+
+    var qnaTab = ref(pageState?.qnaTab ?? 0)
+    var category = ref(pageState?.category ?? [])
+    var subcategory = ref(pageState?.subcategory ?? [])
+    var subcategoryItems = ref(pageState?.subcategoryItems ?? [])
+    var searchKey = ref(pageState?.searchKey ?? '')
+    var searchContent = ref(pageState?.searchContent ?? '')
+    var page = ref(pageState?.page ?? 1)
+    var boardCardData = ref(pageState?.boardCardData ?? [])
+
+    if (Object.keys(pageState).length == 0) {
+      api.get('board/questions' + '?' + 'workYn=true').then(
+        (res) => {
+          res.data.forEach((d) => {
+            d.createDate = exportDateFromTimeStamp(d.createDate)
+          });
+          boardCardData.value = res.data
+        }
+      )
+    }
+
+    store.dispatch('info/setPageState', {});
+
+
     return {
       qnaTabTitle,
       categoryItems,
       subcategoryFullList,
       cidData,
-    };
-  },
-  data() {
-    return {
-      qnaTab: 0,
-      category: [],
-      subcategory: [],
-      subcategoryItems: [],
-      searchContent: '',
-      searchKey: '',
-      page: 1,
-      boardCardData: [],
+      qnaTab,
+      category,
+      subcategory,
+      subcategoryItems,
+      searchKey,
+      searchContent,
+      page,
+      boardCardData,
+      exportDateFromTimeStamp,
     };
   },
   computed: {
@@ -157,9 +190,6 @@ export default {
       }
     }
 
-  },
-  mounted() {
-    var res = this.requestAllWork();
   },
   watch: {
     qnaTab(newVal, oldVal) {
@@ -253,7 +283,7 @@ export default {
                 this.boardCardData = response.data
               }
             )
-        } 
+        }
       }
     },
     async requestAllWork() {
@@ -291,6 +321,7 @@ export default {
       }
     },
     handleCardClicked(item) {
+      this.saveState();
       if (item) {
         this.$router.push({
           path: process.env.VUE_APP_BOARD_QNA_DETAIL,
@@ -301,7 +332,8 @@ export default {
         });
       }
     },
-    handleeWritePage() {
+    handleWritePage() {
+      this.saveState();
       this.$router.push({
         path: process.env.VUE_APP_BOARD_QNA_WRITE,
         query: {
@@ -315,16 +347,17 @@ export default {
       console.log(this.page)
 
     },
-    exportDateFromTimeStamp(timeStamp) {
-      var date = new Date(timeStamp)
-      const year = date.getFullYear();
-      const month = date.getMonth() + 1; // 월은 0부터 시작하므로 1을 더해줍니다.
-      const day = date.getDate();
-      const hour = date.getHours();
-      const minute = date.getMinutes();
-
-      return year + "-" + month + "-" + day + " " + hour + ":" + minute
-
+    saveState() {
+      store.dispatch('info/setPageState', {
+        qnaTab: this.qnaTab,
+        category: this.category,
+        subcategory: this.subcategory,
+        subcategoryItems: this.subcategoryItems,
+        searchKey: this.searchKey,
+        searchContent: this.searchContent,
+        page: this.page,
+        boardCardData: this.boardCardData
+      });
     }
   },
 };
