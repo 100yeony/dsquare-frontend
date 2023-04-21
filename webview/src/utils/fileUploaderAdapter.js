@@ -37,7 +37,7 @@ export default class FileUploadAdapter {
     api.multiPartPost('file/upload', formData)     
     .then((response) => {
       console.log(response)
-      resolve({ default: response.data });
+      resolve({ default: response.data.url });
     }).catch((error) => {
       reject(response && response.error ? response.error.message : genericErrorText);
     })
