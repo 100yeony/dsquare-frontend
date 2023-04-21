@@ -104,6 +104,7 @@ export default {
         }
 
       }).then((response) => {
+        store.dispatch('info/setPageState', {});
         this.$router.push(process.env.VUE_APP_BOARD_QNA);
       });
       //}

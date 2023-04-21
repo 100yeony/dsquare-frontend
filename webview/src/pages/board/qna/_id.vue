@@ -260,6 +260,7 @@ export default {
       console.log(index)
       if (index === 0) {
         console.log("수정하기")
+        store.dispatch('info/setPageState', {});
         this.$router.push({
           path: process.env.VUE_APP_BOARD_QNA_EDIT,
           query: {
@@ -322,6 +323,7 @@ export default {
       const res = await api.del('board/questions/' + this.$route.query.qid, '').then(
         (response) => {
           console.log(response)
+          store.dispatch('info/setPageState', {});
           this.$router.push(process.env.VUE_APP_BOARD_QNA);
         }
       )
