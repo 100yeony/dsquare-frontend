@@ -37,6 +37,7 @@ router.beforeEach(async (to, from, next) => {
 		store.dispatch("url/setUrlQuery", {})
 	}
 
+	console.log(tokenRequired)
 	if(tokenRequired) { // 인증 필요 사이트
 		if(stringUtils.isEmptyBool(token.accessToken)) {
 			return next(process.env.VUE_APP_LOGIN); // 로그인 화면으로 보내기.

@@ -1,7 +1,8 @@
 <script>
 import { useVuelidate } from '@vuelidate/core'
 import { required, email } from '@vuelidate/validators'
-import api from '@/api'
+//import api from '@/api'
+import axios from 'axios'
 /**
  * Forgot Password component
  */
@@ -38,16 +39,17 @@ export default {
       // stop here if form is invalid
       this.v$.$touch();
       if (!this.v$.$error) {
-        let postParam = {};
-        postParam.email = this.email
-        
-        const res = await api.noneTokenPost('/account/find-pw', postParam)
+        const res = await axios.post('http://localhost:8090/account/find-pw', this.email, {
+          headers: {
+            'Content-Type': 'text/plain'
+          },
+        })
         console.log(res)
         if (res.status === 200) {
-          this.$router.push('/account/find-pass-ok');
+          this.$router.push(process.env.VUE_APP_FINDPASS_OK);
           return;
         }
-      
+
       }
     },
   },
@@ -65,18 +67,17 @@ export default {
               회원 가입시 입력하신 이메일 주소를 입력하시면, 해당 이메일로 임시 비밀번호를 발급해드립니다.
             </div>
             <label for="useremail" class="font-medium font-sm"> 이메일 주소</label>
-            
-            <v-text-field label="이메일을 입력해주세요" type="text" v-model="email" variant="outlined"
-              single-line hide-details
+
+            <v-text-field label="이메일을 입력해주세요" type="text" v-model="email" variant="outlined" single-line hide-details
               class="form-control font-sm mt-2" id="useremail" density="compact" :class="{
-                'is-invalid': submitted && v$.email.$error,
-              }" />
+                  'is-invalid': submitted && v$.email.$error,
+                }" />
             <div v-if="submitted && v$.email.$error" class="invalid-feedback">
               <v-icon size="x-small" color="red">mdi-close-circle-outline</v-icon>
               <span v-if="v$.email.required.$invalid" class="font-xs font_red">이메일을 입력해주세요.</span>
               <span v-if="v$.email.email.$invalid" class="font-xs font_red">올바른 이메일 형식이 아닙니다.</span>
             </div>
-          
+
             <v-row align="center" class="mt-5">
               <v-col>
                 <v-btn class="mr-5 pph-25 font-sm button_white font-medium" @click="cancel" variant="">
@@ -118,8 +119,8 @@ export default {
   width: 95% !important;
 }
 
-span{
-  padding: 0px 5px !important; 
+span {
+  padding: 0px 5px !important;
 }
 </style>
 
