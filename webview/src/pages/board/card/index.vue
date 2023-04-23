@@ -101,7 +101,7 @@ export default {
       requestCardData: [],
       scrollPosition: 0,
       giftedCardData: {
-        id: 12,
+        cardId: 12,
         title: "신입사원과제",
         content: "신입사원 웰컴 프로젝트 중이에요.. 저희에게 힘을 주세요.. 신입사원 웰컴 프로젝트 중이에요.. 저희에게 힘을 주세요.. 신입사원 웰컴 프로젝트 중이에요.. 저희에게 힘을 주세요..",
         date: "2023-04-01",
@@ -136,6 +136,16 @@ export default {
     async search() {
     },
     handleCardClicked(item) {
+      if (item) {
+        console.log(item);
+        this.$router.push({
+          path: process.env.VUE_APP_BOARD_CARD_DETAIL,
+          title: item?.title,
+          query: {
+            id: item?.cardId,
+          },
+        });
+      }
     },
     handleeWritePage() {
       console.log("handleeWritePage");
@@ -143,7 +153,6 @@ export default {
         path: process.env.VUE_APP_BOARD_CARD_WRITE,
         query: {},
       });
-
     },
     loadMore() {
       this.page += 1;
