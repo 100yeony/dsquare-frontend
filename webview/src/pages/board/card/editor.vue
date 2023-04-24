@@ -155,7 +155,7 @@ export default {
       }
     },
     cancle() {
-      this.$router.push(process.env.VUE_APP_BOARD_COMMUNICATION);
+      this.$router.push(process.env.VUE_APP_BOARD_CARD);
     },
     categoryChanged() {
       this.subcategory = [];
