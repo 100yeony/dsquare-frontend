@@ -40,7 +40,9 @@
           </v-col>
         </v-row>
         <h2 class="mb-3">{{ cardData.title }}</h2>
-        <div v-html="cardData.content"></div>
+        <div>
+          {{ cardData.content }}
+        </div>
         <v-chip class="mt-2" variant="outlined">
           <v-icon start icon="mdi-account-multiple-outline"></v-icon>
           <template v-for="teammate in cardData.teammate">
