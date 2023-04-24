@@ -122,7 +122,8 @@ export default {
         (response) => {
           response.data.forEach((d) => {
             d.createDate = this.exportDateFromTimeStamp(d.createDate);
-            d.teammate = JSON.parse(d.teammate.replaceAll("'", '"'));  // 어레이로 변환
+            var tempTeammate = d.teammate.replaceAll('[', '["').replaceAll(']', '"]').replaceAll(',', '","');
+            d.teammate = JSON.parse(tempTeammate);  // 어레이로 변환
           });
           this.requestCardData = response.data;
         }
@@ -173,7 +174,6 @@ export default {
     },
     onScroll(e) {
         this.scrollPosition = window.scrollY;
-        console.log(this.scrollPosition);
     },
 
     calculateCardStyle(card, index) {
