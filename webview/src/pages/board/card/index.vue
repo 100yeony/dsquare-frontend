@@ -43,8 +43,8 @@
 
     <!-- 카드 대기중 목록 -->
     <p class="mt-3 text-h6 font-weight-black">카드 대기중</p>
-    <div v-scroll="onScroll">
-      <div v-for="(item, index) in styledCards" :value="item.cardId" class="card" ref="test">
+    <div>
+      <div v-for="(item, index) in requestCardData" :value="item.cardId" class="card">
         <RequestCard class=" mt-2" :data="item" :key="index" @handle-card-clicked="handleCardClicked" :style="item.style"/>
       </div>
     </div>
@@ -99,7 +99,6 @@ export default {
       searchKey: '',
       page: 1,
       requestCardData: [],
-      scrollPosition: 0,
       giftedCardData: {
         cardId: 12,
         title: "신입사원과제",
@@ -126,6 +125,7 @@ export default {
             d.teammate = JSON.parse(tempTeammate);  // 어레이로 변환
           });
           this.requestCardData = response.data;
+          this.cardsLength = response.data.length;
         }
       );
     },
@@ -204,11 +204,6 @@ export default {
       return Math.min(Math.max(min, value), max)
     }
   },
-  computed: {
-    styledCards() {
-      return this.requestCardData.map(this.calculateCardStyle)
-    },
-  }
 };
 </script>
   
@@ -227,7 +222,7 @@ export default {
 }
 
 @mixin translateY {
-  @for $i from 0 through 15 {
+  @for $i from 0 through 10000 {
     &:nth-child(#{$i}) {
       transform: translateY(#{$i * 16}px);
     }
@@ -241,6 +236,4 @@ export default {
   transform-origin: center top;
   @include translateY;
 }
-
-
 </style>
