@@ -122,7 +122,7 @@ export default {
     }
   },
   mounted() {
-    if (!this.$route.query.id) { // work 값이 없으면.
+    if (!this.$route.query.id) { 
       this.$router.replace(process.env.VUE_APP_BOARD_CARD);
       return;
     }
@@ -162,13 +162,15 @@ export default {
       console.log(index)
       if (index === 0) {  // 수정
         this.$router.push({
-          path: process.env.VUE_APP_BOARD_QNA_EDIT,
+          path: process.env.VUE_APP_BOARD_CARD_EDIT,
           query: {
             id: this.cardData.cardId,
             title: this.cardData.title,
             content: this.cardData.content,
             teammate: this.cardData.teammate,
-            projTeamInfo: this.cardData.projTeamInfo,
+            projTeamId: this.cardData.projTeamInfo.tid,
+            projTeamName: this.cardData.projTeamInfo.name,
+            teammateCnt: 3, //추후 api 연동 후 수정  
           }
 
         });

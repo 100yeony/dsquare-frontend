@@ -168,6 +168,15 @@ export default [
 				component: () => import("@/pages/board/card/_id"),
 			},
       {
+        path: process.env.VUE_APP_BOARD_CARD_EDIT, 
+        name: "card-edit",
+        meta: {
+          title: "카드주세요 수정",
+          back: process.env.VUE_APP_BOARD_CARD_DETAIL
+        },
+        component: () => import("@/pages/board/card/edit"),
+      },
+      {
         path: process.env.VUE_APP_MYPAGE,
         name: "mypage",
         meta: {
