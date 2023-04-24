@@ -1,18 +1,48 @@
+<!--
+{
+    "cardId": 1,
+    "writerInfo": {
+        "id": 1,
+        "email": "manager1@naver.com",
+        "nickname": "manager1",
+        "name": "김성우",
+        "contact": "010-1234-5678",
+        "teamHierarchy": [
+            "Digico개발센터"
+        ]
+    },
+    "projTeamInfo": {
+        "tid": 6,
+        "name": "메시징DX플랫폼팀"
+    },
+    "title": "카드 제목입니다.",
+    "content": "카드 내용입니다.",
+    "teammate": "['홍길동', '김길동','안철수']",
+    "createDate": "2023-04-21T16:46:05.847847",
+    "viewCnt": 0,
+    "selectionInfo": null
+}
+-->
 <template>
-    <v-card class="mx-auto justify-center rounded-lg" :class="props?.data?.gifted ? 'gifted-card' : 'nongifted-card'"  variant="outlined" @click="handleCardClicked">
+    <v-card class="mx-auto justify-center rounded-lg" :class="props?.data?.selectionInfo ? 'gifted-card' : 'nongifted-card'"  variant="outlined" @click="handleCardClicked">
         <v-card-item class="pb-4">
             <div>
-                <v-chip class="gifted-chip mb-2 w-100" v-if="props?.data?.gifted" variant="outlined"><img src="@/assets/images/icons/party-popper.svg" class="mr-2"/>카드 드립니다!!!</v-chip>
+                <v-chip class="gifted-chip mb-2 w-100" v-if="props?.data?.selectionInfo" variant="outlined"><img src="@/assets/images/icons/party-popper.svg" class="mr-2"/>카드 드립니다!!!</v-chip>
             </div>
             <div>
                 <v-row>
-                <v-col cols="8" class="text-h7">{{ props?.data?.title }}</v-col>
-                <v-col cols="4" class="text-caption font-0000008F">{{ props?.data?.date }}</v-col>
+                <v-col cols="7" class="text-h7">{{ props?.data?.title }}</v-col>
+                <v-col cols="5" align="right" class="text-caption font-0000008F">{{ props?.data?.createDate }}</v-col>
                 </v-row>
                 <div class="mt-2 mb-3 text-caption font-0000008F">{{ props?.data?.content }} 
                 </div>
             </div>
-            <v-chip class="mt-2" variant="outlined"><v-icon start icon="mdi-account-multiple-outline"></v-icon>{{props?.data?.members}}</v-chip>
+            <v-chip class="mt-2" variant="outlined"><v-icon start icon="mdi-account-multiple-outline">
+                </v-icon>
+                <template v-for="teammate in props?.data?.teammate">
+                    {{  teammate }}&nbsp;
+                </template>
+            </v-chip>
             <v-row class="mt-2">
                 <v-col cols="3" class="center-container align-items-end"><v-icon size="small">mdi-heart-outline</v-icon><span
                     class="text-caption ml-1">{{ props?.data?.like }}</span></v-col>
@@ -29,6 +59,8 @@
     const props = defineProps({
     data: Object,
     });
+
+    
     const emit = defineEmits(["handle-card-clicked"]);
 
     // console.log(props.data);
