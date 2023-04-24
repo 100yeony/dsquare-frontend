@@ -185,11 +185,17 @@ export default {
       <div class="font-sm font-medium mt-7 mb-2">본문</div>
       <ckeditor v-model="editorData" :editor="editor" :config="editorConfig" height="200"></ckeditor>
 
-      <div class="font-sm font-medium">태그</div>
+      <div class="font-sm font-medium mt-5 mb-2">태그</div>
 
       <v-row justify="center">
         <v-col cols="12" class="pw-100 ">
           <v-sheet>
+            <v-row>
+              <v-col>
+                <v-text-field :placeholder=placeholderText v-model="chipText" variant="outlined" density="compact"
+                  @input="handleInput" hide-details append-icon="mdi-tag-plus" @click:append="addChips"></v-text-field>
+              </v-col>
+            </v-row>
             <div>
               <v-chip-group column>
                 <v-chip v-for="tag in tags" :key="tag">
@@ -199,12 +205,6 @@ export default {
               </v-chip-group>
 
             </div>
-            <v-row>
-              <v-col>
-                <v-text-field :placeholder=placeholderText v-model="chipText" variant="outlined" density="compact"
-                  @input="handleInput" hide-details append-icon="mdi-tag-plus" @click:append="addChips"></v-text-field>
-              </v-col>
-            </v-row>
           </v-sheet>
         </v-col>
       </v-row>
