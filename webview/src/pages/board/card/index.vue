@@ -172,6 +172,37 @@ export default {
       return year + "-" + month + "-" + day + " " + hour + ":" + minute
 
     },
+    onScroll(e) {
+        this.scrollPosition = window.scrollY;
+    },
+
+    calculateCardStyle(card, index) {
+      var cardHeight = this.$refs.test ? this.$refs.test[index].clientHeight : 0; // height + padding + margin
+      cardHeight += 16;
+      const firstCardTop = this.$refs.test ? this.$refs.test[0].getBoundingClientRect().top : 0;
+
+      const positionY = this.$refs.test ? this.$refs.test[index].getBoundingClientRect().top : 0;
+      const deltaY = positionY - this.scrollPosition;
+      //console.log(`${index} positionY=${positionY}, deltaY=${deltaY}`);
+      // constrain deltaY between -cardHeight and 0
+      const dY = this.clamp(deltaY, -cardHeight, 0);
+
+      const disappearingPosition = firstCardTop + cardHeight * index;
+      
+      //const dissapearingValue = (dY / cardHeight) + 1
+      const dissapearingValue = (dY / cardHeight) + 1
+      const zValue = dY / cardHeight * 50;
+      const yValue = dY / cardHeight * -20;
+
+      card.style = {
+        opacity: dissapearingValue,
+        transform: `perspective(200px) translate3d(0,${yValue}px, ${zValue}px)`,
+      }
+      return card;
+    },
+    clamp (value, min, max) {
+      return Math.min(Math.max(min, value), max)
+    }
   },
 };
 </script>
