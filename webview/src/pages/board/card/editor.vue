@@ -43,6 +43,7 @@ export default {
       subcategory: [],
       subcategoryItems: [],
       tags: [],
+      teammateCnt:'',
     };
   },
   watch: {
@@ -108,15 +109,24 @@ export default {
   methods: {
     async write(editorData) {
       console.log(editorData)
+      console.log({
+        cardWriterId: store.getters["info/infoUser"].userId,
+        content: editorData,
+        title: this.title,
+        teammate: Array.from(this.chipData),
+        projTeamId: this.projTeamId, 
+        teammateCnt: this.teammateCnt,
+      })
       const res = await api.post('board/cards', {
         cardWriterId: store.getters["info/infoUser"].userId,
         content: editorData,
         title: this.title,
-        teammate: this.tags,
+        teammate: Array.from(this.chipData),
         projTeamId: this.projTeamId, 
+        teammateCnt: this.teammateCnt,
       }).then((response) => {
         console.log(response)
-        this.$router.push(process.env.VUE_APP_BOARD_COMMUNICATION);
+        this.$router.push(process.env.VUE_APP_BOARD_CARD);
       });
 
 
@@ -192,7 +202,7 @@ export default {
             <label class="font-sm font-medium">참여인원 수</label>
             <v-row>
               <v-col cols="4">
-                <v-text-field v-model="title" placeholder="숫자 입력" variant="outlined" density="compact" hide-details
+                <v-text-field v-model="teammateCnt" placeholder="숫자 입력" variant="outlined" density="compact" hide-details
                   class="mt-2 mb-5"/>
               </v-col>
             </v-row>
