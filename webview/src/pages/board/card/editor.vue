@@ -193,7 +193,7 @@ export default {
       </v-row>
 
       <div class="font-sm font-medium mt-7 mb-2">본문</div>
-      <v-text-field placeholder="내용을 입력해주세요." variant="outlined" v-model="editorData"></v-text-field>
+      <v-textarea placeholder="내용을 입력해주세요." variant="outlined" v-model="editorData"></v-textarea>
 
       <v-expansion-panels class="my-3 mt-5">
         <v-expansion-panel>
@@ -282,9 +282,5 @@ export default {
 
 ::v-deep .mdi-close-circle::before{
   font-size: large !important;
-}
-
-::v-deep .v-input--density-default .v-field--variant-outlined{
-  --v-field-padding-bottom: 120px !important; 
 }
 </style>
