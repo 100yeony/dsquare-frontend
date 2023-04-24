@@ -1,28 +1,3 @@
-<!--
-{
-    "cardId": 1,
-    "writerInfo": {
-        "id": 1,
-        "email": "manager1@naver.com",
-        "nickname": "manager1",
-        "name": "김성우",
-        "contact": "010-1234-5678",
-        "teamHierarchy": [
-            "Digico개발센터"
-        ]
-    },
-    "projTeamInfo": {
-        "tid": 6,
-        "name": "메시징DX플랫폼팀"
-    },
-    "title": "카드 제목입니다.",
-    "content": "카드 내용입니다.",
-    "teammate": "['홍길동', '김길동','안철수']",
-    "createDate": "2023-04-21T16:46:05.847847",
-    "viewCnt": 0,
-    "selectionInfo": null
-}
--->
 <template>
     <v-card class="mx-auto justify-center rounded-lg" :class="props?.data?.selectionInfo ? 'gifted-card' : 'nongifted-card'"  variant="outlined" @click="handleCardClicked">
         <v-card-item class="pb-4">
