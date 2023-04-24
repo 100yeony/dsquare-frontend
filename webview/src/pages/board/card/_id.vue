@@ -25,7 +25,7 @@
             <div class="text-caption font-0000008F">{{ cardData.createDate }}</div>
           </v-col>
           <v-col cols="2">
-            <v-menu v-if="!isWriter">
+            <v-menu v-if="isWriter">
               <template v-slot:activator="{ props }">
                 <v-btn icon flat rounded="0" v-bind="props" color="transparent">
                   <v-icon>mdi-dots-horizontal</v-icon>
