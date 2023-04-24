@@ -132,7 +132,8 @@ export default {
       (response) => {
         this.cardData = response.data;
         this.cardData.createDate = this.exportDateFromTimeStamp(this.cardData.createDate);
-        //this.cardData.teammate = JSON.parse(this.cardData.teammate.replaceAll("'", '"'));
+        var tempTeammate = this.cardData.teammate.replaceAll('[', '["').replaceAll(']', '"]').replaceAll(',', '","');
+        this.cardData.teammate = JSON.parse(tempTeammate);  // 어레이로 변환
         if (this.user.userId == response.data.writerInfo.id) {
           this.isWriter = true;
         }
