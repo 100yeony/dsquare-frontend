@@ -193,9 +193,9 @@ export default {
       </v-row>
 
       <div class="font-sm font-medium mt-7 mb-2">본문</div>
-      <ckeditor v-model="editorData" :editor="editor" :config="editorConfig" height="200"></ckeditor>
+      <v-textarea placeholder="내용을 입력해주세요." variant="outlined" v-model="editorData"></v-textarea>
 
-      <v-expansion-panels class="my-3 mt-7">
+      <v-expansion-panels class="my-3 mt-5">
         <v-expansion-panel>
           <v-expansion-panel-title>옵션</v-expansion-panel-title>
           <v-expansion-panel-text>
