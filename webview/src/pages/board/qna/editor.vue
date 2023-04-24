@@ -183,11 +183,17 @@ export default {
       <v-file-input v-model="selectedFile" label="파일을 첨부해주세요." chips class="mt-5" variant="outlined" density="compact">
       </v-file-input>
 
-      <div class="font-sm font-medium">태그</div>
+      <div class="font-sm font-medium mb-2">태그</div>
 
       <v-row justify="center">
         <v-col cols="12" class="pw-100 ">
           <v-sheet>
+            <v-row>
+              <v-col>
+                <v-text-field :placeholder=placeholderText v-model="chipText" variant="outlined" density="compact"
+                  @input="handleInput" hide-details append-icon="mdi-tag-plus" @click:append="addChips"></v-text-field>
+              </v-col>
+            </v-row>
             <div>
               <v-chip-group column>
                 <v-chip v-for="tag in tags" :key="tag">
@@ -197,12 +203,6 @@ export default {
               </v-chip-group>
 
             </div>
-            <v-row>
-              <v-col>
-                <v-text-field :placeholder=placeholderText v-model="chipText" variant="outlined" density="compact"
-                  @input="handleInput" hide-details append-icon="mdi-tag-plus" @click:append="addChips"></v-text-field>
-              </v-col>
-            </v-row>
           </v-sheet>
         </v-col>
       </v-row>

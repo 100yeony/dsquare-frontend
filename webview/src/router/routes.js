@@ -154,7 +154,7 @@ export default [
         name: "card-write",
         meta: {
           title: "카드주세요 작성",
-          back: process.env.VUE_APP_BOARD_COMMUNICATION
+          back: process.env.VUE_APP_BOARD_CARD
         },
         component: () => import("@/pages/board/card/editor"),
       },
@@ -163,7 +163,7 @@ export default [
 				name: "card-detail",
 				meta: {
           title: "카드주세요 상세",
-          back: process.env.VUE_APP_BOARD_COMMUNICATION
+          back: process.env.VUE_APP_BOARD_CARD
 				},
 				component: () => import("@/pages/board/card/_id"),
 			},
