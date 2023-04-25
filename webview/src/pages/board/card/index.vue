@@ -43,11 +43,7 @@
 
             </v-col>
           </v-row>
-          <v-row>
-            <v-col>
-              <v-btn color="shades-black" @click="search()" block :disabled="!searchValidation">검색</v-btn>
-            </v-col>
-          </v-row>
+          <v-btn color="shades-black" @click="search()" block>검색</v-btn>
         </v-expansion-panel-text>
       </v-expansion-panel>
     </v-expansion-panels>
