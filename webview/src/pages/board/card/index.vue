@@ -12,25 +12,22 @@
         <v-expansion-panel-title>검색</v-expansion-panel-title>
         <v-expansion-panel-text>
           <v-row justify="center">
-            <v-col cols="6" class="mb-0 pb-0">
-              <v-select v-model="category" class="text-truncate" placeholder="분야" variant="outlined" density="compact"
-                :items="categoryItems" @update:modelValue="categoryChanged"></v-select>
+            <v-col>
+              <v-select v-model="category" class="text-truncate mt-2" placeholder="부서" variant="outlined"
+                density="compact" :items="categoryItems" @update:modelValue="categoryChanged" id="category"
+                hide-details></v-select>
             </v-col>
-            <v-col cols="6" class="mb-0 pb-0">
-              <v-select v-model="subcategory" class="text-truncate" placeholder="소분야" variant="outlined" density="compact"
-                :items="subcategoryItems" :disabled="!subcategoryItems.length"></v-select>
+            <v-col>
+              <v-select v-model="subcategory" class="text-truncate mt-2" placeholder="소속팀" variant="outlined"
+                density="compact" :items="subcategoryItems" :disabled="!subcategoryItems.length" id="subcategory"
+                hide-details></v-select>
             </v-col>
           </v-row>
           <v-row>
-            <v-col cols="4" class="pr-0 pt-0">
-              <v-select v-model="searchKey" placeholder="구분" class="text-truncate" variant="outlined" density="compact"
-                :items="['제목 + 내용', '작성자']"></v-select>
-            </v-col>
-            <v-col cols="8" class="pl-0 pt-0">
-              <v-text-field v-model="searchContent" placeholder="검색어" variant="outlined" density="compact" />
+            <v-col>
+              <v-btn color="shades-black" @click="search()" block :disabled="!searchValidation">검색</v-btn>
             </v-col>
           </v-row>
-          <v-btn color="shades-black" @click="search()" block>검색</v-btn>
         </v-expansion-panel-text>
       </v-expansion-panel>
     </v-expansion-panels>
@@ -77,9 +74,17 @@ export default {
     Observe
   },
   setup() {
-    let area = store.getters["info/infoArea"];
-    let categoryItems = area.areaList;
-    let subcategoryFullList = area.subAreaList;
+    let categoryItems = ['플랫폼품질혁신TF', '플랫폼IT컨설팅vTF', '플랫폼서비스담당',
+      'Digico서비스담당', 'Digico개발센터'];
+    let subcategoryFullList = [
+      [],
+      [],
+      ["메시징DX플랫폼팀", "서비스플랫폼팀",
+        "금융결제DX플랫폼팀", "인증DX플랫폼팀"],
+      ["미디어플랫폼팀", "AI서비스팀",
+        "AICC서비스팀", "Safety플랫폼팀"],
+      ["AgileCore팀", "Digico사업수행팀", "AICC딜리버리팀"],
+    ];
 
     let searchUri = "/board/questions";
 
@@ -90,13 +95,17 @@ export default {
       maxStackedCards: 4,
     };
   },
+  computed: {
+    searchValidation() {
+      return this.searchProjTeamId ? true : false;
+    }
+  },
   data() {
     return {
       category: [],
       subcategory: [],
       subcategoryItems: [],
-      searchContent: '',
-      searchKey: '',
+      searchProjTeamId: 0,
       page: 1,
       requestCardData: [],
       giftedCardData: {
@@ -116,6 +125,42 @@ export default {
   mounted() {
     var res = this.requestAll();
   },
+  watch: {
+    category(newVal, oldVal) {
+      if (newVal === '플랫폼품질혁신TF') {
+        this.searchProjTeamId = 1;
+      } else if (newVal === '플랫폼IT컨설팅vTF') {
+        this.searchProjTeamId = 2;
+      } else {
+        this.searchProjTeamId = '';
+      }
+    },
+    subcategory(newVal, oldVal) {
+      if (newVal === '메시징DX플랫폼팀') {
+        this.searchProjTeamId = 6;
+      } else if (newVal === '서비스플랫폼팀') {
+        this.searchProjTeamId = 7;
+      } else if (newVal === '금융결제DX플랫폼팀') {
+        this.searchProjTeamId = 8;
+      } else if (newVal === '인증DX플랫폼팀') {
+        this.searchProjTeamId = 9;
+      } else if (newVal === '미디어플랫폼팀') {
+        this.searchProjTeamId = 10;
+      } else if (newVal === 'AI서비스팀') {
+        this.searchProjTeamId = 11;
+      } else if (newVal === 'AICC서비스팀') {
+        this.searchProjTeamId = 12;
+      } else if (newVal === 'Safety플랫폼팀') {
+        this.searchProjTeamId = 13;
+      } else if (newVal === 'AgileCore팀') {
+        this.searchProjTeamId = 14;
+      } else if (newVal === 'Digico사업수행팀') {
+        this.searchProjTeamId = 15;
+      } else if (newVal === 'AICC딜리버리팀') {
+        this.searchProjTeamId = 16;
+      }
+    }
+  },
   methods: {
     async requestAll() {
       var res = await api.get('board/cards').then(
@@ -131,11 +176,27 @@ export default {
       );
     },
     categoryChanged() {
-      var categoryIndex = this.categoryItems.indexOf(this.category);
       this.subcategory = [];
-      this.subcategoryItems = 1 <= categoryIndex ? this.subcategoryFullList[categoryIndex - 1] : [];
+      var categoryIndex = this.categoryItems.indexOf(this.category);
+      if (categoryIndex != 0) {
+        this.subcategoryItems = this.subcategoryFullList[categoryIndex];
+      }
+      else {
+        this.subcategoryItems = [];
+      }
     },
     async search() {
+      var res = await api.get('/board/cards/search?projTeamId=' + this.searchProjTeamId).then(
+        (response) => {
+          response.data.forEach((d) => {
+            d.createDate = this.exportDateFromTimeStamp(d.createDate);
+            var tempTeammate = d.teammate.replaceAll('[', '["').replaceAll(']', '"]').replaceAll(',', '","');
+            d.teammate = JSON.parse(tempTeammate);
+          });
+          this.requestCardData = response.data;
+          this.cardsLength = response.data.length;
+        }
+      );
     },
     handleCardClicked(item) {
       if (item) {
