@@ -45,8 +45,10 @@
         </v-card>
       </v-row> -->
         <v-row>
-          <v-col cols="2" class="center-container"><v-icon size="small">mdi-heart-outline</v-icon><span
-              class="text-caption font-0000008F ml-1">{{ qData.likes }}</span></v-col>
+          <v-col cols="2" class="center-container">
+            <template v-if="qData.likeYn"><v-icon size="small" color="red">mdi-heart</v-icon></template>
+            <template v-else><v-icon size="small">mdi-heart-outline</v-icon></template>
+            <span class="text-caption font-0000008F ml-1">{{ qData.likeCnt }}</span></v-col>
           <v-col cols="2" class="center-container"><v-icon size="small">mdi-message-text-outline</v-icon><span
               class="text-caption font-0000008F ml-1">{{ commentList.length }}</span></v-col>
         </v-row>
@@ -202,7 +204,8 @@ export default {
         content: '',
         createDate: '',
         viewCnt: 0,
-        likes: 0,
+        likeCnt: 0,
+        likeYn: false,
         tags: [],
         writerId: 0,
         managerId: 0,
@@ -376,7 +379,8 @@ export default {
         content: data.content,
         createDate: this.exportDateFromTimeStamp(data.createDate),
         viewCnt: data.viewCnt,
-        likes: 1,
+        likeCnt: data.likeCnt,
+        likeYn: data.likeYn,
         tags: data.tags,
         writerId: data.writerInfo.id,
         managerId: 1,
