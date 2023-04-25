@@ -22,8 +22,12 @@
                     </template>
                 </v-chip>
             <v-row class="mt-2">
-                <v-col cols="2" class="center-container align-items-end"><v-icon size="small">mdi-heart-outline</v-icon><span
-                    class="text-caption ml-1">{{ props?.data?.like }}</span></v-col>
+
+                <v-col cols="2" class="center-container align-items-end">
+                    <template v-if="props?.data?.likeYn"><v-icon size="small" color="red">mdi-heart</v-icon></template>
+                    <template v-else><v-icon size="small">mdi-heart-outline</v-icon></template>
+                    <span class="text-caption ml-1">{{ props?.data?.likeCnt }}</span>
+                </v-col>
                 <v-col cols="2" class="center-container justify-content-end"><v-icon size="small">mdi-message-text-outline</v-icon><span
                     class="text-caption ml-1">{{ props?.data?.comment }}</span></v-col>
                 <v-col cols="8" class="d-flex justify-end"> 

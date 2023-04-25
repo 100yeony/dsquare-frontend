@@ -40,9 +40,14 @@
               <v-select v-model="subcategory" class="text-truncate mt-2" placeholder="소속팀 선택" variant="outlined"
                 density="compact" :items="subcategoryItems" :disabled="!subcategoryItems.length" id="subcategory"
                 hide-details></v-select>
+
             </v-col>
           </v-row>
-          <v-btn color="shades-black" @click="search()" block>검색</v-btn>
+          <v-row>
+            <v-col>
+              <v-btn color="shades-black" @click="search()" block :disabled="!searchValidation">검색</v-btn>
+            </v-col>
+          </v-row>
         </v-expansion-panel-text>
       </v-expansion-panel>
     </v-expansion-panels>
@@ -104,6 +109,11 @@ export default {
       maxStackedCards: 4,
     };
   },
+  computed: {
+    searchValidation() {
+      return this.searchProjTeamId ? true : false;
+    }
+  },
   data() {
     return {
       writerInfo: {
@@ -121,8 +131,7 @@ export default {
       category: [],
       subcategory: [],
       subcategoryItems: [],
-      searchContent: '',
-      searchKey: '',
+      searchProjTeamId: 0,
       page: 1,
       requestCardData: [],
       giftedCardData: {
@@ -131,7 +140,8 @@ export default {
         content: "신입사원 웰컴 프로젝트 중이에요.. 저희에게 힘을 주세요.. 신입사원 웰컴 프로젝트 중이에요.. 저희에게 힘을 주세요.. 신입사원 웰컴 프로젝트 중이에요.. 저희에게 힘을 주세요..",
         date: "2023-04-01",
         teammate: ["변상진", "이호열"],
-        like: "327",
+        likeCnt: "327",
+        likeYn: true,
         comment: "3",
         createDate: "2023-4-21 17:46",
         selectionInfo: {},
@@ -201,9 +211,14 @@ export default {
       );
     },
     categoryChanged() {
-      var categoryIndex = this.categoryItems.indexOf(this.category);
       this.subcategory = [];
-      this.subcategoryItems = 1 <= categoryIndex ? this.subcategoryFullList[categoryIndex - 1] : [];
+      var categoryIndex = this.categoryItems.indexOf(this.category);
+      if (categoryIndex != 0) {
+        this.subcategoryItems = this.subcategoryFullList[categoryIndex];
+      }
+      else {
+        this.subcategoryItems = [];
+      }
     },
     async search() {
       if (typeof this.subcategory == 'string' || typeof this.category == 'string'){
