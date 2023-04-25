@@ -19,8 +19,10 @@
             <v-icon start icon="mdi-account-check"></v-icon> 담당자 답변완료
           </v-chip>
         </v-col>
-        <v-col cols="3" class="center-container align-items-end"><v-icon size="small">mdi-heart-outline</v-icon><span
-            class="text-caption ml-1">{{ props?.data?.like }}</span></v-col>
+        <v-col cols="3" class="center-container align-items-end">
+          <template v-if="props?.data?.likeYn"><v-icon size="small" color="red">mdi-heart</v-icon></template>
+          <template v-else><v-icon size="small">mdi-heart-outline</v-icon></template>
+          <span class="text-caption ml-1">{{ props?.data?.likeCnt }}</span></v-col>
         <v-col cols="3" class="center-container justify-content-end"><v-icon size="small">mdi-message-text-outline</v-icon><span
             class="text-caption ml-1">{{ props?.data?.comment }}</span></v-col>
       </v-row>
