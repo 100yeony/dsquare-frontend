@@ -37,9 +37,33 @@
 
     <!-- 금주의 카드 -->
     <p class="mt-3 text-h6 font-weight-black">금주의 카드</p>
-    <div>
-      <RequestCard class="mt-2 card-of-the-week" :data="giftedCardData" @handle-card-clicked="handleCardClicked" />
-    </div>
+    <swiper
+      :spaceBetween="16"
+      :centeredSlides="true"
+      :autoplay="{
+        delay: 0,
+        disableOnInteraction: false,
+      }"
+      :speed="7000"
+      :resizeObserver="true"
+      :loop="true"
+      :modules="swiperModules"
+      :resistance="false"
+      class="overflow-visible"
+      >
+      <swiper-slide>
+        <RequestCard class="mt-2 card-of-the-week" :data="giftedCardData" @handle-card-clicked="handleCardClicked" />
+      </swiper-slide>
+      <swiper-slide>
+        <RequestCard class="mt-2 card-of-the-week" :data="giftedCardData" @handle-card-clicked="handleCardClicked" />
+      </swiper-slide>
+      <swiper-slide>
+        <RequestCard class="mt-2 card-of-the-week" :data="giftedCardData" @handle-card-clicked="handleCardClicked" />
+      </swiper-slide>
+      <swiper-slide>
+        <RequestCard class="mt-2 card-of-the-week" :data="giftedCardData" @handle-card-clicked="handleCardClicked" />
+      </swiper-slide>
+    </swiper>
 
     <!-- 카드 대기중 목록 -->
     <p class="mt-3 text-h6 font-weight-black">카드 대기중</p>
@@ -68,13 +92,18 @@ import RequestCard from "@/components/cards/RequestCard";
 import Observe from "@/components/Observer";
 import api from '@/api';
 import store from "@/store";
-
+import { Swiper, SwiperSlide } from 'swiper/vue';
+import { Autoplay } from 'swiper';
+import 'swiper/css';
+import 'swiper/css/autoplay';
 
 export default {
   name: "cardBoard",
   components: {
     RequestCard,
-    Observe
+    Observe,
+    Swiper,
+    SwiperSlide,
   },
   setup() {
     let area = store.getters["info/infoArea"];
@@ -110,6 +139,7 @@ export default {
         createDate: "2023-4-21 17:46",
         selectionInfo: {},
       },
+      swiperModules: [ Autoplay, ]
     };
   },
   mounted() {
@@ -236,4 +266,5 @@ export default {
   transform-origin: center top;
   @include translateY;
 }
+
 </style>
