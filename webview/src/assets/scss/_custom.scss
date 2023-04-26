@@ -1053,6 +1053,26 @@ $bottom-navigation-content-font-size : var(--font-size-v-xxs);
   border: none !important;
 }
 
+.none_expansion-panel-padding .v-expansion-panel-text__wrapper{
+  padding: 0 !important;
+}
+
+.center_expansion-panel-icon .v-expansion-panel-title{
+  display: inline !important;
+}
+
+.none_expansion-panel-background-color .v-expansion-panel-title__overlay{
+  background-color:#fff !important;
+}
+
+.none_expansion-panel-box-shadow .v-expansion-panel__shadow{
+  box-shadow: none !important;
+}
+
+.v-list-item-subtitle{
+  font-size: 0.75rem !important;
+}
+
 .ck-content ul {
   margin-left: 20px;
 }

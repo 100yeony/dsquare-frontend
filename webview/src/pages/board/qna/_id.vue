@@ -1,5 +1,8 @@
 <template>
-  <div class="none_ck-toolbar_border">
+  <div class="none_ck-toolbar_border none_expansion-panel-padding
+   center_expansion-panel-icon 
+   none_expansion-panel-background-color 
+   none_expansion-panel-box-shadow">
     <div>
       <DeleteDialog :isShow="isShow" :title="dialogTitle" @click-confirm="onConfirm" @click-cancel="onCancel" />
     </div>
@@ -105,7 +108,7 @@
             </v-col>
           </v-row>
           <ckeditor v-model="item.content" :editor="editor" :config="editorConfig" :disabled="true"></ckeditor>
-          
+
 
           <!-- 
         답변 댓글 데이터 생기면 이 코드 사용
@@ -124,44 +127,50 @@
         </div> 
 -->
           <!-- ***** 답변 댓글 ***** -->
-          <v-card class="back-white mt-4">
-            <v-card-item>
-              <v-row class="mb-2" align="center">
-                <v-col cols="2">
-                  <v-avatar color="grey">😀</v-avatar>
-                </v-col>
-                <v-col cols="10">
-                  <div class="text-body font-bold">
-                    <v-row>변상진</v-row>
-                    <v-row class="text-caption font-0000008F">메시징DX플랫폼</v-row>
-                  </div>
-                </v-col>
-              </v-row>
-              <div class="text-caption font-0000008F">
-                <span class="font-1C4EFE">@김경란</span>테스트 데이터
-              </div>
-            </v-card-item>
-          </v-card>
 
-          <v-card class="back-white mt-4">
-            <v-card-item>
-              <v-row class="mb-2" align="center">
-                <v-col cols="2">
-                  <v-avatar color="grey">😀</v-avatar>
-                </v-col>
-                <v-col cols="10">
-                  <div class="text-body font-bold">
-                    <v-row>이상진</v-row>
-                    <v-row class="text-caption font-0000008F">메시징DX플랫폼</v-row>
-                  </div>
-                </v-col>
-              </v-row>
-              <div class="text-caption font-0000008F">
-                테스트 데이터
-              </div>
-            </v-card-item>
-          </v-card>
+
         </v-card-item>
+        <v-expansion-panels>
+          <v-expansion-panel>
+            <v-expansion-panel-title class="text-center"
+              :color="item.writerInfo.id == qData.managerId ? '#E8F2E1' : ''"></v-expansion-panel-title>
+            <v-expansion-panel-text>
+
+              <v-list>
+                <!-- <v-list-item v-for="item in items" :key="item.title" :title="item.title" subtitle="..."
+                  :prepend-avatar="item.avatar"></v-list-item> -->
+                <v-list-item key="홍길동" title="홍길동" subtitle="메세징dx플랫폼팀"
+                  prepend-avatar="@/assets/images/users/avatar_sample.png">
+                  <div>
+                    테스트 데이터
+                  </div>
+                </v-list-item>
+
+                <v-divider class="m-em-1" />
+                <v-list-item key="홍길동" title="홍길동" subtitle="메세징dx플랫폼팀"
+                  prepend-avatar="@/assets/images/users/avatar_sample.png">
+                  <div>
+                    <span class="font-1C4EFE">@김경란</span>테스트 데이터
+                  </div>
+                </v-list-item>
+                <v-divider class="m-em-1" />
+                <v-container v-if="!item.commentMode" class="text-center font_white_gray font-xs">
+                  <div @click="comment(item)">댓글 달기</div>
+                </v-container>
+
+                <v-container v-else class="text-center font_white_gray font-xs">
+                  <div @click="comment(item)">댓글작성 닫기</div>
+                  <v-text-field v-model="item.commentText" type="input" variant="outlined" single-line hide-details append-inner-icon="mdi-send" class="mt-5"
+                    @click:append-inner="writeComment(item.commentText)"></v-text-field>
+                </v-container>
+
+
+
+
+              </v-list>
+            </v-expansion-panel-text>
+          </v-expansion-panel>
+        </v-expansion-panels>
       </v-card>
     </div>
   </div>
@@ -262,6 +271,13 @@ export default {
           qid: this.$route.query.qid
         }
       });
+    },
+    comment(item) {
+      item.commentMode = !item.commentMode
+      console.log("comment")
+    },
+    writeComment(value) {
+      console.log(value)
     },
     editPost(index) {
       console.log(index)
@@ -394,10 +410,16 @@ export default {
       var res = await api.get('board/questions/' + this.$route.query.qid + '/answers', '').then(//this.$route.query.qid
         (response) => {
           console.log("answer: ")
-          console.log(response.data)
-          this.answerList = response.data
+          this.initAnswerData(response.data)
         }
       )
+    },
+    initAnswerData(datas) {
+      console.log(datas)
+      datas.forEach((data) => {
+        Object.assign(data, { commentMode: false , commentText: ''})
+      })
+      this.answerList = datas
     
     },
 
