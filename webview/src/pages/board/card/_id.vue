@@ -39,7 +39,7 @@
             </v-menu>
           </v-col>
         </v-row>
-        <h2 class="mb-3">{{ cardData.title }}</h2>
+        <h3 class="mb-3">{{ cardData.title }}</h3>
         <div>
           {{ cardData.content }}
         </div>
@@ -63,7 +63,7 @@
             </div>
           </div>
         </div>
-        <v-chip class="mt-5" variant="outlined">
+        <v-chip class="mt-7" variant="outlined">
           <v-icon start icon="mdi-account-multiple-outline"></v-icon>
           <template v-for="team in cardData.projTeamInfo?.name">
             {{  team  }}

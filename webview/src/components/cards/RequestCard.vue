@@ -11,18 +11,17 @@
                 </v-col>
                 <v-col cols="5" align="right" class="text-caption font-0000008F">{{ props?.data?.createDate }}</v-col>
                 </v-row>
-                <div class="text-h7 mt-2">{{ props?.data?.title }}</div>
+                <div class="text-h7 mt-3">{{ props?.data?.title }}</div>
                 <div class="mt-2 mb-3 text-caption font-0000008F">{{ props?.data?.content }} 
                 </div>
             </div>
-                <v-chip class="mt-2" variant="outlined"><v-icon start icon="mdi-account-multiple-outline">
+                <v-chip class="mt-1" variant="outlined"><v-icon start icon="mdi-account-multiple-outline">
                     </v-icon>
                     <template v-for="team in props?.data?.projTeamInfo?.name">
                         {{  team }}
                     </template>
                 </v-chip>
-            <v-row class="mt-2">
-
+            <v-row class="mt-0">
                 <v-col cols="2" class="center-container align-items-end">
                     <template v-if="props?.data?.likeYn"><v-icon size="small" color="red">mdi-heart</v-icon></template>
                     <template v-else><v-icon size="small">mdi-heart-outline</v-icon></template>
