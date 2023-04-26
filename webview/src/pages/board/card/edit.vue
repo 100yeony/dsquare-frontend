@@ -215,9 +215,11 @@ export default {
       <div class="font-sm font-medium mt-7 mb-2">본문</div>
       <v-textarea placeholder="내용을 입력해주세요." variant="outlined" v-model="editorData"></v-textarea>
 
-      <v-expansion-panels class="my-3 mt-5">
+      <v-expansion-panels class="my-3">
         <v-expansion-panel>
-          <v-expansion-panel-title>옵션</v-expansion-panel-title>
+          <v-expansion-panel-title>
+            <p class="mr-2">옵션</p> <p class="text-caption font-0000008F">(필수 입력란이 아닙니다)</p>
+          </v-expansion-panel-title>
           <v-expansion-panel-text>
             <label class="font-sm font-medium">참여인원 수</label>
             <v-row>
