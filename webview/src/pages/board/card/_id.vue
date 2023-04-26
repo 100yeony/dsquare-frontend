@@ -18,7 +18,7 @@
           <v-col cols="4">
             <div class="text-body font-bold">
               <v-row>{{ cardData.writerInfo.name }}</v-row>
-              <v-row class="text-caption font-0000008F">{{ cardData.projTeamInfo.name }}</v-row>
+              <v-row class="text-caption font-0000008F">{{ cardData.writerInfo.teamHierarchy[cardData.writerInfo.teamHierarchy.length-1] }}</v-row>
             </div>
           </v-col>
           <v-col cols="4">
@@ -43,12 +43,29 @@
         <div>
           {{ cardData.content }}
         </div>
-        <v-chip class="mt-2" variant="outlined">
+        <v-divider :thickness="1" class="mt-5 mb-3"></v-divider>
+        <v-row>
+          <v-col cols="1">
+            <v-icon size="small">mdi-information-outline</v-icon>
+          </v-col>
+          <v-col>
+            <div class="font-medium">프로젝트 정보</div>
+          </v-col>
+        </v-row>
+        <div>
+          <div class="sizing mt-2">참여인원 수: {{ cardData.teammateCnt }}</div>
+          <span class="sizing">참여인원: </span>
+          <span class="sizing" v-for="(p, index) in cardData.teammate" :key="p" :value="p">{{ p }} 
+            <span class="sizing" v-if="index!==cardData.teammate.length-1">,</span> 
+          </span>
+        </div>
+        <v-chip class="mt-5" variant="outlined">
           <v-icon start icon="mdi-account-multiple-outline"></v-icon>
-          <template v-for="teammate in cardData.teammate">
-            {{  teammate }}&nbsp;
+          <template v-for="team in cardData.projTeamInfo?.name">
+            {{  team  }}
           </template>
         </v-chip>
+        
         <v-row class="mt-2">
           <v-col cols="2" class="center-container">
             <template v-if="cardData.likeYn"><v-icon size="small" color="red">mdi-heart</v-icon></template>
@@ -71,8 +88,6 @@
   
   </div>
 </template>
-
-
 
 <script>
 import DeleteDialog from '@/components/DeleteDialog';
@@ -107,6 +122,7 @@ export default {
         lastUpdateDate: "",
         viewCnt: 0,
         selectionInfo: null,
+        teammateCnt: 0,
       },
       isWriter: false,
       isCardOwner: false,
@@ -172,7 +188,7 @@ export default {
             teammate: this.cardData.teammate,
             projTeamId: this.cardData.projTeamInfo.tid,
             projTeamName: this.cardData.projTeamInfo.name,
-            teammateCnt: 3, //추후 api 연동 후 수정  
+            teammateCnt: this.cardData.teammateCnt, //추후 api 연동 후 수정  
           }
 
         });
@@ -221,5 +237,13 @@ export default {
 
 .nongifted-card {
   background: white;
+}
+
+::v-deep .v-chip.v-chip--size-default{
+        font-size: 0.75rem !important;
+    }
+
+.sizing {
+  font-size: 0.875rem !important;
 }
 </style>
