@@ -48,6 +48,19 @@
       </v-expansion-panel>
     </v-expansion-panels>
 
+    <!-- 정렬 -->
+    <div class="mt-6" >
+      <v-btn variant="outlined" prepend-icon="mdi-sort-descending">정렬
+        <v-menu activator="parent">
+          <v-list>
+            <v-list-item v-for="(item, index) in sortMenu" :key="index" :value="index" @click="sort(index)">
+              <v-list-item-title>{{ item.title }}</v-list-item-title>
+            </v-list-item>
+          </v-list>
+        </v-menu>
+      </v-btn>
+    </div>
+
     <!-- 카드 대기중 목록 -->
     <div>
       <div v-for="(item, index) in requestCardData" :value="item.cardId" class="card">
@@ -98,10 +111,16 @@ export default {
 
     let searchUri = "/board/questions";
 
+    let sortMenu = [
+      { title: "좋아요순" },
+      { title: "등록순" },
+    ]
+
     return {
       categoryItems, subcategoryFullList,
       searchUri,
-      maxStackedCards: 4,
+      sortMenu,
+      selectedSortIndex: 0,
     };
   },
   data() {
@@ -318,6 +337,19 @@ export default {
       console.log('cancel');
       this.isShow = false;
     },
+    sort(index) {
+      this.selectedSortIndex = index;
+      // index 0=좋아요순, 1=등록순
+      if (index === 0) {
+        this.requestCardData.sort((a, b) => parseInt(b.likeCnt, 10) - parseInt(a.likeCnt, 10));
+      } else if (index === 1) {
+        this.requestCardData.sort((a, b) => {
+          if (a.createDate < b.createDate) return 1;
+          if (b.createDate < a.createDate) return -1;
+          return 0;
+        });
+      }
+    }
   },
 };
 </script>
