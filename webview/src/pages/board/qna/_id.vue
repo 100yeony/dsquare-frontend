@@ -40,13 +40,6 @@
           <span class="text-primary">{{ qData.cname }}: </span>{{ qData.title }}
         </h3>
         <ckeditor v-model="qData.content" :editor="editor" :config="editorConfig" :disabled="true"></ckeditor>
-        <!-- <v-row v-if="'atc' in questionData">
-        <v-card variant="outlined" class="ml-3" color="grey">
-          <v-card-item class="text-caption pa-1 pr-2 font-0000008F" density="compact">
-            <v-icon size="large">mdi-paperclip</v-icon> {{ questionData.atc.fileUrl.split("/").pop() }}
-          </v-card-item>
-        </v-card>
-      </v-row> -->
         <v-row class="mt-3">
           <v-col cols="2" class="center-container">
             <span @click="toggleLike('question', qnaId)">
@@ -108,27 +101,6 @@
             </v-col>
           </v-row>
           <ckeditor v-model="item.content" :editor="editor" :config="editorConfig" :disabled="true"></ckeditor>
-
-
-          <!-- 
-        답변 댓글 데이터 생기면 이 코드 사용
-        <div v-for="(comment, index) in item.commentList" :value="comment.id" class="back-white mt-4 pa-2">
-          <v-row class="mb-2" align="center">
-            <v-col cols="2">
-              <v-avatar color="grey">😀</v-avatar>
-            </v-col>
-            <v-col cols="10">
-              <div class="text-body font-bold">{{ comment.name }}</div>
-            </v-col>
-          </v-row>
-          <div class="text-caption font-0000008F">
-            {{ comment.content }}
-          </div>
-        </div> 
--->
-          <!-- ***** 답변 댓글 ***** -->
-
-
         </v-card-item>
         <v-expansion-panels>
           <v-expansion-panel>
@@ -136,32 +108,32 @@
               :color="item.writerInfo.id == qData.managerId ? '#E8F2E1' : ''"></v-expansion-panel-title>
             <v-expansion-panel-text>
 
-              <v-list>
-                <!-- <v-list-item v-for="item in items" :key="item.title" :title="item.title" subtitle="..."
-                  :prepend-avatar="item.avatar"></v-list-item> -->
-                <v-list-item key="홍길동" title="홍길동" subtitle="메세징dx플랫폼팀"
-                  prepend-avatar="@/assets/images/users/avatar_sample.png">
-                  <div>
-                    테스트 데이터
-                  </div>
-                </v-list-item>
 
-                <v-divider class="m-em-1" />
-                <v-list-item key="홍길동" title="홍길동" subtitle="메세징dx플랫폼팀"
-                  prepend-avatar="@/assets/images/users/avatar_sample.png">
-                  <div>
-                    <span class="font-1C4EFE">@김경란</span>테스트 데이터
-                  </div>
-                </v-list-item>
-                <v-divider class="m-em-1" />
+              <v-list>
+
+                <div v-for="(comment) in item.comments">
+                  <v-list-item :key="comment.writerInfo.id"
+                    :title="comment.writerInfo.name + ' (' + comment.writerInfo.teamHierarchy[comment.writerInfo.teamHierarchy.length - 1] + ')'"
+                    :subtitle="comment.createDate" prepend-avatar="@/assets/images/users/avatar_sample.png">
+                    <div>
+                      {{ comment.content }}
+                    </div>
+                    <div v-if="this.user.userId == comment.writerInfo.id" class="font_red font-xss text-right"
+                    @click="delComment(comment, item)">
+                      댓글 삭제
+                    </div>
+                  </v-list-item>
+                  <v-divider class="m-em-1" />
+                </div>
+
                 <v-container v-if="!item.commentMode" class="text-center font_white_gray font-xs">
-                  <div @click="comment(item)">댓글 달기</div>
+                  <div @click="commentVisible(item)">댓글 달기</div>
                 </v-container>
 
                 <v-container v-else class="text-center font_white_gray font-xs">
-                  <div @click="comment(item)">댓글작성 닫기</div>
-                  <v-text-field v-model="item.commentText" type="input" variant="outlined" single-line hide-details append-inner-icon="mdi-send" class="mt-5"
-                    @click:append-inner="writeComment(item.commentText)"></v-text-field>
+                  <div @click="commentVisible(item)">댓글작성 닫기</div>
+                  <v-text-field v-model="item.commentText" type="input" variant="outlined" single-line hide-details
+                    append-inner-icon="mdi-send" class="mt-5" @click:append-inner="writeComment(item)"></v-text-field>
                 </v-container>
 
 
@@ -272,12 +244,42 @@ export default {
         }
       });
     },
-    comment(item) {
+    commentVisible(item) {
       item.commentMode = !item.commentMode
       console.log("comment")
     },
-    writeComment(value) {
-      console.log(value)
+    async callComments(answerId) {
+      var res = await api.get('board/answer/' + answerId + '/comments', '')
+      res.data.forEach(
+        (d) => {
+          d.createDate = this.exportDateFromTimeStamp(d.createDate)
+        }
+      )
+      return res.data
+    },
+    writeComment(item) {
+      console.log(item)
+      api.post('board/answer/' + item.aid + '/comments', {
+        writerId: store.getters["info/infoUser"].userId,
+        content: item.commentText
+      }).then(
+        async (response) => {
+          console.log(response)
+          item.comments = await this.callComments(item.aid)
+          item.commentText = ''
+
+        }
+      )
+    },
+    delComment(comment, item) {
+      console.log(comment)
+      api.del('board/comments/' + comment.commentId, '').then(
+        async (response) => {
+          console.log(response)
+          item.comments = await this.callComments(item.aid)
+          item.commentText = ''
+        }
+      )
     },
     editPost(index) {
       console.log(index)
@@ -354,13 +356,6 @@ export default {
     async requestDelAnswer(num) {
       const res = await api.del('board/questions/' + this.$route.query.qid + '/answers/' + this.answerId, '').then(
         (response) => {
-          // console.log(response)
-          // this.$router.replace({
-          //   path: process.env.VUE_APP_BOARD_QNA_DETAIL,
-          //   query: {
-          //     qid: this.$route.query.qid
-          //   }
-          // });
           this.requestAnswerData()
         }
       )
@@ -410,17 +405,21 @@ export default {
       var res = await api.get('board/questions/' + this.$route.query.qid + '/answers', '').then(//this.$route.query.qid
         (response) => {
           console.log("answer: ")
-          this.initAnswerData(response.data)
+          this.answerList = response.data
+          this.initAnswerData()
         }
       )
     },
-    initAnswerData(datas) {
-      console.log(datas)
-      datas.forEach((data) => {
-        Object.assign(data, { commentMode: false , commentText: ''})
+    initAnswerData() {
+      console.log(this.answerList)
+      this.answerList.forEach(async (answer) => {
+        let res = await this.callComments(answer.aid)
+        Object.assign(answer, {
+          commentMode: false,
+          commentText: '',
+          comments: res,
+        })
       })
-      this.answerList = datas
-    
     },
 
     // 좋아요 관련
@@ -446,11 +445,11 @@ export default {
   padding-bottom: 0;
 }
 
-::v-deep .ck.ck-editor__editable_inline>:last-child{
-  margin-bottom:0;
+::v-deep .ck.ck-editor__editable_inline>:last-child {
+  margin-bottom: 0;
 }
 
-.v-chip.v-chip--size-default{
+.v-chip.v-chip--size-default {
   font-size: 0.8rem !important;
 }
 </style>
