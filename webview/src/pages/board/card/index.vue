@@ -212,7 +212,7 @@ export default {
     },
     async search() {
       if (typeof this.subcategory == 'string' || typeof this.category == 'string'){
-        var res = await api.get('board/cards/search?projTeamId=' + this.projTeamId).then(
+        var res = await api.get('board/cards?projTeamId=' + this.projTeamId).then(
           (response) => {
             response.data.forEach((d) => {
               d.createDate = this.exportDateFromTimeStamp(d.createDate)
