@@ -72,8 +72,10 @@
         
         <v-row class="mt-2">
           <v-col cols="2" class="center-container">
-            <template v-if="cardData.likeYn"><v-icon size="small" color="red">mdi-heart</v-icon></template>
-            <template v-else><v-icon size="small">mdi-heart-outline</v-icon></template>
+            <span @click="toggleLike('card', cardData.cardId)">
+              <template v-if="cardData.likeYn"><v-icon size="small" color="red">mdi-heart</v-icon></template>
+              <template v-else><v-icon size="small">mdi-heart-outline</v-icon></template>
+            </span>
             <span class="text-caption font-0000008F ml-1">{{ cardData.likeCnt }}</span></v-col>
           <v-col cols="2" class="center-container"><v-icon size="small">mdi-message-text-outline</v-icon><span
               class="text-caption font-0000008F ml-1"><!-- 댓글 수 --></span></v-col>
@@ -97,6 +99,7 @@
 import DeleteDialog from '@/components/DeleteDialog';
 import store from '@/store';
 import api from '@/api';
+import like from '@/api/like.js';
 
 export default {
   components: {
@@ -124,6 +127,8 @@ export default {
         teammate: "",
         createDate: "",
         lastUpdateDate: "",
+        likeCnt: 0,
+        likeYn: false,
         viewCnt: 0,
         selectionInfo: null,
         teammateCnt: 0,
@@ -222,6 +227,21 @@ export default {
     /* 카드 주기 */
     giveCard() {
       console.log("NotImplementedError"); 
+    },
+
+    // 좋아요 관련
+    async toggleLike(board, id) {
+      var res = !this.cardData.likeYn ? await like.post(board, id) : await like.del(board, id);
+      if ([200, 201].includes(res.status)) {  // 성공
+        if (this.cardData.likeYn) {
+          this.cardData.likeCnt--;
+        }
+        else {
+          this.cardData.likeCnt++;
+        }
+        this.cardData.likeYn = !this.cardData.likeYn;
+        this.$forceUpdate();
+      }
     }
   }
 };
