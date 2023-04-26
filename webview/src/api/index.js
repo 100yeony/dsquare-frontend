@@ -355,7 +355,7 @@ const fn = {
   async del(uri, params, headers) {
     try {
       console.log('[DEL]', uri, params)
-      const res = await apiInstance.delete(`${prefix + uri}`, params, { headers: headers })
+      const res = await apiInstance.delete(`${prefix + uri}`, { data: params }, { headers: headers })
       return this.ResponsePayload(res)
     } catch (err) {
       if (this.tokenErrorCheck(err)) {

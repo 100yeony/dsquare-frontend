@@ -18,22 +18,22 @@
           <v-expansion-panel>
             <v-expansion-panel-title>검색</v-expansion-panel-title>
             <v-expansion-panel-text>
-              <v-row justify="center">
-                <v-col cols="6" class="mb-0 pb-0">
+              <v-row justify="center" class="mt-1">
+                <v-col cols="6" class="">
                   <v-select v-model="category" class="text-truncate" placeholder="분야" variant="outlined" density="compact"
-                    :items="categoryItems" @update:modelValue="categoryChanged"></v-select>
+                    :items="categoryItems" @update:modelValue="categoryChanged" hide-details></v-select>
                 </v-col>
-                <v-col cols="6" class="mb-0 pb-0">
+                <v-col cols="6" class="">
                   <v-select v-model="subcategory" class="text-truncate" placeholder="소분야" variant="outlined"
-                    density="compact" :items="subcategoryItems" :disabled="!subcategoryItems.length"></v-select>
+                    density="compact" :items="subcategoryItems" :disabled="!subcategoryItems.length" hide-details></v-select>
                 </v-col>
               </v-row>
               <v-row>
-                <v-col cols="4" class="pr-0 pt-0">
+                <v-col cols="4" class="">
                   <v-select v-model="searchKey" placeholder="구분" class="text-truncate" variant="outlined"
                     density="compact" :items="['제목 + 내용', '작성자']"></v-select>
                 </v-col>
-                <v-col cols="8" class="pl-0 pt-0">
+                <v-col cols="8" class="pl-2">
                   <v-text-field v-model="searchContent" placeholder="검색어" variant="outlined" density="compact" />
                 </v-col>
               </v-row>
@@ -56,12 +56,12 @@
           <v-expansion-panel>
             <v-expansion-panel-title>검색</v-expansion-panel-title>
             <v-expansion-panel-text>
-              <v-row>
-                <v-col cols="4" class="pr-0">
+              <v-row class="mt-1">
+                <v-col cols="4" class="">
                   <v-select v-model="searchKey" placeholder="구분" class="text-truncate" variant="outlined"
                     density="compact" :items="['제목 + 내용', '작성자']"></v-select>
                 </v-col>
-                <v-col cols="8" class="pl-0">
+                <v-col cols="8" class="pl-2">
                   <v-text-field v-model="searchContent" placeholder="검색어" variant="outlined" density="compact" />
                 </v-col>
               </v-row>
@@ -214,7 +214,7 @@ export default {
             } else if (this.searchKey == '작성자') {
               key = 'member'
             }
-            var res = await api.get('board/questions/search?workYn=true&cid='
+            var res = await api.get('board/questions?workYn=true&cid='
               + this.cidData[this.subcategory]
               + '&key=' + key
               + '&value=' + this.searchContent).then(
@@ -227,7 +227,7 @@ export default {
               )
           } else {
             console.log('key, value 없음')
-            var res = await api.get('board/questions/search?workYn=true&cid=' + this.cidData[this.subcategory]).then(
+            var res = await api.get('board/questions?workYn=true&cid=' + this.cidData[this.subcategory]).then(
               (response) => {
                 response.data.forEach((d) => {
                   d.createDate = this.exportDateFromTimeStamp(d.createDate)
@@ -244,7 +244,7 @@ export default {
             } else if (this.searchKey == '작성자') {
               key = 'member'
             }
-            var res = await api.get('board/questions/search?workYn=true'
+            var res = await api.get('board/questions?workYn=true'
               + '&key=' + key
               + '&value=' + this.searchContent).then(
                 (response) => {
@@ -255,7 +255,7 @@ export default {
                 }
               )
           } else {
-            var res = await api.get('board/questions/search?workYn=true').then(
+            var res = await api.get('board/questions?workYn=true').then(
               (response) => {
                 response.data.forEach((d) => {
                   d.createDate = this.exportDateFromTimeStamp(d.createDate)
@@ -273,7 +273,7 @@ export default {
           } else if (this.searchKey == '작성자') {
             key = 'member'
           }
-          var res = await api.get('board/questions/search?workYn=false'
+          var res = await api.get('board/questions?workYn=false'
             + '&key=' + key
             + '&value=' + this.searchContent).then(
               (response) => {
@@ -375,5 +375,9 @@ export default {
 .keep-all {
   word-break: keep-all;
   /* 한국어 잘림 방지 */
+}
+
+.v-col-6 {
+  padding-bottom: 0px !important;
 }
 </style>

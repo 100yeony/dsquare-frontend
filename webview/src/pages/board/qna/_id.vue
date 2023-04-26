@@ -48,8 +48,12 @@
         </v-card>
       </v-row> -->
         <v-row>
-          <v-col cols="2" class="center-container"><v-icon size="small">mdi-heart-outline</v-icon><span
-              class="text-caption font-0000008F ml-1">{{ qData.likes }}</span></v-col>
+          <v-col cols="2" class="center-container">
+            <span @click="toggleLike('question', qnaId)">
+              <template v-if="qData.likeYn"><v-icon size="small" color="red">mdi-heart</v-icon></template>
+              <template v-else><v-icon size="small">mdi-heart-outline</v-icon></template>
+            </span>
+            <span class="text-caption font-0000008F ml-1">{{ qData.likeCnt }}</span></v-col>
           <v-col cols="2" class="center-container"><v-icon size="small">mdi-message-text-outline</v-icon><span
               class="text-caption font-0000008F ml-1">{{ commentList.length }}</span></v-col>
         </v-row>
@@ -173,10 +177,12 @@
 </template>
 <script>
 import DeleteDialog from '@/components/DeleteDialog';
-import api from '@/api'
-import store from '@/store'
+import api from '@/api';
+import store from '@/store';
 import CKEditor from "@ckeditor/ckeditor5-vue";
 import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
+import like from '@/api/like.js';
+
 export default {
   components: {
     DeleteDialog,
@@ -211,7 +217,8 @@ export default {
         content: '',
         createDate: '',
         viewCnt: 0,
-        likes: 0,
+        likeCnt: 0,
+        likeYn: false,
         tags: [],
         writerId: 0,
         managerId: 0,
@@ -230,10 +237,10 @@ export default {
     };
   },
   mounted() {
-    this.qnaId = this.$route.query.qid
-    console.log("--mounted")
+    this.qnaId = this.$route.query.qid;
+    console.log("--mounted");
     console.log(this.$route.query.qid);
-    const questionData = this.requestQuestionData()
+    const questionData = this.requestQuestionData();
     questionData.then(
       (response) => {
         this.qData = this.parseToQData(response.data)
@@ -242,8 +249,8 @@ export default {
           this.isWriter = true;
         }
       }
-    )
-    this.requestAnswerData()
+    );
+    this.requestAnswerData();
   },
   computed: {
     dialogTitle() {
@@ -392,7 +399,8 @@ export default {
         content: data.content,
         createDate: this.exportDateFromTimeStamp(data.createDate),
         viewCnt: data.viewCnt,
-        likes: 1,
+        likeCnt: data.likeCnt,
+        likeYn: data.likeYn,
         tags: data.tags,
         writerId: data.writerInfo.id,
         managerId: 1,
@@ -412,6 +420,22 @@ export default {
         Object.assign(data, { commentMode: false , commentText: ''})
       })
       this.answerList = datas
+    
+    },
+
+    // 좋아요 관련
+    async toggleLike(board, id) {
+      var res = !this.qData.likeYn ? await like.post(board, id) : await like.del(board, id);
+      if ([200, 201].includes(res.status)) {  // 성공
+        if (this.qData.likeYn) {
+          this.qData.likeCnt--;
+        }
+        else {
+          this.qData.likeCnt++;
+        }
+        this.qData.likeYn = !this.qData.likeYn;
+        this.$forceUpdate();
+      }
     }
   },
 };
