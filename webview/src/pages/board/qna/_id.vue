@@ -33,9 +33,9 @@
             </v-menu>
           </v-col>
         </v-row>
-        <h2 class="mb-3">
+        <h3>
           <span class="text-primary">{{ qData.cname }}: </span>{{ qData.title }}
-        </h2>
+        </h3>
         <ckeditor v-model="qData.content" :editor="editor" :config="editorConfig" :disabled="true"></ckeditor>
         <!-- <v-row v-if="'atc' in questionData">
         <v-card variant="outlined" class="ml-3" color="grey">
@@ -44,7 +44,7 @@
           </v-card-item>
         </v-card>
       </v-row> -->
-        <v-row>
+        <v-row class="mt-3">
           <v-col cols="2" class="center-container">
             <template v-if="qData.likeYn"><v-icon size="small" color="red">mdi-heart</v-icon></template>
             <template v-else><v-icon size="small">mdi-heart-outline</v-icon></template>
@@ -54,7 +54,7 @@
         </v-row>
         <v-slide-group>
           <v-slide-group-item v-for="(chip, index) in qData.tags" :key="index">
-            <v-chip class="ma-2">#{{ chip }}</v-chip>
+            <v-chip class="mt-4 mb-2 mr-2">#{{ chip }}</v-chip>
           </v-slide-group-item>
         </v-slide-group>
       </v-card-item>
@@ -398,3 +398,17 @@ export default {
   },
 };
 </script>
+<style scoped>
+::v-deep .ck-rounded-corners .ck.ck-editor__main>.ck-editor__editable {
+  padding-left: 0;
+  padding-bottom: 0;
+}
+
+::v-deep .ck.ck-editor__editable_inline>:last-child{
+  margin-bottom:0;
+}
+
+.v-chip.v-chip--size-default{
+  font-size: 0.8rem !important;
+}
+</style>
