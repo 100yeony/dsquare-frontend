@@ -43,21 +43,25 @@
         <div>
           {{ cardData.content }}
         </div>
-        <v-divider :thickness="1" class="mt-5 mb-3"></v-divider>
-        <v-row>
-          <v-col cols="1">
-            <v-icon size="small">mdi-information-outline</v-icon>
-          </v-col>
-          <v-col>
-            <div class="font-medium">프로젝트 정보</div>
-          </v-col>
-        </v-row>
-        <div>
-          <div class="sizing mt-2">참여인원 수: {{ cardData.teammateCnt }}</div>
-          <span class="sizing">참여인원: </span>
-          <span class="sizing" v-for="(p, index) in cardData.teammate" :key="p" :value="p">{{ p }} 
-            <span class="sizing" v-if="index!==cardData.teammate.length-1">,</span> 
-          </span>
+        <div v-if="cardData.teammate[0] !== '' || cardData.teammateCnt !== null">
+          <v-divider :thickness="1" class="mt-5 mb-3"></v-divider>
+          <v-row>
+            <v-col cols="1">
+              <v-icon size="small">mdi-information-outline</v-icon>
+            </v-col>
+            <v-col>
+              <div class="font-medium">프로젝트 정보</div>
+            </v-col>
+          </v-row>
+          <div>
+            <div class="sizing mt-2" v-if="cardData.teammateCnt">• 참여인원 수: {{ cardData.teammateCnt }}</div>
+            <div v-if="cardData.teammate[0] !== ''" class="mt-2">
+              <span class="sizing">• 참여인원: </span>
+              <span class="sizing" v-for="(p, index) in cardData.teammate" :key="p" :value="p">{{ p }} 
+                <span class="sizing" v-if="index!==cardData.teammate.length-1">,</span> 
+              </span>
+            </div>
+          </div>
         </div>
         <v-chip class="mt-5" variant="outlined">
           <v-icon start icon="mdi-account-multiple-outline"></v-icon>
