@@ -8,7 +8,7 @@
             <img src="@/assets/images/icons/icon_cat.png" />
           </v-col>
           <v-col cols="8">
-            <span class="text-body font-bold">dsweeee</span>
+            <span class="text-body font-bold">{{ userNickname }}</span>
           </v-col>
           <v-col cols="2" @click="drawer = false">
             <img src="@/assets/images/icons/icon_back.png" />
@@ -67,6 +67,7 @@ import { computed, onMounted, ref } from "vue";
 import { useStore } from "vuex";
 import stringUtils from "@/utils/stringUtils";
 import { menuItems } from "@/components/right-menu";
+import api from "@/api";
 export default {
   name: "TopBar",
   components: {},
@@ -86,8 +87,17 @@ export default {
     ],
     drawer: false,
     group: null,
+    nickname: '',
     menuItems: menuItems,
   }),
+  computed : {
+    userNickname() {
+      return this.nickname;
+    }
+  },
+  mounted() {
+    this.loadNickname();
+  },
   methods: {
     onclickBackBtn() {
       if (!stringUtils.isEmptyBool(this.back)) {
@@ -106,6 +116,11 @@ export default {
         this.$store.dispatch('info/setInfoToken', { accessToken: '', refreshToken: '' }); // 토큰값을 제거해줍니다.
         this.$router.push(process.env.VUE_APP_LOGIN);
       }
+    },
+    async loadNickname() {
+      var userId = this.$store.getters["info/infoUser"].userId;
+      var res = await api.get(`member/members/${userId}`)
+        .then((response) => this.nickname = response.data.nickname);
     },
   },
 };
