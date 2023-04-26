@@ -75,7 +75,6 @@ import CardDialog from "@/components/cards/CardDialog.vue";
 import Observe from "@/components/Observer";
 import api from '@/api';
 import store from "@/store";
-import dialogUtils from "@/utils/dialogUtils"
 
 export default {
   name: "cardBoard",
@@ -105,11 +104,6 @@ export default {
       maxStackedCards: 4,
     };
   },
-  computed: {
-    searchValidation() {
-      return this.searchProjTeamId ? true : false;
-    }
-  },
   data() {
     return {
       writerInfo: {
@@ -127,7 +121,7 @@ export default {
       category: [],
       subcategory: [],
       subcategoryItems: [],
-      searchProjTeamId: 0,
+      ProjTeamId: '',
       page: 1,
       requestCardData: [],
       giftedCardData: {
