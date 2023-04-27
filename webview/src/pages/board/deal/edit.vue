@@ -113,15 +113,14 @@ export default {
 
       //if (!this.v$.$error) {
         console.log("-----------")
-        console.log(this.$route.query.qid)
-        const res = await api.post('board/questions/'+this.$route.query.qid, {
-          cid: this.cid,
+        console.log(this.$route.query.id)
+        const res = await api.post('board/carrots/'+this.$route.query.id, {
           content: editorData,
           title: this.title,
-          atcId: this.$route.query.atcid
+          tags: Array.from(this.chipData),
         }).then((response) => {
           console.log(response)
-          this.$router.push(process.env.VUE_APP_BOARD_QNA);
+          this.$router.push(process.env.VUE_APP_BOARD_DEAL);
         });
       //}
 

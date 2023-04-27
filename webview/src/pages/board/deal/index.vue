@@ -25,8 +25,8 @@
         </v-expansion-panels>
 
         <!-- 질문 카드 -->
-        <div v-for="(item, index) in boardCardData" :value="item.qid">
-        <BoardCard class="mt-2" :data="item" @handle-card-clicked="handleCardClicked" />
+        <div v-for="(item, index) in carrotCardData" :value="item.carrotId">
+        <CarrotCard class="mt-2" :data="item" @handle-card-clicked="handleCardClicked" />
         </div>
         <Observe @triggerIntersected="loadMore"/>
     </div>
@@ -44,33 +44,20 @@
   
   <script>
   import { computed, onMounted, ref } from "vue";
-  import BoardCard from "@/components/cards/BoardCard";
+  import CarrotCard from "@/components/cards/CarrotCard";
   import Observe from "@/components/Observer";
   import api from '@/api';
   import store from "@/store";
   
   export default {
-    name: "qnaBoard",
+    name: "carrotBoard",
     components: {
-      BoardCard,
+      CarrotCard,
       Observe
     },
     setup() {
-      let qnaTabTitle = ["업무", "비업무"];
-      let area = store.getters["info/infoArea"];
-      let categoryItems = area.areaList; 
-      let subcategoryFullList = area.subAreaList; 
-      var categoriesAll = [].concat(qnaTabTitle);
-      var i;
-      for (i = 1; i < categoryItems.length; i++) {
-        categoriesAll.push(categoryItems[i]);
-        categoriesAll = categoriesAll.concat(subcategoryFullList[i-1]);
-      }
-      let cidData = {};
-      categoriesAll.forEach((value, index) => cidData[value] = index + 1);
-      
-  
-      let searchUri = "/board/questions";
+      let getAllUri = "/board/carrots";
+      let searchUri = "/board/carrots";
       // const page = ref(1);
   
       // const loadMore = async () => {
@@ -79,103 +66,23 @@
       // };
   
       return {
-        qnaTabTitle,
-        categoryItems,
-        subcategoryFullList,
-        cidData,
+        getAllUri,
         searchUri,
       };
     },
     data() {
       return {
-        qnaTab: 0,
-        category: [],
-        subcategory: [],
-        subcategoryItems: [],
         searchContent: '',
         searchKey: '',
         page: 1,
-        boardCardData: [], 
+        carrotCardData: [], 
       };
     }, 
     mounted(){
-      var res = this.requestAllWork();
-      // this.boardCardData = [   //나중에 search 대신 들어감.
-      //   {
-      //     id: 0,
-      //     category: "응용SW개발",
-      //     title: "OpenWeatherAPI 날씨 이미지가 가져와지지 않습니다.",
-      //     name: "변상진",
-      //     team: "메시징DX플랫폼팀",
-      //     date: "2023-04-01",
-      //     hash: ["jsp", "js", "jquery"],
-      //     success: true,
-      //     like: "999+",
-      //     comment: "999+",
-      //   },
-      //   {
-      //     id: 1,
-      //     category: "응용SW개발",
-      //     title: "docker로 github actions deploy 할 때 에러 - ocker run [OPTIONS] IMAGE [COMMAND] [ARG...]",
-      //     name: "강소미",
-      //     team: "메시징DX플랫폼팀",
-      //     date: "2023-04-01",
-      //     hash: ["githubactions", "docker"],
-      //     success: false,
-      //     like: "327",
-      //     comment: "3",
-      //   },
-      //   {
-      //     id: 2,
-      //     category: "데이터분석",
-      //     title: "이 두가지 쿼리의 차이가 뭘까요 ?",
-      //     name: "남진욱",
-      //     team: "메시징DX플랫폼팀",
-      //     date: "2023-04-01",
-      //     hash: ["sql"],
-      //     success: false,
-      //     like: "300",
-      //     comment: "3",
-      //   },
-      //   {
-      //     id: 3,
-      //     category: "응용SW개발",
-      //     title: "크롬 개발자 도구에서 출력값 차이 원인 (선언문, 할당문 관련)",
-      //     name: "김순재",
-      //     team: "메시징DX플랫폼팀",
-      //     date: "2023-04-01",
-      //     hash: ["자바스크립트", "선언문", "할당문", "완료값"],
-      //     success: false,
-      //     like: "200",
-      //     comment: "3",
-      //   },
-      //   {
-      //     id: 4,
-      //     category: "응용SW개발",
-      //     title: "왜 자꾸 No faces detected 오류가 뜨는지 모르겠습니다.",
-      //     name: "최철준",
-      //     team: "메시징DX플랫폼팀",
-      //     date: "2023-04-01",
-      //     hash: ["안드로이드스튜디오", "안드로이드", "얼굴인식"],
-      //     success: false,
-      //     like: "127",
-      //     comment: "3",
-      //   },
-      // ]
-    },
-    watch: {
-      qnaTab(newVal, oldVal) {
-        this.page = 1;
-        console.log(newVal)
-        this.tabChanged();
-      }
+      var res = this.requestAll();
+      
     },
     methods: {
-      categoryChanged() {
-        var categoryIndex = this.categoryItems.indexOf(this.category);
-        this.subcategory = [];
-        this.subcategoryItems = 1 <= categoryIndex ? this.subcategoryFullList[categoryIndex-1] : [];
-      },
       async search() {
         // let params = {};
         // let work = (this.qnaTab == 0) ? true : false
@@ -189,22 +96,13 @@
         // });
         // this.boardCardData = res.data
       },
-      async requestAllWork() {
+      async requestAll() {
         console.log(store.getters["info/infoToken"].accessToken)
-        var res = await api.get('board/questions', '')
+        var res = await api.get(this.getAllUri, '')
         res.data.forEach((d) => {
-          d.lastUpdateDate = this.exportDateFromTimeStamp(d.lastUpdateDate) 
+          d.createDate = this.exportDateFromTimeStamp(d.createDate);
         });
-        this.boardCardData = res.data
-      },
-  
-      tabChanged() {
-        this.searchContent = '';
-        if (this.qnaTab === 0){
-          this.requestAllWork()
-        } else {
-          this.requestAllNoneWork()
-        }
+        this.carrotCardData = res.data
       },
       handleCardClicked(item) {
         console.log("[handleCardClicked]", item);
@@ -214,7 +112,7 @@
             path: process.env.VUE_APP_BOARD_DEAL_DETAIL,
             title: item?.title,
             query: {
-              qid: item?.qid 
+              id: item?.carrotId,
             }
           });
         }

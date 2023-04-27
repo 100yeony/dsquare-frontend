@@ -2,7 +2,6 @@
 import CKEditor from "@ckeditor/ckeditor5-vue";
 import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
 import FileUploadAdapter from "@/utils/fileUploaderAdapter";
-import { required } from "@vuelidate/validators";
 import { watch, onMounted, ref } from "vue";
 //import { generateKey } from "crypto";
 import api from '@/api';
@@ -12,35 +11,22 @@ export default {
   components: {
     ckeditor: CKEditor.component,
   },
-  // validations() {
-  //   return {
-  //     title: {
-  //       required,
-  //     },
-  //     editorData: {
-  //       required,
-  //     },
-  //     cid: {
-  //       required,
-  //     },
-  //   };
-  // },
   setup() {
     let chipData = ref(new Set());
     let chipText = ref("");
-    let area = store.getters["info/infoArea"];
-    let categoryItems = area.areaList;
-    let subcategoryFullList = area.subAreaList;
-    var categoriesAll = [].concat(["업무", "비업무"]);
-    var i;
-    for (i = 1; i < categoryItems.length; i++) {
-      categoriesAll.push(categoryItems[i]);
-      categoriesAll = categoriesAll.concat(subcategoryFullList[i - 1]);
-    }
-    let cidData = {};
-    categoriesAll.forEach((value, index) => cidData[value] = index + 1);
+    let categoryItems = ['플랫폼품질혁신TF', '플랫폼IT컨설팅vTF', '플랫폼서비스담당',
+      'Digico서비스담당', 'Digico개발센터'];
+    let subcategoryFullList = [
+      [],
+      [],
+      ["메시징DX플랫폼팀", "서비스플랫폼팀",
+        "금융결제DX플랫폼팀", "인증DX플랫폼팀"],
+      ["미디어플랫폼팀", "AI서비스팀",
+        "AICC서비스팀", "Safety플랫폼팀"],
+      ["AgileCore팀", "Digico사업수행팀", "AICC딜리버리팀"],
+    ];
 
-    return { chipData, chipText, cidData };
+    return { chipData, chipText, categoryItems, subcategoryFullList };
   },
   data() {
     return {
@@ -51,28 +37,47 @@ export default {
         extraPlugins: [this.uploader],
         removePlugins: ["ImageCaption"],
       },
-      area: {},
-      areaItems: [],
-      subAreaItems: [],
-      selectedArea: [],
-      selectedSubArea: [],
-      placeholderText: '',
-      isWork: true,
       title: '',
       tags: [],
-      cid: '',
-      submitted: false,
+      content: '',
     };
   },
   watch: {
-    selectedArea: function (newVal, oldVal) {
+    category(newVal, oldVal) {
       console.log(newVal)
-      console.log(oldVal)
+      if (newVal === '플랫폼품질혁신TF') {
+        this.projTeamId = 1;
+      } else if (newVal === '플랫폼IT컨설팅vTF') {
+        this.projTeamId = 2;
+      } else {
+        this.projTeamId = '';
+      }
     },
-    selectedSubArea: function (newVal, oldVal) {
+    subcategory(newVal, oldVal) {
       console.log(newVal)
-      console.log(oldVal)
-      this.cid = this.cidData[newVal]
+      if (newVal === '메시징DX플랫폼팀') {
+        this.projTeamId = 6;
+      } else if (newVal === '서비스플랫폼팀') {
+        this.projTeamId = 7;
+      } else if (newVal === '금융결제DX플랫폼팀') {
+        this.projTeamId = 8;
+      } else if (newVal === '인증DX플랫폼팀') {
+        this.projTeamId = 9;
+      } else if (newVal === '미디어플랫폼팀') {
+        this.projTeamId = 10;
+      } else if (newVal === 'AI서비스팀') {
+        this.projTeamId = 11;
+      } else if (newVal === 'AICC서비스팀') {
+        this.projTeamId = 12;
+      } else if (newVal === 'Safety플랫폼팀') {
+        this.projTeamId = 13;
+      } else if (newVal === 'AgileCore팀') {
+        this.projTeamId = 14;
+      } else if (newVal === 'Digico사업수행팀') {
+        this.projTeamId = 15;
+      } else if (newVal === 'AICC딜리버리팀') {
+        this.projTeamId = 16;
+      }
     }
   },
   computed: {
@@ -81,54 +86,42 @@ export default {
     },
     placeholderText() {
       if (this.chipData.size === 0) {
-        return '태그를 입력해주세요.'
+        return '이름을 입력해주세요.'
       } else {
         return ''
       }
     },
-    editorValidation(){
-      if (this.cid !== '' && this.title !=='' && this.editorData !== ''){
-        return true; 
-      } else{
-        return false; 
+    editorValidation() {
+      if (this.cid !== '' && this.title !== '' && this.editorData !== '' && this.projTeamId !== '') {
+        return true;
+      } else {
+        return false;
       }
     }
   },
   mounted() {
-    this.area = store.getters["info/infoArea"]
-    this.areaItems = this.area.areaList.slice(1)
-    console.log(this.$route.query.work);
-    if (this.$route.query.work === 'false') {
-      this.isWork = false;
-      this.cid = 2;
-      console.log(this.isWork)
-    }
+
   },
   methods: {
     async write(editorData) {
-      this.submitted = true;
+      console.log(editorData)
+      console.log({
+        cardWriterId: store.getters["info/infoUser"].userId,
+        content: editorData,
+        title: this.title,
+        teammate: Array.from(this.chipData),
+        projTeamId: this.projTeamId, 
+        teammateCnt: this.teammateCnt,
+      })
+      const res = await api.post('board/carrots', {
+        tags: Array.from(this.chipData),
+        content: editorData,
+        title: this.title,
+      }).then((response) => {
+        console.log(response)
+        this.$router.push(process.env.VUE_APP_BOARD_DEAL);
+      });
 
-      //this.v$.$touch();
-
-      //if (!this.v$.$error) {
-        console.log(editorData)
-        const res = await api.post('board/questions', {
-          writerId: store.getters["info/infoUser"].userId,
-          cid: this.cid,
-          content: editorData,
-          title: this.title,
-          tags: this.tags,
-          atc: {
-            originFileName: '원본파일명',
-            extension: 'png',
-            fileSize: 51239
-          }
-
-        }).then((response) => {
-          console.log(response)
-          this.$router.push(process.env.VUE_APP_BOARD_COMMUNICATION);
-        });
-      //}
 
     },
     uploader(editor) {
@@ -137,13 +130,9 @@ export default {
       };
     },
     addChips() {
-      let item = this.chipText.trim()
-      if (item !== "" && this.chipData.size < 3) {
-        if (item.startsWith('#')) {
-          this.chipData.add(item)
-        } else {
-          this.chipData.add('#' + this.chipText.trim())
-        }
+      let item = this.chipText.trim().replaceAll('#', '')
+      if (item !== "") {
+        this.chipData.add(item)
       }
       this.chipText = "";
     },
@@ -151,7 +140,6 @@ export default {
       event.preventDefault();
       event.stopPropagation();
       this.chipData.delete(item);
-      console.log(this.chipData)
     },
     handleInput(event) {
       var inputValue = event.target.value;
@@ -163,9 +151,14 @@ export default {
       this.$router.push(process.env.VUE_APP_BOARD_DEAL);
     },
     categoryChanged() {
-      var areaIndex = this.areaItems.indexOf(this.selectedArea);
-      this.subAreaItems = this.area.subAreaList[areaIndex];
-      this.selectedSubArea = [];
+      this.subcategory = [];
+      var categoryIndex = this.categoryItems.indexOf(this.category);
+      if (categoryIndex != 0) {
+        this.subcategoryItems = this.subcategoryFullList[categoryIndex];
+      }
+      else {
+        this.subcategoryItems = [];
+      }
     },
   }
 };
@@ -176,29 +169,14 @@ export default {
     <div>
       <div class="font-sm font-medium mt-2">제목</div>
       <v-text-field v-model="title" placeholder="제목을 입력해주세요." variant="outlined" density="compact" hide-details
-        class="mt-2" />
-      <!-- <div v-if="submitted && title.required.invalid" class="invalid-feedback">
-        <v-icon size="x-small" color="red">mdi-close-circle-outline</v-icon>
-        <span class="font-xs font_red">제목을 입력해주세요.</span>
-      </div> -->
+        class="mt-2 mb-5" />
 
-      <!-- <div v-if="submitted && v$.cid.required.$invalid" class="invalid-feedback">
-        <v-icon size="x-small" color="red">mdi-close-circle-outline</v-icon>
-        <span class="font-xs font_red">분야를 선택해주세요.</span>
-      </div> -->
+      
 
       <div class="font-sm font-medium mt-7 mb-2">본문</div>
-      <ckeditor v-model="editorData" :editor="editor" :config="editorConfig" height="200"></ckeditor>
-      <!-- <div v-if="submitted && v$.editorData.required.$invalid" class="invalid-feedback">
-        <v-icon size="x-small" color="red">mdi-close-circle-outline</v-icon>
-        <span class="font-xs font_red">내용을 입력해주세요.</span>
-      </div> -->
-
-      <v-file-input label="파일을 첨부해주세요." chips class="mt-5" variant="outlined" density="compact">
-      </v-file-input>
+      <v-textarea placeholder="내용을 입력해주세요." variant="outlined" v-model="editorData"></v-textarea>
 
       <div class="font-sm font-medium mb-2">태그</div>
-
       <v-row justify="center">
         <v-col cols="12" class="pw-100 ">
           <v-sheet>
@@ -211,7 +189,7 @@ export default {
             <div>
               <v-chip-group column>
                 <v-chip v-for="tag in tags" :key="tag">
-                  {{ tag }}
+                  #{{ tag }}
                   <v-icon class="ml-2" icon="mdi-close-circle" @click="deleteChip($event, tag)"></v-icon>
                 </v-chip>
               </v-chip-group>
@@ -262,5 +240,17 @@ export default {
 ::v-deep .v-icon {
   color: black !important;
   opacity: initial !important;
+}
+
+::v-deep .v-col-4 {
+  padding-right: 0px !important;
+}
+
+::v-deep .mdi-close-circle::before{
+  font-size: large !important;
+}
+
+.br{
+  display: block;
 }
 </style>
