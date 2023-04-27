@@ -4,10 +4,11 @@
       <div>
         <v-row>
           <v-col>
-              <div class="text-caption font-0000008F">{{ props?.data?.writerInfo?.name }}({{ props?.data?.writerInfo?.teamHierarchy[props?.data?.writerInfo?.teamHierarchy.length-1] }})</div>
+            <div class="text-caption font-0000008F">{{ props?.data?.writerInfo?.name }}({{
+              props?.data?.writerInfo?.teamHierarchy[props?.data?.writerInfo?.teamHierarchy.length - 1] }})</div>
           </v-col>
           <v-col cols="5" align="right" class="text-caption font-0000008F">{{ props?.data?.createDate }}</v-col>
-          </v-row>
+        </v-row>
         <div class="text-h7">
           <span class="text-primary">{{ props?.data?.category.name }}:</span> {{ props?.data?.title }}
         </div>
@@ -15,7 +16,7 @@
 
       <div class="mb-2">
         <span v-for="(chip, index) in props?.data?.tags" :key="index">
-            <span class="mr-2 mt-2 mb-1 text-caption font-0000008F">#{{ chip }}</span>
+          <span class="mr-2 mt-2 mb-1 text-caption font-0000008F">#{{ chip }}</span>
         </span>
       </div>
       <v-row>
@@ -23,8 +24,9 @@
           <template v-if="props?.data?.likeYn"><v-icon size="small" color="red">mdi-heart</v-icon></template>
           <template v-else><v-icon size="small">mdi-heart-outline</v-icon></template>
           <span class="text-caption ml-1">{{ props?.data?.likeCnt }}</span></v-col>
-        <v-col cols="2" class="center-container justify-content-end"><v-icon size="small">mdi-message-text-outline</v-icon><span
-            class="text-caption ml-1">{{ props?.data?.comment }}</span></v-col>
+        <v-col cols="2" class="center-container justify-content-end">
+          <v-icon size="small">mdi-message-text-outline</v-icon>
+          <span class="text-caption ml-1">{{ props?.data?.commentCnt }}</span></v-col>
         <v-col cols="8" class="d-flex justify-end">
           <v-chip class="mt-2 mb-1 chip" color="black" v-if="props?.data?.managerAnswerYn" variant="">
             <v-icon start icon="mdi-account-check"></v-icon> 담당자 답변완료
@@ -46,11 +48,11 @@ function handleCardClicked() {
 }
 </script>
 <style scoped>
-.v-chip.v-chip--size-default{
+.v-chip.v-chip--size-default {
   font-size: 0.7rem !important;
 }
 
-.chip{
+.chip {
   border-width: 1px;
   border-style: solid;
   border-color: #EBE2FB;
@@ -58,7 +60,7 @@ function handleCardClicked() {
   color: white;
 }
 
-.v-col-8{
+.v-col-8 {
   padding-top: 0;
 }
 </style>
