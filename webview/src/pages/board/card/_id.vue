@@ -18,7 +18,7 @@
           <v-col cols="4">
             <div class="text-body font-bold">
               <v-row>{{ cardData.writerInfo.name }}</v-row>
-              <v-row class="text-caption font-0000008F">{{ cardData.projTeamInfo.name }}</v-row>
+              <v-row class="text-caption font-0000008F">{{ cardData.writerInfo.teamHierarchy[cardData.writerInfo.teamHierarchy.length-1] }}</v-row>
             </div>
           </v-col>
           <v-col cols="4">
@@ -39,19 +39,44 @@
             </v-menu>
           </v-col>
         </v-row>
-        <h2 class="mb-3">{{ cardData.title }}</h2>
+        <h3 class="mb-3">{{ cardData.title }}</h3>
         <div>
           {{ cardData.content }}
         </div>
-        <v-chip class="mt-2" variant="outlined">
+        <div v-if="cardData.teammate[0] !== '' || cardData.teammateCnt !== null">
+          <v-divider :thickness="1" class="mt-5 mb-3"></v-divider>
+          <v-row>
+            <v-col cols="1">
+              <v-icon size="small">mdi-information-outline</v-icon>
+            </v-col>
+            <v-col>
+              <div class="font-medium">프로젝트 정보</div>
+            </v-col>
+          </v-row>
+          <div>
+            <div class="sizing mt-2" v-if="cardData.teammateCnt">• 참여인원 수: {{ cardData.teammateCnt }}</div>
+            <div v-if="cardData.teammate[0] !== ''" class="mt-2">
+              <span class="sizing">• 참여인원: </span>
+              <span class="sizing" v-for="(p, index) in cardData.teammate" :key="p" :value="p">{{ p }} 
+                <span class="sizing" v-if="index!==cardData.teammate.length-1">,</span> 
+              </span>
+            </div>
+          </div>
+        </div>
+        <v-chip class="mt-7" variant="outlined">
           <v-icon start icon="mdi-account-multiple-outline"></v-icon>
-          <template v-for="teammate in cardData.teammate">
-            {{  teammate }}&nbsp;
+          <template v-for="team in cardData.projTeamInfo?.name">
+            {{  team  }}
           </template>
         </v-chip>
+        
         <v-row class="mt-2">
-          <v-col cols="2" class="center-container"><v-icon size="small">mdi-heart-outline</v-icon><span
-              class="text-caption font-0000008F ml-1"><!-- 좋아요 수 --></span></v-col>
+          <v-col cols="2" class="center-container">
+            <span @click="toggleLike('card', cardData.cardId)">
+              <template v-if="cardData.likeYn"><v-icon size="small" color="red">mdi-heart</v-icon></template>
+              <template v-else><v-icon size="small">mdi-heart-outline</v-icon></template>
+            </span>
+            <span class="text-caption font-0000008F ml-1">{{ cardData.likeCnt }}</span></v-col>
           <v-col cols="2" class="center-container"><v-icon size="small">mdi-message-text-outline</v-icon><span
               class="text-caption font-0000008F ml-1"><!-- 댓글 수 --></span></v-col>
         </v-row>
@@ -70,12 +95,11 @@
   </div>
 </template>
 
-
-
 <script>
 import DeleteDialog from '@/components/DeleteDialog';
 import store from '@/store';
 import api from '@/api';
+import like from '@/api/like.js';
 
 export default {
   components: {
@@ -103,8 +127,11 @@ export default {
         teammate: "",
         createDate: "",
         lastUpdateDate: "",
+        likeCnt: 0,
+        likeYn: false,
         viewCnt: 0,
         selectionInfo: null,
+        teammateCnt: 0,
       },
       isWriter: false,
       isCardOwner: false,
@@ -170,7 +197,7 @@ export default {
             teammate: this.cardData.teammate,
             projTeamId: this.cardData.projTeamInfo.tid,
             projTeamName: this.cardData.projTeamInfo.name,
-            teammateCnt: 3, //추후 api 연동 후 수정  
+            teammateCnt: this.cardData.teammateCnt, //추후 api 연동 후 수정  
           }
 
         });
@@ -200,6 +227,21 @@ export default {
     /* 카드 주기 */
     giveCard() {
       console.log("NotImplementedError"); 
+    },
+
+    // 좋아요 관련
+    async toggleLike(board, id) {
+      var res = !this.cardData.likeYn ? await like.post(board, id) : await like.del(board, id);
+      if ([200, 201].includes(res.status)) {  // 성공
+        if (this.cardData.likeYn) {
+          this.cardData.likeCnt--;
+        }
+        else {
+          this.cardData.likeCnt++;
+        }
+        this.cardData.likeYn = !this.cardData.likeYn;
+        this.$forceUpdate();
+      }
     }
   }
 };
@@ -219,5 +261,13 @@ export default {
 
 .nongifted-card {
   background: white;
+}
+
+::v-deep .v-chip.v-chip--size-default{
+        font-size: 0.75rem !important;
+    }
+
+.sizing {
+  font-size: 0.875rem !important;
 }
 </style>

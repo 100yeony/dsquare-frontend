@@ -23,7 +23,10 @@ public class Permission {
     private String TAG = "[Permission]";
     private Context context;
     private Activity activity;
-    public static final String[] sCheckPermissions = new String[]{Manifest.permission.INTERNET, Manifest.permission.WRITE_EXTERNAL_STORAGE};
+    public static final String[] sCheckPermissions = new String[]{Manifest.permission.INTERNET
+            , Manifest.permission.WRITE_EXTERNAL_STORAGE
+            , Manifest.permission.POST_NOTIFICATIONS
+            , Manifest.permission.WAKE_LOCK};
 
     public Permission(Context context) {
         this.context = context;

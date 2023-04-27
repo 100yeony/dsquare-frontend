@@ -1,5 +1,8 @@
 <template>
-  <div class="none_ck-toolbar_border">
+  <div class="none_ck-toolbar_border none_expansion-panel-padding
+   center_expansion-panel-icon 
+   none_expansion-panel-background-color 
+   none_expansion-panel-box-shadow">
     <div>
       <DeleteDialog :isShow="isShow" :title="dialogTitle" @click-confirm="onConfirm" @click-cancel="onCancel" />
     </div>
@@ -33,9 +36,9 @@
             </v-menu>
           </v-col>
         </v-row>
-        <h2 class="mb-3">
+        <h3>
           <span class="text-primary">{{ qData.cname }}: </span>{{ qData.title }}
-        </h2>
+        </h3>
         <ckeditor v-model="qData.content" :editor="editor" :config="editorConfig" :disabled="true"></ckeditor>
         <!-- <v-row v-if="'atc' in questionData">
         <v-card variant="outlined" class="ml-3" color="grey">
@@ -44,15 +47,19 @@
           </v-card-item>
         </v-card>
       </v-row> -->
-        <v-row>
-          <v-col cols="2" class="center-container"><v-icon size="small">mdi-heart-outline</v-icon><span
-              class="text-caption font-0000008F ml-1">{{ qData.likes }}</span></v-col>
+        <v-row class="mt-3">
+          <v-col cols="2" class="center-container">
+            <span @click="toggleLike('question', qnaId)">
+              <template v-if="qData.likeYn"><v-icon size="small" color="red">mdi-heart</v-icon></template>
+              <template v-else><v-icon size="small">mdi-heart-outline</v-icon></template>
+            </span>
+            <span class="text-caption font-0000008F ml-1">{{ qData.likeCnt }}</span></v-col>
           <v-col cols="2" class="center-container"><v-icon size="small">mdi-message-text-outline</v-icon><span
               class="text-caption font-0000008F ml-1">{{ commentList.length }}</span></v-col>
         </v-row>
         <v-slide-group>
           <v-slide-group-item v-for="(chip, index) in qData.tags" :key="index">
-            <v-chip class="ma-2">#{{ chip }}</v-chip>
+            <v-chip class="mt-4 mb-2 mr-2">#{{ chip }}</v-chip>
           </v-slide-group-item>
         </v-slide-group>
       </v-card-item>
@@ -101,7 +108,7 @@
             </v-col>
           </v-row>
           <ckeditor v-model="item.content" :editor="editor" :config="editorConfig" :disabled="true"></ckeditor>
-          
+
 
           <!-- 
         답변 댓글 데이터 생기면 이 코드 사용
@@ -120,54 +127,62 @@
         </div> 
 -->
           <!-- ***** 답변 댓글 ***** -->
-          <v-card class="back-white mt-4">
-            <v-card-item>
-              <v-row class="mb-2" align="center">
-                <v-col cols="2">
-                  <v-avatar color="grey">😀</v-avatar>
-                </v-col>
-                <v-col cols="10">
-                  <div class="text-body font-bold">
-                    <v-row>변상진</v-row>
-                    <v-row class="text-caption font-0000008F">메시징DX플랫폼</v-row>
-                  </div>
-                </v-col>
-              </v-row>
-              <div class="text-caption font-0000008F">
-                <span class="font-1C4EFE">@김경란</span>테스트 데이터
-              </div>
-            </v-card-item>
-          </v-card>
 
-          <v-card class="back-white mt-4">
-            <v-card-item>
-              <v-row class="mb-2" align="center">
-                <v-col cols="2">
-                  <v-avatar color="grey">😀</v-avatar>
-                </v-col>
-                <v-col cols="10">
-                  <div class="text-body font-bold">
-                    <v-row>이상진</v-row>
-                    <v-row class="text-caption font-0000008F">메시징DX플랫폼</v-row>
-                  </div>
-                </v-col>
-              </v-row>
-              <div class="text-caption font-0000008F">
-                테스트 데이터
-              </div>
-            </v-card-item>
-          </v-card>
+
         </v-card-item>
+        <v-expansion-panels>
+          <v-expansion-panel>
+            <v-expansion-panel-title class="text-center"
+              :color="item.writerInfo.id == qData.managerId ? '#E8F2E1' : ''"></v-expansion-panel-title>
+            <v-expansion-panel-text>
+
+              <v-list>
+                <!-- <v-list-item v-for="item in items" :key="item.title" :title="item.title" subtitle="..."
+                  :prepend-avatar="item.avatar"></v-list-item> -->
+                <v-list-item key="홍길동" title="홍길동" subtitle="메세징dx플랫폼팀"
+                  prepend-avatar="@/assets/images/users/avatar_sample.png">
+                  <div>
+                    테스트 데이터
+                  </div>
+                </v-list-item>
+
+                <v-divider class="m-em-1" />
+                <v-list-item key="홍길동" title="홍길동" subtitle="메세징dx플랫폼팀"
+                  prepend-avatar="@/assets/images/users/avatar_sample.png">
+                  <div>
+                    <span class="font-1C4EFE">@김경란</span>테스트 데이터
+                  </div>
+                </v-list-item>
+                <v-divider class="m-em-1" />
+                <v-container v-if="!item.commentMode" class="text-center font_white_gray font-xs">
+                  <div @click="comment(item)">댓글 달기</div>
+                </v-container>
+
+                <v-container v-else class="text-center font_white_gray font-xs">
+                  <div @click="comment(item)">댓글작성 닫기</div>
+                  <v-text-field v-model="item.commentText" type="input" variant="outlined" single-line hide-details append-inner-icon="mdi-send" class="mt-5"
+                    @click:append-inner="writeComment(item.commentText)"></v-text-field>
+                </v-container>
+
+
+
+
+              </v-list>
+            </v-expansion-panel-text>
+          </v-expansion-panel>
+        </v-expansion-panels>
       </v-card>
     </div>
   </div>
 </template>
 <script>
 import DeleteDialog from '@/components/DeleteDialog';
-import api from '@/api'
-import store from '@/store'
+import api from '@/api';
+import store from '@/store';
 import CKEditor from "@ckeditor/ckeditor5-vue";
 import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
+import like from '@/api/like.js';
+
 export default {
   components: {
     DeleteDialog,
@@ -202,7 +217,8 @@ export default {
         content: '',
         createDate: '',
         viewCnt: 0,
-        likes: 0,
+        likeCnt: 0,
+        likeYn: false,
         tags: [],
         writerId: 0,
         managerId: 0,
@@ -221,10 +237,10 @@ export default {
     };
   },
   mounted() {
-    this.qnaId = this.$route.query.qid
-    console.log("--mounted")
+    this.qnaId = this.$route.query.qid;
+    console.log("--mounted");
     console.log(this.$route.query.qid);
-    const questionData = this.requestQuestionData()
+    const questionData = this.requestQuestionData();
     questionData.then(
       (response) => {
         this.qData = this.parseToQData(response.data)
@@ -233,8 +249,8 @@ export default {
           this.isWriter = true;
         }
       }
-    )
-    this.requestAnswerData()
+    );
+    this.requestAnswerData();
   },
   computed: {
     dialogTitle() {
@@ -255,6 +271,13 @@ export default {
           qid: this.$route.query.qid
         }
       });
+    },
+    comment(item) {
+      item.commentMode = !item.commentMode
+      console.log("comment")
+    },
+    writeComment(value) {
+      console.log(value)
     },
     editPost(index) {
       console.log(index)
@@ -376,7 +399,8 @@ export default {
         content: data.content,
         createDate: this.exportDateFromTimeStamp(data.createDate),
         viewCnt: data.viewCnt,
-        likes: 1,
+        likeCnt: data.likeCnt,
+        likeYn: data.likeYn,
         tags: data.tags,
         writerId: data.writerInfo.id,
         managerId: 1,
@@ -386,11 +410,47 @@ export default {
       var res = await api.get('board/questions/' + this.$route.query.qid + '/answers', '').then(//this.$route.query.qid
         (response) => {
           console.log("answer: ")
-          console.log(response.data)
-          this.answerList = response.data
+          this.initAnswerData(response.data)
         }
       )
+    },
+    initAnswerData(datas) {
+      console.log(datas)
+      datas.forEach((data) => {
+        Object.assign(data, { commentMode: false , commentText: ''})
+      })
+      this.answerList = datas
+    
+    },
+
+    // 좋아요 관련
+    async toggleLike(board, id) {
+      var res = !this.qData.likeYn ? await like.post(board, id) : await like.del(board, id);
+      if ([200, 201].includes(res.status)) {  // 성공
+        if (this.qData.likeYn) {
+          this.qData.likeCnt--;
+        }
+        else {
+          this.qData.likeCnt++;
+        }
+        this.qData.likeYn = !this.qData.likeYn;
+        this.$forceUpdate();
+      }
     }
   },
 };
 </script>
+<style scoped>
+::v-deep .ck-rounded-corners .ck.ck-editor__main>.ck-editor__editable {
+  padding-left: 0;
+  padding-bottom: 0;
+}
+
+::v-deep .ck.ck-editor__editable_inline>:last-child{
+  margin-bottom:0;
+}
+
+.v-chip.v-chip--size-default{
+  font-size: 0.8rem !important;
+}
+</style>
