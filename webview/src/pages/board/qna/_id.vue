@@ -48,7 +48,7 @@
             </span>
             <span class="text-caption font-0000008F ml-1">{{ qData.likeCnt }}</span></v-col>
           <v-col cols="2" class="center-container"><v-icon size="small">mdi-message-text-outline</v-icon><span
-              class="text-caption font-0000008F ml-1">{{ commentList.length }}</span></v-col>
+              class="text-caption font-0000008F ml-1">{{ qData.commentCnt }}</span></v-col>
         </v-row>
         <v-slide-group>
           <v-slide-group-item v-for="(chip, index) in qData.tags" :key="index">
@@ -497,6 +497,7 @@ export default {
         title: data.title,
         content: data.content,
         createDate: this.exportDateFromTimeStamp(data.createDate),
+        commentCnt: data.commentCnt,
         viewCnt: data.viewCnt,
         likeCnt: data.likeCnt,
         likeYn: data.likeYn,
