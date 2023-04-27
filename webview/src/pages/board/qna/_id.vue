@@ -403,7 +403,7 @@ export default {
         likeYn: data.likeYn,
         tags: data.tags,
         writerId: data.writerInfo.id,
-        managerId: 1,
+        managerId: data.category.managerId,
       }
     },
     async requestAnswerData() {

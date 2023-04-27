@@ -17,32 +17,24 @@
     <v-divider :thickness="1" class="mt-4 mb-5"></v-divider>
 
     <!-- 이달의 카드 -->
-    <p class="mt-3 text-h6 font-weight-black">이달의 카드</p>
+    <p class="mt-3 mb-2 text-h6 font-weight-black">이달의 카드</p>
     <swiper
       :spaceBetween="16"
-      :centeredSlides="true"
       :autoplay="{
         delay: 0,
         disableOnInteraction: false,
       }"
       :speed="7000"
-      :resizeObserver="true"
+      :observer="true"
+      :observeSlideChildren="true"
       :loop="true"
       :modules="swiperModules"
       :resistance="false"
-      class="overflow-visible"
       >
-      <swiper-slide>
-        <RequestCard class="mt-2 card-of-the-week" :data="giftedCardData" @handle-card-clicked="handleCardClicked" />
-      </swiper-slide>
-      <swiper-slide>
-        <RequestCard class="mt-2 card-of-the-week" :data="giftedCardData" @handle-card-clicked="handleCardClicked" />
-      </swiper-slide>
-      <swiper-slide>
-        <RequestCard class="mt-2 card-of-the-week" :data="giftedCardData" @handle-card-clicked="handleCardClicked" />
-      </swiper-slide>
-      <swiper-slide>
-        <RequestCard class="mt-2 card-of-the-week" :data="giftedCardData" @handle-card-clicked="handleCardClicked" />
+      <swiper-slide v-for="(item, index) in selectedCardData" :value="item.cardId">
+        <div>
+          <RequestCard class="mt-2" :data="item" :key="index" @handle-card-clicked="handleCardClicked" @handle-card-dialog="handleCardDialog(item)"/>
+        </div>
       </swiper-slide>
     </swiper>
 
@@ -118,6 +110,7 @@ import { Swiper, SwiperSlide } from 'swiper/vue';
 import { Autoplay } from 'swiper';
 import 'swiper/css';
 import 'swiper/css/autoplay';
+import object from "@/utils/objectUtils";
 
 export default {
   name: "cardBoard",
@@ -175,19 +168,7 @@ export default {
       ProjTeamId: '',
       page: 1,
       requestCardData: [],
-      giftedCardData: {
-        cardId: 12,
-        title: "신입사원과제",
-        content: "신입사원 웰컴 프로젝트 중이에요.. 저희에게 힘을 주세요.. 신입사원 웰컴 프로젝트 중이에요.. 저희에게 힘을 주세요.. 신입사원 웰컴 프로젝트 중이에요.. 저희에게 힘을 주세요..",
-        date: "2023-04-01",
-        teammate: ["변상진", "이호열"],
-        likeCnt: "327",
-        likeYn: true,
-        comment: "3",
-        createDate: "2023-4-21 17:46",
-        selectionInfo: {},
-        projTeamInfo:{tid: 6, name: "메세징DX플랫폼팀"},
-      },
+      selectedCardData: [],
       swiperModules: [ Autoplay, ],
       isShow: false, 
     };
@@ -232,6 +213,7 @@ export default {
   },
   mounted() {
     var res = this.requestAll();
+    var resSelected = this.requestAllSelected();
   },
   computed: {
     dialogTitle() {
@@ -250,6 +232,18 @@ export default {
           this.requestCardData = response.data;
           this.cardsLength = response.data.length;
         }
+      );
+    },
+    async requestAllSelected() {
+      var res = await api.get('board/cards/card-of-the-month').then(
+        (response) => {
+          response.data.forEach((d) => {
+            d.createDate = this.exportDateFromTimeStamp(d.createDate);
+            var tempTeammate = d.teammate.replaceAll('[', '["').replaceAll(']', '"]').replaceAll(',', '","');
+            d.teammate = JSON.parse(tempTeammate);  // 어레이로 변환
+          });
+          this.selectedCardData = response.data;
+        },
       );
     },
     categoryChanged() {

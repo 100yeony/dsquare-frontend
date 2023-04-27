@@ -383,5 +383,37 @@ const fn = {
       }
     }
   },
+  async patch(uri, params, headers) {
+    try {
+      console.log('[POST]', uri, params)
+      console.log('auth :::::::::::::::', headers)
+      const res = await apiInstance.patch(`${prefix + uri}`, params, { headers: headers })
+      return this.ResponsePayload(res)
+    } catch (err) {
+      if (this.tokenErrorCheck(err)) {
+        var flag = await this.requestRefresh().then(
+          (res) => {
+            store.dispatch('info/setInfoToken', { accessToken: res.data.accessToken, refreshToken: res.data.refreshToken });
+            this.setDefaultToken()
+            console.log(res)
+            return true
+          }
+        ).catch(
+          (err) => {
+            return false
+          }
+        )
+        if (flag) {
+          const res = await apiInstance.patch(`${prefix + uri}`, params, { headers: headers })
+          return this.ResponsePayload(res)
+        } else {
+          this.expiredToken()
+        }
+
+      } else {
+        return this.ErrorPayload(err)
+      }
+    }
+  },
 }
 export default createInstance()
