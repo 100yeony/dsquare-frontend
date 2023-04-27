@@ -40,13 +40,6 @@
           <span class="text-primary">{{ qData.cname }}: </span>{{ qData.title }}
         </h3>
         <ckeditor v-model="qData.content" :editor="editor" :config="editorConfig" :disabled="true"></ckeditor>
-        <!-- <v-row v-if="'atc' in questionData">
-        <v-card variant="outlined" class="ml-3" color="grey">
-          <v-card-item class="text-caption pa-1 pr-2 font-0000008F" density="compact">
-            <v-icon size="large">mdi-paperclip</v-icon> {{ questionData.atc.fileUrl.split("/").pop() }}
-          </v-card-item>
-        </v-card>
-      </v-row> -->
         <v-row class="mt-3">
           <v-col cols="2" class="center-container">
             <span @click="toggleLike('question', qnaId)">
@@ -63,6 +56,55 @@
           </v-slide-group-item>
         </v-slide-group>
       </v-card-item>
+      <v-expansion-panels>
+        <v-expansion-panel>
+          <v-expansion-panel-title class="text-center"></v-expansion-panel-title>
+          <v-expansion-panel-text>
+            <v-list>
+              <div v-for="(comment) in qData.comments">
+                <v-list-item :key="comment.writerInfo.id"
+                  :title="comment.writerInfo.name + ' (' + comment.writerInfo.teamHierarchy[comment.writerInfo.teamHierarchy.length - 1] + ')'"
+                  :subtitle="comment.createDate" prepend-avatar="@/assets/images/users/avatar_sample.png">
+                  <div>
+                    <span v-if="(typeof comment.originWriterName != 'undefined')" class="font_bule">
+                      @{{ comment.originWriterName }} </span>{{ comment.content }}
+                  </div>
+                  <v-row class="mt-5">
+                    <v-col class="font_white_gray font-xss text-left"
+                      @click="reComment(qData, comment.writerInfo, comment.commentId)">
+                      답글 작성
+                    </v-col>
+                    <v-col v-if="this.user.userId == comment.writerInfo.id" class="font_white_gray font-xss text-right"
+                      @click="delComment(comment, qData, 'question', qnaId)">
+                      댓글 삭제
+                    </v-col>
+                  </v-row>
+                </v-list-item>
+
+                <v-divider class="m-em-1" />
+              </div>
+
+              <v-container v-if="!qData.commentMode" class="text-center font_white_gray font-xs">
+                <div @click="commentVisible(qData, true)">댓글 달기</div>
+              </v-container>
+
+              <v-container v-else class="text-center font_white_gray font-xs">
+                <div @click="commentVisible(qData, false)">댓글작성 닫기</div>
+                <div class="mt-5">
+                  <v-chip v-if="!qData.mentionName == ''">
+                    @{{ qData.mentionName }}
+                    <v-icon icon="mdi-close-circle" @click="deleteMention(qData)"></v-icon>
+                  </v-chip>
+                  <v-text-field v-model="qData.commentText" :ref="qData.commentInputRef" type="input" variant="outlined"
+                    single-line hide-details append-inner-icon="mdi-send" class="mt-2"
+                    @click:append-inner="writeComment(qData, 'question', qnaId)"></v-text-field>
+                </div>
+              </v-container>
+
+            </v-list>
+          </v-expansion-panel-text>
+        </v-expansion-panel>
+      </v-expansion-panels>
     </v-card>
 
     <v-card v-if="!isWriter" class="mt-4">
@@ -108,64 +150,53 @@
             </v-col>
           </v-row>
           <ckeditor v-model="item.content" :editor="editor" :config="editorConfig" :disabled="true"></ckeditor>
-
-
-          <!-- 
-        답변 댓글 데이터 생기면 이 코드 사용
-        <div v-for="(comment, index) in item.commentList" :value="comment.id" class="back-white mt-4 pa-2">
-          <v-row class="mb-2" align="center">
-            <v-col cols="2">
-              <v-avatar color="grey">😀</v-avatar>
-            </v-col>
-            <v-col cols="10">
-              <div class="text-body font-bold">{{ comment.name }}</div>
-            </v-col>
-          </v-row>
-          <div class="text-caption font-0000008F">
-            {{ comment.content }}
-          </div>
-        </div> 
--->
-          <!-- ***** 답변 댓글 ***** -->
-
-
         </v-card-item>
         <v-expansion-panels>
           <v-expansion-panel>
             <v-expansion-panel-title class="text-center"
               :color="item.writerInfo.id == qData.managerId ? '#E8F2E1' : ''"></v-expansion-panel-title>
             <v-expansion-panel-text>
-
               <v-list>
-                <!-- <v-list-item v-for="item in items" :key="item.title" :title="item.title" subtitle="..."
-                  :prepend-avatar="item.avatar"></v-list-item> -->
-                <v-list-item key="홍길동" title="홍길동" subtitle="메세징dx플랫폼팀"
-                  prepend-avatar="@/assets/images/users/avatar_sample.png">
-                  <div>
-                    테스트 데이터
-                  </div>
-                </v-list-item>
+                <div v-for="(comment) in item.comments">
+                  <v-list-item :key="comment.writerInfo.id"
+                    :title="comment.writerInfo.name + ' (' + comment.writerInfo.teamHierarchy[comment.writerInfo.teamHierarchy.length - 1] + ')'"
+                    :subtitle="comment.createDate" prepend-avatar="@/assets/images/users/avatar_sample.png">
+                    <div>
+                      <span v-if="(typeof comment.originWriterName != 'undefined')" class="font_bule">
+                        @{{ comment.originWriterName }} </span>{{ comment.content }}
+                    </div>
 
-                <v-divider class="m-em-1" />
-                <v-list-item key="홍길동" title="홍길동" subtitle="메세징dx플랫폼팀"
-                  prepend-avatar="@/assets/images/users/avatar_sample.png">
-                  <div>
-                    <span class="font-1C4EFE">@김경란</span>테스트 데이터
-                  </div>
-                </v-list-item>
-                <v-divider class="m-em-1" />
+                    <v-row class="mt-5">
+                      <v-col class="font_white_gray font-xss text-left"
+                        @click="reComment(item, comment.writerInfo, comment.commentId)">
+                        답글 작성
+                      </v-col>
+                      <v-col v-if="this.user.userId == comment.writerInfo.id" class="font_white_gray font-xss text-right"
+                        @click="delComment(comment, item, 'answer', item.aid)">
+                        댓글 삭제
+                      </v-col>
+                    </v-row>
+
+                  </v-list-item>
+                  <v-divider class="m-em-1" />
+                </div>
+
                 <v-container v-if="!item.commentMode" class="text-center font_white_gray font-xs">
-                  <div @click="comment(item)">댓글 달기</div>
+                  <div @click="commentVisible(item, true)">댓글 달기</div>
                 </v-container>
 
                 <v-container v-else class="text-center font_white_gray font-xs">
-                  <div @click="comment(item)">댓글작성 닫기</div>
-                  <v-text-field v-model="item.commentText" type="input" variant="outlined" single-line hide-details append-inner-icon="mdi-send" class="mt-5"
-                    @click:append-inner="writeComment(item.commentText)"></v-text-field>
+                  <div @click="commentVisible(item, false)">댓글작성 닫기</div>
+                  <div class="mt-5">
+                    <v-chip v-if="!item.mentionName == ''">
+                      @{{ item.mentionName }}
+                      <v-icon icon="mdi-close-circle" @click="deleteMention(item)"></v-icon>
+                    </v-chip>
+                    <v-text-field v-model="item.commentText" :ref="item.commentInputRef" type="input" variant="outlined"
+                      single-line hide-details append-inner-icon="mdi-send" class="mt-2"
+                      @click:append-inner="writeComment(item, 'answer', item.aid)"></v-text-field>
+                  </div>
                 </v-container>
-
-
-
 
               </v-list>
             </v-expansion-panel-text>
@@ -242,12 +273,22 @@ export default {
     console.log(this.$route.query.qid);
     const questionData = this.requestQuestionData();
     questionData.then(
-      (response) => {
+      async (response) => {
         this.qData = this.parseToQData(response.data)
         console.log(this.user.userId, response.data.writerId)
         if (this.user.userId == response.data.writerInfo.id) {
           this.isWriter = true;
         }
+        let res = await this.callComments('question', this.qnaId)
+        Object.assign(this.qData, {
+          commentInputRef: 'question' + this.qnaId,
+          mentionName: '',
+          mentionWriterId: 0,
+          mentionId: 0,
+          commentMode: false,
+          commentText: '',
+          comments: res,
+        })
       }
     );
     this.requestAnswerData();
@@ -272,12 +313,77 @@ export default {
         }
       });
     },
-    comment(item) {
-      item.commentMode = !item.commentMode
+    reComment(item, writerInfo, commentId) {
+      item.commentMode = true
+      item.mentionName = writerInfo.name
+      item.mentionWriterId = writerInfo.id
+      item.mentionId = commentId
+      this.$nextTick(() => {
+        const comp = this.$refs[item.commentInputRef]
+        //this.moveToComponent(comp)           수정해야함
+      })
+    },
+    deleteMention(item) {
+      item.mentionName = ''
+      item.mentionWriterId = 0
+      item.mentionId = 0
+    },
+    moveToComponent(comp) {
+      console.log(comp)
+      comp.scrollIntoView({ behavior: 'smooth' })
+    },
+    commentVisible(item, flag) {
+      item.commentMode = flag
       console.log("comment")
     },
-    writeComment(value) {
-      console.log(value)
+    async callComments(boardName, boardId) {
+      var res = await api.get('board/' + boardName + '/' + boardId + '/comments', '')
+      console.log(res)
+      res.data.forEach(
+        (d) => {
+          d.createDate = this.exportDateFromTimeStamp(d.createDate)
+        }
+      )
+      return res.data
+    },
+    writeComment(item, boardName, boardId) {
+      console.log(item)
+      if (item.mentionName == '') {
+        api.post('board/' + boardName + '/' + boardId + '/comments', {
+          writerId: store.getters["info/infoUser"].userId,
+          content: item.commentText
+        }).then(
+          async (response) => {
+            console.log(response)
+            item.comments = await this.callComments(boardName, boardId)
+            item.commentText = ''
+
+          }
+        )
+      } else {
+        api.post('board/' + boardName + '/' + boardId + '/comments/' + item.mentionId, {
+          writerId: store.getters["info/infoUser"].userId,
+          content: item.commentText,
+          originWriterId: item.mentionWriterId
+        }).then(
+          async (response) => {
+            console.log(response)
+            item.comments = await this.callComments(boardName, boardId)
+            item.commentText = ''
+            this.deleteMention(item)
+          }
+        )
+      }
+    },
+    delComment(comment, item, boardName, boardId) {
+      console.log(comment)
+      api.del('board/comments/' + comment.commentId, '').then(
+        async (response) => {
+          console.log(response)
+          item.comments = await this.callComments(boardName, boardId)
+          item.commentText = ''
+        }
+      )
     },
     editPost(index) {
       console.log(index)
@@ -354,13 +460,6 @@ export default {
     async requestDelAnswer(num) {
       const res = await api.del('board/questions/' + this.$route.query.qid + '/answers/' + this.answerId, '').then(
         (response) => {
-          // console.log(response)
-          // this.$router.replace({
-          //   path: process.env.VUE_APP_BOARD_QNA_DETAIL,
-          //   query: {
-          //     qid: this.$route.query.qid
-          //   }
-          // });
           this.requestAnswerData()
         }
       )
@@ -410,17 +509,25 @@ export default {
       var res = await api.get('board/questions/' + this.$route.query.qid + '/answers', '').then(//this.$route.query.qid
         (response) => {
           console.log("answer: ")
-          this.initAnswerData(response.data)
+          this.answerList = response.data
+          this.initAnswerData()
         }
       )
     },
-    initAnswerData(datas) {
-      console.log(datas)
-      datas.forEach((data) => {
-        Object.assign(data, { commentMode: false , commentText: ''})
+    initAnswerData() {
+      console.log(this.answerList)
+      this.answerList.forEach(async (answer) => {
+        let res = await this.callComments('answer', answer.aid)
+        Object.assign(answer, {
+          commentInputRef: 'answer' + res.aid,
+          mentionName: '',
+          mentionWriterId: 0,
+          mentionId: 0,
+          commentMode: false,
+          commentText: '',
+          comments: res,
+        })
       })
-      this.answerList = datas
-    
     },
 
     // 좋아요 관련
@@ -446,11 +553,11 @@ export default {
   padding-bottom: 0;
 }
 
-::v-deep .ck.ck-editor__editable_inline>:last-child{
-  margin-bottom:0;
+::v-deep .ck.ck-editor__editable_inline>:last-child {
+  margin-bottom: 0;
 }
 
-.v-chip.v-chip--size-default{
+.v-chip.v-chip--size-default {
   font-size: 0.8rem !important;
 }
 </style>
