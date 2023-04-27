@@ -17,9 +17,14 @@
     <v-divider :thickness="1" class="mt-4 mb-5"></v-divider>
 
     <!-- 금주의 카드 -->
-    <p class="mt-3 text-h6 font-weight-black">이달의 카드</p>
+    <p class="mt-3 mb-2 text-h6 font-weight-black">이달의 카드</p>
     <div>
-      <RequestCard class="mt-2 card-of-the-week" :data="giftedCardData" @handle-card-clicked="handleCardClicked" @handle-card-dialog="handleCardDialog" />
+      <span v-for="(item, index) in requestCardData" :value="item.cardId" class="card">
+        <div v-if="item.selectionInfo">
+          <RequestCard :data="item" :key="index" @handle-card-clicked="handleCardClicked" @handle-card-dialog="handleCardDialog(item)" :style="item.style"/>
+          <div class="mb-4"></div>
+        </div>
+      </span>
     </div>
 
     <v-divider :thickness="1" class="mt-4 mb-5"></v-divider>
@@ -64,7 +69,9 @@
     <!-- 카드 대기중 목록 -->
     <div>
       <div v-for="(item, index) in requestCardData" :value="item.cardId" class="card">
-        <RequestCard class=" mt-2" :data="item" :key="index" @handle-card-clicked="handleCardClicked" @handle-card-dialog="handleCardDialog" :style="item.style"/>
+        <div v-if="item.selectionInfo==null">
+          <RequestCard class=" mt-2" :data="item" :key="index" @handle-card-clicked="handleCardClicked" @handle-card-dialog="handleCardDialog(item)" :style="item.style"/>
+        </div>
       </div>
     </div>
     <Observe @triggerIntersected="loadMore" />
@@ -88,6 +95,7 @@ import CardDialog from "@/components/cards/CardDialog.vue";
 import Observe from "@/components/Observer";
 import api from '@/api';
 import store from "@/store";
+import object from "@/utils/objectUtils"; 
 
 export default {
   name: "cardBoard",
@@ -143,20 +151,8 @@ export default {
       ProjTeamId: '',
       page: 1,
       requestCardData: [],
-      giftedCardData: {
-        cardId: 12,
-        title: "신입사원과제",
-        content: "신입사원 웰컴 프로젝트 중이에요.. 저희에게 힘을 주세요.. 신입사원 웰컴 프로젝트 중이에요.. 저희에게 힘을 주세요.. 신입사원 웰컴 프로젝트 중이에요.. 저희에게 힘을 주세요..",
-        date: "2023-04-01",
-        teammate: ["변상진", "이호열"],
-        likeCnt: "327",
-        likeYn: true,
-        comment: "3",
-        createDate: "2023-4-21 17:46",
-        selectionInfo: {},
-        projTeamInfo:{tid: 6, name: "메세징DX플랫폼팀"},
-      },
       isShow: false, 
+      selectedItem: {},
     };
   },
   watch: {
@@ -318,24 +314,28 @@ export default {
         this.subcategoryItems = [];
       }
     },
-    handleCardDialog() {
+    handleCardDialog(item) {
       console.log('handel card dialog')
+      this.selectedItem = item;
       this.isShow = true; 
     },
     onConfirm() {
       console.log('confirm payload:');
       this.isShow = false;
-      // if (this.selectedPostType == 0) {
-      //   this.requestDelQuestion();
-      // } else if (this.selectedPostType == 1) {
-      //   this.requestDelAnswer();
-      // } else if (this.selectedPostType == 2) {
-
-      // }
+      this.cardSelect()
     },
     onCancel() {
       console.log('cancel');
       this.isShow = false;
+    },
+    async cardSelect() {
+      console.log(this.selectedItem)
+      const res = await api.patch('board/cards/' + this.selectedItem.cardId).then(
+        (response) => {
+          console.log(response)
+          this.selectedItem = {}
+        }
+      )
     },
     sort(index) {
       this.selectedSortIndex = index;
