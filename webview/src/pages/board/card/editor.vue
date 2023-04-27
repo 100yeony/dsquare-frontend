@@ -118,7 +118,7 @@ export default {
         teammateCnt: this.teammateCnt,
       })
       const res = await api.post('board/cards', {
-        cardWriterId: store.getters["info/infoUser"].userId,
+        //cardWriterId: store.getters["info/infoUser"].userId,
         content: editorData,
         title: this.title,
         teammate: Array.from(this.chipData),
