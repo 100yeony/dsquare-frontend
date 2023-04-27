@@ -18,6 +18,10 @@
 
     <!-- 이달의 카드 -->
     <p class="mt-3 mb-2 text-h6 font-weight-black">이달의 카드</p>
+    <div class="text-center" v-if="this.selectedCardData.length===0">
+      <img src="@/assets/images/empty.png" width="70" height="70">
+      <h3>선정된 카드가 없어요</h3>
+    </div>
     <swiper
       :spaceBetween="16"
       :autoplay="{
@@ -67,7 +71,7 @@
     
 
     <!-- 정렬 -->
-    <div class="mt-6 d-flex justify-end" >
+    <div class="mt-4 mb-4 d-flex justify-end" >
       <v-btn variant="outlined" prepend-icon="mdi-sort-descending">정렬
         <v-menu activator="parent">
           <v-list>
@@ -81,9 +85,10 @@
 
     <!-- 카드 대기중 목록 -->
     <div>
-      <div v-for="(item, index) in requestCardData" :value="item.cardId" class="card">
+      <span v-for="(item, index) in requestCardData" :value="item.cardId" class="card">
         <RequestCard class=" mt-2" :data="item" :key="index" @handle-card-clicked="handleCardClicked" @handle-card-dialog="handleCardDialog(item)" :style="item.style"/>
-      </div>
+        <div class="mb-4"></div>
+      </span>
     </div>
     <Observe @triggerIntersected="loadMore" />
   </div>
@@ -138,7 +143,7 @@ export default {
 
     let sortMenu = [
       { title: "좋아요순" },
-      { title: "등록순" },
+      { title: "최신순" },
     ]
 
     return {
@@ -245,6 +250,7 @@ export default {
             d.teammate = JSON.parse(tempTeammate);  // 어레이로 변환
           });
           this.selectedCardData = response.data;
+          console.log(this.selectedCardData)
         },
       );
     },
