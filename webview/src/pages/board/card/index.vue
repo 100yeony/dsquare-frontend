@@ -17,13 +17,14 @@
     <v-divider :thickness="1" class="mt-4 mb-5"></v-divider>
 
     <!-- 금주의 카드 -->
-    <p class="mt-3 text-h6 font-weight-black">이달의 카드</p>
+    <p class="mt-3 mb-2 text-h6 font-weight-black">이달의 카드</p>
     <div>
-      <div v-for="(item, index) in requestCardData" :value="item.cardId" class="card">
+      <span v-for="(item, index) in requestCardData" :value="item.cardId" class="card">
         <div v-if="item.selectionInfo">
-          <RequestCard class=" mt-2" :data="item" :key="index" @handle-card-clicked="handleCardClicked" @handle-card-dialog="handleCardDialog(item)" :style="item.style"/>
+          <RequestCard :data="item" :key="index" @handle-card-clicked="handleCardClicked" @handle-card-dialog="handleCardDialog(item)" :style="item.style"/>
+          <div class="mb-4"></div>
         </div>
-      </div>
+      </span>
     </div>
 
     <v-divider :thickness="1" class="mt-4 mb-5"></v-divider>

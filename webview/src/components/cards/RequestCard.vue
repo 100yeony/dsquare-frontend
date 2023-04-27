@@ -30,7 +30,9 @@
                 <v-col cols="2" class="center-container justify-content-end"><v-icon size="small">mdi-message-text-outline</v-icon><span
                     class="text-caption ml-1">{{ props?.data?.comment }}</span></v-col>
                 <v-col cols="8" class="d-flex justify-end"> 
-                    <v-btn variant="" class="card_button" @click="showDialog($event)">카드주기</v-btn>
+                    <div v-if="props?.data?.selectionInfo == null">
+                        <v-btn variant="" class="card_button" @click="showDialog($event)">카드주기</v-btn>
+                    </div>
                 </v-col>
             </v-row>
         </v-card-item>
