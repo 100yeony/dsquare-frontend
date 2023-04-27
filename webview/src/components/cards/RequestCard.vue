@@ -2,7 +2,7 @@
     <v-card class="mx-auto justify-center rounded-lg" :class="props?.data?.selectionInfo ? 'gifted-card' : 'nongifted-card'"  variant="outlined" @click="handleCardClicked">
         <v-card-item class="pb-4">
             <div>
-                <v-chip class="gifted-chip mb-2 w-100" v-if="props?.data?.selectionInfo" variant="outlined"><img src="@/assets/images/icons/party-popper.svg" class="mr-2"/>카드 드립니다!!!</v-chip>
+                <v-chip class="gifted-chip mb-2 d-flex" v-if="props?.data?.selectionInfo" variant="outlined"><img src="@/assets/images/icons/party-popper.svg" class="mr-2"/>카드 드립니다!!!</v-chip>
             </div>
             <div>
                 <v-row>
@@ -31,7 +31,7 @@
                     class="text-caption ml-1">{{ props?.data?.comment }}</span></v-col>
                 <v-col cols="8" class="d-flex justify-end"> 
                     <div v-if="props?.data?.selectionInfo == null">
-                        <v-btn variant="" class="card_button" @click="showDialog($event)">카드주기</v-btn>
+                        <v-btn variant="" class="card_button mr-4 mb-4" @click="showDialog($event)">카드주기</v-btn>
                     </div>
                 </v-col>
             </v-row>
@@ -86,5 +86,13 @@
         border-color: black;
         background-color: black;
         color: white;
+    }
+
+    .v-col-2{
+        padding-right: 0px !important; 
+    }
+
+    .v-col-8 {
+        padding: 0px !important;
     }
 </style>
