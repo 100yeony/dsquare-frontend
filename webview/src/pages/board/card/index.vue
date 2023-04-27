@@ -67,7 +67,7 @@
     
 
     <!-- 정렬 -->
-    <div class="mt-6" >
+    <div class="mt-6 d-flex justify-end" >
       <v-btn variant="outlined" prepend-icon="mdi-sort-descending">정렬
         <v-menu activator="parent">
           <v-list>
@@ -214,6 +214,7 @@ export default {
   mounted() {
     var res = this.requestAll();
     var resSelected = this.requestAllSelected();
+    console.log(Swiper);
   },
   computed: {
     dialogTitle() {
