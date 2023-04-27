@@ -82,7 +82,7 @@
     <!-- 카드 대기중 목록 -->
     <div>
       <div v-for="(item, index) in requestCardData" :value="item.cardId" class="card">
-        <RequestCard class=" mt-2" :data="item" :key="index" @handle-card-clicked="handleCardClicked" @handle-card-dialog="handleCardDialog" :style="item.style"/>
+        <RequestCard class=" mt-2" :data="item" :key="index" @handle-card-clicked="handleCardClicked" @handle-card-dialog="handleCardDialog(item)" :style="item.style"/>
       </div>
     </div>
     <Observe @triggerIntersected="loadMore" />
@@ -171,6 +171,7 @@ export default {
       selectedCardData: [],
       swiperModules: [ Autoplay, ],
       isShow: false, 
+      selectedItem: {},
     };
   },
   watch: {
@@ -346,24 +347,28 @@ export default {
         this.subcategoryItems = [];
       }
     },
-    handleCardDialog() {
+    handleCardDialog(item) {
       console.log('handel card dialog')
-      this.isShow = true; 
+      this.selectedItem = item;
+      this.isShow = true;
     },
     onConfirm() {
       console.log('confirm payload:');
       this.isShow = false;
-      // if (this.selectedPostType == 0) {
-      //   this.requestDelQuestion();
-      // } else if (this.selectedPostType == 1) {
-      //   this.requestDelAnswer();
-      // } else if (this.selectedPostType == 2) {
-
-      // }
+      this.cardSelect()
     },
     onCancel() {
       console.log('cancel');
       this.isShow = false;
+    },
+    async cardSelect() {
+      console.log(this.selectedItem)
+      const res = await api.patch('board/cards/' + this.selectedItem.cardId).then(
+        (response) => {
+          console.log(response)
+          this.selectedItem = {}
+        }
+      )
     },
     sort(index) {
       this.selectedSortIndex = index;
