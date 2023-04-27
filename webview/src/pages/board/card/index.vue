@@ -16,16 +16,27 @@
 
     <v-divider :thickness="1" class="mt-4 mb-5"></v-divider>
 
-    <!-- 금주의 카드 -->
+    <!-- 이달의 카드 -->
     <p class="mt-3 mb-2 text-h6 font-weight-black">이달의 카드</p>
-    <div>
-      <span v-for="(item, index) in requestCardData" :value="item.cardId" class="card">
-        <div v-if="item.selectionInfo">
-          <RequestCard :data="item" :key="index" @handle-card-clicked="handleCardClicked" @handle-card-dialog="handleCardDialog(item)" :style="item.style"/>
-          <div class="mb-4"></div>
+    <swiper
+      :spaceBetween="16"
+      :autoplay="{
+        delay: 0,
+        disableOnInteraction: false,
+      }"
+      :speed="7000"
+      :observer="true"
+      :observeSlideChildren="true"
+      :loop="true"
+      :modules="swiperModules"
+      :resistance="false"
+      >
+      <swiper-slide v-for="(item, index) in selectedCardData" :value="item.cardId">
+        <div>
+          <RequestCard class="mt-2" :data="item" :key="index" @handle-card-clicked="handleCardClicked" @handle-card-dialog="handleCardDialog(item)"/>
         </div>
-      </span>
-    </div>
+      </swiper-slide>
+    </swiper>
 
     <v-divider :thickness="1" class="mt-4 mb-5"></v-divider>
 
@@ -53,8 +64,10 @@
       </v-expansion-panel>
     </v-expansion-panels>
 
+    
+
     <!-- 정렬 -->
-    <div class="mt-6" >
+    <div class="mt-6 d-flex justify-end" >
       <v-btn variant="outlined" prepend-icon="mdi-sort-descending">정렬
         <v-menu activator="parent">
           <v-list>
@@ -69,9 +82,7 @@
     <!-- 카드 대기중 목록 -->
     <div>
       <div v-for="(item, index) in requestCardData" :value="item.cardId" class="card">
-        <div v-if="item.selectionInfo==null">
-          <RequestCard class=" mt-2" :data="item" :key="index" @handle-card-clicked="handleCardClicked" @handle-card-dialog="handleCardDialog(item)" :style="item.style"/>
-        </div>
+        <RequestCard class=" mt-2" :data="item" :key="index" @handle-card-clicked="handleCardClicked" @handle-card-dialog="handleCardDialog(item)" :style="item.style"/>
       </div>
     </div>
     <Observe @triggerIntersected="loadMore" />
@@ -95,14 +106,20 @@ import CardDialog from "@/components/cards/CardDialog.vue";
 import Observe from "@/components/Observer";
 import api from '@/api';
 import store from "@/store";
-import object from "@/utils/objectUtils"; 
+import { Swiper, SwiperSlide } from 'swiper/vue';
+import { Autoplay } from 'swiper';
+import 'swiper/css';
+import 'swiper/css/autoplay';
+import object from "@/utils/objectUtils";
 
 export default {
   name: "cardBoard",
   components: {
     RequestCard,
     Observe,
-    CardDialog
+    Swiper,
+    SwiperSlide,
+    CardDialog,
   },
   setup() {
     let categoryItems = ['플랫폼품질혁신TF', '플랫폼IT컨설팅vTF', '플랫폼서비스담당',
@@ -151,6 +168,8 @@ export default {
       ProjTeamId: '',
       page: 1,
       requestCardData: [],
+      selectedCardData: [],
+      swiperModules: [ Autoplay, ],
       isShow: false, 
       selectedItem: {},
     };
@@ -195,6 +214,8 @@ export default {
   },
   mounted() {
     var res = this.requestAll();
+    var resSelected = this.requestAllSelected();
+    console.log(Swiper);
   },
   computed: {
     dialogTitle() {
@@ -213,6 +234,18 @@ export default {
           this.requestCardData = response.data;
           this.cardsLength = response.data.length;
         }
+      );
+    },
+    async requestAllSelected() {
+      var res = await api.get('board/cards/card-of-the-month').then(
+        (response) => {
+          response.data.forEach((d) => {
+            d.createDate = this.exportDateFromTimeStamp(d.createDate);
+            var tempTeammate = d.teammate.replaceAll('[', '["').replaceAll(']', '"]').replaceAll(',', '","');
+            d.teammate = JSON.parse(tempTeammate);  // 어레이로 변환
+          });
+          this.selectedCardData = response.data;
+        },
       );
     },
     categoryChanged() {
@@ -317,7 +350,7 @@ export default {
     handleCardDialog(item) {
       console.log('handel card dialog')
       this.selectedItem = item;
-      this.isShow = true; 
+      this.isShow = true;
     },
     onConfirm() {
       console.log('confirm payload:');
@@ -383,4 +416,5 @@ export default {
   transform-origin: center top;
   @include translateY;
 }
+
 </style>
