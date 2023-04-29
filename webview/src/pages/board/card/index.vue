@@ -22,25 +22,11 @@
       <img src="@/assets/images/empty.png" width="70" height="70">
       <h3>선정된 카드가 없어요</h3>
     </div>
-    <swiper
-      :spaceBetween="16"
-      :autoplay="{
-        delay: 0,
-        disableOnInteraction: false,
-      }"
-      :speed="7000"
-      :observer="true"
-      :observeSlideChildren="true"
-      :loop="true"
-      :modules="swiperModules"
-      :resistance="false"
-      >
-      <swiper-slide v-for="(item, index) in selectedCardData" :value="item.cardId">
-        <div>
+    <Flicking :plugins="flickingPlugins" :options="flickingOptions">
+        <div class="panel" v-for="(item, index) in selectedCardData" :value="item.cardId">
           <RequestCard class="mt-2" :data="item" :key="index" @handle-card-clicked="handleCardClicked" @handle-card-dialog="handleCardDialog(item)"/>
         </div>
-      </swiper-slide>
-    </swiper>
+    </Flicking>
 
     <v-divider :thickness="1" class="mt-4 mb-5"></v-divider>
 
@@ -111,20 +97,28 @@ import CardDialog from "@/components/cards/CardDialog.vue";
 import Observe from "@/components/Observer";
 import api from '@/api';
 import store from "@/store";
-import { Swiper, SwiperSlide } from 'swiper/vue';
-import { Autoplay } from 'swiper';
-import 'swiper/css';
-import 'swiper/css/autoplay';
 import object from "@/utils/objectUtils";
+import Flicking from "@egjs/vue3-flicking";
+import { AutoPlay } from "@egjs/flicking-plugins";
+
+const flickingPlugins = [new AutoPlay({ 
+  duration: 0, 
+  animationDuration: 10000 
+})];
+const flickingOptions = {
+  circular: true,
+  circularFallback: 'bound',
+  moveType: 'freeScroll',
+  easing: x => x,
+}
 
 export default {
   name: "cardBoard",
   components: {
     RequestCard,
     Observe,
-    Swiper,
-    SwiperSlide,
     CardDialog,
+    Flicking,
   },
   setup() {
     let categoryItems = ['플랫폼품질혁신TF', '플랫폼IT컨설팅vTF', '플랫폼서비스담당',
@@ -151,6 +145,7 @@ export default {
       searchUri,
       sortMenu,
       selectedSortIndex: 0,
+      flickingPlugins,
     };
   },
   data() {
@@ -174,7 +169,6 @@ export default {
       page: 1,
       requestCardData: [],
       selectedCardData: [],
-      swiperModules: [ Autoplay, ],
       isShow: false, 
       selectedItem: {},
     };
@@ -220,7 +214,6 @@ export default {
   mounted() {
     var res = this.requestAll();
     var resSelected = this.requestAllSelected();
-    console.log(Swiper);
   },
   computed: {
     dialogTitle() {
@@ -422,5 +415,4 @@ export default {
   transform-origin: center top;
   @include translateY;
 }
-
 </style>
