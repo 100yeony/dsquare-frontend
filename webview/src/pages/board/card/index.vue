@@ -22,10 +22,9 @@
       <img src="@/assets/images/empty.png" width="70" height="70">
       <h3>선정된 카드가 없어요</h3>
     </div>
-    <Flicking :plugins="flickingPlugins" :options="flickingOptions">
-        <div class="panel" v-for="(item, index) in selectedCardData" :value="item.cardId">
-          <RequestCard class="mt-2" :data="item" :key="index" @handle-card-clicked="handleCardClicked" @handle-card-dialog="handleCardDialog(item)"/>
-        </div>
+    <Flicking :plugins="flickingPlugins" :options="flickingOptions" class="mt-2 overflow-visible">
+      <RequestCard class="panel mr-3" v-for="(item, index) in selectedCardData" 
+        :data="item" :key="index" @handle-card-clicked="handleCardClicked" @handle-card-dialog="handleCardDialog(item)"/>
     </Flicking>
 
     <v-divider :thickness="1" class="mt-4 mb-5"></v-divider>
@@ -58,7 +57,7 @@
 
     <!-- 정렬 -->
     <div class="mt-4 mb-4 d-flex justify-end" >
-      <v-btn variant="outlined" prepend-icon="mdi-sort-descending">정렬
+      <v-btn prepend-icon="mdi-sort-descending">정렬
         <v-menu activator="parent">
           <v-list>
             <v-list-item v-for="(item, index) in sortMenu" :key="index" :value="index" @click="sort(index)">
@@ -99,18 +98,20 @@ import api from '@/api';
 import store from "@/store";
 import object from "@/utils/objectUtils";
 import Flicking from "@egjs/vue3-flicking";
+import "@egjs/vue3-flicking/dist/flicking.css";
 import { AutoPlay } from "@egjs/flicking-plugins";
 
-const flickingPlugins = [new AutoPlay({ 
-  duration: 0, 
-  animationDuration: 10000 
-})];
 const flickingOptions = {
+  panelsPerView: 1,
   circular: true,
   circularFallback: 'bound',
   moveType: 'freeScroll',
   easing: x => x,
 }
+const flickingPlugins = [new AutoPlay({ 
+  duration: 0, 
+  animationDuration: 10000,
+})];
 
 export default {
   name: "cardBoard",
@@ -146,6 +147,7 @@ export default {
       sortMenu,
       selectedSortIndex: 0,
       flickingPlugins,
+      flickingOptions,
     };
   },
   data() {
@@ -243,7 +245,6 @@ export default {
             d.teammate = JSON.parse(tempTeammate);  // 어레이로 변환
           });
           this.selectedCardData = response.data;
-          console.log(this.selectedCardData)
         },
       );
     },
