@@ -6,11 +6,14 @@
 
     <v-card class="mx-auto justify-center rounded-lg" :class="cardData.selectionInfo ? 'gifted-card' : 'nongifted-card'" variant="outlined">
       <v-card-item>
+        <!-- '카드 드립니다' 표시 -->
         <div>
           <v-chip class="gifted-chip mb-3 w-100" v-if="cardData.selectionInfo" variant="outlined">
             <img src="@/assets/images/icons/party-popper.svg" class="mr-2"/>카드 드립니다!!!
           </v-chip>
         </div>
+
+        <!-- 프로필, 작성시간, 수정/삭제 메뉴 -->
         <v-row class="mb-2" align="center">
           <v-col cols="2">
             <v-avatar color="grey">😀</v-avatar>
@@ -39,10 +42,16 @@
             </v-menu>
           </v-col>
         </v-row>
+
+        <!-- 제목 -->
         <h3 class="mb-3">{{ cardData.title }}</h3>
+
+        <!-- 내용 -->
         <div>
           {{ cardData.content }}
         </div>
+
+        <!-- 프로젝트 정보 (팀원) -->
         <div v-if="cardData.teammate[0] !== '' || cardData.teammateCnt !== null">
           <v-divider :thickness="1" class="mt-5 mb-3"></v-divider>
           <v-row>
@@ -70,6 +79,7 @@
           </template>
         </v-chip>
         
+        <!-- 좋아요, 댓글 -->
         <v-row class="mt-2">
           <v-col cols="2" class="center-container">
             <span @click="toggleLike('card', cardData.cardId)">

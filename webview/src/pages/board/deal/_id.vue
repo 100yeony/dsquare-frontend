@@ -4,6 +4,7 @@
   </div>
   <v-card>
     <v-card-item>
+      <!-- 프로필, 작성시간, 수정/삭제 메뉴 -->
       <v-row class="mb-2" align="center">
         <v-col cols="2">
           <v-avatar color="grey">😀</v-avatar>
@@ -32,29 +33,46 @@
           </v-menu>
         </v-col>
       </v-row>
+
+      <!-- 제목 -->
       <h2 class="mb-3">
         {{ carrotData.title }}
       </h2>
-      <div v-html="carrotData.content"></div> <!-- v-html: HTML 코드를 템플릿에 삽입 -->
-      <v-row>
-        <v-col cols="2" class="center-container"><v-icon size="small">mdi-heart-outline</v-icon><span
-            class="text-caption font-0000008F ml-1">{{ carrotData.likes }}</span></v-col>
+
+      <!-- 내용 -->
+      <ckeditor v-model="carrotData.content" :editor="editor" :config="editorConfig" :disabled="true"></ckeditor>
+
+      <!-- 좋아요, 댓글 -->
+      <v-row class="mt-2">
+        <v-col cols="2" class="center-container">
+          <span @click="toggleLike('carrot', carrotData.carrotId)">
+            <template v-if="cardData.likeYn"><v-icon size="small" color="red">mdi-heart</v-icon></template>
+            <template v-else><v-icon size="small">mdi-heart-outline</v-icon></template>
+          </span>
+          <span class="text-caption font-0000008F ml-1">{{ carrotData.likeCnt }}</span></v-col>
         <v-col cols="2" class="center-container"><v-icon size="small">mdi-message-text-outline</v-icon><span
-            class="text-caption font-0000008F ml-1">{{ commentList.length }}</span></v-col>
+            class="text-caption font-0000008F ml-1"><!-- 댓글 수 --></span></v-col>
       </v-row>
+
+      <!-- 태그 -->
       <v-slide-group>
         <v-slide-group-item v-for="(chip, index) in carrotData.tags" :key="index">
           <v-chip class="ma-2">#{{ chip }}</v-chip>
         </v-slide-group-item>
       </v-slide-group>
+
     </v-card-item>
   </v-card>
-     
 </template>
+
+
+
 <script>
 import DeleteDialog from '@/components/DeleteDialog';
 import api from '@/api'
 import store from '@/store'
+import like from '@/api/like.js';
+
 export default {
   components: {
     DeleteDialog
@@ -115,18 +133,10 @@ export default {
     }
   },
   methods: {
-    answer() {
-      this.$router.push({
-        path: process.env.VUE_APP_BOARD_QNA_ANSWER,
-        query: {
-          qid: this.$route.query.qid
-        }
-      });
-    },
     editPost(index) {
       console.log(index)
       if (index === 0) {
-        console.log("수정하기")
+        console.log("수정하기");
         this.$router.push({
           path: process.env.VUE_APP_BOARD_DEAL_EDIT,
           query: {
@@ -138,25 +148,8 @@ export default {
 
         });
       } else if (index === 1) {
-        console.log("삭제하기")
+        console.log("삭제하기");
         this.showDialog(0)
-      }
-    },
-    editAnswer(index, id, content){
-      this.answerId = id;
-      if (index == 0) {
-        console.log("답변 수정하기")
-        this.$router.push({
-        path: process.env.VUE_APP_BOARD_QNA_ANSWER_EDIT,
-        query: {
-          qid: this.$route.query.qid,
-          id: id, 
-          content: content
-        }
-      });
-      } else if (index == 1) {
-        console.log("답변 삭제하기")
-        this.showDialog(1)
       }
     },
     showDialog(num) {
@@ -167,9 +160,9 @@ export default {
       console.log('confirm payload:');
       this.isShow = false;
       if (this.selectedPostType==0) {
-        this.requestDelQuestion();
+        this.requestDelCarrot();
       } else if (this.selectedPostType==1) {
-        this.requestDelAnswer();
+        this.requestDelComment();
       } else if (this.selectedPostType==2) {
 
       }
@@ -178,7 +171,7 @@ export default {
       console.log('cancel');
       this.isShow = false;
     },
-    async requestDelQuestion() {
+    async requestDelCarrot() {
       const res = await api.del('board/carrots/' + this.$route.query.id, '').then(
         (response) => {
           console.log(response)
@@ -186,13 +179,8 @@ export default {
         }
       )
     },
-    async requestDelAnswer(num) {
-      const res = await api.del('board/carrots/' + this.$route.query.id + '/answers/' + this.answerId, '').then(
-        (response) => {
-          console.log(response)
-          this.$router.push(process.env.VUE_APP_BOARD_DEAL);
-        }
-      )
+    async requestDelComment(num) {
+      // TODO
     },
     async requestCarrotData() {
       var res = await api.get('board/carrots/' + this.$route.query.id, '')
@@ -208,24 +196,21 @@ export default {
 
       return year + "-" + month + "-" + day + " " + hour + ":" + minute
     },
-    async requestAnswerData(){
-      var res = await api.get('board/questions/' + this.$route.query.qid + '/answers', '').then(//this.$route.query.qid
-        (response)=>{
-          console.log("answer: ")
-          console.log(response.data)
-          this.answerList = response.data 
+
+    // 좋아요 관련
+    async toggleLike(board, id) {
+      var res = !this.carrotData.likeYn ? await like.post(board, id) : await like.del(board, id);
+      if ([200, 201].includes(res.status)) {  // 성공
+        if (this.carrotData.likeYn) {
+          this.carrotData.likeCnt--;
         }
-      )
+        else {
+          this.carrotData.likeCnt++;
+        }
+        this.carrotData.likeYn = !this.carrotData.likeYn;
+        this.$forceUpdate();
+      }
     }
   },
 };
 </script>
-<!-- {
-  "id": 1,
-  "writerId": 1,
-  "content": "답변글 내용입니다222.",
-  "createDate": "2023-04-14T15:08:32.221714",
-  "lastUpdateDate": null,
-  "atcId": null,
-  "deleteYn": false
-} -->
