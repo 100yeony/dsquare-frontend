@@ -24,8 +24,7 @@
                     <template v-else><v-icon size="small">mdi-heart-outline</v-icon></template>
                     <span class="text-caption ml-1">{{ props?.data?.likeCnt }}</span></v-col>
                 <v-col cols="2" class="center-container justify-content-end"><v-icon
-                        size="small">mdi-message-text-outline</v-icon><span class="text-caption ml-1">{{
-                            props?.data?.comment }}</span></v-col>
+                        size="small">mdi-message-text-outline</v-icon><span class="text-caption ml-1">{{ props?.data?.commentCnt }}</span></v-col>
                 <v-col cols="8" class="d-flex justify-end">
                 </v-col>
             </v-row>
