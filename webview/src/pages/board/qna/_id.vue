@@ -67,7 +67,7 @@
                   :subtitle="comment.createDate" prepend-avatar="@/assets/images/users/avatar_sample.png">
                   <div>
                     <span v-if="(typeof comment.originWriterName != 'undefined')" class="font_bule">
-                      @{{ comment.originWriterName }} </span>{{ comment.content }}
+                      @{{ comment.originWriterName }} </span> {{ comment.content }}
                   </div>
                   <v-row class="mt-5">
                     <v-col class="font_white_gray font-xss text-left"
@@ -163,7 +163,7 @@
                     :subtitle="comment.createDate" prepend-avatar="@/assets/images/users/avatar_sample.png">
                     <div>
                       <span v-if="(typeof comment.originWriterName != 'undefined')" class="font_bule">
-                        @{{ comment.originWriterName }} </span>{{ comment.content }}
+                        @{{ comment.originWriterName }} </span> {{ comment.content }}
                     </div>
 
                     <v-row class="mt-5">
@@ -321,24 +321,17 @@ export default {
       this.$nextTick(() => {
         console.log(item.commentInputRef)
         const comp = this.$refs[item.commentInputRef]
-        console.log(comp)
-        console.log(Array.isArray(comp))
         if (Array.isArray(comp)) {
           comp[0].scrollIntoView({ behavior: 'smooth', block: 'end' })
         } else {
           comp.scrollIntoView({ behavior: 'smooth', block: 'end' })
-        }
-        //this.moveToComponent(comp)           
+        }       
       })
     },
     deleteMention(item) {
       item.mentionName = ''
       item.mentionWriterId = 0
       item.mentionId = 0
-    },
-    moveToComponent(comp) {
-      console.log(comp)
-      comp.scrollIntoView({ behavior: 'smooth' })
     },
     commentVisible(item, flag) {
       item.commentMode = flag
