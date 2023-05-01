@@ -319,8 +319,16 @@ export default {
       item.mentionWriterId = writerInfo.id
       item.mentionId = commentId
       this.$nextTick(() => {
+        console.log(item.commentInputRef)
         const comp = this.$refs[item.commentInputRef]
-        //this.moveToComponent(comp)           수정해야함
+        console.log(comp)
+        console.log(Array.isArray(comp))
+        if (Array.isArray(comp)) {
+          comp[0].scrollIntoView({ behavior: 'smooth', block: 'end' })
+        } else {
+          comp.scrollIntoView({ behavior: 'smooth', block: 'end' })
+        }
+        //this.moveToComponent(comp)           
       })
     },
     deleteMention(item) {
@@ -520,7 +528,7 @@ export default {
       this.answerList.forEach(async (answer) => {
         let res = await this.callComments('answer', answer.aid)
         Object.assign(answer, {
-          commentInputRef: 'answer' + res.aid,
+          commentInputRef: 'answer' + answer.aid,
           mentionName: '',
           mentionWriterId: 0,
           mentionId: 0,
