@@ -2,77 +2,41 @@
 import CKEditor from "@ckeditor/ckeditor5-vue";
 import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
 import FileUploadAdapter from "@/utils/fileUploaderAdapter";
-import { required } from "@vuelidate/validators";
 import { watch, onMounted, ref } from "vue";
 import api from '@/api';
 import store from "@/store";
+import { useRoute, useRouter } from 'vue-router';
+
 
 export default {
   components: {
     ckeditor: CKEditor.component,
   },
-  validations() {
-    return {
-      title: {
-        required,
-      },
-      editorData: {
-        required,
-      },
-      cid: {
-        required,
-      },
-    };
-  },
   setup() {
     let chipData = ref(new Set());
     let chipText = ref("");
-    let area = store.getters["info/infoArea"];
-    let categoryItems = area.areaList;
-    let subcategoryFullList = area.subAreaList;
-    var categoriesAll = [].concat(["업무", "비업무"]);
-    var i;
-    for (i = 1; i < categoryItems.length; i++) {
-      categoriesAll.push(categoryItems[i]);
-      categoriesAll = categoriesAll.concat(subcategoryFullList[i - 1]);
-    }
-    let cidData = {};
-    categoriesAll.forEach((value, index) => cidData[value] = index + 1);
 
-    return { chipData, chipText, cidData, categoriesAll };
+    const route = useRoute();
+    store.dispatch("url/setUrlQuery", { carrotId: route.query.carrotId })
+
+    return { chipData, chipText };
   },
   data() {
     return {
       editor: ClassicEditor,
-      editorData: "<h6>내용을 입력해주세요.</h6>",
+      editorData: this.$route.query.content,
       editorConfig: {
         // 상세 수정은 https://ckeditor.com
         extraPlugins: [this.uploader],
-        removePlugins: ["ImageCaption"],
+        removePlugins: ["ImageCaption", "MediaEmbed"]
+
       },
-      area: {},
-      areaItems: [],
-      subAreaItems: [],
-      selectedArea: [],
-      selectedSubArea: [],
       placeholderText: '',
-      isWork: true,
-      title: '',
+      title: this.$route.query.title,
       tags: [],
-      cid: '',
-      submitted: false,
     };
   },
   watch: {
-    selectedArea: function (newVal, oldVal) {
-      console.log(newVal)
-      console.log(oldVal)
-    },
-    selectedSubArea: function (newVal, oldVal) {
-      console.log(newVal)
-      console.log(oldVal)
-      this.cid = this.cidData[newVal]
-    }
   },
   computed: {
     tags() {
@@ -84,44 +48,31 @@ export default {
       } else {
         return ''
       }
+    },
+    editorValidation() {
+      if (this.title !== '' && this.editorData !== '') {
+        return true;
+      } else {
+        return false;
+      }
     }
   },
   mounted() {
-    this.area = store.getters["info/infoArea"]
-    this.areaItems = this.area.areaList.slice(1)
-    this.cid = this.$route.query.cid
     this.title = this.$route.query.title
     this.editorData = this.$route.query.content
-
-    if (this.cid == 2) {
-      this.isWork = false;
-      console.log(this.isWork)
-    } else {
-      this.selectedArea = this.categoriesAll[this.$route.query.upid-1]
-      this.selectedSubArea = this.categoriesAll[this.$route.query.cid-1]
-      this.subAreaItems = this.area.subAreaList[this.areaItems.indexOf(this.selectedArea)]
-      console.log("area: " + this.categoriesAll[this.$route.query.upid-1])
-      console.log("sub_area: " + this.categoriesAll[this.$route.query.cid-1])  
-    }
+    this.chipData = new Set(this.$route.query.chipData);
 
   },
   methods: {
     async edit(editorData) {
-      this.submitted = true;
-
-      //this.v$.$touch();
-
-      //if (!this.v$.$error) {
-        console.log("-----------")
-        console.log(this.$route.query.id)
-        const res = await api.post('board/carrots/'+this.$route.query.id, {
-          content: editorData,
-          title: this.title,
-          tags: Array.from(this.chipData),
-        }).then((response) => {
-          console.log(response)
-          this.$router.push(process.env.VUE_APP_BOARD_DEAL);
-        });
+      const res = await api.post('board/carrots/' + this.$route.query.carrotId, {
+        content: editorData,
+        title: this.title,
+        atcId: this.$route.query.atcid,
+        tags: Array.from(this.chipData)
+      }).then((response) => {
+        this.cancle()
+      });
       //}
 
     },
@@ -131,13 +82,9 @@ export default {
       };
     },
     addChips() {
-      let item = this.chipText.trim()
+      let item = this.chipText.trim().replaceAll('#', '')
       if (item !== "" && this.chipData.size < 3) {
-        if (item.startsWith('#')) {
-          this.chipData.add(item)
-        } else {
-          this.chipData.add('#' + this.chipText.trim())
-        }
+        this.chipData.add(item)
       }
       this.chipText = "";
     },
@@ -145,7 +92,6 @@ export default {
       event.preventDefault();
       event.stopPropagation();
       this.chipData.delete(item);
-      console.log(this.chipData)
     },
     handleInput(event) {
       var inputValue = event.target.value;
@@ -154,12 +100,12 @@ export default {
       }
     },
     cancle() {
-      this.$router.push(process.env.VUE_APP_BOARD_DEAL);
-    },
-    categoryChanged() {
-      var areaIndex = this.areaItems.indexOf(this.selectedArea);
-      this.subAreaItems = this.area.subAreaList[areaIndex];
-      this.selectedSubArea = [];
+      this.$router.replace({
+        path: process.env.VUE_APP_BOARD_DEAL_DETAIL,
+        query: {
+          carrotId: this.$route.query.carrotId
+        }
+      });
     },
   }
 };
@@ -171,30 +117,40 @@ export default {
       <div class="font-sm font-medium mt-2">제목</div>
       <v-text-field v-model="title" placeholder="제목을 입력해주세요." variant="outlined" density="compact" hide-details
         class="mt-2" />
-      <!-- <div v-if="submitted && title.required.invalid" class="invalid-feedback">
-        <v-icon size="x-small" color="red">mdi-close-circle-outline</v-icon>
-        <span class="font-xs font_red">제목을 입력해주세요.</span>
-      </div> -->
-
-      <!-- <div v-if="submitted && v$.cid.required.$invalid" class="invalid-feedback">
-        <v-icon size="x-small" color="red">mdi-close-circle-outline</v-icon>
-        <span class="font-xs font_red">분야를 선택해주세요.</span>
-      </div> -->
 
       <div class="font-sm font-medium mt-7 mb-2">본문</div>
       <ckeditor v-model="editorData" :editor="editor" :config="editorConfig" height="200"></ckeditor>
-      <!-- <div v-if="submitted && v$.editorData.required.$invalid" class="invalid-feedback">
-        <v-icon size="x-small" color="red">mdi-close-circle-outline</v-icon>
-        <span class="font-xs font_red">내용을 입력해주세요.</span>
-      </div> -->
 
+      <div class="font-sm font-medium mt-5 mb-2">태그</div>
+
+      <v-row justify="center">
+        <v-col cols="12" class="pw-100 ">
+          <v-sheet>
+            <v-row>
+              <v-col>
+                <v-text-field :placeholder=placeholderText v-model="chipText" variant="outlined" density="compact"
+                  @input="handleInput" hide-details append-icon="mdi-tag-plus" @click:append="addChips"></v-text-field>
+              </v-col>
+            </v-row>
+            <div>
+              <v-chip-group column>
+                <v-chip v-for="tag in tags" :key="tag">
+                  #{{ tag }}
+                  <v-icon class="ml-2" icon="mdi-close-circle" @click="deleteChip($event, tag)"></v-icon>
+                </v-chip>
+              </v-chip-group>
+
+            </div>
+          </v-sheet>
+        </v-col>
+      </v-row>
 
       <v-row class="mt-5" align="center">
         <v-col cols="6">
           <v-btn block variant="" class="button_white font-medium" @click="cancle">취소</v-btn>
         </v-col>
         <v-col cols="6">
-          <v-btn block variant="" class="button_main font-medium" type="submit">수정</v-btn>
+          <v-btn block variant="" class="button_main font-medium" type="submit" :disabled="!editorValidation">수정</v-btn>
         </v-col>
       </v-row>
     </div>
