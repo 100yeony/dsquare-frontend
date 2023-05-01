@@ -14,50 +14,26 @@ export default {
   setup() {
     let chipData = ref(new Set());
     let chipText = ref("");
-    let area = store.getters["info/infoArea"];
-    let categoryItems = area.areaList;
-    let subcategoryFullList = area.subAreaList;
-    var categoriesAll = [].concat(["업무", "비업무"]);
-    var i;
-    for (i = 1; i < categoryItems.length; i++) {
-      categoriesAll.push(categoryItems[i]);
-      categoriesAll = categoriesAll.concat(subcategoryFullList[i - 1]);
-    }
-    let cidData = {};
-    categoriesAll.forEach((value, index) => cidData[value] = index + 1);
 
-    return { chipData, chipText, cidData };
+    return { chipData, chipText };
   },
   data() {
     return {
+      selectedFile: null,
       editor: ClassicEditor,
       editorData: "",
       editorConfig: {
         // 상세 수정은 https://ckeditor.com
         extraPlugins: [this.uploader],
-        removePlugins: ["ImageCaption"],
+        removePlugins: ["ImageCaption", "MediaEmbed"] //, "ImageUpload", "EasyImage"
       },
-      area: {},
-      areaItems: [],
-      subAreaItems: [],
-      selectedArea: [],
-      selectedSubArea: [],
       placeholderText: '',
-      isWork: true,
       title: '',
       tags: [],
-      cid: '',
     };
   },
   watch: {
-    selectedArea: function (newVal, oldVal) {
-      console.log(newVal)
-      console.log(oldVal)
-    },
-    selectedSubArea: function (newVal, oldVal) {
-      console.log(newVal)
-      console.log(oldVal)
-      this.cid = this.cidData[newVal]
+    selectedFile: function (newVal, oldVal) {
     }
   },
   computed: {
@@ -72,7 +48,7 @@ export default {
       }
     },
     editorValidation() {
-      if (this.cid !== '' && this.title !== '' && this.editorData !== '') {
+      if (this.title !== '' && this.editorData !== '') {
         return true;
       } else {
         return false;
@@ -80,33 +56,34 @@ export default {
     }
   },
   mounted() {
-    this.area = store.getters["info/infoArea"]
-    this.areaItems = this.area.areaList.slice(1)
-    if (this.$route.query.work === 'false') {
-      this.isWork = false;
-      this.cid = 2;
-    }
   },
   methods: {
     async write(editorData) {
-      console.log(editorData)
-      const res = await api.post('board/questions', {
-        writerId: store.getters["info/infoUser"].userId,
-        cid: this.cid,
+      const res = await api.post('board/talks', {
         content: editorData,
         title: this.title,
-        tags: this.tags,
+        tags: Array.from(this.chipData),
         atc: {
           originFileName: '원본파일명',
           extension: 'png',
           fileSize: 51239
         }
-
       }).then((response) => {
-        console.log(response)
+        store.dispatch('info/setPageState', {});
         this.$router.push(process.env.VUE_APP_BOARD_COMMUNICATION);
       });
+      //}
 
+      /**
+       * Test code for post file data
+       * 
+      console.log(this.selectedFile)
+      var formData = new FormData();
+      formData.append('file', this.selectedFile[0], this.selectedFile.name);
+      const res2 = await api.multiPartPost('file/upload', formData).then((response) => {
+        console.log(response)
+      })
+       */
 
     },
     uploader(editor) {
@@ -115,13 +92,9 @@ export default {
       };
     },
     addChips() {
-      let item = this.chipText.trim()
+      let item = this.chipText.trim().replaceAll('#', '')
       if (item !== "" && this.chipData.size < 3) {
-        if (item.startsWith('#')) {
-          this.chipData.add(item)
-        } else {
-          this.chipData.add('#' + this.chipText.trim())
-        }
+        this.chipData.add(item)
       }
       this.chipText = "";
     },
@@ -129,7 +102,6 @@ export default {
       event.preventDefault();
       event.stopPropagation();
       this.chipData.delete(item);
-      console.log(this.chipData)
     },
     handleInput(event) {
       var inputValue = event.target.value;
@@ -139,11 +111,6 @@ export default {
     },
     cancle() {
       this.$router.push(process.env.VUE_APP_BOARD_COMMUNICATION);
-    },
-    categoryChanged() {
-      var areaIndex = this.areaItems.indexOf(this.selectedArea);
-      this.subAreaItems = this.area.subAreaList[areaIndex];
-      this.selectedSubArea = [];
     },
   }
 };
@@ -159,7 +126,7 @@ export default {
       <div class="font-sm font-medium mt-7 mb-2">본문</div>
       <ckeditor v-model="editorData" :editor="editor" :config="editorConfig" height="200"></ckeditor>
 
-      <v-file-input label="파일을 첨부해주세요." chips class="mt-5" variant="outlined" density="compact">
+      <v-file-input v-model="selectedFile" label="파일을 첨부해주세요." chips class="mt-5" variant="outlined" density="compact">
       </v-file-input>
 
       <div class="font-sm font-medium mb-2">태그</div>
@@ -176,7 +143,7 @@ export default {
             <div>
               <v-chip-group column>
                 <v-chip v-for="tag in tags" :key="tag">
-                  {{ tag }}
+                  #{{ tag }}
                   <v-icon class="ml-2" icon="mdi-close-circle" @click="deleteChip($event, tag)"></v-icon>
                 </v-chip>
               </v-chip-group>
