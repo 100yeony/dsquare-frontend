@@ -67,7 +67,7 @@
                   :subtitle="comment.createDate" prepend-avatar="@/assets/images/users/avatar_sample.png">
                   <div>
                     <span v-if="(typeof comment.originWriterName != 'undefined')" class="font_bule">
-                      @{{ comment.originWriterName }} </span>{{ comment.content }}
+                      @{{ comment.originWriterName }} </span> {{ comment.content }}
                   </div>
                   <v-row class="mt-5">
                     <v-col class="font_white_gray font-xss text-left"
@@ -213,17 +213,17 @@ export default {
       item.mentionId = commentId
       this.$nextTick(() => {
         const comp = this.$refs[item.commentInputRef]
-        //this.moveToComponent(comp)           수정해야함
+        if (Array.isArray(comp)) {
+          comp[0].scrollIntoView({ behavior: 'smooth', block: 'end' })
+        } else {
+          comp.scrollIntoView({ behavior: 'smooth', block: 'end' })
+        } 
       })
     },
     deleteMention(item) {
       item.mentionName = ''
       item.mentionWriterId = 0
       item.mentionId = 0
-    },
-    moveToComponent(comp) {
-      console.log(comp)
-      comp.scrollIntoView({ behavior: 'smooth' })
     },
     commentVisible(item, flag) {
       item.commentMode = flag
