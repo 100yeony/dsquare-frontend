@@ -50,6 +50,12 @@
           <v-col cols="2" class="center-container"><v-icon size="small">mdi-message-text-outline</v-icon><span
               class="text-caption font-0000008F ml-1">{{ qData.commentCnt }}</span></v-col>
         </v-row>
+        <div v-if="qData.attachment">
+          <a :href="qData.attachment.url">
+            <v-icon size="small" >mdi-attachment</v-icon>
+            <span class="text-caption font-0000008F ml-1"> {{ qData.attachment.origFilename }} </span>
+          </a>
+        </div>
         <v-slide-group>
           <v-slide-group-item v-for="(chip, index) in qData.tags" :key="index">
             <v-chip class="mt-4 mb-2 mr-2">#{{ chip }}</v-chip>
@@ -234,13 +240,7 @@ export default {
       qData: {
         name: "",
         team: "",
-        atc: {
-          atcId: 0,
-          fileUrl: "",
-          extension: "",
-          createDate: "",
-          fileSize: 0,
-        },
+        attachment: null,
         cname: '',
         cid: 0,
         upCategory: '',
@@ -399,7 +399,7 @@ export default {
             content: this.qData.content,
             upCategory: this.qData.upCategory,
             cid: this.qData.cid,
-            atcid: this.qData.atc.atcId,
+            atcid: this.qData.attachment?.id,
             chipData: this.qData.tags
           }
 
@@ -485,13 +485,7 @@ export default {
       return {
         name: data.writerInfo.name,
         team: data.writerInfo.teamHierarchy[data.writerInfo.teamHierarchy.length - 1],
-        atc: {
-          atcId: 1,
-          fileUrl: "https://ktds.dsquare.co.kr/테스트파일.xlsx",
-          extension: "xlsx",
-          createDate: "2023-03-23 21:02:12",
-          fileSize: 512345,
-        },
+        attachment: data.attachment,
         cname: data.category.name,
         upCategory: data.category.categoryHierarchy[1],
         cid: data.category.cid,

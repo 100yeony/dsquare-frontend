@@ -91,36 +91,44 @@ export default {
   },
   methods: {
     async write(editorData) {
-      const res = await api.post('board/questions', {
+      const formData = new FormData();
+
+      const question = {
         writerId: store.getters["info/infoUser"].userId,
         cid: this.cid,
         content: editorData,
         title: this.title,
         tags: Array.from(this.chipData),
-        atc: {
-          originFileName: '원본파일명',
-          extension: 'png',
-          fileSize: 51239
-        }
+      };
 
-      }).then((response) => {
-        store.dispatch('info/setPageState', {});
-        this.$router.push(process.env.VUE_APP_BOARD_QNA);
-      });
-      //}
+      const questionBlob = new Blob([JSON.stringify(question)], { type: 'application/json' });
+      formData.append('question', questionBlob);
+      if (this.selectedFile) {
+        formData.append("attachment", this.selectedFile[0], this.selectedFile.name);
+      }
 
-      /**
-       * Test code for post file data
-       * 
-      console.log(this.selectedFile)
-      var formData = new FormData();
-      formData.append('file', this.selectedFile[0], this.selectedFile.name);
-      const res2 = await api.multiPartPost('file/upload', formData).then((response) => {
-        console.log(response)
-      })
-       */
-
+      api.multiPartPost('board/questions', formData)
+        .then((response) => {
+          console.log(response)
+          store.dispatch('info/setPageState', {});
+          this.$router.push(process.env.VUE_APP_BOARD_QNA);
+        }).catch((error) => {
+          console.log(error)
+        })
     },
+    //}
+
+    /**
+     * Test code for post file data
+     * 
+    console.log(this.selectedFile)
+    var formData = new FormData();
+    formData.append('file', this.selectedFile[0], this.selectedFile.name);
+    const res2 = await api.multiPartPost('file/upload', formData).then((response) => {
+      console.log(response)
+    })
+     */
+
     uploader(editor) {
       editor.plugins.get("FileRepository").createUploadAdapter = (loader) => {
         return new FileUploadAdapter(loader);
