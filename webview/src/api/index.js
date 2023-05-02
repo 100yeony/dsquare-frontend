@@ -170,12 +170,12 @@ var noneTokenApiInstance
 function createInstance() {
   var token = store.getters["info/infoToken"]
   apiInstance = axios.create({
-    baseURL: 'http://localhost:8090',
+    baseURL: 'http://172.20.10.7:8090',
     headers: { Authorization: 'Bearer ' + token.accessToken }
   })
 
   multiPartApiInstance = axios.create({
-    baseURL: 'http://localhost:8090',
+    baseURL: 'http://172.20.10.7:8090',
     headers: {
       Authorization: 'Bearer ' + token.accessToken,
       'Content-Type': 'multipart/form-data'
@@ -183,7 +183,7 @@ function createInstance() {
   })
 
   noneTokenApiInstance = axios.create({
-    baseURL: 'http://localhost:8090'
+    baseURL: 'http://172.20.10.7:8090'
   })
 
   return fn
