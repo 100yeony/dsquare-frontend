@@ -31,7 +31,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         mContext = this;
-        serverUrl = "http://10.0.2.2:8080"; // front 서버
+        serverUrl = "http://172.20.10.7:8080"; // front 서버
 
         mAppDataPreference = new AppDataPreference(this);
         String accessToken = mAppDataPreference.getAccessToken();
