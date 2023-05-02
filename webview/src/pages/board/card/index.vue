@@ -22,25 +22,10 @@
       <img src="@/assets/images/empty.png" width="70" height="70">
       <h3>선정된 카드가 없어요</h3>
     </div>
-    <swiper
-      :spaceBetween="16"
-      :autoplay="{
-        delay: 0,
-        disableOnInteraction: false,
-      }"
-      :speed="7000"
-      :observer="true"
-      :observeSlideChildren="true"
-      :loop="true"
-      :modules="swiperModules"
-      :resistance="false"
-      >
-      <swiper-slide v-for="(item, index) in selectedCardData" :value="item.cardId">
-        <div>
-          <RequestCard class="mt-2" :data="item" :key="index" @handle-card-clicked="handleCardClicked" @handle-card-dialog="handleCardDialog(item)"/>
-        </div>
-      </swiper-slide>
-    </swiper>
+    <Flicking :plugins="flickingPlugins" :options="flickingOptions" class="mt-2 overflow-visible">
+      <RequestCard class="panel mr-3" v-for="(item, index) in selectedCardData" 
+        :data="item" :key="index" @handle-card-clicked="handleCardClicked" @handle-card-dialog="handleCardDialog(item)"/>
+    </Flicking>
 
     <v-divider :thickness="1" class="mt-4 mb-5"></v-divider>
 
@@ -72,7 +57,7 @@
 
     <!-- 정렬 -->
     <div class="mt-4 mb-4 d-flex justify-end" >
-      <v-btn variant="outlined" prepend-icon="mdi-sort-descending">정렬
+      <v-btn prepend-icon="mdi-sort-descending">정렬
         <v-menu activator="parent">
           <v-list>
             <v-list-item v-for="(item, index) in sortMenu" :key="index" :value="index" @click="sort(index)">
@@ -111,20 +96,30 @@ import CardDialog from "@/components/cards/CardDialog.vue";
 import Observe from "@/components/Observer";
 import api from '@/api';
 import store from "@/store";
-import { Swiper, SwiperSlide } from 'swiper/vue';
-import { Autoplay } from 'swiper';
-import 'swiper/css';
-import 'swiper/css/autoplay';
 import object from "@/utils/objectUtils";
+import Flicking from "@egjs/vue3-flicking";
+import "@egjs/vue3-flicking/dist/flicking.css";
+import { AutoPlay } from "@egjs/flicking-plugins";
+
+const flickingOptions = {
+  panelsPerView: 1,
+  circular: true,
+  circularFallback: 'bound',
+  moveType: 'freeScroll',
+  easing: x => x,
+}
+const flickingPlugins = [new AutoPlay({ 
+  duration: 0, 
+  animationDuration: 10000,
+})];
 
 export default {
   name: "cardBoard",
   components: {
     RequestCard,
     Observe,
-    Swiper,
-    SwiperSlide,
     CardDialog,
+    Flicking,
   },
   setup() {
     let categoryItems = ['플랫폼품질혁신TF', '플랫폼IT컨설팅vTF', '플랫폼서비스담당',
@@ -151,6 +146,8 @@ export default {
       searchUri,
       sortMenu,
       selectedSortIndex: 0,
+      flickingPlugins,
+      flickingOptions,
     };
   },
   data() {
@@ -174,7 +171,6 @@ export default {
       page: 1,
       requestCardData: [],
       selectedCardData: [],
-      swiperModules: [ Autoplay, ],
       isShow: false, 
       selectedItem: {},
     };
@@ -220,7 +216,6 @@ export default {
   mounted() {
     var res = this.requestAll();
     var resSelected = this.requestAllSelected();
-    console.log(Swiper);
   },
   computed: {
     dialogTitle() {
@@ -250,7 +245,6 @@ export default {
             d.teammate = JSON.parse(tempTeammate);  // 어레이로 변환
           });
           this.selectedCardData = response.data;
-          console.log(this.selectedCardData)
         },
       );
     },
@@ -422,5 +416,4 @@ export default {
   transform-origin: center top;
   @include translateY;
 }
-
 </style>
