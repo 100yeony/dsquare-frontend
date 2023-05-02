@@ -31,7 +31,7 @@
                     class="text-caption ml-1">{{ props?.data?.comment }}</span></v-col>
                 <v-col cols="8" class="d-flex justify-end"> 
                     <div v-if="props?.data?.selectionInfo == null">
-                        <v-btn variant="" class="card_button mr-4 mb-4" @click="showDialog($event)">카드주기</v-btn>
+                        <v-btn class="card_button mr-4 mb-4" @click="showDialog($event)">카드주기</v-btn>
                     </div>
                 </v-col>
             </v-row>
