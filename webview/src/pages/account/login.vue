@@ -4,7 +4,8 @@ import { required, email } from '@vuelidate/validators'
 import Footer from "@/components/FooterAuth"
 import api from '@/api'
 
-//import {NativeValueDto} from "@/class/NativeValueDto"
+import {NativeValueDto} from "@/class/NativeValueDto"
+import bridgeUtils from '@/utils/bridgeUtils'
 
 /**
  * Login component
@@ -63,15 +64,24 @@ export default {
 
         if (res?.status === 200) {
           console.log(res)
-          this.$store.dispatch('info/setInfoToken', {
-            accessToken: res.data.accessToken,
-            refreshToken: res.data.refreshToken
-          });
+
+          let accessTokenNativeDto = new NativeValueDto({ "key": 'accessToken', "value": res.data.accessToken, "type": 'P', "preference": 'pref_key_access_token' });
+          this.$store.dispatch('info/setInfoValue', accessTokenNativeDto);
+          bridgeUtils.saveAccessToken(res.data.accessToken);
+
+          let refreshTokenNativeDto = new NativeValueDto({ "key": 'refreshToken', "value": res.data.refreshToken, "type": 'P', "preference": 'pref_key_refresh_token' });
+          this.$store.dispatch('info/setInfoValue', refreshTokenNativeDto);
+          bridgeUtils.saveRefreshToken(res.data.refreshToken);
+
+          // this.$store.dispatch('info/setInfoToken', {
+          //   accessToken: res.data.accessToken,
+          //   refreshToken: res.data.refreshToken
+          // });
 
           const jwt = require("jsonwebtoken");
           const decodedToken = jwt.decode(res.data.accessToken);
           console.log(decodedToken);
-          this.$store.dispatch('info/setInfoUser', {userId: decodedToken.id});
+          this.$store.dispatch('info/setInfoUser', { userId: decodedToken.id });
 
           api.setDefaultToken();
           this.$router.push('/account/change-pass-alert');

@@ -40,7 +40,6 @@ export default {
   },
   methods: {
     async requestAllWork() {
-      console.log(store.getters["info/infoToken"].accessToken)
       var res = await api.get('board/questions' + '?' + 'workYn=true').then(
         (response) => {
           response.data.forEach((d) => {
@@ -52,7 +51,7 @@ export default {
     },
 
     // async requestAllNoneWork() {
-    //   console.log(store.getters["info/infoToken"].accessToken)
+
     //   var res = await api.get('board/questions' + '?' + 'workYn=false').then(
     //     (response) => {
     //       response.data.forEach((d) => {

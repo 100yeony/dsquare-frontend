@@ -1,6 +1,7 @@
 import axios from 'axios'
 import store from "@/store";
 import router from "@/router/index";
+import bridgeUtils from '@/utils/bridgeUtils';
 // import router from '@/router/index'
 // import dayjs from "dayjs";
 // import { v4 } from 'uuid';
@@ -163,27 +164,31 @@ import router from "@/router/index";
 // export default createInstance()
 
 const prefix = ''
+const baseURL = 'http://172.20.10.7:8090'
 var apiInstance
 var multiPartApiInstance
 var noneTokenApiInstance
 
 function createInstance() {
-  var token = store.getters["info/infoToken"]
+  var accessToken = store.getters['info/infoListByKey']('accessToken')
+  var accessTokenValue = (typeof accessToken == 'undefined') ? '':accessToken.value
+  console.log(accessToken)
+  //var token = store.getters["info/infoToken"]
   apiInstance = axios.create({
-    baseURL: 'http://172.20.10.7:8090',
-    headers: { Authorization: 'Bearer ' + token.accessToken }
+    baseURL: baseURL,
+    headers: { Authorization: 'Bearer ' + accessTokenValue }
   })
 
   multiPartApiInstance = axios.create({
-    baseURL: 'http://172.20.10.7:8090',
+    baseURL: baseURL,
     headers: {
-      Authorization: 'Bearer ' + token.accessToken,
+      Authorization: 'Bearer ' + accessTokenValue,
       'Content-Type': 'multipart/form-data'
     }
   })
 
   noneTokenApiInstance = axios.create({
-    baseURL: 'http://172.20.10.7:8090'
+    baseURL: baseURL
   })
 
   return fn
@@ -213,34 +218,44 @@ const fn = {
     }
   },
   async requestRefresh() {
-    var token = store.getters["info/infoToken"]
+    let refreshToken = store.getters['info/infoListByKey']('refreshToken')
+    //var token = store.getters["info/infoToken"]
     apiInstance = axios.create({
-      baseURL: 'http://localhost:8090'
+      baseURL: baseURL
     })
-    const res = await apiInstance.post('auth/refresh', { refreshToken: token.refreshToken })
+    const res = await apiInstance.post('auth/refresh', { refreshToken: refreshToken.value })
     return res
   },
   getBaseUrl() {
     return apiInstance.defaults.baseURL
   },
-
   setDefaultToken() {
-    var token = store.getters["info/infoToken"]
-    console.log('setDefaultToken=> ' + token.accessToken)
+    var accessToken = store.getters['info/infoListByKey']('accessToken')
+    var accessTokenValue = (typeof accessToken == 'undefined') ? '':accessToken.value
+    console.log('setDefaultToken=> ' + accessTokenValue)
     apiInstance = axios.create({
-      baseURL: 'http://localhost:8090',
-      headers: { Authorization: 'Bearer ' + token.accessToken }
+      baseURL: baseURL,
+      headers: { Authorization: 'Bearer ' + accessTokenValue }
     })
     multiPartApiInstance = axios.create({
-      baseURL: 'http://localhost:8090',
+      baseURL: baseURL,
       headers: {
-        Authorization: 'Bearer ' + token.accessToken,
+        Authorization: 'Bearer ' + accessTokenValue,
         'Content-Type': 'multipart/form-data'
       }
     })
   },
+  setTokenState(accessToken, refreshToken) {
+    let accessTokenNativeDto = new NativeValueDto({ "key": 'accessToken', "value": accessToken, "type": 'P', "preference": 'pref_key_access_token' });
+    this.$store.dispatch('info/setInfoValue', accessTokenNativeDto);
+    bridgeUtils.saveAccessToken(res.data.accessToken);
+
+    let refreshTokenNativeDto = new NativeValueDto({ "key": 'refreshToken', "value": refreshToken, "type": 'P', "preference": 'pref_key_refresh_token' });
+    this.$store.dispatch('info/setInfoValue', refreshTokenNativeDto);
+    bridgeUtils.saveRefreshToken(res.data.refreshToken);
+  },
   expiredToken() {
-    store.dispatch('info/setInfoToken', { accessToken: '', refreshToken: '' }); // 토큰값을 제거해줍니다.
+    this.$store.dispatch('info/setInfoListBlank'); // 토큰값을 제거해줍니다.
     router.push(process.env.VUE_APP_LOGIN);
   }
   ,
@@ -254,7 +269,7 @@ const fn = {
       if (this.tokenErrorCheck(err)) {
         var flag = await this.requestRefresh().then(
           (res) => {
-            store.dispatch('info/setInfoToken', { accessToken: res.data.accessToken, refreshToken: res.data.refreshToken });
+            this.setTokenState(res.data.accessToken, res.data.refreshToken)
             this.setDefaultToken()
             console.log(res)
             return true
@@ -286,7 +301,7 @@ const fn = {
       if (this.tokenErrorCheck(err)) {
         var flag = await this.requestRefresh().then(
           (res) => {
-            store.dispatch('info/setInfoToken', { accessToken: res.data.accessToken, refreshToken: res.data.refreshToken });
+            this.setTokenState(res.data.accessToken, res.data.refreshToken)
             this.setDefaultToken()
             console.log(res)
             return true
@@ -309,7 +324,7 @@ const fn = {
     }
   },
 
-  async noneTokenPost(uri, params, headers){
+  async noneTokenPost(uri, params, headers) {
     try {
       console.log('[POST]', uri, params)
       console.log('auth :::::::::::::::', headers)
@@ -329,7 +344,7 @@ const fn = {
       if (this.tokenErrorCheck(err)) {
         var flag = await this.requestRefresh().then(
           (res) => {
-            store.dispatch('info/setInfoToken', { accessToken: res.data.accessToken, refreshToken: res.data.refreshToken });
+            this.setTokenState(res.data.accessToken, res.data.refreshToken)
             this.setDefaultToken()
             console.log(res)
             return true
@@ -361,7 +376,7 @@ const fn = {
       if (this.tokenErrorCheck(err)) {
         var flag = await this.requestRefresh().then(
           (res) => {
-            store.dispatch('info/setInfoToken', { accessToken: res.data.accessToken, refreshToken: res.data.refreshToken });
+            this.setTokenState(res.data.accessToken, res.data.refreshToken)
             this.setDefaultToken()
             console.log(res)
             return true
@@ -393,7 +408,7 @@ const fn = {
       if (this.tokenErrorCheck(err)) {
         var flag = await this.requestRefresh().then(
           (res) => {
-            store.dispatch('info/setInfoToken', { accessToken: res.data.accessToken, refreshToken: res.data.refreshToken });
+            this.setTokenState(res.data.accessToken, res.data.refreshToken)
             this.setDefaultToken()
             console.log(res)
             return true

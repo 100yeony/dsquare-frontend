@@ -406,7 +406,6 @@ export default {
       store.dispatch('info/setInfoArea', {value1: categoryList, value2: subList})
     });
 
-    console.log(store.getters["info/infoToken"])
   }
 };
 </script>

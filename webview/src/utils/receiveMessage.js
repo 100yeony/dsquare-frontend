@@ -17,6 +17,7 @@ var methods = {
 
     let nativeDto = new NativeValueDto({"key": key, "value": value, "type":type, "preference": preference});
     store.dispatch('info/setInfoValue',nativeDto);
+    
     let item = store.getters['info/infoListByKey'](key);
     if(item != null) {
       console.log('[now store item] item: ' , item)

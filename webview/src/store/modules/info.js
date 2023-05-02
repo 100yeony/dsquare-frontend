@@ -1,11 +1,8 @@
+import { NativeValueDto } from "@/class/NativeValueDto";
 
 export const info = {
   namespaced: true,
   state: () => ({
-      token: {
-        accessToken: '',
-        refreshToken: ''
-      },
       list: [],
       area: {
         areaList: [],
@@ -19,9 +16,6 @@ export const info = {
       }
   }),
   mutations: {
-    SET_INFO_TOKEN(state,value){
-      state.token = value;
-    },
     SET_INFO_VALUE(state, value){
       let inputKey = value?.key;
       let isEdit = false;
@@ -38,6 +32,9 @@ export const info = {
         state.list.push(value)
       }
     },
+    SET_INFO_LIST_BLANK(state){
+      state.list = []
+    },
     SET_INFO_AREA(state, value){
       //추후 api 와 연동
       state.area.areaList = value.value1;
@@ -51,9 +48,6 @@ export const info = {
     }
   },
   getters: {
-    infoToken(state, getters, rootState){
-      return state.token;
-    },
     infoListByKey: (state) => (key) => {
       console.log(key)
       return state.list.find(item => item.key === key)
@@ -69,13 +63,12 @@ export const info = {
     }
   },
   actions: {
-    setInfoToken({state, commit, rootState}, value) {
-      console.log(value)
-      commit('SET_INFO_TOKEN', value)
-    },
     setInfoValue({state, commit, rootState}, value) {
       console.log(value)
       commit('SET_INFO_VALUE', value)
+    },
+    setInfoListBlank({state, commit, rootState}) {
+      commit('SET_INFO_LIST_BLANK')
     },
     setInfoArea({state, commit, rootState}, value) {
       //추후 api 와 연동

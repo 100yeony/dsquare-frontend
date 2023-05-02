@@ -25,6 +25,7 @@ public class MainActivity extends AppCompatActivity {
     String serverUrl;
     private boolean initWebview = false;
     private AppDataPreference mAppDataPreference = null;
+    HashSet<NativeValueDto> initHash = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,11 +40,13 @@ public class MainActivity extends AppCompatActivity {
         // @TODO false 인경우도 제작하세요.
         Permission permission = new Permission(this);
         permission.requestSystemPermissions(Permission.sCheckPermissions);
-
-        HashSet<NativeValueDto> initHash = new HashSet<NativeValueDto>();
         // init 시 전달 값(토큰)
-        initHash.add(new NativeValueDto("accessToken", accessToken, "P", CConstants.PREF_KEY_ACCESS_TOKEN));
-        initHash.add(new NativeValueDto("refreshToken", refreshToken, "P", CConstants.PREF_KEY_REFRESH_TOKEN));
+
+        if (!accessToken.equals("") && !refreshToken.equals("")){
+            initHash = new HashSet<NativeValueDto>();
+            initHash.add(new NativeValueDto("accessToken", accessToken, "P", CConstants.PREF_KEY_ACCESS_TOKEN));
+            initHash.add(new NativeValueDto("refreshToken", refreshToken, "P", CConstants.PREF_KEY_REFRESH_TOKEN));
+        }
 
         webView = (WebView) findViewById(R.id.web_view);
         webView.getSettings().setJavaScriptEnabled(true);
