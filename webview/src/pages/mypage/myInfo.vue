@@ -25,7 +25,7 @@ export default {
     ];
 
     return {
-      v$: useVuelidate(),categoryItems, subcategoryFullList
+      v$: useVuelidate(), categoryItems, subcategoryFullList
     };
   },
   data() {
@@ -43,10 +43,10 @@ export default {
       subcategory: [],
       subcategoryItems: [],
       submitted: false,
-      flag: false, 
+      flag: false,
       profileImage: sample,
       imageFormData: null,
-      menu:false,
+      menu: false,
     };
   },
   validations() {
@@ -98,6 +98,7 @@ export default {
       } else {
         this.user.tid = '';
       }
+      console.log(this.user.tid)
     },
     subcategory(newVal, oldVal) {
       console.log(newVal)
@@ -134,11 +135,13 @@ export default {
         this.user.name = response.data.name;
         this.user.email = response.data.email;
         this.user.contact = response.data.contact;
-        if (response.data.teamHierarchy.length === 1){
-          this.category = response.data.teamHierarchy[0]; 
+        if (response.data.teamHierarchy.length === 1) {
+          this.category = response.data.teamHierarchy[0];
         } else {
           this.category = response.data.teamHierarchy[0];
-          this.subcategory = response.data.teamHierarchy[1];
+          this.$nextTick(() => {
+            this.subcategory = response.data.teamHierarchy[1];
+          })
         }
         this.user.ktMail = response.data.ktMail;
       }
@@ -162,12 +165,12 @@ export default {
         }).then((response) => {
           console.log(response)
         });
-      } 
+      }
     },
-    goToChangePass(){
+    goToChangePass() {
       this.$router.push('/account/change-pass');
     },
-    goToDeleteMember(){
+    goToDeleteMember() {
       this.$router.push('/account/delete-member');
     },
     handleImageUpload(event) {
@@ -204,14 +207,10 @@ export default {
       <!-- <input type="file" @change="handleImageUpload"> -->
     </v-col>
     <v-col>
-      <v-menu
-        v-model="menu"
-        :close-on-content-click="false"
-        location="bottom"
-      >
+      <v-menu v-model="menu" :close-on-content-click="false" location="bottom">
         <template v-slot:activator="{ props }">
           <v-btn class="button_white font-medium mt-30 mb-5" variant="" v-bind="props">
-          변경
+            변경
           </v-btn>
         </template>
         <v-card>
@@ -220,20 +219,20 @@ export default {
               <div class="d-flex justify-start">
                 <div class="filebox bs3-primary">
                   <input class="upload-name" disabled="disabled" value="파일선택">
-                  <label for="ex_filename" class="font-sm font-bold">업로드</label> 
-                  <input type="file" id="ex_filename" class="upload-hidden" @change="handleImageUpload"> 
+                  <label for="ex_filename" class="font-sm font-bold">업로드</label>
+                  <input type="file" id="ex_filename" class="upload-hidden" @change="handleImageUpload">
                 </div>
-                <v-btn icon="mdi-close-circle" variant="" @click="menu=false"></v-btn>
+                <v-btn icon="mdi-close-circle" variant="" @click="menu = false"></v-btn>
               </div>
             </v-list-item>
           </v-list>
         </v-card>
-        
+
       </v-menu>
 
     </v-col>
   </v-row>
-  
+
   <v-form @submit.prevent="tryToUpdate" class="overflow-show">
 
     <v-form-group id="name-group" label="Name" label-for="name">
@@ -247,7 +246,7 @@ export default {
     <v-form-group id="email-group" label="Email" label-for="email">
       <label for="email" class="font-medium font-sm">이메일</label>
       <v-text-field type="text" v-model="user.email" variant="outlined" single-line hide-details
-        class="form-control font-sm mt-2" id="email" density="compact" disabled/>
+        class="form-control font-sm mt-2" id="email" density="compact" disabled />
     </v-form-group>
 
     <div class="mb-3"></div>
@@ -256,8 +255,8 @@ export default {
       <label for="nickname" class="font-medium font-sm">닉네임</label>
       <v-text-field type="text" v-model="user.nickname" variant="outlined" single-line hide-details
         class="form-control font-sm mt-2" id="nickname" density="compact" :class="{
-          'is-invalid': submitted && v$.user.nickname.$error,
-        }" placeholder="닉네임을 입력해주세요." />
+            'is-invalid': submitted && v$.user.nickname.$error,
+          }" placeholder="닉네임을 입력해주세요." />
       <div v-if="submitted && v$.user.nickname.required.$invalid" class="invalid-feedback">
         <v-icon size="x-small" color="red">mdi-close-circle-outline</v-icon>
         <span class="font-xs font_red">닉네임을 입력해주세요.</span>
@@ -270,8 +269,8 @@ export default {
       <label for="contact" class="font-medium font-sm">연락처</label>
       <v-text-field type="text" v-model="user.contact" variant="outlined" single-line hide-details
         class="form-control font-sm mt-2" id="contact" density="compact" :class="{
-          'is-invalid': submitted && v$.user.contact.$error,
-        }" placeholder="연락처를 입력해주세요." />
+            'is-invalid': submitted && v$.user.contact.$error,
+          }" placeholder="연락처를 입력해주세요." />
 
       <div v-if="submitted && v$.user.contact.$error">
         <v-icon size="x-small" color="red">mdi-close-circle-outline</v-icon>
@@ -289,9 +288,8 @@ export default {
       <v-row justify="center">
         <v-col>
           <label for="category" class="font-medium font-sm">부서</label>
-          <v-select v-model="category" class="text-truncate mt-2" placeholder="부서" variant="outlined"
-            density="compact" :items="categoryItems" @update:modelValue="categoryChanged" id="category"
-            hide-details></v-select>
+          <v-select v-model="category" class="text-truncate mt-2" placeholder="부서" variant="outlined" density="compact"
+            :items="categoryItems" @update:modelValue="categoryChanged" id="category" hide-details></v-select>
         </v-col>
         <v-col>
           <label for="subcategory" class="font-medium font-sm">소속팀</label>
@@ -304,6 +302,7 @@ export default {
         <v-icon size="x-small" color="red">mdi-close-circle-outline</v-icon>
         <span class="font-xs font_red">부서와 소속팀을 선택해주세요.</span>
       </div>
+
     </v-form-group>
 
     <div class="mb-3"></div>
@@ -312,8 +311,8 @@ export default {
       <label for="ktMail" class="font-medium font-sm">사내메일</label>
       <v-text-field type="text" v-model="user.ktMail" variant="outlined" single-line hide-details
         class="form-control font-sm mt-2" id="ktMail" density="compact" :class="{
-          'is-invalid': submitted && v$.user.ktMail.$error,
-        }" placeholder="gildonghong@kt.com" />
+            'is-invalid': submitted && v$.user.ktMail.$error,
+          }" placeholder="gildonghong@kt.com" />
 
       <div v-if="submitted && v$.user.ktMail.$error">
         <v-icon size="x-small" color="red">mdi-close-circle-outline</v-icon>
@@ -330,9 +329,9 @@ export default {
 
   </v-form>
 
-    <!-- 두개 다 보여주는 건 예시인거지 나중에는 하나만 보여주게 수정하세요. -->
-    <!-- text 형 유저 avatar -->
-    <!-- <v-card class="mt-3">
+  <!-- 두개 다 보여주는 건 예시인거지 나중에는 하나만 보여주게 수정하세요. -->
+  <!-- text 형 유저 avatar -->
+  <!-- <v-card class="mt-3">
       <h3>
         <v-avatar color="grey" size="120"> asdfsdfa </v-avatar>
         <span class="font-weight">사진없는유저</span>
@@ -342,9 +341,8 @@ export default {
   <v-divider :thickness="2" class="mt-4 mb-5"></v-divider>
 
   <p class="text-h6 font-weight-black mb-20">비밀번호</p>
-  <v-btn class="pph-25 font-sm button_main font-medium mt-0 mb-5" 
-    variant="" @click="goToChangePass">
-    비밀번호 변경 
+  <v-btn class="pph-25 font-sm button_main font-medium mt-0 mb-5" variant="" @click="goToChangePass">
+    비밀번호 변경
   </v-btn>
 
   <v-divider :thickness="2" class="mt-4 mb-5"></v-divider>
@@ -353,14 +351,14 @@ export default {
     <div>
       <div class="font-sm ml-5 mt-3 mb-3 mr-5 font_gray">
         회원 탈퇴일로부터 계정 정보(이메일/사내메일/닉네임/연락처/소속팀)는
-        <span style="color:deepskyblue" class="font-bold">개인정보 보호방침</span>에 따라 <b>30일간 보관 및 잠김</b>되며, 30일 경과된 후에는 모든 개인 정보는 완전히 삭제되어 더 이상 복구할 수 없게 됩니다.
+        <span style="color:deepskyblue" class="font-bold">개인정보 보호방침</span>에 따라 <b>30일간 보관 및 잠김</b>되며, 30일 경과된 후에는 모든 개인
+        정보는 완전히 삭제되어 더 이상 복구할 수 없게 됩니다.
         작성된 게시글은 삭제되지 않으며, Dsquare로 소유권이 귀속됩니다.
       </div>
     </div>
   </div>
   <v-checkbox label="계정삭제 정책에 동의합니다." density="compact" v-model="flag"></v-checkbox>
-  <v-btn class="pph-25 font-sm button_main font-medium mt-0 mb-5" 
-    variant="" :disabled="!flag" @click="goToDeleteMember">
+  <v-btn class="pph-25 font-sm button_main font-medium mt-0 mb-5" variant="" :disabled="!flag" @click="goToDeleteMember">
     회원탈퇴
   </v-btn>
 </template>
@@ -372,6 +370,7 @@ export default {
   background-color: rgb(var(--v-theme-primary));
   color: white;
 }
+
 .button_white {
   border-width: 1px;
   border-style: solid;
@@ -379,7 +378,7 @@ export default {
   color: black;
 }
 
-.pph-7{
+.pph-7 {
   padding-left: 7% !important;
   padding-right: 7% !important;
 }
@@ -390,10 +389,11 @@ export default {
   border-color: #ABABAB;
   border-radius: 0.375rem;
 }
+
 .filebox .upload-name {
-	display: inline-block;
-	padding: .5em .75em;
-	background-color: #f5f5f5;
+  display: inline-block;
+  padding: .5em .75em;
+  background-color: #f5f5f5;
   border: 1px solid #ebebeb;
   border-bottom-color: #e2e2e2;
   border-radius: .25em;
@@ -401,30 +401,30 @@ export default {
 
 .filebox.bs3-primary label {
   color: #fff;
-	background-color: rgb(var(--v-theme-primary));
-	border-color: rgb(var(--v-theme-primary));
+  background-color: rgb(var(--v-theme-primary));
+  border-color: rgb(var(--v-theme-primary));
 }
 
 .filebox label {
-	display: inline-block;
-	padding: .5em .75em;
-	color: #999;
-	background-color: #fdfdfd;
-	cursor: pointer;
-	border: 1px solid #ebebeb;
-	border-bottom-color: #e2e2e2;
-	border-radius: .25em;
+  display: inline-block;
+  padding: .5em .75em;
+  color: #999;
+  background-color: #fdfdfd;
+  cursor: pointer;
+  border: 1px solid #ebebeb;
+  border-bottom-color: #e2e2e2;
+  border-radius: .25em;
 }
 
 .filebox input[type="file"] {
-	position: absolute;
-	width: 1px;
-	height: 1px;
-	padding: 0;
-	margin: -1px;
-	overflow: hidden;
-	clip:rect(0,0,0,0);
-	border: 0;
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  border: 0;
 }
 </style>
 
