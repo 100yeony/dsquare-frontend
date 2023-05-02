@@ -111,10 +111,6 @@ import CardDialog from "@/components/cards/CardDialog.vue";
 import Observe from "@/components/Observer";
 import api from '@/api';
 import store from "@/store";
-import { Swiper, SwiperSlide } from 'swiper/vue';
-import { Autoplay } from 'swiper';
-import 'swiper/css';
-import 'swiper/css/autoplay';
 import object from "@/utils/objectUtils";
 
 export default {

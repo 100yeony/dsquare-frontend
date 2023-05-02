@@ -1,14 +1,23 @@
 <script>
-import { computed, onMounted, ref } from "vue";
 import BoardCard from "@/components/cards/BoardCard";
+import TalkCard from "@/components/cards/TalkCard";
+import CarrotCard from "@/components/cards/CarrotCard";
+import RequestCard from "@/components/cards/RequestCard";
 import Observe from "@/components/Observer";
 import api from '@/api';
-import store from "@/store";
+
+let qnaUri = 'board/questions?workYn=';
+let commUri = 'board/talks';
+let dealUri = 'board/carrots';
+let requestCardUri = 'board/cards';
 
 export default {
   name: "myPost",
   components: {
     BoardCard,
+    TalkCard,
+    CarrotCard,
+    RequestCard,
     Observe
   },
   setup() {
@@ -23,13 +32,16 @@ export default {
       qnaTab: 0,
       page: 1,
       boardCardData: [],
+      commCardData: [],
+      dealCardData: [],
+      requestedCardData: [],
     };
   },
   computed: {
 
   },
   mounted() {
-    var res = this.requestAllWork();
+    this.requestAllQuestions();
   },
   watch: {
     qnaTab(newVal, oldVal) {
@@ -39,50 +51,130 @@ export default {
     }
   },
   methods: {
-    async requestAllWork() {
-      console.log(store.getters["info/infoToken"].accessToken)
-      var res = await api.get('board/questions' + '?' + 'workYn=true').then(
+    async requestAllQuestions() {
+      var res_work, res_nonwork;
+      await api.get(qnaUri + 'true').then(
         (response) => {
           response.data.forEach((d) => {
             d.createDate = this.exportDateFromTimeStamp(d.createDate)
           });
-          this.boardCardData = response.data
+          res_work = response;
         }
-      )
-    },
+      );
 
-    // async requestAllNoneWork() {
-    //   console.log(store.getters["info/infoToken"].accessToken)
-    //   var res = await api.get('board/questions' + '?' + 'workYn=false').then(
-    //     (response) => {
-    //       response.data.forEach((d) => {
-    //         d.createDate = this.exportDateFromTimeStamp(d.createDate)
-    //       });
-    //       this.boardCardData = response.data
-    //     }
-    //   )
-    // },
+      await api.get(qnaUri + 'false').then(
+        (response) => {
+          response.data.forEach((d) => {
+            d.createDate = this.exportDateFromTimeStamp(d.createDate)
+          });
+          res_nonwork = response;
+        }
+      );
+
+      var data = [];
+      data = data.concat(res_work.data).concat(res_nonwork.data);
+      data.sort((a, b) => {
+        if (a.createDate < b.createDate) return 1;
+        if (b.createDate < a.createDate) return -1;
+        return 0;
+      });
+
+      this.boardCardData = data;
+    },
+    async requestAllComms() {
+      await api.get(commUri).then(
+        (response) => {
+          response.data.forEach((d) => {
+            d.createDate = this.exportDateFromTimeStamp(d.createDate)
+          });
+          this.commCardData = response.data;
+        }
+      );
+    },
+    async requestAllDeals() {
+      await api.get(dealUri).then(
+        (response) => {
+          response.data.forEach((d) => {
+            d.createDate = this.exportDateFromTimeStamp(d.createDate)
+          });
+          this.dealCardData = response.data;
+        }
+      );
+    },
+    async requestAllRequestedCards() {
+      await api.get(requestCardUri).then(
+        (response) => {
+          response.data.forEach((d) => {
+            d.createDate = this.exportDateFromTimeStamp(d.createDate)
+          });
+          this.requestedCardData = response.data;
+        }
+      );
+    },
 
     tabChanged() {
       if (this.qnaTab == 0) {
-        this.requestAllWork()
+        if (!this.boardCardData.length) {
+          this.requestAllQuestions();
+        }
       } else if (this.qnaTab == 1) {
-        // 소통해요 넣기 
+        if (!this.commCardData.length) {
+          this.requestAllComms();
+        }
       } else if (this.qnaTab == 2) {
-        // 당근해요 넣기 
+        if (!this.dealCardData.length) {
+          this.requestAllDeals();
+        }
       } else {
-        // 카드주세요 넣기 
+        if (!this.requestedCardData.length) {
+          this.requestAllRequestedCards();
+        }
       }
     },
     handleCardClicked(item) {
       console.log("[handleCardClicked]", item);
-      if (item) {
-        //상세 화면으로 이동.
+      if ('qid' in item) {
         this.$router.push({
           path: process.env.VUE_APP_BOARD_QNA_DETAIL,
-          title: item?.title,
+          meta: {
+            back: process.env.VUE_APP_MYPAGE_MYPOST,
+            title: item?.title,
+          },
           query: {
             qid: item?.qid
+          }
+        });
+      } else if ('talkId' in item) {
+        this.$router.push({
+          path: process.env.VUE_APP_BOARD_COMMUNICATION_DETAIL,
+          meta: {
+            back: process.env.VUE_APP_MYPAGE_MYPOST,
+          },
+          title: item?.title,
+          query: {
+            talkId: item?.talkId
+          }
+        });
+      } else if ('carrotId' in item) {
+        this.$router.push({
+          path: process.env.VUE_APP_BOARD_DEAL_DETAIL,
+          meta: {
+            back: process.env.VUE_APP_MYPAGE_MYPOST,
+          },
+          title: item?.title,
+          query: {
+            carrotId: item?.carrotId
+          }
+        });
+      } else {
+        this.$router.push({
+          path: process.env.VUE_APP_BOARD_CARD_DETAIL,
+          meta: {
+            back: process.env.VUE_APP_MYPAGE_MYPOST,
+          },
+          title: item?.title,
+          query: {
+            id: item?.cardId,
           }
         });
       }
@@ -116,23 +208,34 @@ export default {
       </v-tab>
     </v-tabs>
     <v-window v-model="qnaTab" :touch="false">
-      <!-- ***** 업무 ***** -->
+      <!-- ***** 궁금해요 ***** -->
       <v-window-item :value="0">
-        <!-- 질문 카드 -->
-        <div v-for="(item, index) in boardCardData" :value="item.qid">
+        <div v-for="(item, index) in boardCardData" :key="index" :value="item.qid">
           <BoardCard class="mt-2" :data="item" @handle-card-clicked="handleCardClicked" />
         </div>
         <Observe @triggerIntersected="loadMore" />
       </v-window-item>
-
-      <!-- ***** 비업무 *****
+      <!-- ***** 소통해요 ***** -->
       <v-window-item :value="1">
-        
-        <div v-for="(item, index) in boardCardData" :value="item.qid">
-          <BoardCard class="mt-2" :data="item" @handle-card-clicked="handleCardClicked" />
+        <div v-for="(item, index) in commCardData" :key="index" :value="item.talkId">
+          <TalkCard class="mt-2" :data="item" @handle-card-clicked="handleCardClicked" />
         </div>
         <Observe @triggerIntersected="loadMore" />
-      </v-window-item> -->
+      </v-window-item>
+      <!-- ***** 당근해요 ***** -->
+      <v-window-item :value="2">
+        <div v-for="(item, index) in dealCardData" :key="index" :value="item.carrotId">
+          <CarrotCard class="mt-2" :data="item" @handle-card-clicked="handleCardClicked" />
+        </div>
+        <Observe @triggerIntersected="loadMore" />
+      </v-window-item>
+      <!-- ***** 카드주세요 ***** -->
+      <v-window-item :value="3">
+        <div v-for="(item, index) in requestedCardData" :key="index" :value="item.cardId">
+          <RequestCard class="mt-2" :data="item" @handle-card-clicked="handleCardClicked" />
+        </div>
+        <Observe @triggerIntersected="loadMore" />
+      </v-window-item>
     </v-window>
   </div>
 </template>
