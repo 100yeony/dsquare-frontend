@@ -103,7 +103,9 @@ export default {
 
       const questionBlob = new Blob([JSON.stringify(question)], { type: 'application/json' });
       formData.append('question', questionBlob);
-      formData.append("attachment", this.selectedFile[0], this.selectedFile.name);
+      if (this.selectedFile) {
+        formData.append("attachment", this.selectedFile[0], this.selectedFile.name);
+      }
 
       api.multiPartPost('board/questions', formData)
         .then((response) => {
