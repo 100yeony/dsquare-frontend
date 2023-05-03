@@ -6,10 +6,10 @@ import RequestCard from "@/components/cards/RequestCard";
 import Observe from "@/components/Observer";
 import api from '@/api';
 
-let qnaUri = 'board/questions?workYn=';
-let commUri = 'board/talks';
-let dealUri = 'board/carrots';
-let requestCardUri = 'board/cards';
+let qnaUri = 'mypage/questions';
+let commUri = 'mypage/talks';
+let dealUri = 'mypage/carrots';
+let requestCardUri = 'mypage/cards';
 
 export default {
   name: "myPost",
@@ -52,34 +52,14 @@ export default {
   },
   methods: {
     async requestAllQuestions() {
-      var res_work, res_nonwork;
-      await api.get(qnaUri + 'true').then(
+      await api.get(qnaUri).then(
         (response) => {
           response.data.forEach((d) => {
             d.createDate = this.exportDateFromTimeStamp(d.createDate)
           });
-          res_work = response;
+          this.boardCardData = response.data;
         }
       );
-
-      await api.get(qnaUri + 'false').then(
-        (response) => {
-          response.data.forEach((d) => {
-            d.createDate = this.exportDateFromTimeStamp(d.createDate)
-          });
-          res_nonwork = response;
-        }
-      );
-
-      var data = [];
-      data = data.concat(res_work.data).concat(res_nonwork.data);
-      data.sort((a, b) => {
-        if (a.createDate < b.createDate) return 1;
-        if (b.createDate < a.createDate) return -1;
-        return 0;
-      });
-
-      this.boardCardData = data;
     },
     async requestAllComms() {
       await api.get(commUri).then(
