@@ -34,16 +34,25 @@ export default {
       this.submitted = true;
       // stop here if form is invalid
       this.v$.$touch();
-      if (!this.v$.$error) {
+      if (!this.v$.$error && this.new_pw == this.new_pw_ok) {
         const res = await api.patch('account/change-pw/', {
-          email: this.user.email,
+          email: this.$route.query.email,
           originalPassword: this.current_pw, 
           changedPassword: this.new_pw, 
         }).then((response) => {
           console.log(response)
+          this.$store.dispatch('info/setInfoToken', { accessToken: '', refreshToken: '' }); // 토큰값을 제거해줍니다.
+          this.$router.push(process.env.VUE_APP_CHANGEPASS_OK)
         });
       }
     },
+  },
+  watch: {
+    new_pw_ok(newVal, oldVal){
+      console.log("watch--")
+      console.log(newVal)
+      console.log(this.new_pw != this.new_pw_ok)
+    }
   },
   computed: {
     pwNewConfirm() {
@@ -59,12 +68,7 @@ export default {
         return '비밀번호는 최소 8자 이상 입력하세요.';
       } else if (this.submitted && this.v$.new_pw_ok.pwValidator.$invalid) {
         return '알파벳 대소문자, 숫자, 특수문자를 조합한 비밀번호를 입력하세요.'
-      } else if (this.submitted && this.new_pw != this.new_pw_ok){
-        return '비밀번호가 일치하지 않아요.'
-      }
-      console.log(this.new_pw)
-      console.log(this.new_pw_ok)
-      console.log('-----')
+      } 
       return '';
     },
     pwCurrentConfirm() {
@@ -121,6 +125,10 @@ export default {
                         <div v-if="submitted && v$.new_pw_ok.$error">
                           <v-icon size="x-small" color="red">mdi-close-circle-outline</v-icon>
                           <span class="font-xs font_red">{{ pwNewOkConfirm }}</span>
+                        </div>
+                        <div v-if="submitted && this.new_pw != this.new_pw_ok && !v$.new_pw_ok.$error">
+                          <v-icon size="x-small" color="red">mdi-close-circle-outline</v-icon>
+                          <span class="font-xs font_red">비밀번호가 일치하지 않아요.</span>
                         </div>
     
                         <v-btn type="submit" class="font-sm pph-50 mt-30 button_main font-medium" variant="">

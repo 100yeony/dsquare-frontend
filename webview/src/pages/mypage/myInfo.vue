@@ -168,7 +168,12 @@ export default {
       }
     },
     goToChangePass() {
-      this.$router.push('/account/change-pass');
+      this.$router.push({
+        path: process.env.VUE_APP_CHANGEPASS,
+        query: {
+          email: this.user.email
+        }
+      });
     },
     goToDeleteMember() {
       this.$router.push('/account/delete-member');
