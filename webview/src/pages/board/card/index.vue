@@ -29,54 +29,98 @@
 
     <v-divider :thickness="1" class="mt-4 mb-5"></v-divider>
 
-    <p class="mt-3 text-h6 font-weight-black">카드 대기중</p>
-    <!-- 검색 -->
-    <v-expansion-panels class="my-3">
-      <v-expansion-panel>
-        <v-expansion-panel-title>검색</v-expansion-panel-title>
-        <v-expansion-panel-text>
-          <v-row justify="center" class="mb-2">
-            <v-col>
-              <v-select v-model="category" class="text-truncate mt-2" placeholder="부서 선택" variant="outlined"
-                density="compact" :items="categoryItems" @update:modelValue="categoryChanged" id="category"
-                hide-details></v-select>
-            </v-col>
-            <v-col>
-              <v-select v-model="subcategory" class="text-truncate mt-2" placeholder="소속팀 선택" variant="outlined"
-                density="compact" :items="subcategoryItems" :disabled="!subcategoryItems.length" id="subcategory"
-                hide-details></v-select>
+    <v-tabs fixed-tabs class="mt-5" color="primary" v-model="qnaTab">
+      <v-tab v-for="(i, index) in qnaTabTitle.length" :key="index" :value="index" slider-color="primary">
+        {{ qnaTabTitle[index] }}
+      </v-tab>
+    </v-tabs>
+<!-- 
+    <p class="mt-3 text-h6 font-weight-black">카드 대기중</p> -->
 
-            </v-col>
-          </v-row>
-          <v-btn color="shades-black" @click="search()" block>검색</v-btn>
-        </v-expansion-panel-text>
-      </v-expansion-panel>
-    </v-expansion-panels>
+    <v-window v-model="qnaTab" :touch="false">
+      <v-window-item :value="0">
+        <!-- 검색 -->
+        <v-expansion-panels class="my-3">
+          <v-expansion-panel>
+            <v-expansion-panel-title>검색</v-expansion-panel-title>
+            <v-expansion-panel-text>
+              <v-row justify="center" class="mb-2">
+                <v-col>
+                  <v-select v-model="category" class="text-truncate mt-2" placeholder="부서 선택" variant="outlined"
+                    density="compact" :items="categoryItems" @update:modelValue="categoryChanged" id="category"
+                    hide-details></v-select>
+                </v-col>
+                <v-col>
+                  <v-select v-model="subcategory" class="text-truncate mt-2" placeholder="소속팀 선택" variant="outlined"
+                    density="compact" :items="subcategoryItems" :disabled="!subcategoryItems.length" id="subcategory"
+                    hide-details></v-select>
 
-    
+                </v-col>
+              </v-row>
+              <v-btn color="shades-black" @click="search()" block>검색</v-btn>
+            </v-expansion-panel-text>
+          </v-expansion-panel>
+        </v-expansion-panels>
+        
+        <!-- 정렬 -->
+        <div class="mt-4 mb-4 d-flex justify-end" >
+          <v-btn prepend-icon="mdi-sort-descending">정렬
+            <v-menu activator="parent">
+              <v-list>
+                <v-list-item v-for="(item, index) in sortMenu" :key="index" :value="index" @click="sort(index)">
+                  <v-list-item-title>{{ item.title }}</v-list-item-title>
+                </v-list-item>
+              </v-list>
+            </v-menu>
+          </v-btn>
+        </div>
 
-    <!-- 정렬 -->
-    <div class="mt-4 mb-4 d-flex justify-end" >
-      <v-btn prepend-icon="mdi-sort-descending">정렬
-        <v-menu activator="parent">
-          <v-list>
-            <v-list-item v-for="(item, index) in sortMenu" :key="index" :value="index" @click="sort(index)">
-              <v-list-item-title>{{ item.title }}</v-list-item-title>
-            </v-list-item>
-          </v-list>
-        </v-menu>
-      </v-btn>
-    </div>
+        <!-- 카드 대기중 목록 -->
+        <div>
+          <div v-for="(item, index) in requestCardData" :value="item.cardId" class="card">
+            <RequestCard class=" mt-2" :data="item" @handle-card-clicked="handleCardClicked" @handle-card-dialog="handleCardDialog(item)" :style="item.style"/>
+          </div>
+        </div>
 
-    <!-- 카드 대기중 목록 -->
-    <div>
-      <span v-for="(item, index) in requestCardData" :value="item.cardId" class="card">
-        <RequestCard class=" mt-2" :data="item" :key="index" @handle-card-clicked="handleCardClicked" @handle-card-dialog="handleCardDialog(item)" :style="item.style"/>
-        <div class="mb-4"></div>
-      </span>
-    </div>
-    <Observe @triggerIntersected="loadMore" />
+      </v-window-item>
+
+      <v-window-item :value="1">
+        <!-- 선정된 카드 목록 -->
+        <!-- <p class="mt-3 text-h6 font-weight-black">선정된 카드</p> -->
+
+        <!-- 검색 -->
+        <v-expansion-panels class="my-3">
+          <v-expansion-panel>
+            <v-expansion-panel-title>검색</v-expansion-panel-title>
+            <v-expansion-panel-text>
+              <v-row justify="center" class="mb-2">
+                <v-col>
+                  <v-select v-model="category" class="text-truncate mt-2" placeholder="부서 선택" variant="outlined"
+                    density="compact" :items="categoryItems" @update:modelValue="categoryChanged" id="category"
+                    hide-details></v-select>
+                </v-col>
+                <v-col>
+                  <v-select v-model="subcategory" class="text-truncate mt-2" placeholder="소속팀 선택" variant="outlined"
+                    density="compact" :items="subcategoryItems" :disabled="!subcategoryItems.length" id="subcategory"
+                    hide-details></v-select>
+
+                </v-col>
+              </v-row>
+              <v-btn color="shades-black" @click="search()" block>검색</v-btn>
+            </v-expansion-panel-text>
+          </v-expansion-panel>
+        </v-expansion-panels>
+
+        <div>
+          <div v-for="(item, index) in completedCardData" :value="item.cardId" class="card" :key="index">
+            <RequestCard class=" mt-2" :data="item" @handle-card-clicked="handleCardClicked" @handle-card-dialog="handleCardDialog(item)" :style="item.style"/>
+          </div>
+        </div>
+      </v-window-item>
+    </v-window>
   </div>
+  
+  <br>
 
   <v-menu transition="slide-y-transition">
     <template v-slot:activator="{ props }">
@@ -86,7 +130,6 @@
     </template>
   </v-menu>
 </template>
-
 
 
 <script>
@@ -141,6 +184,8 @@ export default {
       { title: "최신순" },
     ]
 
+    let qnaTabTitle = ["카드대기중", "선정된카드"];
+
     return {
       categoryItems, subcategoryFullList,
       searchUri,
@@ -148,6 +193,7 @@ export default {
       selectedSortIndex: 0,
       flickingPlugins,
       flickingOptions,
+      qnaTabTitle,
     };
   },
   data() {
@@ -171,8 +217,10 @@ export default {
       page: 1,
       requestCardData: [],
       selectedCardData: [],
+      completedCardData: [],
       isShow: false, 
       selectedItem: {},
+      qnaTab: 0, 
     };
   },
   watch: {
@@ -211,6 +259,11 @@ export default {
       } else if (newVal === 'AICC딜리버리팀') {
         this.projTeamId = 16;
       }
+    },
+    qnaTab(newVal, oldVal) {
+      this.page = 1;
+      console.log(newVal)
+      this.tabChanged();
     }
   },
   mounted() {
@@ -221,18 +274,32 @@ export default {
     dialogTitle() {
       return '카드를 주시겠습니까?';
     },
+    emptyCard() {
+      return window.innerHeight
+    }
   },
   methods: {
+    tabChanged() {
+      this.category = []
+      this.subcategory = []
+      this.searchKey = ''
+      this.searchContent = '';
+    },
     async requestAll() {
       var res = await api.get('board/cards').then(
         (response) => {
+          console.log('response', response)
           response.data.forEach((d) => {
             d.createDate = this.exportDateFromTimeStamp(d.createDate);
             var tempTeammate = d.teammate.replaceAll('[', '["').replaceAll(']', '"]').replaceAll(',', '","');
             d.teammate = JSON.parse(tempTeammate);  // 어레이로 변환
+
+            if (d.selectionInfo == null) {
+              this.requestCardData.push(d)
+            } else {
+              this.completedCardData.push(d)
+            }
           });
-          this.requestCardData = response.data;
-          this.cardsLength = response.data.length;
         }
       );
     },
@@ -259,13 +326,23 @@ export default {
       }
     },
     async search() {
+
       if (typeof this.subcategory == 'string' || typeof this.category == 'string'){
         var res = await api.get('board/cards?projTeamId=' + this.projTeamId).then(
           (response) => {
+            if (this.qnaTab == 0) {
+              this.requestCardData = []
+            } else {
+              this.completedCardData = []
+            }
             response.data.forEach((d) => {
               d.createDate = this.exportDateFromTimeStamp(d.createDate)
+              if (d.selectionInfo == null && this.qnaTab == 0) {
+                this.requestCardData.push(d)
+              } else if (d.selectionInfo != null && this.qnaTab == 1){
+                this.completedCardData.push(d)
+              }
             });
-            this.requestCardData = response.data
           }
         )
       }
@@ -382,7 +459,7 @@ export default {
           return 0;
         });
       }
-    }
+    },
   },
 };
 </script>
@@ -404,7 +481,7 @@ export default {
 @mixin translateY {
   @for $i from 0 through 10000 {
     &:nth-child(#{$i}) {
-      transform: translateY(#{$i * 16}px);
+      transform: translateY(#{$i * 0.2}rem);
     }
   }
 }
@@ -415,5 +492,9 @@ export default {
   top: 4em;
   transform-origin: center top;
   @include translateY;
+}
+
+.v-window {
+  overflow: inherit !important;  
 }
 </style>
