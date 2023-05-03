@@ -1,14 +1,23 @@
 <script>
-import { computed, onMounted, ref } from "vue";
-import BoardCard from "@/components/cards/BoardCard";
+import AnswerCard from "@/components/cards/AnswerCard";
+import CommentCard from "@/components/cards/CommentCard";
 import Observe from "@/components/Observer";
 import api from '@/api';
-import store from "@/store";
+
+let answersUri = 'mypage/answers';
+let commentsUri = '/mypage/comments';
+let questionUri = '/board/questions/';
+let answerUri = '/board/answers/';
+let cardUri = '/board/cards/';
+let talkUri = '/board/talks/';
+let carrotUri = '/board/carrots/';
+
 
 export default {
   name: "myPost",
   components: {
-    BoardCard,
+    AnswerCard,
+    CommentCard,
     Observe
   },
   setup() {
@@ -22,14 +31,12 @@ export default {
     return {
       qnaTab: 0,
       page: 1,
-      boardCardData: [],
+      answerCardData: [],
+      commentCardData: [],
     };
   },
-  computed: {
-
-  },
   mounted() {
-    var res = this.requestAllWork();
+    this.requestAllAnswers();
   },
   watch: {
     qnaTab(newVal, oldVal) {
@@ -39,52 +46,109 @@ export default {
     }
   },
   methods: {
-    async requestAllWork() {
-      var res = await api.get('board/questions' + '?' + 'workYn=true').then(
+    async requestAllAnswers() {
+      await api.get(answersUri).then(
         (response) => {
-          response.data.forEach((d) => {
-            d.createDate = this.exportDateFromTimeStamp(d.createDate)
+          response.data.forEach(async (d) => {
+            d.createDate = this.exportDateFromTimeStamp(d.createDate);
           });
-          this.boardCardData = response.data
+          this.answerCardData = response.data;
         }
-      )
+      );
+
+      this.answerCardData.forEach(async (answer) => {
+        await api.get(questionUri + answer.qid).then(
+          (response) => {
+            answer["question"] = {
+              name: response.data.writerInfo.name,
+              teamHierarchy: response.data.writerInfo.teamHierarchy,
+              categoryName: response.data.category.name,
+              title: response.data.title,
+            };
+          }
+        );
+      });
     },
 
-    // async requestAllNoneWork() {
+    async requestAllComments() {
+      await api.get(commentsUri).then(
+        (response) => {
+          response.data.forEach(async (d) => {
+            d.createDate = this.exportDateFromTimeStamp(d.createDate);
+          });
+          this.commentCardData = response.data;
+        }
+      );
 
-    //   var res = await api.get('board/questions' + '?' + 'workYn=false').then(
-    //     (response) => {
-    //       response.data.forEach((d) => {
-    //         d.createDate = this.exportDateFromTimeStamp(d.createDate)
-    //       });
-    //       this.boardCardData = response.data
-    //     }
-    //   )
-    // },
+      var uriMap = {
+        QUESTION: questionUri,
+        ANSWER: answerUri,
+        CARD: cardUri,
+        TALK: talkUri,
+        CARROT: carrotUri,
+      }
+      this.commentCardData.forEach(async (comment) => {
+        var uri = uriMap[comment.boardType];
+        await api.get(uri + comment.postId).then(
+          (response) => {
+            comment["post"] = {
+              name: response.data.writerInfo.name,
+              teamHierarchy: response.data.writerInfo.teamHierarchy,
+              title: response.data.title ? response.data.title : response.data.content,
+              qid: response.data.qid ? response.data.qid : null,
+            };
+
+            if (comment.boardType === 'QUESTION') {
+              comment["post"]["categoryName"] = response.data.category.name;
+            }
+          }
+        )
+      });
+    },
 
     tabChanged() {
       if (this.qnaTab == 0) {
-        this.requestAllWork()
-      } else if (this.qnaTab == 1) {
-        // 소통해요 넣기 
-      } else if (this.qnaTab == 2) {
-        // 당근해요 넣기 
+        if (!this.answerCardData.length) {
+          this.requestAllAnswers();
+        }
       } else {
-        // 카드주세요 넣기 
+        if (!this.commentCardData.length) {
+          this.requestAllComments();
+        }
       }
     },
     handleCardClicked(item) {
-      console.log("[handleCardClicked]", item);
-      if (item) {
-        //상세 화면으로 이동.
-        this.$router.push({
-          path: process.env.VUE_APP_BOARD_QNA_DETAIL,
-          title: item?.title,
-          query: {
-            qid: item?.qid
+      var path, query;
+
+      if ("aid" in item) {
+        path = process.env.VUE_APP_BOARD_QNA_DETAIL;
+        query = { qid: item.qid };
+      } else {
+        var postId = item.postId;
+        
+        if (item.boardType === "QUESTION") {
+          path = process.env.VUE_APP_BOARD_QNA_DETAIL;
+          query = { qid: postId };
+        } else if (item.boardType === "ANSWER") {
+          path = process.env.VUE_APP_BOARD_QNA_DETAIL;
+          query = { qid: item.post.qid };
+        } else {
+          query = { id: postId };
+          if (item.boardType === "CARD") {
+            path = process.env.VUE_APP_BOARD_CARD_DETAIL;
+          } else if (item.boardType === "TALK") {
+            path = process.env.VUE_APP_BOARD_TALK_DETAIL;
+          } else { // CARROT
+            path = process.env.VUE_APP_BOARD_CARROT_DETAIL;
           }
-        });
+        }
       }
+
+      this.$router.push({ 
+        path: path, 
+        title: item?.title, 
+        query: query 
+      });
     },
     loadMore() {
       this.page += 1;
@@ -103,7 +167,7 @@ export default {
       return year + "-" + month + "-" + day + " " + hour + ":" + minute
 
     }
-    
+
   },
 };
 </script>
@@ -115,23 +179,21 @@ export default {
       </v-tab>
     </v-tabs>
     <v-window v-model="qnaTab" :touch="false">
-      <!-- ***** 업무 ***** -->
+      <!-- ***** 내 답변 ***** -->
       <v-window-item :value="0">
-        <!-- 질문 카드 -->
-        <div v-for="(item, index) in boardCardData" :value="item.qid">
-          <BoardCard class="mt-2" :data="item" @handle-card-clicked="handleCardClicked" />
+        <div v-for="(item, index) in answerCardData" :key="index" :value="item.aid">
+          <AnswerCard class="mt-2" :data="item" @handle-card-clicked="handleCardClicked" />
+        </div>
+        <Observe @triggerIntersected="loadMore" />
+      </v-window-item>
+      <!-- ***** 내 댓글 ***** -->
+      <v-window-item :value="1">
+        <div v-for="(item, index) in commentCardData" :key="index" :value="item.commentId">
+          <CommentCard class="mt-2" :data="item" @handle-card-clicked="handleCardClicked" />
         </div>
         <Observe @triggerIntersected="loadMore" />
       </v-window-item>
 
-      <!-- ***** 비업무 *****
-      <v-window-item :value="1">
-        
-        <div v-for="(item, index) in boardCardData" :value="item.qid">
-          <BoardCard class="mt-2" :data="item" @handle-card-clicked="handleCardClicked" />
-        </div>
-        <Observe @triggerIntersected="loadMore" />
-      </v-window-item> -->
     </v-window>
   </div>
 </template>
@@ -148,7 +210,7 @@ export default {
   /* 한국어 잘림 방지 */
 }
 
-.v-btn--size-default{
+.v-btn--size-default {
   padding: 0 0px;
 }
 </style>
