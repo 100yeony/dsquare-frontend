@@ -95,6 +95,7 @@ export default {
               name: response.data.writerInfo.name,
               teamHierarchy: response.data.writerInfo.teamHierarchy,
               title: response.data.title ? response.data.title : response.data.content,
+              qid: response.data.qid ? response.data.qid : null,
             };
 
             if (comment.boardType === 'QUESTION') {
@@ -103,28 +104,51 @@ export default {
           }
         )
       });
-      console.log(this.commentCardData);
     },
 
     tabChanged() {
       if (this.qnaTab == 0) {
-        this.requestAllAnswers()
+        if (!this.answerCardData.length) {
+          this.requestAllAnswers();
+        }
       } else {
-        this.requestAllComments();
+        if (!this.commentCardData.length) {
+          this.requestAllComments();
+        }
       }
     },
     handleCardClicked(item) {
-      console.log("[handleCardClicked]", item);
-      if (item) {
-        //상세 화면으로 이동.
-        this.$router.push({
-          path: process.env.VUE_APP_BOARD_QNA_DETAIL,
-          title: item?.title,
-          query: {
-            qid: item?.qid
+      var path, query;
+
+      if ("aid" in item) {
+        path = process.env.VUE_APP_BOARD_QNA_DETAIL;
+        query = { qid: item.qid };
+      } else {
+        var postId = item.postId;
+        
+        if (item.boardType === "QUESTION") {
+          path = process.env.VUE_APP_BOARD_QNA_DETAIL;
+          query = { qid: postId };
+        } else if (item.boardType === "ANSWER") {
+          path = process.env.VUE_APP_BOARD_QNA_DETAIL;
+          query = { qid: item.post.qid };
+        } else {
+          query = { id: postId };
+          if (item.boardType === "CARD") {
+            path = process.env.VUE_APP_BOARD_CARD_DETAIL;
+          } else if (item.boardType === "TALK") {
+            path = process.env.VUE_APP_BOARD_TALK_DETAIL;
+          } else { // CARROT
+            path = process.env.VUE_APP_BOARD_CARROT_DETAIL;
           }
-        });
+        }
       }
+
+      this.$router.push({ 
+        path: path, 
+        title: item?.title, 
+        query: query 
+      });
     },
     loadMore() {
       this.page += 1;
