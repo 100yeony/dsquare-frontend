@@ -2,7 +2,8 @@
     <v-card class="mx-auto justify-center rounded-lg" :class="props?.data?.selectionInfo ? 'gifted-card' : 'nongifted-card'"  variant="outlined" @click="handleCardClicked">
         <v-card-item class="pb-4">
             <div>
-                <v-chip class="gifted-chip mb-2 d-flex" v-if="props?.data?.selectionInfo" variant="outlined"><img src="@/assets/images/icons/party-popper.svg" class="mr-2"/>카드 드립니다!!!</v-chip>
+                <v-chip class="gifted-chip mb-2 d-flex" v-if="props?.data?.selectionInfo" variant="outlined"><img src="@/assets/images/icons/party-popper.svg" class="mr-2"/>
+                    {{props?.data?.selectionInfo.cardOwner.name}}님이 카드 드립니다!!!</v-chip>
             </div>
             <div>
                 <v-row>
