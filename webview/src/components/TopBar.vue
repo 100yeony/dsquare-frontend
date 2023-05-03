@@ -102,8 +102,10 @@ export default {
       if (item && item.url) {
         this.$router.replace(item.url);
       }
-      else if (item.value === 8){
-        this.$store.dispatch('info/setInfoToken', { accessToken: '', refreshToken: '' }); // 토큰값을 제거해줍니다.
+      else if (item.value === 8) {
+        //this.$store.dispatch('info/setInfoToken', { accessToken: '', refreshToken: '' }); // 토큰값을 제거해줍니다.
+        this.$store.dispatch('info/setInfoListBlank');
+
         this.$router.push(process.env.VUE_APP_LOGIN);
       }
     },
@@ -113,6 +115,6 @@ export default {
 <style>
 .right-navigation-drawer {
   width: 70%;
-  max-width: 400px; 
+  max-width: 400px;
 }
 </style>

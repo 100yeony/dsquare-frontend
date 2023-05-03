@@ -1,6 +1,9 @@
 package com.ktds.dsquare;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 
@@ -8,6 +11,8 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.util.Log;
 import android.webkit.JavascriptInterface;
+import android.webkit.ValueCallback;
+import android.webkit.WebChromeClient;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
@@ -25,13 +30,16 @@ public class MainActivity extends AppCompatActivity {
     String serverUrl;
     private boolean initWebview = false;
     private AppDataPreference mAppDataPreference = null;
+    HashSet<NativeValueDto> initHash = null;
+    public static final int FILE_SELECTOR_REQ = 1;
+    private ValueCallback mFilePathCallback;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         mContext = this;
-        serverUrl = "http://10.0.2.2:8080"; // front 서버
+        serverUrl = "http://172.20.10.7:8080"; // front 서버
 
         mAppDataPreference = new AppDataPreference(this);
         String accessToken = mAppDataPreference.getAccessToken();
@@ -39,11 +47,13 @@ public class MainActivity extends AppCompatActivity {
         // @TODO false 인경우도 제작하세요.
         Permission permission = new Permission(this);
         permission.requestSystemPermissions(Permission.sCheckPermissions);
-
-        HashSet<NativeValueDto> initHash = new HashSet<NativeValueDto>();
         // init 시 전달 값(토큰)
-        initHash.add(new NativeValueDto("accessToken", accessToken, "P", CConstants.PREF_KEY_ACCESS_TOKEN));
-        initHash.add(new NativeValueDto("refreshToken", refreshToken, "P", CConstants.PREF_KEY_REFRESH_TOKEN));
+
+        if (!accessToken.equals("") && !refreshToken.equals("")){
+            initHash = new HashSet<NativeValueDto>();
+            initHash.add(new NativeValueDto("accessToken", accessToken, "P", CConstants.PREF_KEY_ACCESS_TOKEN));
+            initHash.add(new NativeValueDto("refreshToken", refreshToken, "P", CConstants.PREF_KEY_REFRESH_TOKEN));
+        }
 
         webView = (WebView) findViewById(R.id.web_view);
         webView.getSettings().setJavaScriptEnabled(true);
@@ -53,6 +63,29 @@ public class MainActivity extends AppCompatActivity {
             webView.getSettings().setDisplayZoomControls(true);
         }
         webView.addJavascriptInterface(new JavascriptObject(), "JavascriptActions");
+        webView.setWebChromeClient(new WebChromeClient(){
+            @Override
+            public boolean onShowFileChooser(WebView webView, ValueCallback<Uri[]> filePathCallback, FileChooserParams fileChooserParams) {
+                Log.d("onShowFileChooser","onShowFileChooser");
+                Log.d("fileChooserParams", String.join(", ", fileChooserParams.getAcceptTypes()));
+
+                mFilePathCallback = filePathCallback;
+                Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+
+                // 여러장의 사진을 선택하는 경우
+                // intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
+
+                String[] acceptTypes = fileChooserParams.getAcceptTypes();
+                intent.addCategory(Intent.CATEGORY_OPENABLE);
+
+                for (String type : acceptTypes) {
+                    intent.setType((type.length()==0) ? "*/*" : type);
+                }
+
+                startActivityForResult(Intent.createChooser(intent, "Select file"), FILE_SELECTOR_REQ);
+                return true;
+            }
+        });
         webView.setWebViewClient(new WebViewClient() {
             @Override
             public void onPageFinished(WebView view, String url) {
@@ -64,6 +97,7 @@ public class MainActivity extends AppCompatActivity {
                 }
                 super.onPageFinished(view, url);
             }
+
         });
         webView.loadUrl(serverUrl); // @TODO webview에서 localhost 접근 바로 되지 않아, ip주소로 접근 중.
     }
@@ -107,5 +141,29 @@ public class MainActivity extends AppCompatActivity {
             mAppDataPreference.setRefreshToken(token);
         }
     }
+
+    // @TODO registerForActivityResult 로 변경
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == FILE_SELECTOR_REQ) {
+            if (resultCode == Activity.RESULT_OK) {
+                if (data.getClipData() != null) {
+                    int count = data.getClipData().getItemCount();
+                    Uri[] uris = new Uri[count];
+                    for (int i = 0; i < count; i++) {
+                        uris[i] = data.getClipData().getItemAt(i).getUri();
+                    }
+                    mFilePathCallback.onReceiveValue(uris);
+                }
+                else if (data.getData() != null) {
+                    mFilePathCallback.onReceiveValue((new Uri[]{data.getData()}));
+                }
+            } else {
+                mFilePathCallback.onReceiveValue(null);
+            }
+        }
+    }
+
 
 }

@@ -78,7 +78,8 @@ var methods = {
       // 지금은 android only만 남겨둠.
       return window.JavascriptActions.saveAccessToken(token);
     } catch(e) {
-      return defaultValue
+      console.log(e)
+      return 
     }
   },
   saveRefreshToken(token){
@@ -93,7 +94,8 @@ var methods = {
       // 지금은 android only만 남겨둠.
       return window.JavascriptActions.saveRefreshToken(token);
     } catch(e) {
-      return defaultValue
+      console.log(e)
+      return 
     }
   }
 

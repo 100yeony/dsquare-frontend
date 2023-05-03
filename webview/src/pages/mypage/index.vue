@@ -41,7 +41,9 @@ export default {
   },
   methods: {
     logout() {
-      this.$store.dispatch('info/setInfoToken', {accessToken: '', refreshToken: ''}); // 토큰값을 제거해줍니다.
+      //this.$store.dispatch('info/setInfoToken', {accessToken: '', refreshToken: ''}); // 토큰값을 제거해줍니다.
+      this.$store.dispatch('info/setInfoListBlank');
+
       this.$router.push(process.env.VUE_APP_LOGIN);
     },
   },

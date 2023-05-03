@@ -1,6 +1,8 @@
 import axios from 'axios'
 import store from "@/store";
 import router from "@/router/index";
+import bridgeUtils from '@/utils/bridgeUtils';
+import {NativeValueDto} from "@/class/NativeValueDto"
 // import router from '@/router/index'
 // import dayjs from "dayjs";
 // import { v4 } from 'uuid';
@@ -163,27 +165,31 @@ import router from "@/router/index";
 // export default createInstance()
 
 const prefix = ''
+const baseURL = 'http://172.20.10.7:8090'
 var apiInstance
 var multiPartApiInstance
 var noneTokenApiInstance
 
 function createInstance() {
-  var token = store.getters["info/infoToken"]
+  var accessToken = store.getters['info/infoListByKey']('accessToken')
+  var accessTokenValue = (typeof accessToken == 'undefined') ? '' : accessToken.value
+  console.log(accessToken)
+  //var token = store.getters["info/infoToken"]
   apiInstance = axios.create({
-    baseURL: 'http://localhost:8090',
-    headers: { Authorization: 'Bearer ' + token.accessToken }
+    baseURL: baseURL,
+    headers: { Authorization: 'Bearer ' + accessTokenValue }
   })
 
   multiPartApiInstance = axios.create({
-    baseURL: 'http://localhost:8090',
+    baseURL: baseURL,
     headers: {
-      Authorization: 'Bearer ' + token.accessToken,
+      Authorization: 'Bearer ' + accessTokenValue,
       'Content-Type': 'multipart/form-data'
     }
   })
 
   noneTokenApiInstance = axios.create({
-    baseURL: 'http://localhost:8090'
+    baseURL: baseURL
   })
 
   return fn
@@ -205,7 +211,7 @@ const fn = {
     }
   },
   tokenErrorCheck(err) {
-    if (err?.response?.data?.code == '401001') {
+    if (err?.response?.data?.code == 401 || err?.response?.status == 401) {// 후에 code 변경
       console.log("it's token expired")
       return true
     } else {
@@ -213,139 +219,134 @@ const fn = {
     }
   },
   async requestRefresh() {
-    var token = store.getters["info/infoToken"]
+    let refreshToken = store.getters['info/infoListByKey']('refreshToken')
+    //var token = store.getters["info/infoToken"]
+    console.log('requestRefresh', refreshToken)
     apiInstance = axios.create({
-      baseURL: 'http://localhost:8090'
+      baseURL: baseURL
     })
-    const res = await apiInstance.post('auth/refresh', { refreshToken: token.refreshToken })
+    const res = await apiInstance.post('auth/refresh', { refreshToken: refreshToken.value })
+    console.log(res)
     return res
+  },
+  async doRefreshWork(doRequest, uri, params, headers){
+    var flag = await this.requestRefresh().then(
+      (res) => {
+        if (res.status == 200) {
+          this.setTokenState(res.data.accessToken, res.data.refreshToken)
+          this.setDefaultToken()
+          console.log(res)
+          return true
+        } else {
+          return false
+        }
+      }
+    ).catch((err) => {
+      return false
+    })
+    console.log(flag)
+    if (flag) {
+      const res = await doRequest(uri, params, headers)
+      console.log(res)
+      return this.ResponsePayload(res)
+    } else {
+      this.expiredToken()
+    }
   },
   getBaseUrl() {
     return apiInstance.defaults.baseURL
   },
-
   setDefaultToken() {
-    var token = store.getters["info/infoToken"]
-    console.log('setDefaultToken=> ' + token.accessToken)
+    var accessToken = store.getters['info/infoListByKey']('accessToken')
+    var accessTokenValue = (typeof accessToken == 'undefined') ? '' : accessToken.value
+    console.log('setDefaultToken=> ' + accessTokenValue)
     apiInstance = axios.create({
-      baseURL: 'http://localhost:8090',
-      headers: { Authorization: 'Bearer ' + token.accessToken }
+      baseURL: baseURL,
+      headers: { Authorization: 'Bearer ' + accessTokenValue }
     })
     multiPartApiInstance = axios.create({
-      baseURL: 'http://localhost:8090',
+      baseURL: baseURL,
       headers: {
-        Authorization: 'Bearer ' + token.accessToken,
+        Authorization: 'Bearer ' + accessTokenValue,
         'Content-Type': 'multipart/form-data'
       }
     })
   },
+  setTokenState(accessToken, refreshToken) {
+    let accessTokenNativeDto = new NativeValueDto({ "key": 'accessToken', "value": accessToken, "type": 'P', "preference": 'pref_key_access_token' });
+    store.dispatch('info/setInfoValue', accessTokenNativeDto);
+    bridgeUtils.saveAccessToken(accessToken);
+
+    let refreshTokenNativeDto = new NativeValueDto({ "key": 'refreshToken', "value": refreshToken, "type": 'P', "preference": 'pref_key_refresh_token' });
+    store.dispatch('info/setInfoValue', refreshTokenNativeDto);
+    bridgeUtils.saveRefreshToken(refreshToken);
+  },
   expiredToken() {
-    store.dispatch('info/setInfoToken', { accessToken: '', refreshToken: '' }); // 토큰값을 제거해줍니다.
+    store.dispatch('info/setInfoListBlank'); // 토큰값을 제거해줍니다.
     router.push(process.env.VUE_APP_LOGIN);
   }
   ,
   async post(uri, params, headers) {
+    const doPost = async (uri, params, headers) => {
+      return await apiInstance.post(`${prefix + uri}`, params, { headers: headers })
+    }
     try {
-      console.log('[POST]', uri, params)
-      console.log('auth :::::::::::::::', headers)
-      const res = await apiInstance.post(`${prefix + uri}`, params, { headers: headers })
+      const res = await doPost(uri, params, headers)
       return this.ResponsePayload(res)
     } catch (err) {
       if (this.tokenErrorCheck(err)) {
-        var flag = await this.requestRefresh().then(
-          (res) => {
-            store.dispatch('info/setInfoToken', { accessToken: res.data.accessToken, refreshToken: res.data.refreshToken });
-            this.setDefaultToken()
-            console.log(res)
-            return true
-          }
-        ).catch(
-          (err) => {
-            return false
-          }
-        )
-        if (flag) {
-          const res = await apiInstance.post(`${prefix + uri}`, params, { headers: headers })
-          return this.ResponsePayload(res)
-        } else {
-          this.expiredToken()
-        }
-
+        var r = await this.doRefreshWork(doPost, uri, params, headers)
+        console.log(r) 
+        return r
       } else {
         return this.ErrorPayload(err)
       }
     }
   },
   async multiPartPost(uri, formData, headers) {
+    const doMultiPartPost = async (uri, formData, headers) => {
+      return await multiPartApiInstance.post(`${prefix + uri}`, formData, { headers: headers })
+    }
     try {
-      console.log('[POST]', uri, formData)
-      console.log('auth :::::::::::::::', headers)
-      const res = await multiPartApiInstance.post(`${prefix + uri}`, formData, { headers: headers })
+      const res = await doMultiPartPost(uri, formData, headers)
       return this.ResponsePayload(res)
     } catch (err) {
       if (this.tokenErrorCheck(err)) {
-        var flag = await this.requestRefresh().then(
-          (res) => {
-            store.dispatch('info/setInfoToken', { accessToken: res.data.accessToken, refreshToken: res.data.refreshToken });
-            this.setDefaultToken()
-            console.log(res)
-            return true
-          }
-        ).catch(
-          (err) => {
-            return false
-          }
-        )
-        if (flag) {
-          const res = await multiPartApiInstance.post(`${prefix + uri}`, formData, { headers: headers })
-          return this.ResponsePayload(res)
-        } else {
-          this.expiredToken()
-        }
-
+        return await this.doRefreshWork(doMultiPartPost, uri, formData, headers)
       } else {
         return this.ErrorPayload(err)
       }
     }
   },
 
-  async noneTokenPost(uri, params, headers){
+  async noneTokenPost(uri, params, headers) {
+    const doNoneTokenPost = async (uri, params, headers) => {
+      return await noneTokenApiInstance.post(`${prefix + uri}`, params, { headers: headers })
+    }
     try {
-      console.log('[POST]', uri, params)
-      console.log('auth :::::::::::::::', headers)
-      const res = await noneTokenApiInstance.post(`${prefix + uri}`, params, { headers: headers })
+      const res = await doNoneTokenPost(uri, params, headers)
       return this.ResponsePayload(res)
     } catch (err) {
-      return this.ErrorPayload(err)
+      if (this.tokenErrorCheck(err)) {
+        return await this.doRefreshWork(doNoneTokenPost, uri, params, headers)
+      } else {
+        return this.ErrorPayload(err)
+      }
     }
   },
 
   async get(uri, params, headers) {
+    const doGet = async (uri, params, headers) => {
+      return await apiInstance.get(`${prefix + uri}`, params, { headers: headers })
+    }
     try {
       console.log('[GET]', uri, params)
-      const res = await apiInstance.get(`${prefix + uri}`, params, { headers: headers })
+      console.log(apiInstance.config)
+      const res = await doGet(uri, params, headers)
       return this.ResponsePayload(res)
     } catch (err) {
       if (this.tokenErrorCheck(err)) {
-        var flag = await this.requestRefresh().then(
-          (res) => {
-            store.dispatch('info/setInfoToken', { accessToken: res.data.accessToken, refreshToken: res.data.refreshToken });
-            this.setDefaultToken()
-            console.log(res)
-            return true
-          }
-        ).catch(
-          (err) => {
-            return false
-          }
-        )
-        if (flag) {
-          const res = await apiInstance.get(`${prefix + uri}`, params, { headers: headers })
-          return this.ResponsePayload(res)
-        } else {
-          this.expiredToken()
-        }
-
+        return await this.doRefreshWork(doGet, uri, params, headers)
       } else {
         return this.ErrorPayload(err)
       }
@@ -353,63 +354,30 @@ const fn = {
   },
 
   async del(uri, params, headers) {
+    const doDel = async (uri, params, headers) => {
+      return await apiInstance.delete(`${prefix + uri}`, { data: params }, { headers: headers })
+    }
     try {
-      console.log('[DEL]', uri, params)
-      const res = await apiInstance.delete(`${prefix + uri}`, { data: params }, { headers: headers })
+      const res = await doDel(uri, params, headers)
       return this.ResponsePayload(res)
     } catch (err) {
       if (this.tokenErrorCheck(err)) {
-        var flag = await this.requestRefresh().then(
-          (res) => {
-            store.dispatch('info/setInfoToken', { accessToken: res.data.accessToken, refreshToken: res.data.refreshToken });
-            this.setDefaultToken()
-            console.log(res)
-            return true
-          }
-        ).catch(
-          (err) => {
-            return false
-          }
-        )
-        if (flag) {
-          const res = await apiInstance.delete(`${prefix + uri}`, params, { headers: headers })
-          return this.ResponsePayload(res)
-        } else {
-          this.expiredToken()
-        }
-
+        return await this.doRefreshWork(doDel, uri, params, headers)
       } else {
         return this.ErrorPayload(err)
       }
     }
   },
   async patch(uri, params, headers) {
+    const doPatch = async (uri, params, headers) => {
+      return await apiInstance.patch(`${prefix + uri}`, params, { headers: headers })
+    }
     try {
-      console.log('[POST]', uri, params)
-      console.log('auth :::::::::::::::', headers)
-      const res = await apiInstance.patch(`${prefix + uri}`, params, { headers: headers })
+      const res = await doPatch(uri, params, headers)
       return this.ResponsePayload(res)
     } catch (err) {
       if (this.tokenErrorCheck(err)) {
-        var flag = await this.requestRefresh().then(
-          (res) => {
-            store.dispatch('info/setInfoToken', { accessToken: res.data.accessToken, refreshToken: res.data.refreshToken });
-            this.setDefaultToken()
-            console.log(res)
-            return true
-          }
-        ).catch(
-          (err) => {
-            return false
-          }
-        )
-        if (flag) {
-          const res = await apiInstance.patch(`${prefix + uri}`, params, { headers: headers })
-          return this.ResponsePayload(res)
-        } else {
-          this.expiredToken()
-        }
-
+        return await this.doRefreshWork(doPatch, uri, params, headers)
       } else {
         return this.ErrorPayload(err)
       }
