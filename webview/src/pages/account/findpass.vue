@@ -1,8 +1,8 @@
 <script>
 import { useVuelidate } from '@vuelidate/core'
 import { required, email } from '@vuelidate/validators'
-//import api from '@/api'
-import axios from 'axios'
+import api from '@/api'
+//import axios from 'axios'
 /**
  * Forgot Password component
  */
@@ -39,11 +39,7 @@ export default {
       // stop here if form is invalid
       this.v$.$touch();
       if (!this.v$.$error) {
-        const res = await axios.post('http://localhost:8090/account/find-pw', this.email, {
-          headers: {
-            'Content-Type': 'text/plain'
-          },
-        })
+        const res = await api.textPlainPost('account/find-pw', this.email)
         console.log(res)
         if (res.status === 200) {
           this.$router.push(process.env.VUE_APP_FINDPASS_OK);

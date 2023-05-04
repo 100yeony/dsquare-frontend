@@ -169,6 +169,7 @@ const baseURL = 'http://localhost:8090'
 var apiInstance
 var multiPartApiInstance
 var noneTokenApiInstance
+var textPlainApiInstance
 
 function createInstance() {
   var accessToken = store.getters['info/infoListByKey']('accessToken')
@@ -190,6 +191,13 @@ function createInstance() {
 
   noneTokenApiInstance = axios.create({
     baseURL: baseURL
+  })
+
+  textPlainApiInstance = axios.create({
+    baseURL: baseURL,
+    headers: {
+      'Content-Type': 'text/plain'
+    }
   })
 
   return fn
@@ -334,7 +342,21 @@ const fn = {
       }
     }
   },
-
+  async textPlainPost(uri, params, headers) {
+    const doTextPlainPost = async (uri, params, headers) => {
+      return await textPlainApiInstance.post(`${prefix + uri}`, params, { headers: headers })
+    }
+    try {
+      const res = await doTextPlainPost(uri, params, headers)
+      return this.ResponsePayload(res)
+    } catch (err) {
+      if (this.tokenErrorCheck(err)) {
+        return await this.doRefreshWork(doTextPlainPost, uri, params, headers)
+      } else {
+        return this.ErrorPayload(err)
+      }
+    }
+  },
   async get(uri, params, headers) {
     const doGet = async (uri, params, headers) => {
       return await apiInstance.get(`${prefix + uri}`, params, { headers: headers })
