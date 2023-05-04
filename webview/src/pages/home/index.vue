@@ -9,20 +9,20 @@
     </v-row>
     <v-row>
       <v-col cols="6">
-        <v-card color="#0000000A">
+        <v-card color="#0000000A" @click="pushMyPosts">
           <v-card-item class="justify-center text-center">
             <img src="@/assets/images/icons/icon_layout-list.png" />
             <p class="text-caption">등록글</p>
-            <v-chip>10</v-chip>
+            <v-chip>{{ myPostsCount }}</v-chip>
           </v-card-item>
         </v-card>
       </v-col>
       <v-col cols="6">
-        <v-card color="#0000000A">
+        <v-card color="#0000000A" @click="pushMyReplies">
           <v-card-item class="justify-center text-center">
             <img src="@/assets/images/icons/icon_smile.png" />
-            <p class="text-caption">Reply</p>
-            <v-chip color="shades-black">12</v-chip>
+            <p class="text-caption">답변/댓글</p>
+            <v-chip color="shades-black">{{ myRepliesCount }}</v-chip>
           </v-card-item>
         </v-card>
       </v-col>
@@ -278,6 +278,15 @@ import store from "@/store";
 import samplePng from "@/assets/images/users/avatar_sample.png";
 import api from '@/api';
 
+/* My place 관련 */
+let myQnaUri = 'mypage/questions';
+let myCommUri = 'mypage/talks';
+let myDealUri = 'mypage/carrots';
+let myRequestCardUri = 'mypage/cards';
+
+let myAnswersUri = 'mypage/answers';
+let myCommentsUri = '/mypage/comments';
+
 let qnaWorkUri = 'board/questions?workYn=true';
 let qnaNonworkUri = 'board/questions?workYn=false';
 let commUri = 'board/talks';
@@ -287,6 +296,9 @@ let cardUri = 'board/cards';
 export default {
   name: "DashboardPage",
   setup() {
+    let myPostsCount = ref(0);
+    let myRepliesCount = ref(0);
+
     let recentTab = ref(0);
     let recentTabTitle = ref(["궁금해요", "소통해요", "당근해요", "카드주세요"]);
     let recentData = ref([]);
@@ -453,6 +465,8 @@ export default {
     }
 
     return {
+      myPostsCount,
+      myRepliesCount,
       recentTab,
       recentTabTitle,
       recentData,
@@ -468,6 +482,26 @@ export default {
   },
   methods: {
     init() { },
+    async requestAllMyplace() {
+      var res = await api.get(myQnaUri).then((response) => { this.myPostsCount += response.data.length });
+      res = await api.get(myCommUri).then((response) => { this.myPostsCount += response.data.length });
+      res = await api.get(myDealUri).then((response) => { this.myPostsCount += response.data.length });
+      res = await api.get(myRequestCardUri).then((response) => { this.myPostsCount += response.data.length });
+      
+      res = await api.get(myAnswersUri).then((response) => { this.myRepliesCount += response.data.length });
+      res = await api.get(myCommentsUri).then((response) => { this.myRepliesCount += response.data.length });
+    },
+    pushMyPosts() {
+      this.$router.push({
+        path: process.env.VUE_APP_MYPAGE_MYPOST,
+      });
+    },
+    pushMyReplies() {
+      this.$router.push({
+        path: process.env.VUE_APP_MYPAGE_MYCOMMENT,
+      });
+    },
+
     async requestAllRecent() {
       var qnaData = [];
       var commData = [];
@@ -558,6 +592,7 @@ export default {
     },
   },
   mounted() {
+    this.requestAllMyplace();
     this.requestAllRecent();
     const infoArea = {}
     var categoryList = ['전체']
