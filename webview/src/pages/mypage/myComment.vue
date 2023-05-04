@@ -137,9 +137,9 @@ export default {
           if (item.boardType === "CARD") {
             path = process.env.VUE_APP_BOARD_CARD_DETAIL;
           } else if (item.boardType === "TALK") {
-            path = process.env.VUE_APP_BOARD_TALK_DETAIL;
+            path = process.env.VUE_APP_BOARD_COMMUNICATION_DETAIL;
           } else { // CARROT
-            path = process.env.VUE_APP_BOARD_CARROT_DETAIL;
+            path = process.env.VUE_APP_BOARD_DEAL_DETAIL;
           }
         }
       }

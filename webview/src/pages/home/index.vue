@@ -53,6 +53,57 @@
         </v-slide-group-item>
       </v-slide-group>
     </div>
+
+    <!-- 최신글 -->
+    <v-row class="mt-2 mb-2">
+      <v-col cols="10">
+        <p class="text-h6 font-weight-black">최신글</p>
+      </v-col>
+      <v-col cols="2"><v-icon icon="mdi-plus"></v-icon></v-col>
+    </v-row>
+    <v-card>
+      <v-tabs fixed-tabs show-arrows bg-color="shades-black" color="shades-white" align-tabs="title" height="2rem"
+        selected-class="shades-white" v-model="recentTab">
+        <v-tab v-for="(i, index) in recentTabTitle.length" :key="index" :value="index" selected-class="shades-white">
+          {{ recentTabTitle[index] }}
+        </v-tab>
+      </v-tabs>
+      <v-card-text>
+        <v-window v-model="recentTab">
+          <!-- 각 게시판 최신글 목록 -->
+          <template v-for="(x, i) in recentData.length" :key="i">
+            <v-window-item :value="i">
+              <v-table density="compact">
+                <tbody>
+                  <tr v-for="post in recentData[i]" :key="post.id">
+                    <v-row no-gutters @click="pushPost(post)">
+                      <v-col cols="8">
+                        <td class="d-inline-block text-truncate text-body-2 font-weight-bold" style="max-width:95%;"
+                          color="#0000008F">
+                          {{ post.title }}
+                        </td>
+                      </v-col>
+                      <v-col cols="2">
+                        <td class="text-caption font-0000008F">
+                          <img src="@/assets/images/icons/icon_heart.png" /> {{ post.likeCnt }}
+                        </td>
+                      </v-col>
+                      <v-col cols="2">
+                        <td class="text-caption font-0000008F">
+                          <img src="@/assets/images/icons/icon_message-circle.png" /> {{ post.commentCnt }}
+                        </td>
+                      </v-col>
+                    </v-row>
+                  </tr>
+                </tbody>
+              </v-table>
+            </v-window-item>
+          </template>
+        </v-window>
+      </v-card-text>
+    </v-card>
+
+
     <!-- 명예의 전당 body-->
     <v-row class="mt-2 mb-2">
       <v-col cols="10">
@@ -61,8 +112,8 @@
       <v-col cols="2"><v-icon icon="mdi-plus"></v-icon></v-col>
     </v-row>
     <v-card>
-      <v-tabs bg-color="shades-black" color="shades-white" align-tabs="title" height="2rem" selected-class="shades-white"
-        v-model="hallOfFameTab">
+      <v-tabs fixed-tabs bg-color="shades-black" color="shades-white" align-tabs="title" height="2rem"
+        selected-class="shades-white" v-model="hallOfFameTab">
         <v-tab v-for="(i, index) in hallOfFameTabTitle.length" :key="index" :value="index" selected-class="shades-white">
           {{ hallOfFameTabTitle[index] }}
         </v-tab>
@@ -135,8 +186,8 @@
     </v-row>
 
     <v-card>
-      <v-tabs bg-color="shades-black" color="shades-white" align-tabs="title" height="2rem" selected-class="shades-white"
-        v-model="userRankingTab">
+      <v-tabs fixed-tabs bg-color="shades-black" color="shades-white" align-tabs="title" height="2rem"
+        selected-class="shades-white" v-model="userRankingTab">
         <v-tab v-for="(i, index) in userRankingTabTitle.length" :key="index" :value="index" selected-class="shades-white">
           {{ userRankingTabTitle[index] }}
         </v-tab>
@@ -218,15 +269,29 @@
     </v-card>
   </div>
 </template>
+
+
 <script>
 import { computed, ref, watch, toRef } from "vue";
 import { useStore } from "vuex";
 import store from "@/store";
 import samplePng from "@/assets/images/users/avatar_sample.png";
-import api from '@/api'
+import api from '@/api';
+
+let qnaWorkUri = 'board/questions?workYn=true';
+let qnaNonworkUri = 'board/questions?workYn=false';
+let commUri = 'board/talks';
+let dealUri = 'board/carrots';
+let cardUri = 'board/cards';
+
 export default {
   name: "DashboardPage",
   setup() {
+    let recentTab = ref(0);
+    let recentTabTitle = ref(["궁금해요", "소통해요", "당근해요", "카드주세요"]);
+    let recentData = ref([]);
+    let recentLimit = ref(5);
+
     let hallOfFameTab = ref(0);
     let hallOfFameTabTitle = ref(["주간", "월간"]);
     let hallOfFameData = ref([
@@ -375,20 +440,125 @@ export default {
       ],
     ]);
 
+    function exportDateFromTimeStamp(timeStamp) {
+      var date = new Date(timeStamp)
+      const year = date.getFullYear();
+      const month = date.getMonth() + 1; // 월은 0부터 시작하므로 1을 더해줍니다.
+      const day = date.getDate();
+      const hour = date.getHours();
+      const minute = date.getMinutes();
+      const seconds = String(date.getSeconds()).padStart(2, '0');
+
+      return year + "-" + month + "-" + day + " " + hour + ":" + minute + " " + seconds;
+    }
+
     return {
+      recentTab,
+      recentTabTitle,
+      recentData,
+      recentLimit,
       hallOfFameTab,
       hallOfFameTabTitle,
       hallOfFameData,
       userRankingTab,
       userRankingTabTitle,
       userRankingData,
+      exportDateFromTimeStamp,
     };
   },
   methods: {
     init() { },
+    async requestAllRecent() {
+      var qnaData = [];
+      var commData = [];
+      var dealData = [];
+      var cardData = [];
+
+      // 궁금해요
+      var res = await api.get(qnaWorkUri).then(
+        (response) => {
+          response.data.forEach((d) => {
+            d.createDate = this.exportDateFromTimeStamp(d.createDate)
+          });
+          qnaData = qnaData.concat(response.data);
+        }
+      );
+      res = await api.get(qnaNonworkUri).then(
+        (response) => {
+          response.data.forEach((d) => {
+            d.createDate = this.exportDateFromTimeStamp(d.createDate)
+          });
+          qnaData = qnaData.concat(response.data);
+        }
+      );
+      qnaData.sort((a, b) => {
+        if (a.createDate < b.createDate) return 1;
+        if (b.createDate < a.createDate) return -1;
+        return 0;
+      });
+      this.recentData.push(qnaData.slice(0, this.recentLimit));
+
+      // 소통해요
+      res = await api.get(commUri).then(
+        (response) => {
+          response.data.forEach((d) => {
+            d.createDate = this.exportDateFromTimeStamp(d.createDate)
+          });
+          commData = response.data;
+        }
+      );
+      this.recentData.push(commData.slice(0, this.recentLimit));
+
+      // 당근해요
+      res = await api.get(dealUri).then(
+        (response) => {
+          response.data.forEach((d) => {
+            d.createDate = this.exportDateFromTimeStamp(d.createDate)
+          });
+          dealData = response.data;
+        }
+      );
+      this.recentData.push(dealData.slice(0, this.recentLimit));
+
+      // 카드주세요
+      res = await api.get(cardUri).then(
+        (response) => {
+          response.data.forEach((d) => {
+            d.createDate = this.exportDateFromTimeStamp(d.createDate)
+          });
+          cardData = response.data;
+        }
+      );
+      this.recentData.push(cardData.slice(0, this.recentLimit));
+    },
+    pushPost(post) {
+      var path, query;
+
+      if ("qid" in post) {
+        path = process.env.VUE_APP_BOARD_QNA_DETAIL;
+        query = { qid: post.qid };
+      } else {
+        if ("talkId" in post) {
+          path = process.env.VUE_APP_BOARD_COMMUNICATION_DETAIL;
+          query = { talkId: post.talkId };
+        } else if ("carrotId" in post) {
+          path = process.env.VUE_APP_BOARD_DEAL_DETAIL;
+          query = { carrotId: post.carrotId };
+        } else {
+          path = process.env.VUE_APP_BOARD_CARD_DETAIL;
+          query = { id: post.cardId };
+        }
+      }
+
+      this.$router.push({
+        path: path,
+        title: post?.title,
+        query: query
+      });
+    },
   },
   mounted() {
-
+    this.requestAllRecent();
     const infoArea = {}
     var categoryList = ['전체']
     var subList = []
@@ -403,19 +573,30 @@ export default {
       })
       console.log(categoryList)
       console.log(subList)
-      store.dispatch('info/setInfoArea', {value1: categoryList, value2: subList})
+      store.dispatch('info/setInfoArea', { value1: categoryList, value2: subList })
     });
 
   }
 };
 </script>
+
 <style scoped>
 .v-tabs--align-tabs-title:not(.v-slide-group--has-affixes) .v-tab:first-child {
   -webkit-margin-start: 0;
   margin-inline-start: 0;
 }
 
-.v-tab.v-tab {
-  min-width: 50%;
+.title-col {
+  font-size: 0px;
+  letter-spacing: 0px;
+  word-spacing: 0px;
+}
+
+.title-col>td {
+  font-size: 0px;
+  letter-spacing: 0px;
+  word-spacing: 0px;
+  margin: 0px;
+  padding: 0px;
 }
 </style>
