@@ -5,17 +5,18 @@
     <p class="text-caption my-3 font-0000008F">
       물품 거래 혹은 나눔을 통해 정을 나눠보세요.
     </p>
+    
     <!-- 검색 -->
     <v-expansion-panels class="my-3">
       <v-expansion-panel>
         <v-expansion-panel-title>검색</v-expansion-panel-title>
         <v-expansion-panel-text>
-          <v-row>
-            <v-col cols="4" class="pr-0 pt-0 mt-5">
-              <v-select v-model="searchKey" placeholder="구분" class="text-truncate" variant="outlined" density="compact"
-                :items="['제목 + 내용', '작성자']"></v-select>
+          <v-row class="mt-1">
+            <v-col cols="4" class="">
+              <v-select v-model="searchKey" placeholder="구분" class="text-truncate" variant="outlined"
+                density="compact" :items="['제목 + 내용', '작성자']"></v-select>
             </v-col>
-            <v-col cols="8" class="pl-0 pt-0 mt-5">
+            <v-col cols="8" class="pl-2">
               <v-text-field v-model="searchContent" placeholder="검색어" variant="outlined" density="compact" />
             </v-col>
           </v-row>
@@ -23,6 +24,16 @@
         </v-expansion-panel-text>
       </v-expansion-panel>
     </v-expansion-panels>
+
+    <div v-if="boardCardData.length == 0 && !searchFlag" class="text-center mt-60 mb-20">
+      <img src="@/assets/images/nopost.png" width="70" height="70">
+      <h3>작성된 글이 없어요</h3>
+    </div>
+
+    <div v-if="boardCardData.length == 0 && searchFlag" class="text-center mt-60 mb-20">
+      <img src="@/assets/images/search.png" width="70" height="70">
+      <h3>검색 결과가 없어요</h3>
+    </div>
 
     <!-- 질문 카드 -->
     <div v-for="(item, index) in boardCardData" :value="item.carrotId">
@@ -95,6 +106,11 @@ export default {
       exportDateFromTimeStamp,
     };
   },
+  data() {
+    return {
+      searchFlag: false, 
+    }
+  },
   computed: {
     searchValidation() {
       if (this.searchKey != '' && this.searchContent != ''){
@@ -123,7 +139,8 @@ export default {
               });
               this.boardCardData = response.data
             }
-          )
+          );
+          this.searchFlag = (this.boardCardData.length == 0) ? true:false  
       }
     },
     async requestAll() {

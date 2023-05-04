@@ -20,7 +20,7 @@
     <p class="mt-3 mb-2 text-h6 font-weight-black">이달의 카드</p>
     <div class="text-center" v-if="this.selectedCardData.length===0">
       <img src="@/assets/images/empty.png" width="70" height="70">
-      <h3>선정된 카드가 없어요</h3>
+      <h3>이달의 카드가 없어요</h3>
     </div>
     <Flicking :plugins="flickingPlugins" :options="flickingOptions" class="mt-2 overflow-visible">
       <RequestCard class="panel mr-3" v-for="(item, index) in selectedCardData" 
@@ -75,6 +75,16 @@
           </v-btn>
         </div>
 
+        <div v-if="requestCardData.length == 0 && !searchFlag" class="text-center mt-60 mb-20">
+          <img src="@/assets/images/nopost.png" width="70" height="70">
+          <h3>대기중인 카드가 없어요</h3>
+        </div>
+
+        <div v-if="requestCardData.length == 0 && searchFlag" class="text-center mt-60 mb-20">
+          <img src="@/assets/images/search.png" width="70" height="70">
+          <h3>검색 결과가 없어요</h3>
+        </div>
+
         <!-- 카드 대기중 목록 -->
         <div>
           <div v-for="(item, index) in requestCardData" :value="item.cardId" class="card">
@@ -110,6 +120,16 @@
             </v-expansion-panel-text>
           </v-expansion-panel>
         </v-expansion-panels>
+
+        <div v-if="completedCardData.length == 0 && !completedFlag" class="text-center mt-60 mb-20">
+          <img src="@/assets/images/nopost.png" width="70" height="70">
+          <h3>선정된 카드가 없어요</h3>
+        </div>
+
+        <div v-if="completedCardData.length == 0 && completedFlag" class="text-center mt-60 mb-20">
+          <img src="@/assets/images/search.png" width="70" height="70">
+          <h3>검색 결과가 없어요</h3>
+        </div>
 
         <div>
           <div v-for="(item, index) in completedCardData" :value="item.cardId" class="card" :key="index">
@@ -221,6 +241,8 @@ export default {
       isShow: false, 
       selectedItem: {},
       qnaTab: 0, 
+      searchFlag: false, 
+      completedFlag: false, 
     };
   },
   watch: {
@@ -326,7 +348,6 @@ export default {
       }
     },
     async search() {
-
       if (typeof this.subcategory == 'string' || typeof this.category == 'string'){
         var res = await api.get('board/cards?projTeamId=' + this.projTeamId).then(
           (response) => {
@@ -335,6 +356,7 @@ export default {
             } else {
               this.completedCardData = []
             }
+            
             response.data.forEach((d) => {
               d.createDate = this.exportDateFromTimeStamp(d.createDate)
               if (d.selectionInfo == null && this.qnaTab == 0) {
@@ -343,6 +365,12 @@ export default {
                 this.completedCardData.push(d)
               }
             });
+
+            if (this.qnaTab == 0){
+              this.searchFlag = (this.requestCardData.length == 0) ? true:false
+            } else {
+              this.completedFlag = (this.completedCardData.length == 0) ? true:false
+            }
           }
         )
       }
