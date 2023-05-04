@@ -62,9 +62,9 @@
       <v-col cols="2"><v-icon icon="mdi-plus"></v-icon></v-col>
     </v-row>
     <v-card>
-      <v-tabs fixed-tabs show-arrows bg-color="shades-black" color="shades-white" align-tabs="title" height="2rem"
+      <v-tabs fixed-tabs bg-color="shades-black" color="shades-white" align-tabs="title" height="2rem"
         selected-class="shades-white" v-model="recentTab">
-        <v-tab v-for="(i, index) in recentTabTitle.length" :key="index" :value="index" selected-class="shades-white">
+        <v-tab v-for="(i, index) in recentTabTitle.length" :key="index" :value="index" selected-class="shades-white" class="pa-0">
           {{ recentTabTitle[index] }}
         </v-tab>
       </v-tabs>
@@ -194,76 +194,41 @@
       </v-tabs>
       <v-card-text>
         <v-window v-model="userRankingTab">
-          <v-window-item :value="0">
-            <v-table density="compact">
-              <tbody>
-                <tr v-for="item in userRankingData[0]" :key="item.id">
-                  <v-row no-gutters>
-                    <v-col cols="2">
-                      <td class="text-h6 font-bold" color="#0000008F">
-                        {{ item.ranking }}
-                      </td>
-                    </v-col>
-                    <v-col cols="2">
-                      <td>
-                        <v-avatar v-if="item.icon">
-                          <v-img cover :src="item.icon"></v-img>
-                        </v-avatar>
-                        <v-avatar v-else color="grey">{{
-                          item.userId
-                        }}</v-avatar>
-                      </td>
-                    </v-col>
-                    <v-col cols="6">
-                      <td class="text-body-2 font-weight-bold" color="#0000008F">
-                        {{ item.userId }}
-                      </td>
-                    </v-col>
-                    <v-col cols="2">
-                      <td class="text-caption font-0000008F">
-                        <img src="@/assets/images/icons/icon_message-circle.png" />{{ item.comment }}
-                      </td>
-                    </v-col>
-                  </v-row>
-                </tr>
-              </tbody>
-            </v-table>
-          </v-window-item>
-          <v-window-item :value="1">
-            <v-table density="compact">
-              <tbody>
-                <tr v-for="item in userRankingData[0]" :key="item.id">
-                  <v-row no-gutters>
-                    <v-col cols="2">
-                      <td class="text-h6 font-bold" color="#0000008F">
-                        {{ item.ranking }}
-                      </td>
-                    </v-col>
-                    <v-col cols="2">
-                      <td>
-                        <v-avatar v-if="item.icon">
-                          <v-img cover :src="item.icon"></v-img>
-                        </v-avatar>
-                        <v-avatar v-else color="grey">{{
-                          item.userId
-                        }}</v-avatar>
-                      </td>
-                    </v-col>
-                    <v-col cols="6">
-                      <td class="text-body-2 font-weight-bold" color="#0000008F">
-                        {{ item.userId }}
-                      </td>
-                    </v-col>
-                    <v-col cols="2">
-                      <td class="text-caption font-0000008F">
-                        <img src="@/assets/images/icons/icon_message-circle.png" />{{ item.comment }}
-                      </td>
-                    </v-col>
-                  </v-row>
-                </tr>
-              </tbody>
-            </v-table>
-          </v-window-item>
+          <template v-for="(x, i) in userRankingData.length" :key="i">
+            <v-window-item :value="i">
+              <v-table density="compact">
+                <tbody>
+                  <tr v-for="(user, rank) in userRankingData[i]" :key="user.id">
+                    <v-row class="mb-2" no-gutters>
+                      <v-col cols="2">
+                        <td class="text-h6 font-bold" color="#0000008F">
+                          {{ rank + 1 }}
+                        </td>
+                      </v-col>
+                      <v-col cols="2">
+                        <td>
+                          <v-avatar v-if="'icon' in user && user.icon">
+                            <v-img cover :src="user.icon"></v-img>
+                          </v-avatar>
+                          <v-avatar v-else color="grey">{{ user.memberInfo?.name.slice(0, 3) }}</v-avatar>
+                        </td>
+                      </v-col>
+                      <v-col align-self="center" cols="6">
+                        <td class="text-body-2 font-weight-bold" color="#0000008F">
+                          {{ user.memberInfo?.name }}
+                        </td>
+                      </v-col>
+                      <v-col align-self="center" cols="2">
+                        <td class="text-caption font-0000008F">
+                          <img src="@/assets/images/icons/icon_message-circle.png" /> {{ user.postCnt }}
+                        </td>
+                      </v-col>
+                    </v-row>
+                  </tr>
+                </tbody>
+              </v-table>
+            </v-window-item>
+          </template>
         </v-window>
       </v-card-text>
     </v-card>
@@ -278,11 +243,16 @@ import store from "@/store";
 import samplePng from "@/assets/images/users/avatar_sample.png";
 import api from '@/api';
 
+/* 최신글 관련 */
 let qnaWorkUri = 'board/questions?workYn=true';
 let qnaNonworkUri = 'board/questions?workYn=false';
 let commUri = 'board/talks';
 let dealUri = 'board/carrots';
 let cardUri = 'board/cards';
+
+/* 사용자랭킹 관련 */
+let questionUserUri = '/dashboard/best-users?key=question';
+let answerUserUri = '/dashboard/best-users?key=answer';
 
 export default {
   name: "DashboardPage",
@@ -363,82 +333,8 @@ export default {
 
     let userRankingTab = ref(0);
     let userRankingTabTitle = ref(["질문왕", "답변왕"]);
-    let userRankingData = ref([
-      [
-        {
-          id: 0,
-          ranking: "No.1",
-          icon: samplePng,
-          userId: "질문왕1",
-          comment: "999+",
-        },
-        {
-          id: 1,
-          icon: "",
-          ranking: "No.2",
-          userId: "질문왕2",
-          comment: "32",
-        },
-        {
-          id: 2,
-          icon: "",
-          ranking: "No.3",
-          userId: "질문왕3",
-          comment: "32",
-        },
-        {
-          id: 3,
-          icon: "",
-          ranking: "No.4",
-          userId: "질문왕4",
-          comment: "32",
-        },
-        {
-          id: 4,
-          icon: "",
-          ranking: "No.4",
-          userId: "질문왕3",
-          comment: "32",
-        },
-      ],
-      [
-        {
-          id: 0,
-          icon: "",
-          ranking: "No.1",
-          userId: "답변왕1",
-          comment: "32",
-        },
-        {
-          id: 1,
-          icon: samplePng,
-          ranking: "No.2",
-          userId: "답변왕2",
-          comment: "32",
-        },
-        {
-          id: 2,
-          icon: "",
-          ranking: "No.3",
-          userId: "답변왕3",
-          comment: "32",
-        },
-        {
-          id: 3,
-          icon: "",
-          ranking: "No.4",
-          userId: "답변왕4",
-          comment: "32",
-        },
-        {
-          id: 4,
-          icon: "",
-          ranking: "No.5",
-          userId: "답변왕5",
-          comment: "32",
-        },
-      ],
-    ]);
+    let userRankingData = ref([]);
+    let userRankingLimit = ref(5);
 
     function exportDateFromTimeStamp(timeStamp) {
       var date = new Date(timeStamp)
@@ -463,11 +359,13 @@ export default {
       userRankingTab,
       userRankingTabTitle,
       userRankingData,
+      userRankingLimit,
       exportDateFromTimeStamp,
     };
   },
   methods: {
     init() { },
+    /* 최신글 관련 */
     async requestAllRecent() {
       var qnaData = [];
       var commData = [];
@@ -556,9 +454,22 @@ export default {
         query: query
       });
     },
+
+    /* 사용자랭킹 관련 */
+    async requestAllUserrank() {
+      var questionUserData = [];
+      var answerUserData = [];
+
+      var res = await api.get(questionUserUri).then((response) => { questionUserData = response.data; });
+      this.userRankingData.push(questionUserData.slice(0, this.userRankingLimit));
+
+      res = await api.get(answerUserUri).then((response) => { answerUserData = response.data; });
+      this.userRankingData.push(answerUserData.slice(0, this.userRankingLimit));
+    }
   },
   mounted() {
     this.requestAllRecent();
+    this.requestAllUserrank();
     const infoArea = {}
     var categoryList = ['전체']
     var subList = []
