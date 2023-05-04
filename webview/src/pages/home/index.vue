@@ -5,7 +5,7 @@
       <v-col cols="10">
         <p class="text-h6 font-weight-black">My Place</p>
       </v-col>
-      <v-col cols="2"><v-icon icon="mdi-plus"></v-icon></v-col>
+      
     </v-row>
     <v-row>
       <v-col cols="6">
@@ -32,7 +32,7 @@
       <v-col cols="10">
         <p class=" text-h6 font-weight-black">Weekly Hot</p>
       </v-col>
-      <v-col cols="2"><v-icon icon="mdi-plus"></v-icon></v-col>
+      
     </v-row>
     <div>
       <v-slide-group>
@@ -59,7 +59,7 @@
       <v-col cols="10">
         <p class="text-h6 font-weight-black">최신글</p>
       </v-col>
-      <v-col cols="2"><v-icon icon="mdi-plus"></v-icon></v-col>
+      
     </v-row>
     <v-card>
       <v-tabs fixed-tabs bg-color="shades-black" color="shades-white" align-tabs="title" height="2rem"
@@ -109,7 +109,7 @@
       <v-col cols="10">
         <p class="text-h6 font-weight-black">명예의 전당</p>
       </v-col>
-      <v-col cols="2"><v-icon icon="mdi-plus"></v-icon></v-col>
+      
     </v-row>
     <v-card>
       <v-tabs fixed-tabs bg-color="shades-black" color="shades-white" align-tabs="title" height="2rem"
@@ -182,7 +182,7 @@
       <v-col cols="10">
         <p class="text-h6 font-weight-black">사용자 랭킹</p>
       </v-col>
-      <v-col cols="2"><v-icon icon="mdi-plus"></v-icon></v-col>
+      
     </v-row>
 
     <v-card>
