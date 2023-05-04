@@ -24,6 +24,16 @@
       </v-expansion-panel>
     </v-expansion-panels>
 
+    <div v-if="boardCardData.length == 0 && !searchFlag" class="text-center mt-60 mb-20">
+      <img src="@/assets/images/nopost.png" width="70" height="70">
+      <h3>작성된 글이 없어요</h3>
+    </div>
+
+    <div v-if="boardCardData.length == 0 && searchFlag" class="text-center mt-60 mb-20">
+      <img src="@/assets/images/search.png" width="70" height="70">
+      <h3>검색 결과가 없어요</h3>
+    </div>
+
     <!-- 질문 카드 -->
     <div v-for="(item, index) in boardCardData" :value="item.talkId">
       <TalkCard class="mt-2" :data="item" @handle-card-clicked="handleCardClicked" />
@@ -106,6 +116,11 @@ export default {
     }
 
   },
+  data() {
+    return {
+      searchFlag: false, 
+    }
+  },
   methods: {
     async search() {
       if (this.searchKey != '' && this.searchContent != '') {
@@ -124,7 +139,8 @@ export default {
               });
               this.boardCardData = response.data
             }
-          )
+          );
+          this.searchFlag = (this.boardCardData.length == 0) ? true:false  
       }
     },
     async requestAll() {
