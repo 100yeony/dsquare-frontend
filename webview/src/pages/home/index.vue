@@ -446,8 +446,9 @@ export default {
       const day = date.getDate();
       const hour = date.getHours();
       const minute = date.getMinutes();
+      const seconds = String(date.getSeconds()).padStart(2, '0');
 
-      return year + "-" + month + "-" + day + " " + hour + ":" + minute
+      return year + "-" + month + "-" + day + " " + hour + ":" + minute + " " + seconds;
     }
 
     return {
