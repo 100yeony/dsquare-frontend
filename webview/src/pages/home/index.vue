@@ -62,8 +62,8 @@
       <v-col cols="2"><v-icon icon="mdi-plus"></v-icon></v-col>
     </v-row>
     <v-card>
-      <v-tabs fixed-tabs show-arrows bg-color="shades-black" color="shades-white" align-tabs="title" height="2rem" selected-class="shades-white"
-        v-model="recentTab">
+      <v-tabs fixed-tabs show-arrows bg-color="shades-black" color="shades-white" align-tabs="title" height="2rem"
+        selected-class="shades-white" v-model="recentTab">
         <v-tab v-for="(i, index) in recentTabTitle.length" :key="index" :value="index" selected-class="shades-white">
           {{ recentTabTitle[index] }}
         </v-tab>
@@ -76,9 +76,10 @@
               <v-table density="compact">
                 <tbody>
                   <tr v-for="post in recentData[i]" :key="post.id">
-                    <v-row no-gutters>
+                    <v-row no-gutters @click="pushPost(post)">
                       <v-col cols="8">
-                        <td class="d-inline-block text-truncate text-body-2 font-weight-bold" style="max-width:95%;" color="#0000008F">
+                        <td class="d-inline-block text-truncate text-body-2 font-weight-bold" style="max-width:95%;"
+                          color="#0000008F">
                           {{ post.title }}
                         </td>
                       </v-col>
@@ -111,8 +112,8 @@
       <v-col cols="2"><v-icon icon="mdi-plus"></v-icon></v-col>
     </v-row>
     <v-card>
-      <v-tabs fixed-tabs bg-color="shades-black" color="shades-white" align-tabs="title" height="2rem" selected-class="shades-white"
-        v-model="hallOfFameTab">
+      <v-tabs fixed-tabs bg-color="shades-black" color="shades-white" align-tabs="title" height="2rem"
+        selected-class="shades-white" v-model="hallOfFameTab">
         <v-tab v-for="(i, index) in hallOfFameTabTitle.length" :key="index" :value="index" selected-class="shades-white">
           {{ hallOfFameTabTitle[index] }}
         </v-tab>
@@ -185,8 +186,8 @@
     </v-row>
 
     <v-card>
-      <v-tabs fixed-tabs bg-color="shades-black" color="shades-white" align-tabs="title" height="2rem" selected-class="shades-white"
-        v-model="userRankingTab">
+      <v-tabs fixed-tabs bg-color="shades-black" color="shades-white" align-tabs="title" height="2rem"
+        selected-class="shades-white" v-model="userRankingTab">
         <v-tab v-for="(i, index) in userRankingTabTitle.length" :key="index" :value="index" selected-class="shades-white">
           {{ userRankingTabTitle[index] }}
         </v-tab>
@@ -472,7 +473,7 @@ export default {
       var commData = [];
       var dealData = [];
       var cardData = [];
-      
+
       // 궁금해요
       var res = await api.get(qnaWorkUri).then(
         (response) => {
@@ -530,6 +531,31 @@ export default {
       );
       this.recentData.push(cardData.slice(0, this.recentLimit));
     },
+    pushPost(post) {
+      var path, query;
+
+      if ("qid" in post) {
+        path = process.env.VUE_APP_BOARD_QNA_DETAIL;
+        query = { qid: post.qid };
+      } else {
+        if ("talkId" in post) {
+          path = process.env.VUE_APP_BOARD_COMMUNICATION_DETAIL;
+          query = { talkId: post.talkId };
+        } else if ("carrotId" in post) {
+          path = process.env.VUE_APP_BOARD_DEAL_DETAIL;
+          query = { carrotId: post.carrotId };
+        } else {
+          path = process.env.VUE_APP_BOARD_CARD_DETAIL;
+          query = { id: post.cardId };
+        }
+      }
+
+      this.$router.push({
+        path: path,
+        title: post?.title,
+        query: query
+      });
+    },
   },
   mounted() {
     this.requestAllRecent();
@@ -547,7 +573,7 @@ export default {
       })
       console.log(categoryList)
       console.log(subList)
-      store.dispatch('info/setInfoArea', {value1: categoryList, value2: subList})
+      store.dispatch('info/setInfoArea', { value1: categoryList, value2: subList })
     });
 
   }
@@ -566,7 +592,7 @@ export default {
   word-spacing: 0px;
 }
 
-.title-col > td {
+.title-col>td {
   font-size: 0px;
   letter-spacing: 0px;
   word-spacing: 0px;
