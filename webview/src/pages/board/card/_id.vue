@@ -1,14 +1,24 @@
 <template>
-  <div class="none_ck-toolbar_border">
+  <div class="none_ck-toolbar_border none_expansion-panel-padding
+   center_expansion-panel-icon 
+   none_expansion-panel-background-color 
+   none_expansion-panel-box-shadow">
+    <div>
+      <CardDialog :isShow="isShowCard" 
+      :title="dialogTitle" 
+      @click-confirm="onConfirmCard" 
+      @click-cancel="onCancelCard" />
+    </div>
+
     <div>
       <DeleteDialog :isShow="isShow" :title="dialogTitle" @click-confirm="onConfirm" @click-cancel="onCancel" />
     </div>
 
-    <v-card class="mx-auto justify-center rounded-lg" :class="cardData.selectionInfo ? 'gifted-card' : 'nongifted-card'" variant="outlined">
+    <v-card class="mx-auto justify-center rounded-lg" variant="outlined">
       <v-card-item>
         <div>
           <v-chip class="gifted-chip mb-3 w-100" v-if="cardData.selectionInfo" variant="outlined">
-            <img src="@/assets/images/icons/party-popper.svg" class="mr-2"/>카드 드립니다!!!
+            <img src="@/assets/images/icons/party-popper.svg" class="mr-2"/>{{ cardData.selectionInfo.cardOwner.name}}님이 카드 드립니다!!!
           </v-chip>
         </div>
         <v-row class="mb-2" align="center">
@@ -78,13 +88,77 @@
             </span>
             <span class="text-caption font-0000008F ml-1">{{ cardData.likeCnt }}</span></v-col>
           <v-col cols="2" class="center-container"><v-icon size="small">mdi-message-text-outline</v-icon><span
-              class="text-caption font-0000008F ml-1"><!-- 댓글 수 --></span></v-col>
+              class="text-caption font-0000008F ml-1">{{ cardData.commentCnt }}</span></v-col>
         </v-row>
       </v-card-item>
+      <v-expansion-panels>
+        <v-expansion-panel>
+          <v-expansion-panel-title class="text-center" color="#f6f6f6">댓글</v-expansion-panel-title>
+          <v-expansion-panel-text>
+            <v-list>
+              <div v-for="(comment) in cardData.comments" :key="comment.writerInfo.id">
+                <v-list-item>
+                  <v-row>
+                    <v-col cols="2">
+                      <v-avatar color="grey" size="40">
+                        <v-img cover src="@/assets/images/users/avatar_sample.png"></v-img>
+                      </v-avatar>
+                    </v-col>
+                    <v-col>
+                      <div>
+                        <div class="font-xs">
+                          {{ comment.writerInfo.name + ' (' + comment.writerInfo.teamHierarchy[comment.writerInfo.teamHierarchy.length - 1] + ')' }}
+                        </div>
+                        <div class="font-xs font_white_gray">
+                          {{ comment.createDate }}
+                        </div>
+                      </div>
+                    </v-col>
+                  </v-row>
+                  <div class="mt-3 mb-3">
+                    <span v-if="(typeof comment.originWriterName != 'undefined')" class="font_bule">
+                      @{{ comment.originWriterName }} </span> {{ comment.content }}
+                  </div>
+                  <v-row>
+                    <v-col class="font_white_gray font-xss text-left"
+                      @click="reComment(cardData, comment.writerInfo, comment.commentId)">
+                      답글 달기
+                    </v-col>
+                    <v-col v-if="this.user.userId == comment.writerInfo.id" class="font_white_gray font-xss text-right"
+                      @click="delComment(comment, cardData, 'card', cardData.cardId)">
+                      삭제
+                    </v-col>
+                  </v-row>
+                </v-list-item>
+
+                <v-divider class="m-em-1" />
+              </div>
+
+              <!-- <v-container v-if="!cardData.commentMode" class="text-center font_white_gray font-xs">
+                <div @click="commentVisible(cardData, true)">댓글 달기</div>
+              </v-container> -->
+
+              <v-container class="text-center font_white_gray font-xs">
+                <!-- <div @click="commentVisible(cardData, false)">닫기</div> -->
+                <div class="mt-5">
+                  <v-chip v-if="!cardData.mentionName == ''">
+                    @{{ cardData.mentionName }}
+                    <v-icon icon="mdi-close-circle" @click="deleteMention(cardData)"></v-icon>
+                  </v-chip>
+                  <v-text-field v-model="cardData.commentText" :ref="cardData.commentInputRef" type="input" variant="outlined"
+                    single-line hide-details append-inner-icon="mdi-send" class="mt-2 inputbox" density="compact"
+                    @click:append-inner="writeComment(cardData, 'card', cardData.cardId)"></v-text-field>
+                </div>
+              </v-container>
+
+            </v-list>
+          </v-expansion-panel-text>
+        </v-expansion-panel>
+      </v-expansion-panels>
     </v-card>
 
     <!-- 카드 승인 버튼 -->
-    <v-card v-if="!isWriter /* && isCardOwner */" class="mt-4" variant="outlined">
+    <v-card v-if="!isWriter && cardData.selectionInfo == null" class="mt-4" variant="outlined">
       <v-card-item>
         <div class="font-m text-center mb-3">수고한 직원들을 응원해주세요!</div>
         <v-btn block color="shades-black" @click="giveCard">카드 주기</v-btn>
@@ -97,6 +171,7 @@
 
 <script>
 import DeleteDialog from '@/components/DeleteDialog';
+import CardDialog from "@/components/cards/CardDialog.vue";
 import store from '@/store';
 import api from '@/api';
 import like from '@/api/like.js';
@@ -104,6 +179,7 @@ import like from '@/api/like.js';
 export default {
   components: {
     DeleteDialog,
+    CardDialog,
   },
   data() {
     return {
@@ -128,14 +204,21 @@ export default {
         createDate: "",
         lastUpdateDate: "",
         likeCnt: 0,
+        commentCnt: 0,
         likeYn: false,
         viewCnt: 0,
         selectionInfo: null,
         teammateCnt: 0,
       },
+      commentList: [],
+      answerList: [
+      ],
+      answerId: 0,
       isWriter: false,
       isCardOwner: false,
       isShow: false,
+      isShowCard: false, 
+      selectedPostType: 0, 
       cardMenu: [
         { title: "수정", id: 0 },
         { title: "삭제", id: 1 },
@@ -144,8 +227,12 @@ export default {
   },
   computed: {
     dialogTitle() {
-      // 댓글이 생길 경우 조건 생성
-      return '게시물을 삭제하시겠습니까?';
+      if (this.selectedPostType == 0){
+        return '게시물을 삭제하시겠습니까?';
+      }
+      else {
+        return '카드를 주시겠습니까?';
+      }
     }
   },
   mounted() {
@@ -156,7 +243,7 @@ export default {
 
     const questionData = this.requestQuestionData();
     questionData.then(
-      (response) => {
+      async (response) => {
         this.cardData = response.data;
         this.cardData.createDate = this.exportDateFromTimeStamp(this.cardData.createDate);
         var tempTeammate = this.cardData.teammate.replaceAll('[', '["').replaceAll(']', '"]').replaceAll(',', '","');
@@ -164,10 +251,94 @@ export default {
         if (this.user.userId == response.data.writerInfo.id) {
           this.isWriter = true;
         }
+        console.log("mounted",this.cardData)
+        let res = await this.callComments('card', this.cardData.cardId)
+        Object.assign(this.cardData, {
+          commentInputRef: 'card' + this.cardData.cardId,
+          mentionName: '',
+          mentionWriterId: 0,
+          mentionId: 0,
+          commentMode: false,
+          commentText: '',
+          comments: res,
+        })
       }
     );
   },
   methods: {
+    reComment(item, writerInfo, commentId) {
+      item.commentMode = true
+      item.mentionName = writerInfo.name
+      item.mentionWriterId = writerInfo.id
+      item.mentionId = commentId
+      this.$nextTick(() => {
+        const comp = this.$refs[item.commentInputRef]
+        if (Array.isArray(comp)) {
+          comp[0].scrollIntoView({ behavior: 'smooth', block: 'end' })
+        } else {
+          comp.scrollIntoView({ behavior: 'smooth', block: 'end' })
+        } 
+      })
+    },
+    deleteMention(item) {
+      item.mentionName = ''
+      item.mentionWriterId = 0
+      item.mentionId = 0
+    },
+    commentVisible(item, flag) {
+      item.commentMode = flag
+      console.log("comment")
+    },
+    async callComments(boardName, boardId) {
+      console.log(boardId)
+      var res = await api.get('board/' + boardName + '/' + boardId + '/comments', '')
+      console.log(res)
+      res.data.forEach(
+        (d) => {
+          d.createDate = this.exportDateFromTimeStamp(d.createDate)
+        }
+      )
+      return res.data
+    },
+    writeComment(item, boardName, boardId) {
+      console.log(item)
+      if (item.mentionName == '') {
+        api.post('board/' + boardName + '/' + boardId + '/comments', {
+          writerId: store.getters["info/infoUser"].userId,
+          content: item.commentText
+        }).then(
+          async (response) => {
+            console.log(response)
+            item.comments = await this.callComments(boardName, boardId)
+            item.commentText = ''
+
+          }
+        )
+      } else {
+        api.post('board/' + boardName + '/' + boardId + '/comments/' + item.mentionId, {
+          writerId: store.getters["info/infoUser"].userId,
+          content: item.commentText,
+          originWriterId: item.mentionWriterId
+        }).then(
+          async (response) => {
+            console.log(response)
+            item.comments = await this.callComments(boardName, boardId)
+            item.commentText = ''
+            this.deleteMention(item)
+          }
+        )
+      }
+    },
+    delComment(comment, item, boardName, boardId) {
+      console.log(comment)
+      api.del('board/comments/' + comment.commentId, '').then(
+        async (response) => {
+          console.log(response)
+          item.comments = await this.callComments(boardName, boardId)
+          item.commentText = ''
+        }
+      )
+    },
     /* 카드 정보 받아오기 */
     async requestQuestionData() {
       var res = await api.get('board/cards/' + this.$route.query.id, '');
@@ -206,14 +377,26 @@ export default {
       }
     },
     showDialog() {
+      this.selectedPostType = 0; 
       this.isShow = true;
+    },
+    showCardDialog() {
+      this.selectedPostType = 1; 
+      this.isShowCard = true; 
     },
     onConfirm() {
       this.isShow = false;
       this.requestDelCard();
     },
+    onConfirmCard() {
+      this.isShowCard = false; 
+      this.cardSelect(); 
+    },
     onCancel() {
       this.isShow = false;
+    },
+    onCancelCard() {
+      this.isShowCard = false; 
     },
     async requestDelCard() {
       const res = await api.del('board/cards/' + this.$route.query.id, '').then(
@@ -226,7 +409,15 @@ export default {
 
     /* 카드 주기 */
     giveCard() {
-      console.log("NotImplementedError"); 
+      this.showCardDialog()
+    },
+
+    async cardSelect() {
+      const res = await api.patch('board/cards/' + this.cardData.cardId).then(
+        (response) => {
+          console.log(response)
+        }
+      )
     },
 
     // 좋아요 관련
@@ -269,5 +460,16 @@ export default {
 
 .sizing {
   font-size: 0.875rem !important;
+}
+
+.v-container{
+  padding-top: 0px !important; 
+  padding-bottom: 16px !important; 
+  padding-left: 16px !important; 
+  padding-right: 16px !important; 
+}
+
+.inputbox{
+  color: black !important; 
 }
 </style>
