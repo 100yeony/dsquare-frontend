@@ -42,6 +42,16 @@
           </v-expansion-panel>
         </v-expansion-panels>
 
+        <div v-if="boardCardData.length == 0 && !workSearchFlag" class="text-center mt-60 mb-20">
+          <img src="@/assets/images/nopost.png" width="70" height="70">
+          <h3>작성된 글이 없어요</h3>
+        </div>
+
+        <div v-if="boardCardData.length == 0 && workSearchFlag" class="text-center mt-60 mb-20">
+          <img src="@/assets/images/search.png" width="70" height="70">
+          <h3>검색 결과가 없어요</h3>
+        </div>
+
         <!-- 질문 카드 -->
         <div v-for="(item, index) in boardCardData" :value="item.qid">
           <BoardCard class="mt-2" :data="item" @handle-card-clicked="handleCardClicked" />
@@ -69,6 +79,16 @@
             </v-expansion-panel-text>
           </v-expansion-panel>
         </v-expansion-panels>
+
+        <div v-if="boardCardData.length == 0 && !searchFlag" class="text-center mt-60 mb-20">
+          <img src="@/assets/images/nopost.png" width="70" height="70">
+          <h3>작성된 글이 없어요</h3>
+        </div>
+
+        <div v-if="boardCardData.length == 0 && searchFlag" class="text-center mt-60 mb-20">
+          <img src="@/assets/images/search.png" width="70" height="70">
+          <h3>검색 결과가 없어요</h3>
+        </div>
 
         <!-- 질문 카드 -->
         <div v-for="(item, index) in boardCardData" :value="item.qid">
@@ -169,6 +189,12 @@ export default {
       exportDateFromTimeStamp,
     };
   },
+  data() {
+    return {
+      workSearchFlag: false, 
+      searchFlag: false, 
+    }
+  },
   computed: {
     searchValidation() {
       if (typeof this.subcategory == 'string') {
@@ -224,7 +250,8 @@ export default {
                   });
                   this.boardCardData = response.data
                 }
-              )
+              ); 
+              this.workSearchFlag = (this.boardCardData.length == 0) ? true:false  
           } else {
             console.log('key, value 없음')
             var res = await api.get('board/questions?workYn=true&cid=' + this.cidData[this.subcategory]).then(
@@ -234,7 +261,8 @@ export default {
                 });
                 this.boardCardData = response.data
               }
-            )
+            );
+            this.workSearchFlag = (this.boardCardData.length == 0) ? true:false  
           }
         } else {
           if (this.searchKey != '' && this.searchContent != '') {
@@ -253,7 +281,8 @@ export default {
                   });
                   this.boardCardData = response.data
                 }
-              )
+              );
+              this.workSearchFlag = (this.boardCardData.length == 0) ? true:false  
           } else {
             var res = await api.get('board/questions?workYn=true').then(
               (response) => {
@@ -262,7 +291,8 @@ export default {
                 });
                 this.boardCardData = response.data
               }
-            )
+            );
+            this.workSearchFlag = (this.boardCardData.length == 0) ? true:false  
           }
         }
       } else if (this.qnaTab == 1) {
@@ -282,7 +312,8 @@ export default {
                 });
                 this.boardCardData = response.data
               }
-            )
+            );
+            this.searchFlag = (this.boardCardData.length == 0) ? true:false  
         }
       }
     },
