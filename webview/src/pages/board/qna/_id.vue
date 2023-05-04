@@ -67,22 +67,37 @@
           <v-expansion-panel-title class="text-center"></v-expansion-panel-title>
           <v-expansion-panel-text>
             <v-list>
-              <div v-for="(comment) in qData.comments">
-                <v-list-item :key="comment.writerInfo.id"
-                  :title="comment.writerInfo.name + ' (' + comment.writerInfo.teamHierarchy[comment.writerInfo.teamHierarchy.length - 1] + ')'"
-                  :subtitle="comment.createDate" prepend-avatar="@/assets/images/users/avatar_sample.png">
-                  <div>
+              <div v-for="(comment) in qData.comments" :key="comment.writerInfo.id">
+                <v-list-item>
+                  <v-row>
+                    <v-col cols="2">
+                      <v-avatar color="grey" size="40">
+                        <v-img cover src="@/assets/images/users/avatar_sample.png"></v-img>
+                      </v-avatar>
+                    </v-col>
+                    <v-col>
+                      <div>
+                        <div class="font-xs">
+                          {{ comment.writerInfo.name + ' (' + comment.writerInfo.teamHierarchy[comment.writerInfo.teamHierarchy.length - 1] + ')' }}
+                        </div>
+                        <div class="font-xs font_white_gray">
+                          {{ comment.createDate }}
+                        </div>
+                      </div>
+                    </v-col>
+                  </v-row>
+                  <div class="mt-3">
                     <span v-if="(typeof comment.originWriterName != 'undefined')" class="font_bule">
                       @{{ comment.originWriterName }} </span> {{ comment.content }}
                   </div>
-                  <v-row class="mt-5">
+                  <v-row class="mt-3">
                     <v-col class="font_white_gray font-xss text-left"
                       @click="reComment(qData, comment.writerInfo, comment.commentId)">
-                      답글 작성
+                      답글 달기
                     </v-col>
                     <v-col v-if="this.user.userId == comment.writerInfo.id" class="font_white_gray font-xss text-right"
-                      @click="delComment(comment, qData, 'question', qnaId)">
-                      댓글 삭제
+                      @click="delComment(comment, qData, 'talk', qnaId)">
+                      삭제
                     </v-col>
                   </v-row>
                 </v-list-item>
@@ -95,14 +110,14 @@
               </v-container>
 
               <v-container v-else class="text-center font_white_gray font-xs">
-                <div @click="commentVisible(qData, false)">댓글작성 닫기</div>
+                <div @click="commentVisible(qData, false)">닫기</div>
                 <div class="mt-5">
                   <v-chip v-if="!qData.mentionName == ''">
                     @{{ qData.mentionName }}
                     <v-icon icon="mdi-close-circle" @click="deleteMention(qData)"></v-icon>
                   </v-chip>
                   <v-text-field v-model="qData.commentText" :ref="qData.commentInputRef" type="input" variant="outlined"
-                    single-line hide-details append-inner-icon="mdi-send" class="mt-2"
+                    single-line hide-details append-inner-icon="mdi-send" class="mt-2" density="compact"
                     @click:append-inner="writeComment(qData, 'question', qnaId)"></v-text-field>
                 </div>
               </v-container>
@@ -163,43 +178,57 @@
               :color="item.writerInfo.id == qData.managerId ? '#E8F2E1' : ''"></v-expansion-panel-title>
             <v-expansion-panel-text>
               <v-list>
-                <div v-for="(comment) in item.comments">
-                  <v-list-item :key="comment.writerInfo.id"
-                    :title="comment.writerInfo.name + ' (' + comment.writerInfo.teamHierarchy[comment.writerInfo.teamHierarchy.length - 1] + ')'"
-                    :subtitle="comment.createDate" prepend-avatar="@/assets/images/users/avatar_sample.png">
-                    <div>
-                      <span v-if="(typeof comment.originWriterName != 'undefined')" class="font_bule">
-                        @{{ comment.originWriterName }} </span> {{ comment.content }}
-                    </div>
+                <div v-for="(comment) in item.comments" :key="comment.writerInfo.id">
+                <v-list-item>
+                  <v-row>
+                    <v-col cols="2">
+                      <v-avatar color="grey" size="40">
+                        <v-img cover src="@/assets/images/users/avatar_sample.png"></v-img>
+                      </v-avatar>
+                    </v-col>
+                    <v-col>
+                      <div>
+                        <div class="font-xs">
+                          {{ comment.writerInfo.name + ' (' + comment.writerInfo.teamHierarchy[comment.writerInfo.teamHierarchy.length - 1] + ')' }}
+                        </div>
+                        <div class="font-xs font_white_gray">
+                          {{ comment.createDate }}
+                        </div>
+                      </div>
+                    </v-col>
+                  </v-row>
+                  <div class="mt-3">
+                    <span v-if="(typeof comment.originWriterName != 'undefined')" class="font_bule">
+                      @{{ comment.originWriterName }} </span> {{ comment.content }}
+                  </div>
+                  <v-row class="mt-3">
+                    <v-col class="font_white_gray font-xss text-left"
+                      @click="reComment(item, comment.writerInfo, comment.commentId)">
+                      답글 달기
+                    </v-col>
+                    <v-col v-if="this.user.userId == comment.writerInfo.id" class="font_white_gray font-xss text-right"
+                      @click="delComment(comment, item, 'answer', item.aid)">
+                      삭제
+                    </v-col>
+                  </v-row>
+                </v-list-item>
 
-                    <v-row class="mt-5">
-                      <v-col class="font_white_gray font-xss text-left"
-                        @click="reComment(item, comment.writerInfo, comment.commentId)">
-                        답글 작성
-                      </v-col>
-                      <v-col v-if="this.user.userId == comment.writerInfo.id" class="font_white_gray font-xss text-right"
-                        @click="delComment(comment, item, 'answer', item.aid)">
-                        댓글 삭제
-                      </v-col>
-                    </v-row>
-
-                  </v-list-item>
-                  <v-divider class="m-em-1" />
-                </div>
+                <v-divider class="m-em-1" />
+              </div>
 
                 <v-container v-if="!item.commentMode" class="text-center font_white_gray font-xs">
                   <div @click="commentVisible(item, true)">댓글 달기</div>
                 </v-container>
 
                 <v-container v-else class="text-center font_white_gray font-xs">
-                  <div @click="commentVisible(item, false)">댓글작성 닫기</div>
+                  <div @click="commentVisible(item, false)">닫기</div>
                   <div class="mt-5">
                     <v-chip v-if="!item.mentionName == ''">
                       @{{ item.mentionName }}
                       <v-icon icon="mdi-close-circle" @click="deleteMention(item)"></v-icon>
                     </v-chip>
                     <v-text-field v-model="item.commentText" :ref="item.commentInputRef" type="input" variant="outlined"
-                      single-line hide-details append-inner-icon="mdi-send" class="mt-2"
+                      single-line hide-details append-inner-icon="mdi-send" class="mt-2" density="compact"
                       @click:append-inner="writeComment(item, 'answer', item.aid)"></v-text-field>
                   </div>
                 </v-container>
@@ -555,5 +584,9 @@ export default {
 
 .v-chip.v-chip--size-default {
   font-size: 0.8rem !important;
+}
+
+::v-deep .mdi-send::before {
+  color: black !important; 
 }
 </style>
