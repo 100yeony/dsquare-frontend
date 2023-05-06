@@ -35,10 +35,12 @@ public class MainActivity extends AppCompatActivity {
     public static final int FILE_SELECTOR_REQ = 1;
     private ValueCallback mFilePathCallback;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
         mContext = this;
         serverUrl = "http://172.20.10.7:8080"; // front 서버
 
@@ -111,6 +113,11 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         webView.loadUrl(serverUrl); // @TODO webview에서 localhost 접근 바로 되지 않아, ip주소로 접근 중.
+
+        boolean isFCM = getIntent().getBooleanExtra("isFCM", false);
+        if (isFCM){
+            loadNotificationPage();
+        }
     }
 
     private void receiveMessage(HashSet<NativeValueDto> hash) {
@@ -174,6 +181,19 @@ public class MainActivity extends AppCompatActivity {
                 mFilePathCallback.onReceiveValue(null);
             }
         }
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        Log.d("FirebaseMessagingService", "onNewIntent");
+        if (intent.getBooleanExtra("isFCM", false)){
+            loadNotificationPage();
+        }
+    }
+
+    private void loadNotificationPage() {
+        webView.loadUrl(serverUrl + "/notifications");
     }
 
 
