@@ -36,21 +36,14 @@
     </v-row>
     <div>
       <v-slide-group>
-        <v-slide-group-item>
-          <v-chip class="ma-2">#페이밴드</v-chip>
-        </v-slide-group-item>
-        <v-slide-group-item>
-          <v-chip class="ma-2">#초과근무</v-chip>
-        </v-slide-group-item>
-        <v-slide-group-item>
-          <v-chip class="ma-2">#벗꽃명소</v-chip>
-        </v-slide-group-item>
-        <v-slide-group-item>
-          <v-chip class="ma-2">#판교사옥</v-chip>
-        </v-slide-group-item>
-        <v-slide-group-item>
-          <v-chip class="ma-2">#내용1</v-chip>
-        </v-slide-group-item>
+        <template v-if="weeklyHotData.length">
+          <v-slide-group-item v-for="(tag, index) in weeklyHotData" :key="index">
+            <v-chip class="ma-2">{{ tag }}</v-chip>
+          </v-slide-group-item>
+        </template>
+        <template v-else>
+          <v-container align="center">한 주간 관심이 많았던 태그가 없습니다.</v-container>
+        </template>
       </v-slide-group>
     </div>
 
@@ -243,6 +236,8 @@ import store from "@/store";
 import samplePng from "@/assets/images/users/avatar_sample.png";
 import api from '@/api';
 
+/* Weekly Hot 관련 */
+let weeklyHotUri = '/board/dashboard/top7-tags';
 /* My place 관련 */
 let myQnaUri = 'mypage/questions';
 let myCommUri = 'mypage/talks';
@@ -266,6 +261,8 @@ let answerUserUri = '/dashboard/best-users?key=answer';
 export default {
   name: "DashboardPage",
   setup() {
+    let weeklyHotData = ref([]);
+    let weeklyHotLimit = ref(7);
     let myPostsCount = ref(0);
     let myRepliesCount = ref(0);
 
@@ -361,6 +358,8 @@ export default {
     }
 
     return {
+      weeklyHotData,
+      weeklyHotLimit,
       myPostsCount,
       myRepliesCount,
       recentTab,
@@ -379,6 +378,12 @@ export default {
   },
   methods: {
     init() { },
+    /* Weekly Hot 태그 관련 */
+    async requestWeeklyHot() {
+      var temp = [];
+      var res = await api.get(weeklyHotUri).then((response) => { temp = response.data; });
+      this.weeklyHotData = temp.slice(0, this.weeklyHotLimit);
+    },
     async requestAllMyplace() {
       var res = await api.get(myQnaUri).then((response) => { this.myPostsCount += response.data.length });
       res = await api.get(myCommUri).then((response) => { this.myPostsCount += response.data.length });
@@ -398,7 +403,6 @@ export default {
         path: process.env.VUE_APP_MYPAGE_MYCOMMENT,
       });
     },
-
     /* 최신글 관련 */
     async requestAllRecent() {
       var qnaData = [];
@@ -502,6 +506,7 @@ export default {
     }
   },
   mounted() {
+    this.requestWeeklyHot();
     this.requestAllMyplace();
     this.requestAllRecent();
     this.requestAllUserrank();
