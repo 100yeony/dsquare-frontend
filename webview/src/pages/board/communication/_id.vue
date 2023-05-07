@@ -10,7 +10,16 @@
       <v-card-item>
         <v-row class="mb-2" align="center">
           <v-col cols="2">
-            <v-avatar color="grey">😀</v-avatar>
+            <span v-if="qData.profileImage == null">
+              <v-avatar color="grey" size="40">
+                <v-img cover src="@/assets/images/users/profile_default.png"></v-img>
+              </v-avatar>
+            </span>
+            <span v-if="qData.profileImage != null">
+              <v-avatar color="grey" size="40">
+                <v-img cover :src="qData.profileImage"></v-img>
+              </v-avatar>
+            </span>
           </v-col>
           <v-col cols="4">
             <div class="text-body font-bold">
@@ -65,9 +74,16 @@
                 <v-list-item>
                   <v-row>
                     <v-col cols="2">
-                      <v-avatar color="grey" size="40">
-                        <v-img cover src="@/assets/images/users/avatar_sample.png"></v-img>
-                      </v-avatar>
+                      <span v-if="comment.writerInfo.profileImage == null">
+                        <v-avatar color="grey" size="40">
+                          <v-img cover src="@/assets/images/users/profile_default.png"></v-img>
+                        </v-avatar>
+                      </span>
+                      <span v-if="comment.writerInfo.profileImage != null">
+                        <v-avatar color="grey" size="40">
+                          <v-img cover :src="comment.writerInfo.profileImage"></v-img>
+                        </v-avatar>
+                      </span>
                     </v-col>
                     <v-col>
                       <div>
@@ -170,6 +186,7 @@ export default {
         tags: [],
         writerId: 0,
         managerId: 0,
+        profileImage: null, 
       },
       commentList: [],
       answerList: [
@@ -379,6 +396,7 @@ export default {
         likeYn: data.likeYn,
         tags: data.tags,
         writerId: data.writerInfo.id,
+        profileImage: data.writerInfo.profileImage, 
       }
     },
 
