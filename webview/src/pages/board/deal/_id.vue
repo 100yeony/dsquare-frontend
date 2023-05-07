@@ -58,7 +58,7 @@
       </v-card-item>
       <v-expansion-panels>
         <v-expansion-panel>
-          <v-expansion-panel-title class="text-center"></v-expansion-panel-title>
+          <v-expansion-panel-title class="text-center" color="#f6f6f6">댓글</v-expansion-panel-title>
           <v-expansion-panel-text>
             <v-list>
               <div v-for="(comment) in qData.comments" :key="comment.writerInfo.id">
@@ -80,11 +80,11 @@
                       </div>
                     </v-col>
                   </v-row>
-                  <div class="mt-3">
+                  <div class="mt-3 mb-3">
                     <span v-if="(typeof comment.originWriterName != 'undefined')" class="font_bule">
                       @{{ comment.originWriterName }} </span> {{ comment.content }}
                   </div>
-                  <v-row class="mt-3">
+                  <v-row>
                     <v-col class="font_white_gray font-xss text-left"
                       @click="reComment(qData, comment.writerInfo, comment.commentId)">
                       답글 달기
@@ -99,19 +99,19 @@
                 <v-divider class="m-em-1" />
               </div>
 
-              <v-container v-if="!qData.commentMode" class="text-center font_white_gray font-xs">
+              <!-- <v-container v-if="!qData.commentMode" class="text-center font_white_gray font-xs">
                 <div @click="commentVisible(qData, true)">댓글 달기</div>
-              </v-container>
+              </v-container> -->
 
-              <v-container v-else class="text-center font_white_gray font-xs">
-                <div @click="commentVisible(qData, false)">닫기</div>
+              <v-container class="text-center font_white_gray font-xs">
+                <!-- <div @click="commentVisible(qData, false)">닫기</div> -->
                 <div class="mt-5">
                   <v-chip v-if="!qData.mentionName == ''">
                     @{{ qData.mentionName }}
                     <v-icon icon="mdi-close-circle" @click="deleteMention(qData)"></v-icon>
                   </v-chip>
                   <v-text-field v-model="qData.commentText" :ref="qData.commentInputRef" type="input" variant="outlined"
-                    single-line hide-details append-inner-icon="mdi-send" class="mt-2" density="compact"
+                    single-line hide-details append-inner-icon="mdi-send" class="mt-2 inputbox" density="compact"
                     @click:append-inner="writeComment(qData, 'carrot', qnaId)"></v-text-field>
                 </div>
               </v-container>
@@ -413,7 +413,14 @@ export default {
   font-size: 0.8rem !important;
 }
 
-::v-deep .mdi-send::before {
+.v-container{
+  padding-top: 0px !important; 
+  padding-bottom: 16px !important; 
+  padding-left: 16px !important; 
+  padding-right: 16px !important; 
+}
+
+.inputbox{
   color: black !important; 
 }
 </style>
