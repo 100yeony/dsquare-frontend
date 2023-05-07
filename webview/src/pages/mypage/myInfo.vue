@@ -4,7 +4,7 @@ import { useVuelidate } from "@vuelidate/core";
 import { required, email } from "@vuelidate/validators";
 import api from '@/api'
 import regex from "@/utils/regex"
-import sample from "@/assets/images/users/avatar_sample.png";
+import sample from "@/assets/images/users/profile_default.png";
 import store from '@/store';
 
 const contactValidator = (contact) => contact == "" || regex.phoneRegexCheck(contact);
@@ -44,7 +44,7 @@ export default {
       subcategoryItems: [],
       submitted: false,
       flag: false,
-      profileImage: sample,
+      profileImage: null,
       imageFormData: null,
       menu: false,
     };
@@ -131,6 +131,7 @@ export default {
     const userData = this.requestUserData();
     userData.then(
       (response) => {
+        console.log('user infooooooo', response)
         this.user.nickname = response.data.nickname;
         this.user.name = response.data.name;
         this.user.email = response.data.email;
@@ -144,6 +145,11 @@ export default {
           })
         }
         this.user.ktMail = response.data.ktMail;
+        if (response.data.profileImage == null) {
+          this.profileImage = sample
+        } else {
+          this.profileImage = response.data.profileImage;
+        } 
       }
     );
     console.log(userData)
@@ -178,15 +184,20 @@ export default {
     goToDeleteMember() {
       this.$router.push('/account/delete-member');
     },
-    handleImageUpload(event) {
+    async handleImageUpload(event) {
       const file = event.target.files[0];
       const fileName = file.name;
       const uploadNameInput = document.querySelector('.upload-name');
       const formData = new FormData();
-      formData.append('profileImage', file);
+      formData.append('image', file);
       this.profileImage = URL.createObjectURL(file);
       this.imageFormData = formData;
       uploadNameInput.value = fileName;
+
+      const res = await api.patch('member/members/' + this.userId + '/profile/image', this.imageFormData
+      ).then((response) => {
+        console.log(response)
+      });
     },
     categoryChanged() {
       this.subcategory = [];
