@@ -379,7 +379,6 @@ export default {
   },
   methods: {
     init() { },
-<<<<<<< webview/src/pages/home/index.vue
     async requestAllMyplace() {
       var res = await api.get(myQnaUri).then((response) => { this.myPostsCount += response.data.length });
       res = await api.get(myCommUri).then((response) => { this.myPostsCount += response.data.length });
@@ -400,9 +399,7 @@ export default {
       });
     },
 
-=======
     /* 최신글 관련 */
->>>>>>> webview/src/pages/home/index.vue
     async requestAllRecent() {
       var qnaData = [];
       var commData = [];
