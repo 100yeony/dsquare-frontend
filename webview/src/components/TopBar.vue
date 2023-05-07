@@ -5,12 +5,14 @@
       <v-list>
         <v-row justify="center">
           <v-col cols="2">
-            <img src="@/assets/images/icons/icon_cat.png" />
+            <v-avatar color="grey" size="40">
+              <v-img cover :src="profileImage"></v-img>
+            </v-avatar>
           </v-col>
-          <v-col cols="8">
-            <span class="text-body font-bold">dsweeee</span>
+          <v-col cols="7" class="d-flex align-self-center pl-5">
+            <span class="text-body font-bold">{{ this.userName }}</span>
           </v-col>
-          <v-col cols="2" @click="drawer = false">
+          <v-col cols="2" class="d-flex align-self-center" @click="drawer = false">
             <img src="@/assets/images/icons/icon_back.png" />
           </v-col>
         </v-row>
@@ -33,7 +35,9 @@
         <v-btn icon size="x-large" @click="onclickBackBtn()" v-if="back">
           <v-icon>mdi-arrow-left</v-icon>
         </v-btn>
-        <v-toolbar-title>DSquare</v-toolbar-title>
+        <v-toolbar-title><span>
+          <router-link to="/home" class="n_td">DSquare</router-link>
+        </span></v-toolbar-title>
         <!--
       아래 내용들을 이용해서, 검색, push를 custom 진행하세요.
        -->
@@ -67,6 +71,8 @@ import { computed, onMounted, ref } from "vue";
 import { useStore } from "vuex";
 import stringUtils from "@/utils/stringUtils";
 import { menuItems } from "@/components/right-menu";
+import api from '@/api'
+
 export default {
   name: "TopBar",
   components: {},
@@ -75,7 +81,8 @@ export default {
     const menuTitle = computed(() => store.getters["layout/menuTitle"]);
     const back = computed(() => store.getters["url/urlBack"]);
     const query = computed(() => store.getters["url/urlQuery"]);
-    return { menuTitle, back, query };
+    const user = computed(() => store.getters["info/infoUser"]);
+    return { menuTitle, back, query, user };
   },
   data: () => ({
     notifications: [
@@ -87,8 +94,24 @@ export default {
     drawer: false,
     group: null,
     menuItems: menuItems,
+    userName: '',
+    profileImage: null,
   }),
+  mounted() {
+    const userData = this.requestUserData();
+    userData.then(
+      (response) => {
+        console.log('user infooooooo', response)
+        this.userName = response.data.name 
+        this.profileImage = response.data.profileImage
+      }
+    );
+  },
   methods: {
+    async requestUserData() {
+      var res = await api.get('member/members/' + this.user.userId, '');
+      return res;
+    },
     onclickBackBtn() {
       if (!stringUtils.isEmptyBool(this.back)) {
         this.$router.replace({
@@ -116,5 +139,9 @@ export default {
 .right-navigation-drawer {
   width: 70%;
   max-width: 400px;
+}
+
+a {
+  color: black !important; 
 }
 </style>
