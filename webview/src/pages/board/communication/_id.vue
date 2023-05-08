@@ -21,10 +21,9 @@
               </v-avatar>
             </span>
           </v-col>
-          <v-col cols="4">
+          <v-col cols="4" class="pl-5">
             <div class="text-body font-bold">
-              <v-row>{{ qData.name }}</v-row>
-              <v-row class="text-caption font-0000008F">{{ qData.team }}</v-row>
+              <v-row>{{ qData.nickname }}</v-row>
             </div>
           </v-col>
           <v-col cols="4">
@@ -88,7 +87,7 @@
                     <v-col>
                       <div>
                         <div class="font-xs">
-                          {{ comment.writerInfo.name + ' (' + comment.writerInfo.teamHierarchy[comment.writerInfo.teamHierarchy.length - 1] + ')' }}
+                          {{ comment.writerInfo.nickname}}
                         </div>
                         <div class="font-xs font_white_gray">
                           {{ comment.createDate }}
@@ -166,6 +165,7 @@ export default {
       qnaId: 0,
       qData: {
         name: "",
+        nickname: "",
         team: "",
         atc: {
           atcId: 0,
@@ -379,6 +379,7 @@ export default {
       console.log("parse_data:  ", data)
       return {
         name: data.writerInfo.name,
+        nickname: data.writerInfo.nickname, 
         team: data.writerInfo.teamHierarchy[data.writerInfo.teamHierarchy.length - 1],
         atc: {
           atcId: 1,

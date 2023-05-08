@@ -4,9 +4,7 @@
             <div>
                 <v-row>
                     <v-col>
-                        <div class="text-caption font-0000008F">{{ props?.data?.writerInfo?.name }}({{
-                            props?.data?.writerInfo?.teamHierarchy[props?.data?.writerInfo?.teamHierarchy.length - 1] }})
-                        </div>
+                        <div class="text-caption font-0000008F">{{ props?.data?.writerInfo?.nickname }}</div>
                     </v-col>
                     <v-col cols="5" align="right" class="text-caption font-0000008F">{{ props?.data?.createDate }}</v-col>
                 </v-row>
