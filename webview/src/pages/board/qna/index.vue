@@ -144,6 +144,7 @@ import api from '@/api';
 import store from "@/store";
 
 let questionUri = 'board/questions';
+let searchUri = 'board/questions';
 
 export default {
   name: "qnaBoard",
@@ -229,6 +230,7 @@ export default {
       nonworkDataOrder: "create",
       nonworkDataPage: 0,
       nonworkDataSize: 10,
+      searchParams: {},
     };
   },
   data() {
@@ -275,105 +277,122 @@ export default {
     async search() {
       // 업무
       if (this.qnaTab == 0) {
+        var params = {
+          workYn: true,
+          order: this.workDataOrder,
+          page: (this.workDataPage = 0),
+          size: (this.workDataSize = 10),
+        };
+        
         if (typeof this.subcategory == 'string') {
+          params['cid'] = this.cidData[this.subcategory];
           if (this.searchKey != '' && this.searchContent != '') {
-            var key = ''
             if (this.searchKey == '제목 + 내용') {
-              key = 'titleAndContent'
+              params['key'] = 'titleAndContent';
             } else if (this.searchKey == '작성자') {
-              key = 'member'
+              params['key'] = 'member';
             }
-            var res = await api.get('board/questions?workYn=true&cid='
-              + this.cidData[this.subcategory]
-              + '&key=' + key
-              + '&value=' + this.searchContent).then(
-                (response) => {
-                  response.data.forEach((d) => {
-                    d.createDate = this.exportDateFromTimeStamp(d.createDate)
-                  });
-                  this.workCardData = response.data
-                }
-              ); 
-              this.workSearchFlag = (this.workCardData.length == 0) ? true:false  
+            params['value'] = this.searchContent;
+            // var res = await api.get(searchUri, {params}).then(
+            //   (response) => {
+            //     response.data.forEach((d) => {
+            //       d.createDate = this.exportDateFromTimeStamp(d.createDate)
+            //     });
+            //     this.workCardData = response.data
+            //   }
+            // ); 
+            this.workCardData = [];
+            this.workSearchFlag = (this.workCardData.length == 0) ? true:false  
           } else {
             console.log('key, value 없음')
-            var res = await api.get('board/questions?workYn=true&cid=' + this.cidData[this.subcategory]).then(
-              (response) => {
-                response.data.forEach((d) => {
-                  d.createDate = this.exportDateFromTimeStamp(d.createDate)
-                });
-                this.workCardData = response.data
-              }
-            );
+            // var res = await api.get(searchUri, {params}).then(
+            //   (response) => {
+            //     response.data.forEach((d) => {
+            //       d.createDate = this.exportDateFromTimeStamp(d.createDate)
+            //     });
+            //     this.workCardData = response.data
+            //   }
+            // );
+            this.workCardData = [];
             this.workSearchFlag = (this.workCardData.length == 0) ? true:false  
           }
         } else {
           if (this.searchKey != '' && this.searchContent != '') {
-            var key = ''
             if (this.searchKey == '제목 + 내용') {
-              key = 'titleAndContent'
+              params['key'] = 'titleAndContent'
             } else if (this.searchKey == '작성자') {
-              key = 'member'
+              params['key'] = 'member'
             }
-            var res = await api.get('board/questions?workYn=true'
-              + '&key=' + key
-              + '&value=' + this.searchContent).then(
-                (response) => {
-                  response.data.forEach((d) => {
-                    d.createDate = this.exportDateFromTimeStamp(d.createDate)
-                  });
-                  this.workCardData = response.data
-                }
-              );
-              this.workSearchFlag = (this.workCardData.length == 0) ? true:false  
+            params['value'] = this.searchContent;
+            // var res = await api.get(searchUri, {params}).then(
+            //   (response) => {
+            //     response.data.forEach((d) => {
+            //       d.createDate = this.exportDateFromTimeStamp(d.createDate)
+            //     });
+            //     this.workCardData = response.data
+            //   }
+            // );
+            this.workCardData = [];
+            this.workSearchFlag = (this.workCardData.length == 0) ? true:false  
           } else {
-            var res = await api.get('board/questions?workYn=true').then(
-              (response) => {
-                response.data.forEach((d) => {
-                  d.createDate = this.exportDateFromTimeStamp(d.createDate)
-                });
-                this.workCardData = response.data
-              }
-            );
+            // var res = await api.get(searchUri, {params}).then(
+            //   (response) => {
+            //     response.data.forEach((d) => {
+            //       d.createDate = this.exportDateFromTimeStamp(d.createDate)
+            //     });
+            //     this.workCardData = response.data
+            //   }
+            // );
+            this.workCardData = [];
             this.workSearchFlag = (this.workCardData.length == 0) ? true:false  
           }
         }
+
+        this.searchParams = params;
       }
       // 비업무
       else if (this.qnaTab == 1) {
+        var params = {
+          workYn: false,
+          order: this.nonworkDataOrder,
+          page: (this.nonworkDataPage = 0),
+          size: (this.nonworkDataSize = 10),
+        };
         if (this.searchKey != '' && this.searchContent != '') {
-          var key = ''
           if (this.searchKey == '제목 + 내용') {
-            key = 'titleAndContent'
+            params['key'] = 'titleAndContent';
           } else if (this.searchKey == '작성자') {
-            key = 'member'
+            params['key'] = 'member';
           }
-          var res = await api.get('board/questions?workYn=false'
-            + '&key=' + key
-            + '&value=' + this.searchContent).then(
-              (response) => {
-                response.data.forEach((d) => {
-                  d.createDate = this.exportDateFromTimeStamp(d.createDate)
-                });
-                this.workCardData = response.data
-              }
-            );
-            this.searchFlag = (this.workCardData.length == 0) ? true:false  
+          params['value'] = this.searchContent;
+          this.nonworkCardData = [];
+          // var res = await api.get(searchUri, {params}).then(
+          //   (response) => {
+          //     response.data.forEach((d) => {
+          //       d.createDate = this.exportDateFromTimeStamp(d.createDate)
+          //     });
+          //     this.nonworkCardData = response.data
+          //   }
+          // );
+          this.searchFlag = (this.nonworkCardData.length == 0) ? true:false  
         }
+
+        this.searchParams = params;
       }
     },
     async loadMore() {
-      var params = this.qnaTab == 0 ? {
-        workYn: true,
-        order: this.workDataOrder,
-        page: this.workDataPage ? this.workDataPage + 1 : 0,
-        size: this.workDataSize, 
-      } : {
-        workYn: false,
-        order: this.nonworkDataOrder,
-        page: this.nonworkDataPage ? this.nonworkDataPage + 1 : 0,
-        size: this.nonworkDataSize, 
-      };
+      var params = this.searchParams ?? {};
+      if (this.qnaTab === 0) {
+        params['workYn'] = true,
+        params['order'] = this.workDataOrder;
+        params['page'] = this.workDataPage ? this.workDataPage + 1 : 0;
+        params['size'] = this.workDataSize;
+      } else {
+        params['workYn'] = false;
+        params['order'] = this.nonworkDataOrder;
+        params['page'] = this.nonworkDataPage ? this.nonworkDataPage + 1 : 0;
+        params['size'] = this.nonworkDataSize; 
+      }
       var res = await api.get(questionUri, { params }).then(
         (response) => {
           if ([200, 201].includes(response.status) && response.data.length) {
@@ -390,28 +409,6 @@ export default {
           }
         }
       );
-      
-    },
-    async requestAllWork() {
-      var res = await api.get('board/questions' + '?' + 'workYn=true&order=create&page=0&size=10').then(
-        (response) => {
-          response.data.forEach((d) => {
-            d.createDate = this.exportDateFromTimeStamp(d.createDate)
-          });
-          this.workCardData = response.data
-        }
-      )
-    },
-
-    async requestAllNoneWork() {
-      var res = await api.get('board/questions' + '?' + 'workYn=false&order=create&page=0&size=10').then(
-        (response) => {
-          response.data.forEach((d) => {
-            d.createDate = this.exportDateFromTimeStamp(d.createDate)
-          });
-          this.workCardData = response.data
-        }
-      )
     },
     sort(index) {
       // index 0=좋아요순, 1=등록순
