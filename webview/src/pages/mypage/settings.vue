@@ -2,9 +2,23 @@
   <v-data-table
     :headers="headers"
     :items="users"
-    :sort-by="[{ key: 'calories', order: 'asc' }]"
+    :sort-by="[{ key: 'name', order: 'asc' }]"
     class="elevation-1"
   >
+  <template v-slot:item.profileImage="{ item }">
+    {{ item }}
+    <span v-if="item.profileImage==null">
+      <v-avatar color="grey" size="40">
+        <v-img cover src="@/assets/images/users/profile_default.png"></v-img>
+      </v-avatar>
+    </span>
+    <span v-else>
+      <v-avatar color="grey" size="40">
+        <v-img cover :src="item.profileImage"></v-img>
+      </v-avatar>
+    </span>
+  </template>
+
     <template v-slot:top>
       <v-toolbar
         flat
@@ -149,7 +163,7 @@ import { VDataTable } from 'vuetify/labs/VDataTable'
       dialogDelete: false,
       headers: [
         {
-          title: '',
+          title: '프로필',
           align: 'start',
           sortable: false,
           key: 'profileImage',
@@ -199,18 +213,18 @@ import { VDataTable } from 'vuetify/labs/VDataTable'
       },
     },
     mounted() {
-    const userData = this.requestUserData();
-    userData.then(
-      (response) => {
-        console.log('user info for manager', response)
-        response.data.forEach((d) => {
-          this.users.push(d)
-        });
-      }
-    );
-    console.log(this.users) 
+      const userData = this.requestUserData();
+      userData.then(
+        (response) => {
+          console.log('user info for manager', response)
+          response.data.forEach((d) => {
+            this.users.push(d)
+          });
+        }
+      );
+      console.log(this.users) 
 
-  },
+    },
 
   methods: {
     async requestUserData() {

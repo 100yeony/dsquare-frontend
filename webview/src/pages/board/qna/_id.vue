@@ -153,7 +153,7 @@
 
     <!-- ***** 답변 ***** -->
     <div v-for="(item, index) in answerList" :value="item.id">
-      <v-card :color="item.writerInfo.id == qData.managerId ? '#E8F2E1' : ''" class="mt-4">
+      <v-card class="mt-4">
         <v-card-title v-if="item.writerInfo.id == qData.managerId" class="font-6DAE43">
           <v-icon class="mr-2">mdi-checkbox-marked-circle-outline</v-icon>담당자 답변 완료
         </v-card-title>
