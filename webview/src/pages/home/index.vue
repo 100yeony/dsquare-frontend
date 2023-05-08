@@ -83,7 +83,7 @@
                       </v-col>
                       <v-col cols="2">
                         <td class="text-caption font-0000008F">
-                          <img src="@/assets/images/icons/icon_message-circle.png" /> {{ post.commentCnt }}
+                          <img src="@/assets/images/icons/icon_message-circle.png" /> {{ "qid" in post ? post.answerCnt : post.commentCnt }}
                         </td>
                       </v-col>
                     </v-row>
@@ -113,53 +113,25 @@
       </v-tabs>
       <v-card-text>
         <v-window v-model="hallOfFameTab">
-          <v-window-item :value="0">
+          <v-window-item v-for="(hall, i) in hallofFameData" :key="i" :value="0">
             <v-table density="compact">
               <tbody>
-                <tr v-for="item in hallOfFameData[0]" :key="item.id">
-                  <v-row no-gutters>
+                <tr v-for="post in hall" :key="post.qid">
+                  <v-row no-gutters @click="pushPost(post)">
                     <v-col cols="8">
-                      <td class="text-body-2 font-weight-bold" color="#0000008F">
-                        {{ item.title }}
+                      <td class="d-inline-block text-truncate text-body-2 font-weight-bold" style="max-width:95%;" 
+                        color="#0000008F">
+                        {{ post.title }}
                       </td>
                     </v-col>
                     <v-col cols="2">
                       <td class="text-caption font-0000008F">
-                        <img src="@/assets/images/icons/icon_heart.png" />{{
-                          item.like
-                        }}
+                        <img src="@/assets/images/icons/icon_heart.png" />{{ post.likeCnt }}
                       </td>
                     </v-col>
                     <v-col cols="2">
                       <td class="text-caption font-0000008F">
-                        <img src="@/assets/images/icons/icon_message-circle.png" />{{ item.comment }}
-                      </td>
-                    </v-col>
-                  </v-row>
-                </tr>
-              </tbody>
-            </v-table>
-          </v-window-item>
-          <v-window-item :value="1">
-            <v-table density="compact">
-              <tbody>
-                <tr v-for="item in hallOfFameData[1]" :key="item.id">
-                  <v-row no-gutters>
-                    <v-col cols="8">
-                      <td class="text-body-2 font-weight-bold" color="#0000008F">
-                        {{ item.title }}
-                      </td>
-                    </v-col>
-                    <v-col cols="2">
-                      <td class="text-caption font-0000008F">
-                        <img src="@/assets/images/icons/icon_heart.png" />{{
-                          item.like
-                        }}
-                      </td>
-                    </v-col>
-                    <v-col cols="2">
-                      <td class="text-caption font-0000008F">
-                        <img src="@/assets/images/icons/icon_message-circle.png" />{{ item.comment }}
+                        <img src="@/assets/images/icons/icon_message-circle.png" />{{ post.answerCnt }}
                       </td>
                     </v-col>
                   </v-row>
@@ -254,6 +226,10 @@ let commUri = 'board/talks';
 let dealUri = 'board/carrots';
 let cardUri = 'board/cards';
 
+/* 명예의 전당 관련 */
+let hallWeeklyUri = '/dashboard/hall-of-fame?key=week';
+let hallMonthlyUri = '/dashboard/hall-of-fame?key=month';
+
 /* 사용자랭킹 관련 */
 let questionUserUri = '/dashboard/best-users?key=question';
 let answerUserUri = '/dashboard/best-users?key=answer';
@@ -273,72 +249,8 @@ export default {
 
     let hallOfFameTab = ref(0);
     let hallOfFameTabTitle = ref(["주간", "월간"]);
-    let hallOfFameData = ref([
-      [
-        {
-          id: 0,
-          title: "(주간)검증된 베스트 게시글 제목",
-          like: "999+",
-          comment: "999+",
-        },
-        {
-          id: 1,
-          title: "(주간)검증된 베스트 게시글 제목",
-          like: "300",
-          comment: "32",
-        },
-        {
-          id: 2,
-          title: "(주간)검증된 베스트 게시글 제목",
-          like: "227",
-          comment: "32",
-        },
-        {
-          id: 3,
-          title: "(주간)검증된 베스트 게시글 제목",
-          like: "200",
-          comment: "32",
-        },
-        {
-          id: 4,
-          title: "(주간)검증된 베스트 게시글 제목",
-          like: "127",
-          comment: "32",
-        },
-      ],
-      [
-        {
-          id: 0,
-          title: "(월간)검증된 베스트 게시글 제목",
-          like: "327",
-          comment: "32",
-        },
-        {
-          id: 1,
-          title: "(월간)검증된 베스트 게시글 제목",
-          like: "300",
-          comment: "32",
-        },
-        {
-          id: 2,
-          title: "(월간)검증된 베스트 게시글 제목",
-          like: "227",
-          comment: "32",
-        },
-        {
-          id: 3,
-          title: "(월간)검증된 베스트 게시글 제목",
-          like: "200",
-          comment: "32",
-        },
-        {
-          id: 4,
-          title: "(월간)검증된 베스트 게시글 제목",
-          like: "127",
-          comment: "32",
-        },
-      ],
-    ]);
+    let hallOfFameData = ref([]);
+    let hallOfFameLimit = ref(5);
 
     let userRankingTab = ref(0);
     let userRankingTabTitle = ref(["질문왕", "답변왕"]);
@@ -369,6 +281,7 @@ export default {
       hallOfFameTab,
       hallOfFameTabTitle,
       hallOfFameData,
+      hallOfFameLimit,
       userRankingTab,
       userRankingTabTitle,
       userRankingData,
@@ -493,6 +406,18 @@ export default {
       });
     },
 
+    /* 명예의 전당 관련 */
+    async requestAllHall() {
+      var weeklyData = [];
+      var monthlyData = [];
+
+      var res = await api.get(hallWeeklyUri).then((response) => { weeklyData = response.data; });
+      this.hallOfFameData.push(weeklyData.slice(0, this.hallOfFameLimit));
+
+      res = await api.get(hallMonthlyUri).then((response) => { monthlyData = response.data; });
+      this.hallOfFameData.push(monthlyData.slice(0, this.hallOfFameLimit));
+    },
+
     /* 사용자랭킹 관련 */
     async requestAllUserrank() {
       var questionUserData = [];
@@ -509,6 +434,7 @@ export default {
     this.requestWeeklyHot();
     this.requestAllMyplace();
     this.requestAllRecent();
+    this.requestAllHall();
     this.requestAllUserrank();
     const infoArea = {}
     var categoryList = ['전체']
