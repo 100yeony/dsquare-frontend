@@ -13,6 +13,7 @@ import iconSmile from "@/assets/images/icons/icon_smile.png";
 import iconAtSign from "@/assets/images/icons/icon_at_sign.png";
 import iconUsers from "@/assets/images/icons/icon_users.png";
 import iconLogout from "@/assets/images/icons/icon_logout.png";
+import iconSettings from "@/assets/images/icons/settings.png";
 
 export const menuItems = [
   {
@@ -70,9 +71,15 @@ export const menuItems = [
   },
   {
     value: 7,
-    title: "회원정보 관리",
+    title: "개인정보 설정",
     icon: iconUsers,
     url: process.env.VUE_APP_MYPAGE_MYINFO,
+  },
+  {
+    value: 8,
+    title: "회원정보 관리",
+    icon: iconSettings,
+    url: process.env.VUE_APP_MYPAGE_SETTINGS,
   },
   {
     type: "subheader",
@@ -80,7 +87,7 @@ export const menuItems = [
     url: "",
   },
   {
-    value: 8,
+    value: 9,
     title: "로그아웃", 
     icon: iconLogout,
   },
