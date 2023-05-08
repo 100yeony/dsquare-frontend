@@ -165,7 +165,7 @@ import {NativeValueDto} from "@/class/NativeValueDto"
 // export default createInstance()
 
 const prefix = ''
-const baseURL = 'http://172.20.10.7:8090'
+const baseURL = 'http://localhost:8090'
 var apiInstance
 var multiPartApiInstance
 var noneTokenApiInstance
