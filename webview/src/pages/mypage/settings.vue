@@ -7,7 +7,10 @@
   >
   <template v-slot:item.profileImage="{ item }">
     {{ item }}
-    <span v-if="item.profileImage==null">
+    <v-avatar color="grey" size="40">
+      <v-img cover :src="item?.profileImage ?? profileDefaultImg"></v-img>
+    </v-avatar>
+    <!-- <span v-if="item.profileImage==null">
       <v-avatar color="grey" size="40">
         <v-img cover src="@/assets/images/users/profile_default.png"></v-img>
       </v-avatar>
@@ -16,7 +19,7 @@
       <v-avatar color="grey" size="40">
         <v-img cover :src="item.profileImage"></v-img>
       </v-avatar>
-    </span>
+    </span> -->
   </template>
 
     <template v-slot:top>
@@ -29,7 +32,7 @@
           v-model="dialog"
           max-width="500px"
         >
-        
+
           <v-card>
             <v-card-title>
               <span class="text-h5">{{ formTitle }}</span>
@@ -196,6 +199,7 @@ import { VDataTable } from 'vuetify/labs/VDataTable'
         carbs: 0,
         protein: 0,
       },
+      profileDefaultImg : "@/assets/images/users/profile_default.png",
     }),
 
     computed: {
@@ -222,7 +226,7 @@ import { VDataTable } from 'vuetify/labs/VDataTable'
           });
         }
       );
-      console.log(this.users) 
+      console.log(this.users)
 
     },
 
@@ -231,7 +235,7 @@ import { VDataTable } from 'vuetify/labs/VDataTable'
       var res = await api.get('member/members', '');
       return res;
     },
-    
+
 
     editItem (item) {
       this.editedIndex = this.desserts.indexOf(item)
