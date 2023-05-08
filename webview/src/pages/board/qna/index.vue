@@ -42,18 +42,31 @@
           </v-expansion-panel>
         </v-expansion-panels>
 
-        <div v-if="boardCardData.length == 0 && !workSearchFlag" class="text-center mt-60 mb-20">
+        <!-- 정렬 -->
+        <div class="mt-4 mb-4 d-flex justify-end" >
+          <v-btn prepend-icon="mdi-sort-descending">정렬
+            <v-menu activator="parent">
+              <v-list>
+                <v-list-item v-for="(item, index) in sortMenu" :key="index" :value="index" @click="sort(index)">
+                  <v-list-item-title>{{ item.title }}</v-list-item-title>
+                </v-list-item>
+              </v-list>
+            </v-menu>
+          </v-btn>
+        </div>
+
+        <div v-if="workCardData.length == 0 && !workSearchFlag" class="text-center mt-60 mb-20">
           <img src="@/assets/images/nopost.png" width="70" height="70">
           <h3>작성된 글이 없어요</h3>
         </div>
 
-        <div v-if="boardCardData.length == 0 && workSearchFlag" class="text-center mt-60 mb-20">
+        <div v-if="workCardData.length == 0 && workSearchFlag" class="text-center mt-60 mb-20">
           <img src="@/assets/images/search.png" width="70" height="70">
           <h3>검색 결과가 없어요</h3>
         </div>
 
         <!-- 질문 카드 -->
-        <div v-for="(item, index) in boardCardData" :value="item.qid">
+        <div v-for="(item, index) in workCardData" :value="item.qid">
           <BoardCard class="mt-2" :data="item" @handle-card-clicked="handleCardClicked" />
         </div>
         <Observe @triggerIntersected="loadMore" />
@@ -80,18 +93,31 @@
           </v-expansion-panel>
         </v-expansion-panels>
 
-        <div v-if="boardCardData.length == 0 && !searchFlag" class="text-center mt-60 mb-20">
+        <!-- 정렬 -->
+        <div class="mt-4 mb-4 d-flex justify-end" >
+          <v-btn prepend-icon="mdi-sort-descending">정렬
+            <v-menu activator="parent">
+              <v-list>
+                <v-list-item v-for="(item, index) in sortMenu" :key="index" :value="index" @click="sort(index)">
+                  <v-list-item-title>{{ item.title }}</v-list-item-title>
+                </v-list-item>
+              </v-list>
+            </v-menu>
+          </v-btn>
+        </div>
+
+        <div v-if="nonworkCardData.length == 0 && !searchFlag" class="text-center mt-60 mb-20">
           <img src="@/assets/images/nopost.png" width="70" height="70">
           <h3>작성된 글이 없어요</h3>
         </div>
 
-        <div v-if="boardCardData.length == 0 && searchFlag" class="text-center mt-60 mb-20">
+        <div v-if="nonworkCardData.length == 0 && searchFlag" class="text-center mt-60 mb-20">
           <img src="@/assets/images/search.png" width="70" height="70">
           <h3>검색 결과가 없어요</h3>
         </div>
 
         <!-- 질문 카드 -->
-        <div v-for="(item, index) in boardCardData" :value="item.qid">
+        <div v-for="(item, index) in nonworkCardData" :value="item.qid">
           <BoardCard class="mt-2" :data="item" @handle-card-clicked="handleCardClicked" />
         </div>
         <Observe @triggerIntersected="loadMore" />
@@ -117,6 +143,8 @@ import Observe from "@/components/Observer";
 import api from '@/api';
 import store from "@/store";
 
+let questionUri = 'board/questions';
+
 export default {
   name: "qnaBoard",
   components: {
@@ -137,6 +165,11 @@ export default {
     let cidData = {};
     categoriesAll.forEach((value, index) => cidData[value] = index + 1);
 
+    let sortMenu = [
+      { title: "좋아요순" },
+      { title: "최신순" },
+    ]
+
     function exportDateFromTimeStamp(timeStamp) {
       var date = new Date(timeStamp)
       const year = date.getFullYear();
@@ -156,19 +189,19 @@ export default {
     var subcategoryItems = ref(pageState?.subcategoryItems ?? [])
     var searchKey = ref(pageState?.searchKey ?? '')
     var searchContent = ref(pageState?.searchContent ?? '')
-    var page = ref(pageState?.page ?? 1)
-    var boardCardData = ref(pageState?.boardCardData ?? [])
+    var workCardData = ref(pageState?.workCardData ?? [])
+    var nonworkCardData = ref(pageState?.nonworkCardData ?? [])
 
-    if (Object.keys(pageState).length == 0) {
-      api.get('board/questions' + '?' + 'workYn=true').then(
-        (res) => {
-          res.data.forEach((d) => {
-            d.createDate = exportDateFromTimeStamp(d.createDate)
-          });
-          boardCardData.value = res.data
-        }
-      )
-    }
+    // if (Object.keys(pageState).length == 0) {
+    //   api.get('board/questions' + '?' + 'workYn=true&order=create&page=0&size=10').then(
+    //     (res) => {
+    //       res.data.forEach((d) => {
+    //         d.createDate = exportDateFromTimeStamp(d.createDate)
+    //       });
+    //       workCardData.value = res.data
+    //     }
+    //   )
+    // }
 
     store.dispatch('info/setPageState', {});
 
@@ -184,9 +217,18 @@ export default {
       subcategoryItems,
       searchKey,
       searchContent,
-      page,
-      boardCardData,
+      sortMenu,
+      workCardData,
+      nonworkCardData,
       exportDateFromTimeStamp,
+
+      /* GET param 관련  */
+      workDataOrder: "create",
+      workDataPage: 0,
+      workDataSize: 10,
+      nonworkDataOrder: "create",
+      nonworkDataPage: 0,
+      nonworkDataSize: 10,
     };
   },
   data() {
@@ -231,6 +273,7 @@ export default {
       this.subcategoryItems = 1 <= categoryIndex ? this.subcategoryFullList[categoryIndex - 1] : [];
     },
     async search() {
+      // 업무
       if (this.qnaTab == 0) {
         if (typeof this.subcategory == 'string') {
           if (this.searchKey != '' && this.searchContent != '') {
@@ -248,10 +291,10 @@ export default {
                   response.data.forEach((d) => {
                     d.createDate = this.exportDateFromTimeStamp(d.createDate)
                   });
-                  this.boardCardData = response.data
+                  this.workCardData = response.data
                 }
               ); 
-              this.workSearchFlag = (this.boardCardData.length == 0) ? true:false  
+              this.workSearchFlag = (this.workCardData.length == 0) ? true:false  
           } else {
             console.log('key, value 없음')
             var res = await api.get('board/questions?workYn=true&cid=' + this.cidData[this.subcategory]).then(
@@ -259,10 +302,10 @@ export default {
                 response.data.forEach((d) => {
                   d.createDate = this.exportDateFromTimeStamp(d.createDate)
                 });
-                this.boardCardData = response.data
+                this.workCardData = response.data
               }
             );
-            this.workSearchFlag = (this.boardCardData.length == 0) ? true:false  
+            this.workSearchFlag = (this.workCardData.length == 0) ? true:false  
           }
         } else {
           if (this.searchKey != '' && this.searchContent != '') {
@@ -279,23 +322,25 @@ export default {
                   response.data.forEach((d) => {
                     d.createDate = this.exportDateFromTimeStamp(d.createDate)
                   });
-                  this.boardCardData = response.data
+                  this.workCardData = response.data
                 }
               );
-              this.workSearchFlag = (this.boardCardData.length == 0) ? true:false  
+              this.workSearchFlag = (this.workCardData.length == 0) ? true:false  
           } else {
             var res = await api.get('board/questions?workYn=true').then(
               (response) => {
                 response.data.forEach((d) => {
                   d.createDate = this.exportDateFromTimeStamp(d.createDate)
                 });
-                this.boardCardData = response.data
+                this.workCardData = response.data
               }
             );
-            this.workSearchFlag = (this.boardCardData.length == 0) ? true:false  
+            this.workSearchFlag = (this.workCardData.length == 0) ? true:false  
           }
         }
-      } else if (this.qnaTab == 1) {
+      }
+      // 비업무
+      else if (this.qnaTab == 1) {
         if (this.searchKey != '' && this.searchContent != '') {
           var key = ''
           if (this.searchKey == '제목 + 내용') {
@@ -310,33 +355,80 @@ export default {
                 response.data.forEach((d) => {
                   d.createDate = this.exportDateFromTimeStamp(d.createDate)
                 });
-                this.boardCardData = response.data
+                this.workCardData = response.data
               }
             );
-            this.searchFlag = (this.boardCardData.length == 0) ? true:false  
+            this.searchFlag = (this.workCardData.length == 0) ? true:false  
         }
       }
     },
+    async loadMore() {
+      var params = this.qnaTab == 0 ? {
+        workYn: true,
+        order: this.workDataOrder,
+        page: this.workDataPage ? this.workDataPage + 1 : 0,
+        size: this.workDataSize, 
+      } : {
+        workYn: false,
+        order: this.nonworkDataOrder,
+        page: this.nonworkDataPage ? this.nonworkDataPage + 1 : 0,
+        size: this.nonworkDataSize, 
+      };
+      var res = await api.get(questionUri, { params }).then(
+        (response) => {
+          if ([200, 201].includes(response.status) && response.data.length) {
+            response.data.forEach((d) => {
+              d.createDate = this.exportDateFromTimeStamp(d.createDate);
+            });
+            if (this.qnaTab == 0) {
+              this.workCardData = this.workCardData.concat(response.data);
+              this.workDataPage++;
+            } else {
+              this.nonworkCardData = this.nonworkCardData.concat(response.data);
+              this.nonworkDataPage++;
+            }
+          }
+        }
+      );
+      
+    },
     async requestAllWork() {
-      var res = await api.get('board/questions' + '?' + 'workYn=true').then(
+      var res = await api.get('board/questions' + '?' + 'workYn=true&order=create&page=0&size=10').then(
         (response) => {
           response.data.forEach((d) => {
             d.createDate = this.exportDateFromTimeStamp(d.createDate)
           });
-          this.boardCardData = response.data
+          this.workCardData = response.data
         }
       )
     },
 
     async requestAllNoneWork() {
-      var res = await api.get('board/questions' + '?' + 'workYn=false').then(
+      var res = await api.get('board/questions' + '?' + 'workYn=false&order=create&page=0&size=10').then(
         (response) => {
           response.data.forEach((d) => {
             d.createDate = this.exportDateFromTimeStamp(d.createDate)
           });
-          this.boardCardData = response.data
+          this.workCardData = response.data
         }
       )
+    },
+    sort(index) {
+      // index 0=좋아요순, 1=등록순
+      // 업무
+      if (this.qnaTab == 0) {
+        this.workDataOrder = index ? "create" : "like";
+        this.workDataPage = 0;
+        this.workDataSize = 10;
+        this.workCardData = [];
+      }
+      // 비업무
+      else if (this.qnaTab == 1) {
+        this.nonworkDataOrder = index ? "create" : "like";
+        this.nonworkDataPage = 0;
+        this.nonworkDataSize = 10;
+        this.nonworkCardData = [];
+      }
     },
 
     tabChanged() {
@@ -345,11 +437,11 @@ export default {
       this.searchKey = ''
       this.searchContent = '';
 
-      if (this.qnaTab == 0) {
-        this.requestAllWork()
-      } else {
-        this.requestAllNoneWork()
-      }
+      // if (this.qnaTab == 0) {
+      //   this.requestAllWork()
+      // } else {
+      //   this.requestAllNoneWork()
+      // }
     },
     handleCardClicked(item) {
       this.saveState();
@@ -373,11 +465,6 @@ export default {
       });
 
     },
-    loadMore() {
-      this.page += 1;
-      console.log(this.page)
-
-    },
     saveState() {
       store.dispatch('info/setPageState', {
         qnaTab: this.qnaTab,
@@ -386,8 +473,14 @@ export default {
         subcategoryItems: this.subcategoryItems,
         searchKey: this.searchKey,
         searchContent: this.searchContent,
-        page: this.page,
-        boardCardData: this.boardCardData
+        workCardData: this.workCardData,
+        workDataPage: this.workDataPage,
+        workDataOrder: this.workDataOrder,
+        workDataSize: this.workDataSize,
+        nonworkCardData: this.nonworkCardData,
+        nonworkDataPage: this.nonworkDataPage,
+        nonworkDataOrder: this.nonworkDataOrder,
+        nonworkDataSize: this.nonworkDataSize,
       });
     }
   },
