@@ -216,6 +216,14 @@ export default [
         },
         component: () => import("@/pages/mypage/settings"),
       },
+      {
+        path: process.env.VUE_APP_MYPAGE_SETTINGS_INFO,
+        name: "settings-info",
+        meta: {
+          title: "회원정보 수정",
+        },
+        component: () => import("@/pages/mypage/settingsInfo"),
+      },
     ],
   },
   {
