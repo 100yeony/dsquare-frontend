@@ -2,6 +2,7 @@
 import CKEditor from "@ckeditor/ckeditor5-vue";
 import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
 import FileUploadAdapter from "@/utils/fileUploaderAdapter";
+import fileUtils from "@/utils/fileUtils";
 import { watch, onMounted, ref } from "vue";
 //import { generateKey } from "crypto";
 import api from '@/api';
@@ -31,6 +32,7 @@ export default {
   data() {
     return {
       selectedFile: null,
+      fileAttachable: false,
       editor: ClassicEditor,
       editorData: "",
       editorConfig: {
@@ -60,6 +62,18 @@ export default {
       }
     },
     selectedFile: function (newVal, oldVal) {
+      console.log(newVal)
+      if (newVal != null && newVal?.length != 0) {
+        if (fileUtils.isFileSizeLimit(newVal[0].size)){
+          this.fileAttachable = false
+          alert('파일 크기는 10MB 이하여야 합니다.');
+          this.selectedFile = null
+        } else {
+          this.fileAttachable = true 
+        }
+      } else {
+        this.fileAttachable = false
+      }
     }
   },
   computed: {
@@ -103,7 +117,7 @@ export default {
 
       const questionBlob = new Blob([JSON.stringify(question)], { type: 'application/json' });
       formData.append('question', questionBlob);
-      if (this.selectedFile) {
+      if (this.fileAttachable) {
         formData.append("attachment", this.selectedFile[0], this.selectedFile.name);
       }
 
