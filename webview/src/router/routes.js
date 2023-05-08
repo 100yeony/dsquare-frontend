@@ -19,6 +19,15 @@ export default [
         component: () => import("@/pages/home"),
       },
       {
+        path: process.env.VUE_APP_NOTIFICATIONS,
+        name: "notifications",
+        meta: {
+          title: "일림 목록",
+          back: process.env.VUE_APP_HOME
+        },
+        component: () => import("@/pages/notification/index"),
+      },
+      {
         path: process.env.VUE_APP_BOARD_QNA,
         name: "qna",
         meta: {
