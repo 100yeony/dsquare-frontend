@@ -21,7 +21,7 @@
               </v-avatar>
             </span>
           </v-col>
-          <v-col cols="4">
+          <v-col cols="4" class="pl-5">
             <div class="text-body font-bold">
               <v-row>{{ qData.name }}</v-row>
               <v-row class="text-caption font-0000008F">{{ qData.team }}</v-row>
