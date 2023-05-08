@@ -7,7 +7,7 @@
     "serve:tb": "vue-cli-service serve --mode tb",
     "serve:prod": "vue-cli-service serve --mode prod",
     "build": "vue-cli-service build",
-    "postbuild": "npm run cp:android && npm run cp:ios",
+    "postbuild": "",
     "build:tb": "vue-cli-service build --mode tb",
     "build:prod": "vue-cli-service build --mode prod",
     "lint": "vue-cli-service lint"

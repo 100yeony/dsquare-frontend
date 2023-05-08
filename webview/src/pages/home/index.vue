@@ -9,20 +9,20 @@
     </v-row>
     <v-row>
       <v-col cols="6">
-        <v-card color="#0000000A">
+        <v-card color="#0000000A" @click="pushMyPosts">
           <v-card-item class="justify-center text-center">
             <img src="@/assets/images/icons/icon_layout-list.png" />
             <p class="text-caption">등록글</p>
-            <v-chip>10</v-chip>
+            <v-chip>{{ myPostsCount }}</v-chip>
           </v-card-item>
         </v-card>
       </v-col>
       <v-col cols="6">
-        <v-card color="#0000000A">
+        <v-card color="#0000000A" @click="pushMyReplies">
           <v-card-item class="justify-center text-center">
             <img src="@/assets/images/icons/icon_smile.png" />
-            <p class="text-caption">Reply</p>
-            <v-chip color="shades-black">12</v-chip>
+            <p class="text-caption">답변/댓글</p>
+            <v-chip color="shades-black">{{ myRepliesCount }}</v-chip>
           </v-card-item>
         </v-card>
       </v-col>
@@ -36,21 +36,14 @@
     </v-row>
     <div>
       <v-slide-group>
-        <v-slide-group-item>
-          <v-chip class="ma-2">#페이밴드</v-chip>
-        </v-slide-group-item>
-        <v-slide-group-item>
-          <v-chip class="ma-2">#초과근무</v-chip>
-        </v-slide-group-item>
-        <v-slide-group-item>
-          <v-chip class="ma-2">#벗꽃명소</v-chip>
-        </v-slide-group-item>
-        <v-slide-group-item>
-          <v-chip class="ma-2">#판교사옥</v-chip>
-        </v-slide-group-item>
-        <v-slide-group-item>
-          <v-chip class="ma-2">#내용1</v-chip>
-        </v-slide-group-item>
+        <template v-if="weeklyHotData.length">
+          <v-slide-group-item v-for="(tag, index) in weeklyHotData" :key="index">
+            <v-chip class="ma-2">{{ tag }}</v-chip>
+          </v-slide-group-item>
+        </template>
+        <template v-else>
+          <v-container align="center">한 주간 관심이 많았던 태그가 없습니다.</v-container>
+        </template>
       </v-slide-group>
     </div>
 
@@ -90,7 +83,7 @@
                       </v-col>
                       <v-col cols="2">
                         <td class="text-caption font-0000008F">
-                          <img src="@/assets/images/icons/icon_message-circle.png" /> {{ post.commentCnt }}
+                          <img src="@/assets/images/icons/icon_message-circle.png" /> {{ "qid" in post ? post.answerCnt : post.commentCnt }}
                         </td>
                       </v-col>
                     </v-row>
@@ -120,53 +113,25 @@
       </v-tabs>
       <v-card-text>
         <v-window v-model="hallOfFameTab">
-          <v-window-item :value="0">
+          <v-window-item v-for="(hall, i) in hallofFameData" :key="i" :value="0">
             <v-table density="compact">
               <tbody>
-                <tr v-for="item in hallOfFameData[0]" :key="item.id">
-                  <v-row no-gutters>
+                <tr v-for="post in hall" :key="post.qid">
+                  <v-row no-gutters @click="pushPost(post)">
                     <v-col cols="8">
-                      <td class="text-body-2 font-weight-bold" color="#0000008F">
-                        {{ item.title }}
+                      <td class="d-inline-block text-truncate text-body-2 font-weight-bold" style="max-width:95%;" 
+                        color="#0000008F">
+                        {{ post.title }}
                       </td>
                     </v-col>
                     <v-col cols="2">
                       <td class="text-caption font-0000008F">
-                        <img src="@/assets/images/icons/icon_heart.png" />{{
-                          item.like
-                        }}
+                        <img src="@/assets/images/icons/icon_heart.png" />{{ post.likeCnt }}
                       </td>
                     </v-col>
                     <v-col cols="2">
                       <td class="text-caption font-0000008F">
-                        <img src="@/assets/images/icons/icon_message-circle.png" />{{ item.comment }}
-                      </td>
-                    </v-col>
-                  </v-row>
-                </tr>
-              </tbody>
-            </v-table>
-          </v-window-item>
-          <v-window-item :value="1">
-            <v-table density="compact">
-              <tbody>
-                <tr v-for="item in hallOfFameData[1]" :key="item.id">
-                  <v-row no-gutters>
-                    <v-col cols="8">
-                      <td class="text-body-2 font-weight-bold" color="#0000008F">
-                        {{ item.title }}
-                      </td>
-                    </v-col>
-                    <v-col cols="2">
-                      <td class="text-caption font-0000008F">
-                        <img src="@/assets/images/icons/icon_heart.png" />{{
-                          item.like
-                        }}
-                      </td>
-                    </v-col>
-                    <v-col cols="2">
-                      <td class="text-caption font-0000008F">
-                        <img src="@/assets/images/icons/icon_message-circle.png" />{{ item.comment }}
+                        <img src="@/assets/images/icons/icon_message-circle.png" />{{ post.answerCnt }}
                       </td>
                     </v-col>
                   </v-row>
@@ -243,12 +208,27 @@ import store from "@/store";
 import samplePng from "@/assets/images/users/avatar_sample.png";
 import api from '@/api';
 
+/* Weekly Hot 관련 */
+let weeklyHotUri = '/board/dashboard/top7-tags';
+/* My place 관련 */
+let myQnaUri = 'mypage/questions';
+let myCommUri = 'mypage/talks';
+let myDealUri = 'mypage/carrots';
+let myRequestCardUri = 'mypage/cards';
+
+let myAnswersUri = 'mypage/answers';
+let myCommentsUri = '/mypage/comments';
+
 /* 최신글 관련 */
 let qnaWorkUri = 'board/questions?workYn=true';
 let qnaNonworkUri = 'board/questions?workYn=false';
 let commUri = 'board/talks';
 let dealUri = 'board/carrots';
 let cardUri = 'board/cards';
+
+/* 명예의 전당 관련 */
+let hallWeeklyUri = '/dashboard/hall-of-fame?key=week';
+let hallMonthlyUri = '/dashboard/hall-of-fame?key=month';
 
 /* 사용자랭킹 관련 */
 let questionUserUri = '/dashboard/best-users?key=question';
@@ -257,6 +237,11 @@ let answerUserUri = '/dashboard/best-users?key=answer';
 export default {
   name: "DashboardPage",
   setup() {
+    let weeklyHotData = ref([]);
+    let weeklyHotLimit = ref(7);
+    let myPostsCount = ref(0);
+    let myRepliesCount = ref(0);
+
     let recentTab = ref(0);
     let recentTabTitle = ref(["궁금해요", "소통해요", "당근해요", "카드주세요"]);
     let recentData = ref([]);
@@ -264,72 +249,8 @@ export default {
 
     let hallOfFameTab = ref(0);
     let hallOfFameTabTitle = ref(["주간", "월간"]);
-    let hallOfFameData = ref([
-      [
-        {
-          id: 0,
-          title: "(주간)검증된 베스트 게시글 제목",
-          like: "999+",
-          comment: "999+",
-        },
-        {
-          id: 1,
-          title: "(주간)검증된 베스트 게시글 제목",
-          like: "300",
-          comment: "32",
-        },
-        {
-          id: 2,
-          title: "(주간)검증된 베스트 게시글 제목",
-          like: "227",
-          comment: "32",
-        },
-        {
-          id: 3,
-          title: "(주간)검증된 베스트 게시글 제목",
-          like: "200",
-          comment: "32",
-        },
-        {
-          id: 4,
-          title: "(주간)검증된 베스트 게시글 제목",
-          like: "127",
-          comment: "32",
-        },
-      ],
-      [
-        {
-          id: 0,
-          title: "(월간)검증된 베스트 게시글 제목",
-          like: "327",
-          comment: "32",
-        },
-        {
-          id: 1,
-          title: "(월간)검증된 베스트 게시글 제목",
-          like: "300",
-          comment: "32",
-        },
-        {
-          id: 2,
-          title: "(월간)검증된 베스트 게시글 제목",
-          like: "227",
-          comment: "32",
-        },
-        {
-          id: 3,
-          title: "(월간)검증된 베스트 게시글 제목",
-          like: "200",
-          comment: "32",
-        },
-        {
-          id: 4,
-          title: "(월간)검증된 베스트 게시글 제목",
-          like: "127",
-          comment: "32",
-        },
-      ],
-    ]);
+    let hallOfFameData = ref([]);
+    let hallOfFameLimit = ref(5);
 
     let userRankingTab = ref(0);
     let userRankingTabTitle = ref(["질문왕", "답변왕"]);
@@ -349,6 +270,10 @@ export default {
     }
 
     return {
+      weeklyHotData,
+      weeklyHotLimit,
+      myPostsCount,
+      myRepliesCount,
       recentTab,
       recentTabTitle,
       recentData,
@@ -356,6 +281,7 @@ export default {
       hallOfFameTab,
       hallOfFameTabTitle,
       hallOfFameData,
+      hallOfFameLimit,
       userRankingTab,
       userRankingTabTitle,
       userRankingData,
@@ -365,6 +291,31 @@ export default {
   },
   methods: {
     init() { },
+    /* Weekly Hot 태그 관련 */
+    async requestWeeklyHot() {
+      var temp = [];
+      var res = await api.get(weeklyHotUri).then((response) => { temp = response.data; });
+      this.weeklyHotData = temp.slice(0, this.weeklyHotLimit);
+    },
+    async requestAllMyplace() {
+      var res = await api.get(myQnaUri).then((response) => { this.myPostsCount += response.data.length });
+      res = await api.get(myCommUri).then((response) => { this.myPostsCount += response.data.length });
+      res = await api.get(myDealUri).then((response) => { this.myPostsCount += response.data.length });
+      res = await api.get(myRequestCardUri).then((response) => { this.myPostsCount += response.data.length });
+      
+      res = await api.get(myAnswersUri).then((response) => { this.myRepliesCount += response.data.length });
+      res = await api.get(myCommentsUri).then((response) => { this.myRepliesCount += response.data.length });
+    },
+    pushMyPosts() {
+      this.$router.push({
+        path: process.env.VUE_APP_MYPAGE_MYPOST,
+      });
+    },
+    pushMyReplies() {
+      this.$router.push({
+        path: process.env.VUE_APP_MYPAGE_MYCOMMENT,
+      });
+    },
     /* 최신글 관련 */
     async requestAllRecent() {
       var qnaData = [];
@@ -455,6 +406,18 @@ export default {
       });
     },
 
+    /* 명예의 전당 관련 */
+    async requestAllHall() {
+      var weeklyData = [];
+      var monthlyData = [];
+
+      var res = await api.get(hallWeeklyUri).then((response) => { weeklyData = response.data; });
+      this.hallOfFameData.push(weeklyData.slice(0, this.hallOfFameLimit));
+
+      res = await api.get(hallMonthlyUri).then((response) => { monthlyData = response.data; });
+      this.hallOfFameData.push(monthlyData.slice(0, this.hallOfFameLimit));
+    },
+
     /* 사용자랭킹 관련 */
     async requestAllUserrank() {
       var questionUserData = [];
@@ -468,7 +431,10 @@ export default {
     }
   },
   mounted() {
+    this.requestWeeklyHot();
+    this.requestAllMyplace();
     this.requestAllRecent();
+    this.requestAllHall();
     this.requestAllUserrank();
     const infoArea = {}
     var categoryList = ['전체']
