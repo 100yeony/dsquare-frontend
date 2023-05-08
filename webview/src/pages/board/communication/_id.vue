@@ -96,8 +96,8 @@
                     </v-col>
                   </v-row>
                   <div class="mt-3 mb-3">
-                    <span v-if="(typeof comment.originWriterName != 'undefined')" class="font_bule">
-                      @{{ comment.originWriterName }} </span> {{ comment.content }}
+                    <span v-if="(typeof comment.originWriterNickname != 'undefined')" class="font_bule">
+                      @{{ comment.originWriterNickname }} </span> {{ comment.content }}
                   </div>
                   <v-row>
                     <v-col class="font_white_gray font-xss text-left"
@@ -240,7 +240,7 @@ export default {
   methods: {
     reComment(item, writerInfo, commentId) {
       item.commentMode = true
-      item.mentionName = writerInfo.name
+      item.mentionName = writerInfo.nickname
       item.mentionWriterId = writerInfo.id
       item.mentionId = commentId
       this.$nextTick(() => {
