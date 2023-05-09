@@ -5,9 +5,16 @@
       <v-list>
         <v-row justify="center">
           <v-col cols="2">
-            <v-avatar color="grey" size="40">
-              <v-img cover :src="profileImage"></v-img>
-            </v-avatar>
+            <span v-if="profileImage == null">
+              <v-avatar color="grey" size="40">
+                <v-img cover src="@/assets/images/users/profile_default.png"></v-img>
+              </v-avatar>
+            </span>
+            <span v-if="profileImage != null">
+              <v-avatar color="grey" size="40">
+                <v-img cover :src="profileImage"></v-img>
+              </v-avatar>
+            </span>
           </v-col>
           <v-col cols="7" class="d-flex align-self-center pl-5">
             <span class="text-body font-bold">{{ this.userName }}</span>
@@ -125,7 +132,7 @@ export default {
       if (item && item.url) {
         this.$router.replace(item.url);
       }
-      else if (item.value === 8) {
+      else if (item.value === 9) {
         //this.$store.dispatch('info/setInfoToken', { accessToken: '', refreshToken: '' }); // 토큰값을 제거해줍니다.
         this.$store.dispatch('info/setInfoListBlank');
 
