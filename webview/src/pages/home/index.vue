@@ -308,7 +308,6 @@ export default {
 
       this.myRepliesCount += (await api.get(myAnswersUri)).data.length;
       this.myRepliesCount += (await api.get(myCommentsUri)).data.length;
-
     },
     pushMyPosts() {
       this.$router.push({
@@ -354,7 +353,7 @@ export default {
       comms.data.forEach((d) => {
         d.createDate = this.exportDateFromTimeStamp(d.createDate)
       })
-      commData = comms.data 
+      commData = comms.data
       this.recentData.push(commData.slice(0, this.recentLimit));
 
 
@@ -406,12 +405,12 @@ export default {
       var weeklyData = [];
       var monthlyData = [];
 
-      var hallWeeklys =  await api.get(hallWeeklyUri)
-      weeklyData = hallWeeklys.data 
+      var hallWeeklys = await api.get(hallWeeklyUri)
+      weeklyData = hallWeeklys.data
       this.hallOfFameData.push(weeklyData.slice(0, this.hallOfFameLimit));
 
       var hallMonths = await api.get(hallMonthlyUri)
-      monthlyData = hallMonths.data 
+      monthlyData = hallMonths.data
       this.hallOfFameData.push(monthlyData.slice(0, this.hallOfFameLimit));
     },
 
@@ -427,19 +426,12 @@ export default {
       var answerUsers = await api.get(answerUserUri)
       answerUserData = answerUsers.data
       this.userRankingData.push(answerUserData.slice(0, this.userRankingLimit));
-    }
-  },
-  mounted() {
-    this.requestWeeklyHot();
-    this.requestAllMyplace();
-    this.requestAllRecent();
-    this.requestAllHall();
-    this.requestAllUserrank();
-    const infoArea = {}
-    var categoryList = ['전체']
-    var subList = []
-    api.get('board/categories').then((response) => {
-      response.data[0].childList.forEach((category) => {
+    },
+    async requestCategories() {
+      var categoryList = ['전체']
+      var subList = []
+      var res = await api.get('board/categories')
+      res.data[0].childList.forEach((category) => {
         categoryList.push(category.name)
         var subs = []
         category.childList.forEach((child) => {
@@ -450,7 +442,15 @@ export default {
       console.log(categoryList)
       console.log(subList)
       store.dispatch('info/setInfoArea', { value1: categoryList, value2: subList })
-    });
+    }
+  },
+  mounted() {
+    this.requestWeeklyHot();
+    this.requestAllMyplace();
+    this.requestAllRecent();
+    this.requestAllHall();
+    this.requestAllUserrank();
+    this.requestCategories();
 
   }
 };
