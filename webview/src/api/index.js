@@ -219,7 +219,7 @@ const fn = {
     }
   },
   tokenErrorCheck(err) {
-    if (err?.response?.data?.code == 401 || err?.response?.status == 401) {// 후에 code 변경
+    if (err?.response?.data?.code == 401 || err?.response?.status == 401 ||err?.response?.status == 403) {// 후에 code 변경
       console.log("it's token expired")
       return true
     } else {

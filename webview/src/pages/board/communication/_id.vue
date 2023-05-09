@@ -21,10 +21,9 @@
               </v-avatar>
             </span>
           </v-col>
-          <v-col cols="4">
+          <v-col cols="4" class="pl-5">
             <div class="text-body font-bold">
-              <v-row>{{ qData.name }}</v-row>
-              <v-row class="text-caption font-0000008F">{{ qData.team }}</v-row>
+              <v-row>{{ qData.nickname }}</v-row>
             </div>
           </v-col>
           <v-col cols="4">
@@ -88,7 +87,7 @@
                     <v-col>
                       <div>
                         <div class="font-xs">
-                          {{ comment.writerInfo.name + ' (' + comment.writerInfo.teamHierarchy[comment.writerInfo.teamHierarchy.length - 1] + ')' }}
+                          {{ comment.writerInfo.nickname}}
                         </div>
                         <div class="font-xs font_white_gray">
                           {{ comment.createDate }}
@@ -97,8 +96,8 @@
                     </v-col>
                   </v-row>
                   <div class="mt-3 mb-3">
-                    <span v-if="(typeof comment.originWriterName != 'undefined')" class="font_bule">
-                      @{{ comment.originWriterName }} </span> {{ comment.content }}
+                    <span v-if="(typeof comment.originWriterNickname != 'undefined')" class="font_bule">
+                      @{{ comment.originWriterNickname }} </span> {{ comment.content }}
                   </div>
                   <v-row>
                     <v-col class="font_white_gray font-xss text-left"
@@ -166,6 +165,7 @@ export default {
       qnaId: 0,
       qData: {
         name: "",
+        nickname: "",
         team: "",
         atc: {
           atcId: 0,
@@ -240,7 +240,7 @@ export default {
   methods: {
     reComment(item, writerInfo, commentId) {
       item.commentMode = true
-      item.mentionName = writerInfo.name
+      item.mentionName = writerInfo.nickname
       item.mentionWriterId = writerInfo.id
       item.mentionId = commentId
       this.$nextTick(() => {
@@ -379,6 +379,7 @@ export default {
       console.log("parse_data:  ", data)
       return {
         name: data.writerInfo.name,
+        nickname: data.writerInfo.nickname, 
         team: data.writerInfo.teamHierarchy[data.writerInfo.teamHierarchy.length - 1],
         atc: {
           atcId: 1,

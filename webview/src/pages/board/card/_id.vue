@@ -34,7 +34,7 @@
               </v-avatar>
             </span>
           </v-col>
-          <v-col cols="4">
+          <v-col cols="4" class="pl-5">
             <div class="text-body font-bold">
               <v-row>{{ cardData.writerInfo.name }}</v-row>
               <v-row class="text-caption font-0000008F">{{ cardData.writerInfo.teamHierarchy[cardData.writerInfo.teamHierarchy.length-1] }}</v-row>
