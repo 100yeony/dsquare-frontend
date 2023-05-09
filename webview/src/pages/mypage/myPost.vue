@@ -52,44 +52,35 @@ export default {
   },
   methods: {
     async requestAllQuestions() {
-      await api.get(qnaUri).then(
-        (response) => {
-          response.data.forEach((d) => {
-            d.createDate = this.exportDateFromTimeStamp(d.createDate)
-          });
-          this.boardCardData = response.data;
-        }
-      );
+      var res = await api.get(qnaUri)
+      res.data.forEach((d) => {
+        d.createDate = this.exportDateFromTimeStamp(d.createDate)
+      });
+      this.boardCardData = res.data;
     },
     async requestAllComms() {
-      await api.get(commUri).then(
-        (response) => {
-          response.data.forEach((d) => {
-            d.createDate = this.exportDateFromTimeStamp(d.createDate)
-          });
-          this.commCardData = response.data;
-        }
-      );
+      var res = await api.get(commUri)
+      res.data.forEach((d) => {
+        d.createDate = this.exportDateFromTimeStamp(d.createDate)
+      });
+      this.commCardData = res.data;
     },
     async requestAllDeals() {
-      await api.get(dealUri).then(
-        (response) => {
-          response.data.forEach((d) => {
-            d.createDate = this.exportDateFromTimeStamp(d.createDate)
-          });
-          this.dealCardData = response.data;
-        }
-      );
+      var res = await api.get(dealUri)
+      res.data.forEach((d) => {
+        d.createDate = this.exportDateFromTimeStamp(d.createDate)
+      });
+      this.dealCardData = res.data;
+
+
     },
     async requestAllRequestedCards() {
-      await api.get(requestCardUri).then(
-        (response) => {
-          response.data.forEach((d) => {
-            d.createDate = this.exportDateFromTimeStamp(d.createDate)
-          });
-          this.requestedCardData = response.data;
-        }
-      );
+      var res = await api.get(requestCardUri)
+      res.data.forEach((d) => {
+        d.createDate = this.exportDateFromTimeStamp(d.createDate)
+      });
+      this.requestedCardData = res.data;
+
     },
 
     tabChanged() {
@@ -176,7 +167,7 @@ export default {
       return year + "-" + month + "-" + day + " " + hour + ":" + minute
 
     }
-    
+
   },
 };
 </script>
@@ -232,7 +223,7 @@ export default {
   /* 한국어 잘림 방지 */
 }
 
-.v-btn--size-default{
+.v-btn--size-default {
   padding: 0 0px;
 }
 </style>

@@ -39,11 +39,11 @@ export default {
           email: this.$route.query.email,
           originalPassword: this.current_pw, 
           changedPassword: this.new_pw, 
-        }).then((response) => {
-          console.log(response)
-          this.$store.dispatch('info/setInfoToken', { accessToken: '', refreshToken: '' }); // 토큰값을 제거해줍니다.
-          this.$router.push(process.env.VUE_APP_CHANGEPASS_OK)
-        });
+        })
+        console.log(res)
+        this.$store.dispatch('info/setInfoToken', { accessToken: '', refreshToken: '' }); // 토큰값을 제거해줍니다.
+        this.$router.push(process.env.VUE_APP_CHANGEPASS_OK)
+
       }
     },
   },

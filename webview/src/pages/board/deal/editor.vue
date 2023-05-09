@@ -59,7 +59,7 @@ export default {
   },
   methods: {
     async write(editorData) {
-      const res = await api.post('board/carrots', {
+      await api.post('board/carrots', {
         content: editorData,
         title: this.title,
         tags: Array.from(this.chipData),
@@ -68,22 +68,9 @@ export default {
           extension: 'png',
           fileSize: 51239
         }
-      }).then((response) => {
-        store.dispatch('info/setPageState', {});
-        this.$router.push(process.env.VUE_APP_BOARD_DEAL);
-      });
-      //}
-
-      /**
-       * Test code for post file data
-       * 
-      console.log(this.selectedFile)
-      var formData = new FormData();
-      formData.append('file', this.selectedFile[0], this.selectedFile.name);
-      const res2 = await api.multiPartPost('file/upload', formData).then((response) => {
-        console.log(response)
       })
-       */
+      store.dispatch('info/setPageState', {});
+      this.$router.push(process.env.VUE_APP_BOARD_DEAL);
 
     },
     uploader(editor) {

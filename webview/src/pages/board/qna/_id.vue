@@ -61,7 +61,7 @@
         </v-row>
         <div v-if="qData.attachment">
           <a :href="qData.attachment.url">
-            <v-icon size="small" >mdi-attachment</v-icon>
+            <v-icon size="small">mdi-attachment</v-icon>
             <span class="text-caption font-0000008F ml-1"> {{ qData.attachment.origFilename }} </span>
           </a>
         </div>
@@ -94,7 +94,8 @@
                     <v-col>
                       <div>
                         <div class="font-xs">
-                          {{ comment.writerInfo.name + ' (' + comment.writerInfo.teamHierarchy[comment.writerInfo.teamHierarchy.length - 1] + ')' }}
+                          <v-chip v-if="comment.writerInfo.id == qData.writerId">작성자</v-chip>{{ comment.writerInfo.name +
+                            ' (' + comment.writerInfo.teamHierarchy[comment.writerInfo.teamHierarchy.length - 1] + ')' }}
                         </div>
                         <div class="font-xs font_white_gray">
                           {{ comment.createDate }}
@@ -112,7 +113,7 @@
                       답글 달기
                     </v-col>
                     <v-col v-if="this.user.userId == comment.writerInfo.id" class="font_white_gray font-xss text-right"
-                      @click="delComment(comment, qData, 'talk', qnaId)">
+                      @click="delComment(comment, qData, 'question', qnaId)">
                       삭제
                     </v-col>
                   </v-row>
@@ -205,49 +206,51 @@
             <v-expansion-panel-text>
               <v-list>
                 <div v-for="(comment) in item.comments" :key="comment.writerInfo.id">
-                <v-list-item>
-                  <v-row>
-                    <v-col cols="2">
-                      <span v-if="comment.writerInfo.profileImage == null">
-                        <v-avatar color="grey" size="40">
-                          <v-img cover src="@/assets/images/users/profile_default.png"></v-img>
-                        </v-avatar>
-                      </span>
-                      <span v-if="comment.writerInfo.profileImage != null">
-                        <v-avatar color="grey" size="40">
-                          <v-img cover :src="comment.writerInfo.profileImage"></v-img>
-                        </v-avatar>
-                      </span>
-                    </v-col>
-                    <v-col>
-                      <div>
-                        <div class="font-xs">
-                          {{ comment.writerInfo.name + ' (' + comment.writerInfo.teamHierarchy[comment.writerInfo.teamHierarchy.length - 1] + ')' }}
+                  <v-list-item>
+                    <v-row>
+                      <v-col cols="2">
+                        <span v-if="comment.writerInfo.profileImage == null">
+                          <v-avatar color="grey" size="40">
+                            <v-img cover src="@/assets/images/users/profile_default.png"></v-img>
+                          </v-avatar>
+                        </span>
+                        <span v-if="comment.writerInfo.profileImage != null">
+                          <v-avatar color="grey" size="40">
+                            <v-img cover :src="comment.writerInfo.profileImage"></v-img>
+                          </v-avatar>
+                        </span>
+                      </v-col>
+                      <v-col>
+                        <div>
+                          <div class="font-xs">
+                            <v-icon v-if="comment.writerInfo.id == item.writerInfo.id">mdi-pencil-box</v-icon>{{
+                              comment.writerInfo.name + ' (' +
+                              comment.writerInfo.teamHierarchy[comment.writerInfo.teamHierarchy.length - 1] + ')' }}
+                          </div>
+                          <div class="font-xs font_white_gray">
+                            {{ comment.createDate }}
+                          </div>
                         </div>
-                        <div class="font-xs font_white_gray">
-                          {{ comment.createDate }}
-                        </div>
-                      </div>
-                    </v-col>
-                  </v-row>
-                  <div class="mt-3 mb-3">
-                    <span v-if="(typeof comment.originWriterName != 'undefined')" class="font_bule">
-                      @{{ comment.originWriterName }} </span> {{ comment.content }}
-                  </div>
-                  <v-row>
-                    <v-col class="font_white_gray font-xss text-left"
-                      @click="reComment(item, comment.writerInfo, comment.commentId)">
-                      답글 달기
-                    </v-col>
-                    <v-col v-if="this.user.userId == comment.writerInfo.id" class="font_white_gray font-xss text-right"
-                      @click="delComment(comment, item, 'answer', item.aid)">
-                      삭제
-                    </v-col>
-                  </v-row>
-                </v-list-item>
+                      </v-col>
+                    </v-row>
+                    <div class="mt-3 mb-3">
+                      <span v-if="(typeof comment.originWriterName != 'undefined')" class="font_bule">
+                        @{{ comment.originWriterName }} </span> {{ comment.content }}
+                    </div>
+                    <v-row>
+                      <v-col class="font_white_gray font-xss text-left"
+                        @click="reComment(item, comment.writerInfo, comment.commentId)">
+                        답글 달기
+                      </v-col>
+                      <v-col v-if="this.user.userId == comment.writerInfo.id" class="font_white_gray font-xss text-right"
+                        @click="delComment(comment, item, 'answer', item.aid)">
+                        삭제
+                      </v-col>
+                    </v-row>
+                  </v-list-item>
 
-                <v-divider class="m-em-1" />
-              </div>
+                  <v-divider class="m-em-1" />
+                </div>
 
                 <!-- <v-container v-if="!item.commentMode" class="text-center font_white_gray font-xs">
                   <div @click="commentVisible(item, true)">댓글 달기</div>
@@ -315,7 +318,7 @@ export default {
         tags: [],
         writerId: 0,
         managerId: 0,
-        profileImage: null, 
+        profileImage: null,
       },
       commentList: [],
       answerList: [
@@ -388,7 +391,7 @@ export default {
           comp[0].scrollIntoView({ behavior: 'smooth', block: 'end' })
         } else {
           comp.scrollIntoView({ behavior: 'smooth', block: 'end' })
-        }       
+        }
       })
     },
     deleteMention(item) {
@@ -513,20 +516,13 @@ export default {
       this.isShow = false;
     },
     async requestDelQuestion() {
-      const res = await api.del('board/questions/' + this.$route.query.qid, '').then(
-        (response) => {
-          console.log(response)
-          store.dispatch('info/setPageState', {});
-          this.$router.push(process.env.VUE_APP_BOARD_QNA);
-        }
-      )
+      await api.del('board/questions/' + this.$route.query.qid, '')
+      store.dispatch('info/setPageState', {});
+      this.$router.push(process.env.VUE_APP_BOARD_QNA);
     },
-    async requestDelAnswer(num) {
-      const res = await api.del('board/questions/' + this.$route.query.qid + '/answers/' + this.answerId, '').then(
-        (response) => {
-          this.requestAnswerData()
-        }
-      )
+    async requestDelAnswer() {
+      await api.del('board/questions/' + this.$route.query.qid + '/answers/' + this.answerId, '')
+      this.requestAnswerData()
     },
     async requestQuestionData() {
       var res = await api.get('board/questions/' + this.$route.query.qid, '')
@@ -562,17 +558,13 @@ export default {
         tags: data.tags,
         writerId: data.writerInfo.id,
         managerId: data.category.managerId,
-        profileImage: data.writerInfo.profileImage, 
+        profileImage: data.writerInfo.profileImage,
       }
     },
     async requestAnswerData() {
-      var res = await api.get('board/questions/' + this.$route.query.qid + '/answers', '').then(//this.$route.query.qid
-        (response) => {
-          console.log("answer: ")
-          this.answerList = response.data
-          this.initAnswerData()
-        }
-      )
+      var res = await api.get('board/questions/' + this.$route.query.qid + '/answers', '')
+      this.answerList = res.data 
+      this.initAnswerData()
     },
     initAnswerData() {
       console.log(this.answerList)
@@ -620,14 +612,14 @@ export default {
 .v-chip.v-chip--size-default {
   font-size: 0.8rem !important;
 }
-.v-container{
-  padding-top: 0px !important; 
-  padding-bottom: 16px !important; 
-  padding-left: 16px !important; 
-  padding-right: 16px !important; 
+
+.v-container {
+  padding-top: 0px !important;
+  padding-bottom: 16px !important;
+  padding-left: 16px !important;
+  padding-right: 16px !important;
 }
 
-.inputbox{
-  color: black !important; 
-}
-</style>
+.inputbox {
+  color: black !important;
+}</style>

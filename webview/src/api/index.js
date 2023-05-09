@@ -238,7 +238,7 @@ const fn = {
     return res
   },
   async doRefreshWork(doRequest, uri, params, headers){
-    var flag = await this.requestRefresh().then(
+    var flag = this.requestRefresh().then(
       (res) => {
         if (res.status == 200) {
           this.setTokenState(res.data.accessToken, res.data.refreshToken)

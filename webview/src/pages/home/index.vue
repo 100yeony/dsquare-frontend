@@ -5,7 +5,7 @@
       <v-col cols="10">
         <p class="text-h6 font-weight-black">My Place</p>
       </v-col>
-      
+
     </v-row>
     <v-row>
       <v-col cols="6">
@@ -32,7 +32,7 @@
       <v-col cols="10">
         <p class=" text-h6 font-weight-black">Weekly Hot</p>
       </v-col>
-      
+
     </v-row>
     <div>
       <v-slide-group>
@@ -52,12 +52,13 @@
       <v-col cols="10">
         <p class="text-h6 font-weight-black">최신글</p>
       </v-col>
-      
+
     </v-row>
     <v-card>
       <v-tabs fixed-tabs bg-color="shades-black" color="shades-white" align-tabs="title" height="2rem"
         selected-class="shades-white" v-model="recentTab">
-        <v-tab v-for="(i, index) in recentTabTitle.length" :key="index" :value="index" selected-class="shades-white" class="pa-0">
+        <v-tab v-for="(i, index) in recentTabTitle.length" :key="index" :value="index" selected-class="shades-white"
+          class="pa-0">
           {{ recentTabTitle[index] }}
         </v-tab>
       </v-tabs>
@@ -83,7 +84,8 @@
                       </v-col>
                       <v-col cols="2">
                         <td class="text-caption font-0000008F">
-                          <img src="@/assets/images/icons/icon_message-circle.png" /> {{ "qid" in post ? post.answerCnt : post.commentCnt }}
+                          <img src="@/assets/images/icons/icon_message-circle.png" /> {{ "qid" in post ? post.answerCnt :
+                            post.commentCnt }}
                         </td>
                       </v-col>
                     </v-row>
@@ -102,7 +104,7 @@
       <v-col cols="10">
         <p class="text-h6 font-weight-black">명예의 전당</p>
       </v-col>
-      
+
     </v-row>
     <v-card>
       <v-tabs fixed-tabs bg-color="shades-black" color="shades-white" align-tabs="title" height="2rem"
@@ -119,7 +121,7 @@
                 <tr v-for="post in hall" :key="post.qid">
                   <v-row no-gutters @click="pushPost(post)">
                     <v-col cols="8">
-                      <td class="d-inline-block text-truncate text-body-2 font-weight-bold" style="max-width:95%;" 
+                      <td class="d-inline-block text-truncate text-body-2 font-weight-bold" style="max-width:95%;"
                         color="#0000008F">
                         {{ post.title }}
                       </td>
@@ -147,7 +149,7 @@
       <v-col cols="10">
         <p class="text-h6 font-weight-black">사용자 랭킹</p>
       </v-col>
-      
+
     </v-row>
 
     <v-card>
@@ -294,17 +296,19 @@ export default {
     /* Weekly Hot 태그 관련 */
     async requestWeeklyHot() {
       var temp = [];
-      var res = await api.get(weeklyHotUri).then((response) => { temp = response.data; });
+      var res = await api.get(weeklyHotUri);
+      temp = res.data
       this.weeklyHotData = temp.slice(0, this.weeklyHotLimit);
     },
     async requestAllMyplace() {
-      var res = await api.get(myQnaUri).then((response) => { this.myPostsCount += response.data.length });
-      res = await api.get(myCommUri).then((response) => { this.myPostsCount += response.data.length });
-      res = await api.get(myDealUri).then((response) => { this.myPostsCount += response.data.length });
-      res = await api.get(myRequestCardUri).then((response) => { this.myPostsCount += response.data.length });
-      
-      res = await api.get(myAnswersUri).then((response) => { this.myRepliesCount += response.data.length });
-      res = await api.get(myCommentsUri).then((response) => { this.myRepliesCount += response.data.length });
+      this.myPostsCount += (await api.get(myQnaUri)).data.length;
+      this.myPostsCount += (await api.get(myCommUri)).data.length;
+      this.myPostsCount += (await api.get(myDealUri)).data.length;
+      this.myPostsCount += (await api.get(myRequestCardUri)).data.length;
+
+      this.myRepliesCount += (await api.get(myAnswersUri)).data.length;
+      this.myRepliesCount += (await api.get(myCommentsUri)).data.length;
+
     },
     pushMyPosts() {
       this.$router.push({
@@ -324,22 +328,20 @@ export default {
       var cardData = [];
 
       // 궁금해요
-      var res = await api.get(qnaWorkUri).then(
-        (response) => {
-          response.data.forEach((d) => {
-            d.createDate = this.exportDateFromTimeStamp(d.createDate)
-          });
-          qnaData = qnaData.concat(response.data);
-        }
-      );
-      res = await api.get(qnaNonworkUri).then(
-        (response) => {
-          response.data.forEach((d) => {
-            d.createDate = this.exportDateFromTimeStamp(d.createDate)
-          });
-          qnaData = qnaData.concat(response.data);
-        }
-      );
+      var qnaWorks = await api.get(qnaWorkUri)
+      qnaWorks.data.forEach((d) => {
+        d.createDate = this.exportDateFromTimeStamp(d.createDate)
+      }
+      )
+      qnaData = qnaData.concat(qnaWorks.data);
+
+      var qnaNoneWorks = await api.get(qnaNonworkUri)
+      qnaNoneWorks.data.forEach((d) => {
+        d.createDate = this.exportDateFromTimeStamp(d.createDate)
+      }
+      )
+      qnaData = qnaData.concat(qnaNoneWorks.data);
+
       qnaData.sort((a, b) => {
         if (a.createDate < b.createDate) return 1;
         if (b.createDate < a.createDate) return -1;
@@ -348,37 +350,30 @@ export default {
       this.recentData.push(qnaData.slice(0, this.recentLimit));
 
       // 소통해요
-      res = await api.get(commUri).then(
-        (response) => {
-          response.data.forEach((d) => {
-            d.createDate = this.exportDateFromTimeStamp(d.createDate)
-          });
-          commData = response.data;
-        }
-      );
+      var comms = await api.get(commUri)
+      comms.data.forEach((d) => {
+        d.createDate = this.exportDateFromTimeStamp(d.createDate)
+      })
+      commData = comms.data 
       this.recentData.push(commData.slice(0, this.recentLimit));
 
+
       // 당근해요
-      res = await api.get(dealUri).then(
-        (response) => {
-          response.data.forEach((d) => {
-            d.createDate = this.exportDateFromTimeStamp(d.createDate)
-          });
-          dealData = response.data;
-        }
-      );
+      var deals = await api.get(dealUri)
+      deals.data.forEach((d) => {
+        d.createDate = this.exportDateFromTimeStamp(d.createDate)
+      })
+      dealData = deals.data
       this.recentData.push(dealData.slice(0, this.recentLimit));
 
       // 카드주세요
-      res = await api.get(cardUri).then(
-        (response) => {
-          response.data.forEach((d) => {
-            d.createDate = this.exportDateFromTimeStamp(d.createDate)
-          });
-          cardData = response.data;
-        }
-      );
+      var cards = await api.get(cardUri)
+      cards.data.forEach((d) => {
+        d.createDate = this.exportDateFromTimeStamp(d.createDate)
+      })
+      cardData = cards.data
       this.recentData.push(cardData.slice(0, this.recentLimit));
+
     },
     pushPost(post) {
       var path, query;
@@ -411,10 +406,12 @@ export default {
       var weeklyData = [];
       var monthlyData = [];
 
-      var res = await api.get(hallWeeklyUri).then((response) => { weeklyData = response.data; });
+      var hallWeeklys =  await api.get(hallWeeklyUri)
+      weeklyData = hallWeeklys.data 
       this.hallOfFameData.push(weeklyData.slice(0, this.hallOfFameLimit));
 
-      res = await api.get(hallMonthlyUri).then((response) => { monthlyData = response.data; });
+      var hallMonths = await api.get(hallMonthlyUri)
+      monthlyData = hallMonths.data 
       this.hallOfFameData.push(monthlyData.slice(0, this.hallOfFameLimit));
     },
 
@@ -423,10 +420,12 @@ export default {
       var questionUserData = [];
       var answerUserData = [];
 
-      var res = await api.get(questionUserUri).then((response) => { questionUserData = response.data; });
+      var questionUsers = await api.get(questionUserUri)
+      questionUserData = questionUsers.data
       this.userRankingData.push(questionUserData.slice(0, this.userRankingLimit));
 
-      res = await api.get(answerUserUri).then((response) => { answerUserData = response.data; });
+      var answerUsers = await api.get(answerUserUri)
+      answerUserData = answerUsers.data
       this.userRankingData.push(answerUserData.slice(0, this.userRankingLimit));
     }
   },

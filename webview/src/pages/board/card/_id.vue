@@ -415,12 +415,9 @@ export default {
       this.isShowCard = false; 
     },
     async requestDelCard() {
-      const res = await api.del('board/cards/' + this.$route.query.id, '').then(
-        (response) => {
-          console.log(response)
-          this.$router.push(process.env.VUE_APP_BOARD_CARD);
-        }
-      )
+      const res = await api.del('board/cards/' + this.$route.query.id, '')
+      console.log(res)
+      this.$router.push(process.env.VUE_APP_BOARD_CARD);
     },
 
     /* 카드 주기 */
@@ -429,11 +426,8 @@ export default {
     },
 
     async cardSelect() {
-      const res = await api.patch('board/cards/' + this.cardData.cardId).then(
-        (response) => {
-          console.log(response)
-        }
-      )
+      const res = await api.patch('board/cards/' + this.cardData.cardId)
+      console.log(res)
     },
 
     // 좋아요 관련

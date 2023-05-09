@@ -47,38 +47,30 @@ export default {
   },
   methods: {
     async requestAllAnswers() {
-      await api.get(answersUri).then(
-        (response) => {
-          response.data.forEach(async (d) => {
-            d.createDate = this.exportDateFromTimeStamp(d.createDate);
-          });
-          this.answerCardData = response.data;
-        }
-      );
+      var res = await api.get(answersUri)
+      res.data.forEach(async (d) => {
+        d.createDate = this.exportDateFromTimeStamp(d.createDate);
+      });
+      this.answerCardData = res.data;
 
       this.answerCardData.forEach(async (answer) => {
-        await api.get(questionUri + answer.qid).then(
-          (response) => {
-            answer["question"] = {
-              name: response.data.writerInfo.name,
-              teamHierarchy: response.data.writerInfo.teamHierarchy,
-              categoryName: response.data.category.name,
-              title: response.data.title,
-            };
-          }
-        );
+        let res = await api.get(questionUri + answer.qid)
+        answer["question"] = {
+          name: res.data.writerInfo.name,
+          teamHierarchy: res.data.writerInfo.teamHierarchy,
+          categoryName: res.data.category.name,
+          title: res.data.title,
+        };
+
       });
     },
 
     async requestAllComments() {
-      await api.get(commentsUri).then(
-        (response) => {
-          response.data.forEach(async (d) => {
-            d.createDate = this.exportDateFromTimeStamp(d.createDate);
-          });
-          this.commentCardData = response.data;
-        }
-      );
+      var res = await api.get(commentsUri)
+      res.data.forEach(async (d) => {
+        d.createDate = this.exportDateFromTimeStamp(d.createDate);
+      });
+      this.commentCardData = res.data;
 
       var uriMap = {
         QUESTION: questionUri,
@@ -89,20 +81,17 @@ export default {
       }
       this.commentCardData.forEach(async (comment) => {
         var uri = uriMap[comment.boardType];
-        await api.get(uri + comment.postId).then(
-          (response) => {
-            comment["post"] = {
-              name: response.data.writerInfo.name,
-              teamHierarchy: response.data.writerInfo.teamHierarchy,
-              title: response.data.title ? response.data.title : response.data.content,
-              qid: response.data.qid ? response.data.qid : null,
-            };
+        var res = await api.get(uri + comment.postId)
+        comment["post"] = {
+          name: res.data.writerInfo.name,
+          teamHierarchy: res.data.writerInfo.teamHierarchy,
+          title: res.data.title ? res.data.title : res.data.content,
+          qid: res.data.qid ? res.data.qid : null,
+        };
 
-            if (comment.boardType === 'QUESTION') {
-              comment["post"]["categoryName"] = response.data.category.name;
-            }
-          }
-        )
+        if (comment.boardType === 'QUESTION') {
+          comment["post"]["categoryName"] = res.data.category.name;
+        }
       });
     },
 
@@ -125,7 +114,7 @@ export default {
         query = { qid: item.qid };
       } else {
         var postId = item.postId;
-        
+
         if (item.boardType === "QUESTION") {
           path = process.env.VUE_APP_BOARD_QNA_DETAIL;
           query = { qid: postId };
@@ -144,10 +133,10 @@ export default {
         }
       }
 
-      this.$router.push({ 
-        path: path, 
-        title: item?.title, 
-        query: query 
+      this.$router.push({
+        path: path,
+        title: item?.title,
+        query: query
       });
     },
     loadMore() {

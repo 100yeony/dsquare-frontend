@@ -12,8 +12,8 @@
         <v-expansion-panel-text>
           <v-row class="mt-1">
             <v-col cols="4" class="">
-              <v-select v-model="searchKey" placeholder="구분" class="text-truncate" variant="outlined"
-                density="compact" :items="['제목 + 내용', '작성자']"></v-select>
+              <v-select v-model="searchKey" placeholder="구분" class="text-truncate" variant="outlined" density="compact"
+                :items="['제목 + 내용', '작성자']"></v-select>
             </v-col>
             <v-col cols="8" class="pl-2">
               <v-text-field v-model="searchContent" placeholder="검색어" variant="outlined" density="compact" />
@@ -108,7 +108,7 @@ export default {
   },
   computed: {
     searchValidation() {
-      if (this.searchKey != '' && this.searchContent != ''){
+      if (this.searchKey != '' && this.searchContent != '') {
         return true
       } else {
         return false
@@ -118,7 +118,7 @@ export default {
   },
   data() {
     return {
-      searchFlag: false, 
+      searchFlag: false,
     }
   },
   methods: {
@@ -132,26 +132,20 @@ export default {
         }
         var res = await api.get('board/talks' + '?'
           + 'key=' + key
-          + '&value=' + this.searchContent).then(
-            (response) => {
-              response.data.forEach((d) => {
-                d.createDate = this.exportDateFromTimeStamp(d.createDate)
-              });
-              this.boardCardData = response.data
-            }
-          );
-          this.searchFlag = (this.boardCardData.length == 0) ? true:false  
+          + '&value=' + this.searchContent)
+        res.data.forEach((d) => {
+          d.createDate = this.exportDateFromTimeStamp(d.createDate)
+        });
+        this.boardCardData = res.data
+        this.searchFlag = (this.boardCardData.length == 0) ? true : false
       }
     },
     async requestAll() {
-      var res = await api.get('board/talks').then(
-        (response) => {
-          response.data.forEach((d) => {
+      var res = await api.get('board/talks')
+      res.data.forEach((d) => {
             d.createDate = this.exportDateFromTimeStamp(d.createDate)
           });
-          this.boardCardData = response.data
-        }
-      )
+          this.boardCardData = res.data
     },
     handleCardClicked(item) {
       if (item) {

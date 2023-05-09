@@ -2,10 +2,7 @@
   <div class="keep-all">
 
     <div>
-      <CardDialog :isShow="isShow" 
-      :title="dialogTitle" 
-      @click-confirm="onConfirm" 
-      @click-cancel="onCancel" />
+      <CardDialog :isShow="isShow" :title="dialogTitle" @click-confirm="onConfirm" @click-cancel="onCancel" />
     </div>
 
     <!-- 카드주세요 header-->
@@ -18,13 +15,13 @@
 
     <!-- 이달의 카드 -->
     <p class="mt-3 mb-2 text-h6 font-weight-black">이달의 카드</p>
-    <div class="text-center" v-if="this.selectedCardData.length===0">
+    <div class="text-center" v-if="this.selectedCardData.length === 0">
       <img src="@/assets/images/empty.png" width="70" height="70">
       <h3>이달의 카드가 없어요</h3>
     </div>
     <Flicking :plugins="flickingPlugins" :options="flickingOptions" class="mt-2 overflow-visible">
-      <RequestCard class="panel mr-3" v-for="(item, index) in selectedCardData" 
-        :data="item" :key="index" @handle-card-clicked="handleCardClicked" @handle-card-dialog="handleCardDialog(item)"/>
+      <RequestCard class="panel mr-3" v-for="(item, index) in selectedCardData" :data="item" :key="index"
+        @handle-card-clicked="handleCardClicked" @handle-card-dialog="handleCardDialog(item)" />
     </Flicking>
 
     <v-divider :thickness="1" class="mt-4 mb-5"></v-divider>
@@ -34,7 +31,7 @@
         {{ qnaTabTitle[index] }}
       </v-tab>
     </v-tabs>
-<!-- 
+    <!-- 
     <p class="mt-3 text-h6 font-weight-black">카드 대기중</p> -->
 
     <v-window v-model="qnaTab" :touch="false">
@@ -61,9 +58,9 @@
             </v-expansion-panel-text>
           </v-expansion-panel>
         </v-expansion-panels>
-        
+
         <!-- 정렬 -->
-        <div class="mt-4 mb-4 d-flex justify-end" >
+        <div class="mt-4 mb-4 d-flex justify-end">
           <v-btn prepend-icon="mdi-sort-descending">정렬
             <v-menu activator="parent">
               <v-list>
@@ -88,7 +85,8 @@
         <!-- 카드 대기중 목록 -->
         <div>
           <div v-for="(item, index) in requestCardData" :value="item.cardId" class="card">
-            <RequestCard class=" mt-2" :data="item" @handle-card-clicked="handleCardClicked" @handle-card-dialog="handleCardDialog(item)" :style="item.style"/>
+            <RequestCard class=" mt-2" :data="item" @handle-card-clicked="handleCardClicked"
+              @handle-card-dialog="handleCardDialog(item)" :style="item.style" />
           </div>
         </div>
 
@@ -133,13 +131,14 @@
 
         <div>
           <div v-for="(item, index) in completedCardData" :value="item.cardId" class="card" :key="index">
-            <RequestCard class=" mt-2" :data="item" @handle-card-clicked="handleCardClicked" @handle-card-dialog="handleCardDialog(item)" :style="item.style"/>
+            <RequestCard class=" mt-2" :data="item" @handle-card-clicked="handleCardClicked"
+              @handle-card-dialog="handleCardDialog(item)" :style="item.style" />
           </div>
         </div>
       </v-window-item>
     </v-window>
   </div>
-  
+
   <br>
 
   <v-menu transition="slide-y-transition">
@@ -171,8 +170,8 @@ const flickingOptions = {
   moveType: 'freeScroll',
   easing: x => x,
 }
-const flickingPlugins = [new AutoPlay({ 
-  duration: 0, 
+const flickingPlugins = [new AutoPlay({
+  duration: 0,
   animationDuration: 10000,
 })];
 
@@ -238,11 +237,11 @@ export default {
       requestCardData: [],
       selectedCardData: [],
       completedCardData: [],
-      isShow: false, 
+      isShow: false,
       selectedItem: {},
-      qnaTab: 0, 
-      searchFlag: false, 
-      completedFlag: false, 
+      qnaTab: 0,
+      searchFlag: false,
+      completedFlag: false,
     };
   },
   watch: {
@@ -308,34 +307,28 @@ export default {
       this.searchContent = '';
     },
     async requestAll() {
-      var res = await api.get('board/cards').then(
-        (response) => {
-          console.log('response', response)
-          response.data.forEach((d) => {
-            d.createDate = this.exportDateFromTimeStamp(d.createDate);
-            var tempTeammate = d.teammate.replaceAll('[', '["').replaceAll(']', '"]').replaceAll(',', '","');
-            d.teammate = JSON.parse(tempTeammate);  // 어레이로 변환
+      var res = await api.get('board/cards')
+      console.log('response', res)
+      res.data.forEach((d) => {
+        d.createDate = this.exportDateFromTimeStamp(d.createDate);
+        var tempTeammate = d.teammate.replaceAll('[', '["').replaceAll(']', '"]').replaceAll(',', '","');
+        d.teammate = JSON.parse(tempTeammate);  // 어레이로 변환
 
-            if (d.selectionInfo == null) {
-              this.requestCardData.push(d)
-            } else {
-              this.completedCardData.push(d)
-            }
-          });
+        if (d.selectionInfo == null) {
+          this.requestCardData.push(d)
+        } else {
+          this.completedCardData.push(d)
         }
-      );
+      });
     },
     async requestAllSelected() {
-      var res = await api.get('board/cards/card-of-the-month').then(
-        (response) => {
-          response.data.forEach((d) => {
-            d.createDate = this.exportDateFromTimeStamp(d.createDate);
-            var tempTeammate = d.teammate.replaceAll('[', '["').replaceAll(']', '"]').replaceAll(',', '","');
-            d.teammate = JSON.parse(tempTeammate);  // 어레이로 변환
-          });
-          this.selectedCardData = response.data;
-        },
-      );
+      var res = await api.get('board/cards/card-of-the-month')
+      res.data.forEach((d) => {
+        d.createDate = this.exportDateFromTimeStamp(d.createDate);
+        var tempTeammate = d.teammate.replaceAll('[', '["').replaceAll(']', '"]').replaceAll(',', '","');
+        d.teammate = JSON.parse(tempTeammate);  // 어레이로 변환
+      });
+      this.selectedCardData = res.data;
     },
     categoryChanged() {
       this.subcategory = [];
@@ -348,31 +341,29 @@ export default {
       }
     },
     async search() {
-      if (typeof this.subcategory == 'string' || typeof this.category == 'string'){
-        var res = await api.get('board/cards?projTeamId=' + this.projTeamId).then(
-          (response) => {
-            if (this.qnaTab == 0) {
-              this.requestCardData = []
-            } else {
-              this.completedCardData = []
-            }
-            
-            response.data.forEach((d) => {
-              d.createDate = this.exportDateFromTimeStamp(d.createDate)
-              if (d.selectionInfo == null && this.qnaTab == 0) {
-                this.requestCardData.push(d)
-              } else if (d.selectionInfo != null && this.qnaTab == 1){
-                this.completedCardData.push(d)
-              }
-            });
+      if (typeof this.subcategory == 'string' || typeof this.category == 'string') {
+        var res = await api.get('board/cards?projTeamId=' + this.projTeamId)
+        if (this.qnaTab == 0) {
+          this.requestCardData = []
+        } else {
+          this.completedCardData = []
+        }
 
-            if (this.qnaTab == 0){
-              this.searchFlag = (this.requestCardData.length == 0) ? true:false
-            } else {
-              this.completedFlag = (this.completedCardData.length == 0) ? true:false
-            }
+        res.data.forEach((d) => {
+          d.createDate = this.exportDateFromTimeStamp(d.createDate)
+          if (d.selectionInfo == null && this.qnaTab == 0) {
+            this.requestCardData.push(d)
+          } else if (d.selectionInfo != null && this.qnaTab == 1) {
+            this.completedCardData.push(d)
           }
-        )
+        });
+
+        if (this.qnaTab == 0) {
+          this.searchFlag = (this.requestCardData.length == 0) ? true : false
+        } else {
+          this.completedFlag = (this.completedCardData.length == 0) ? true : false
+        }
+
       }
     },
     handleCardClicked(item) {
@@ -412,7 +403,7 @@ export default {
 
     },
     onScroll(e) {
-        this.scrollPosition = window.scrollY;
+      this.scrollPosition = window.scrollY;
     },
 
     calculateCardStyle(card, index) {
@@ -427,7 +418,7 @@ export default {
       const dY = this.clamp(deltaY, -cardHeight, 0);
 
       const disappearingPosition = firstCardTop + cardHeight * index;
-      
+
       //const dissapearingValue = (dY / cardHeight) + 1
       const dissapearingValue = (dY / cardHeight) + 1
       const zValue = dY / cardHeight * 50;
@@ -439,7 +430,7 @@ export default {
       }
       return card;
     },
-    clamp (value, min, max) {
+    clamp(value, min, max) {
       return Math.min(Math.max(min, value), max)
     },
     categoryChanged() {
@@ -468,12 +459,9 @@ export default {
     },
     async cardSelect() {
       console.log(this.selectedItem)
-      const res = await api.patch('board/cards/' + this.selectedItem.cardId).then(
-        (response) => {
-          console.log(response)
-          this.selectedItem = {}
-        }
-      )
+      const res = await api.patch('board/cards/' + this.selectedItem.cardId)
+      console.log(res)
+      this.selectedItem = {}
     },
     sort(index) {
       this.selectedSortIndex = index;
@@ -523,6 +511,6 @@ export default {
 }
 
 .v-window {
-  overflow: inherit !important;  
+  overflow: inherit !important;
 }
 </style>

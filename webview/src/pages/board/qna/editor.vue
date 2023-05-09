@@ -130,18 +130,7 @@ export default {
           console.log(error)
         })
     },
-    //}
 
-    /**
-     * Test code for post file data
-     * 
-    console.log(this.selectedFile)
-    var formData = new FormData();
-    formData.append('file', this.selectedFile[0], this.selectedFile.name);
-    const res2 = await api.multiPartPost('file/upload', formData).then((response) => {
-      console.log(response)
-    })
-     */
 
     uploader(editor) {
       editor.plugins.get("FileRepository").createUploadAdapter = (loader) => {

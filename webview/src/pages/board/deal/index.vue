@@ -5,7 +5,7 @@
     <p class="text-caption my-3 font-0000008F">
       물품 거래 혹은 나눔을 통해 정을 나눠보세요.
     </p>
-    
+
     <!-- 검색 -->
     <v-expansion-panels class="my-3">
       <v-expansion-panel>
@@ -13,8 +13,8 @@
         <v-expansion-panel-text>
           <v-row class="mt-1">
             <v-col cols="4" class="">
-              <v-select v-model="searchKey" placeholder="구분" class="text-truncate" variant="outlined"
-                density="compact" :items="['제목 + 내용', '작성자']"></v-select>
+              <v-select v-model="searchKey" placeholder="구분" class="text-truncate" variant="outlined" density="compact"
+                :items="['제목 + 내용', '작성자']"></v-select>
             </v-col>
             <v-col cols="8" class="pl-2">
               <v-text-field v-model="searchContent" placeholder="검색어" variant="outlined" density="compact" />
@@ -108,12 +108,12 @@ export default {
   },
   data() {
     return {
-      searchFlag: false, 
+      searchFlag: false,
     }
   },
   computed: {
     searchValidation() {
-      if (this.searchKey != '' && this.searchContent != ''){
+      if (this.searchKey != '' && this.searchContent != '') {
         return true
       } else {
         return false
@@ -132,26 +132,21 @@ export default {
         }
         var res = await api.get('board/carrots' + '?'
           + 'key=' + key
-          + '&value=' + this.searchContent).then(
-            (response) => {
-              response.data.forEach((d) => {
-                d.createDate = this.exportDateFromTimeStamp(d.createDate)
-              });
-              this.boardCardData = response.data
-            }
-          );
-          this.searchFlag = (this.boardCardData.length == 0) ? true:false  
+          + '&value=' + this.searchContent)
+        res.data.forEach((d) => {
+          d.createDate = this.exportDateFromTimeStamp(d.createDate)
+        });
+        this.boardCardData = res.data
+        this.searchFlag = (this.boardCardData.length == 0) ? true : false
       }
     },
     async requestAll() {
-      var res = await api.get('board/carrots').then(
-        (response) => {
-          response.data.forEach((d) => {
-            d.createDate = this.exportDateFromTimeStamp(d.createDate)
-          });
-          this.boardCardData = response.data
-        }
-      )
+      var res = await api.get('board/carrots')
+      res.data.forEach((d) => {
+        d.createDate = this.exportDateFromTimeStamp(d.createDate)
+      });
+      this.boardCardData = res.data
+
     },
     handleCardClicked(item) {
       if (item) {
