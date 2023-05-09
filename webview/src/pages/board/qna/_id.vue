@@ -94,7 +94,7 @@
                     <v-col>
                       <div>
                         <div class="font-xs">
-                          <v-chip v-if="comment.writerInfo.id == qData.writerId">작성자</v-chip>{{ comment.writerInfo.name +
+                          <v-chip variant="outlined" class="ma-2" size="x-small" color="primary" v-if="comment.writerInfo.id == qData.writerId">작성자</v-chip>{{ comment.writerInfo.name +
                             ' (' + comment.writerInfo.teamHierarchy[comment.writerInfo.teamHierarchy.length - 1] + ')' }}
                         </div>
                         <div class="font-xs font_white_gray">
@@ -223,7 +223,7 @@
                       <v-col>
                         <div>
                           <div class="font-xs">
-                            <v-icon v-if="comment.writerInfo.id == item.writerInfo.id">mdi-pencil-box</v-icon>{{
+                            <v-chip variant="outlined" class="ma-2" size="x-small" color="green" v-if="comment.writerInfo.id == item.writerInfo.id">답변자</v-chip>{{
                               comment.writerInfo.name + ' (' +
                               comment.writerInfo.teamHierarchy[comment.writerInfo.teamHierarchy.length - 1] + ')' }}
                           </div>
