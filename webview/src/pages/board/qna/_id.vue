@@ -94,8 +94,8 @@
                     <v-col>
                       <div>
                         <div class="font-xs">
-                          <v-chip variant="outlined" class="ma-2" size="x-small" color="primary" v-if="comment.writerInfo.id == qData.writerId">작성자</v-chip>{{ comment.writerInfo.name +
-                            ' (' + comment.writerInfo.teamHierarchy[comment.writerInfo.teamHierarchy.length - 1] + ')' }}
+                          {{ comment.writerInfo.name + ' (' + comment.writerInfo.teamHierarchy[comment.writerInfo.teamHierarchy.length - 1] + ')' }}
+                          <v-chip variant="outlined" class="ml-1" size="x-small" color="primary" v-if="comment.writerInfo.id == qData.writerId">작성자</v-chip>
                         </div>
                         <div class="font-xs font_white_gray">
                           {{ comment.createDate }}
@@ -160,7 +160,7 @@
         </v-card-title>
         <v-card-item>
           <!-- 답변자 -->
-          <v-row class="mb-2" align="center">
+          <v-row align="center">
             <v-col cols="2">
               <span v-if="item.writerInfo.profileImage == null">
                 <v-avatar color="grey" size="40">
@@ -173,7 +173,7 @@
                 </v-avatar>
               </span>
             </v-col>
-            <v-col cols="8">
+            <v-col cols="8" class="pl-5">
               <div class="text-body font-bold">
                 <v-row> {{ item.writerInfo.name }} </v-row>
                 <v-row class="text-caption font-0000008F"> {{
@@ -223,9 +223,10 @@
                       <v-col>
                         <div>
                           <div class="font-xs">
-                            <v-chip variant="outlined" class="ma-2" size="x-small" color="green" v-if="comment.writerInfo.id == item.writerInfo.id">답변자</v-chip>{{
+                            {{
                               comment.writerInfo.name + ' (' +
                               comment.writerInfo.teamHierarchy[comment.writerInfo.teamHierarchy.length - 1] + ')' }}
+                            <v-chip variant="outlined" class="ml-1" size="x-small" color="green" v-if="comment.writerInfo.id == item.writerInfo.id">답변자</v-chip>
                           </div>
                           <div class="font-xs font_white_gray">
                             {{ comment.createDate }}
