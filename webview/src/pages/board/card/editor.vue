@@ -113,14 +113,14 @@ export default {
         cardWriterId: store.getters["info/infoUser"].userId,
         content: editorData,
         title: this.title,
-        teammate: Array.from(this.chipData),
+        teammates: Array.from(this.chipData),
         projTeamId: this.projTeamId, 
         teammateCnt: this.teammateCnt,
       })
       const res = await api.post('board/cards', {
         content: editorData,
         title: this.title,
-        teammate: Array.from(this.chipData),
+        teammates: Array.from(this.chipData),
         projTeamId: this.projTeamId, 
         teammateCnt: this.teammateCnt,
       })

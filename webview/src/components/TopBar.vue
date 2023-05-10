@@ -39,9 +39,9 @@
     </v-navigation-drawer>
     <div>
       <v-app-bar absolute dense color="#ffffff">
-        <v-btn icon size="x-large" @click="onclickBackBtn()" v-if="back">
+        <!-- <v-btn icon size="x-large" @click="onclickBackBtn()" v-if="back">
           <v-icon>mdi-arrow-left</v-icon>
-        </v-btn>
+        </v-btn> -->
         <v-toolbar-title>
           <span class="mr-1">
             <img cover src="@/assets/images/logo.jpeg" width="30" height="30">
