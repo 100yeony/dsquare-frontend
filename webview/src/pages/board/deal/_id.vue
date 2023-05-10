@@ -87,10 +87,11 @@
                     </v-col>
                     <v-col>
                       <div>
-                        <div class="font-xs"><v-chip variant="outlined" class="ma-2" size="x-small" color="primary"
-                            v-if="comment.writerInfo.id == qData.writerId">작성자</v-chip>
+                        <div class="font-xs">
                           {{ comment.writerInfo.name + ' (' +
                             comment.writerInfo.teamHierarchy[comment.writerInfo.teamHierarchy.length - 1] + ')' }}
+                            <v-chip variant="outlined" class="ml-1" size="x-small" color="primary"
+                            v-if="comment.writerInfo.id == qData.writerId">작성자</v-chip>
                         </div>
                         <div class="font-xs font_white_gray">
                           {{ comment.createDate }}
