@@ -19,7 +19,7 @@
       <img src="@/assets/images/empty.png" width="70" height="70">
       <h3>이달의 카드가 없어요</h3>
     </div>
-    <Flicking :plugins="flickingPlugins" :options="flickingOptions" class="mt-2 overflow-visible">
+    <Flicking :plugins="flickingPlugins" :options="flickingOptions" class="mt-2">
       <RequestCard class="panel mr-3" v-for="(item, index) in selectedCardData" :data="item" :key="index"
         @handle-card-clicked="handleCardClicked" @handle-card-dialog="handleCardDialog(item)" />
     </Flicking>
@@ -311,8 +311,8 @@ export default {
       console.log('response', res)
       res.data.forEach((d) => {
         d.createDate = this.exportDateFromTimeStamp(d.createDate);
-        var tempTeammate = d.teammate.replaceAll('[', '["').replaceAll(']', '"]').replaceAll(',', '","');
-        d.teammate = JSON.parse(tempTeammate);  // 어레이로 변환
+        var tempTeammates = d.teammates.replaceAll('[', '["').replaceAll(']', '"]').replaceAll(',', '","');
+        d.teammates = JSON.parse(tempTeammates);  // 어레이로 변환
 
         if (d.selectionInfo == null) {
           this.requestCardData.push(d)

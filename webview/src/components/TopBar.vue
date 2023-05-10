@@ -42,9 +42,14 @@
         <v-btn icon size="x-large" @click="onclickBackBtn()" v-if="back">
           <v-icon>mdi-arrow-left</v-icon>
         </v-btn>
-        <v-toolbar-title><span>
-          <router-link to="/home" class="n_td">DSquare</router-link>
-        </span></v-toolbar-title>
+        <v-toolbar-title>
+          <span class="mr-1">
+            <img cover src="@/assets/images/logo.jpeg" width="30" height="30">
+          </span>
+          <span>
+            <router-link to="/home" class="n_td">DSquare</router-link>
+          </span>
+        </v-toolbar-title>
         <!--
       아래 내용들을 이용해서, 검색, push를 custom 진행하세요.
        -->
