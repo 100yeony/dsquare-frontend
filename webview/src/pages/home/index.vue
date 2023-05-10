@@ -115,32 +115,34 @@
       </v-tabs>
       <v-card-text>
         <v-window v-model="hallOfFameTab">
-          <v-window-item v-for="(hall, i) in hallofFameData" :key="i" :value="0">
-            <v-table density="compact">
-              <tbody>
-                <tr v-for="post in hall" :key="post.qid">
-                  <v-row no-gutters @click="pushPost(post)">
-                    <v-col cols="8">
-                      <td class="d-inline-block text-truncate text-body-2 font-weight-bold" style="max-width:95%;"
-                        color="#0000008F">
-                        {{ post.title }}
-                      </td>
-                    </v-col>
-                    <v-col cols="2">
-                      <td class="text-caption font-0000008F">
-                        <img src="@/assets/images/icons/icon_heart.png" />{{ post.likeCnt }}
-                      </td>
-                    </v-col>
-                    <v-col cols="2">
-                      <td class="text-caption font-0000008F">
-                        <img src="@/assets/images/icons/icon_message-circle.png" />{{ post.answerCnt }}
-                      </td>
-                    </v-col>
-                  </v-row>
-                </tr>
-              </tbody>
-            </v-table>
-          </v-window-item>
+          <template v-for="(hall, i) in hallOfFameData" :key="i">
+            <v-window-item :value="i">
+              <v-table density="compact">
+                <tbody>
+                  <tr v-for="post in hall" :key="post.qid">
+                    <v-row no-gutters @click="pushPost(post)">
+                      <v-col cols="8">
+                        <td class="d-inline-block text-truncate text-body-2 font-weight-bold" style="max-width:95%;" 
+                          color="#0000008F">
+                          {{ post.title }}
+                        </td>
+                      </v-col>
+                      <v-col cols="2">
+                        <td class="text-caption font-0000008F">
+                          <img src="@/assets/images/icons/icon_heart.png" />{{ post.likeCnt }}
+                        </td>
+                      </v-col>
+                      <v-col cols="2">
+                        <td class="text-caption font-0000008F">
+                          <img src="@/assets/images/icons/icon_message-circle.png" />{{ post.answerCnt }}
+                        </td>
+                      </v-col>
+                    </v-row>
+                  </tr>
+                </tbody>
+              </v-table>
+            </v-window-item>
+          </template>
         </v-window>
       </v-card-text>
     </v-card>
@@ -412,6 +414,9 @@ export default {
       var hallMonths = await api.get(hallMonthlyUri)
       monthlyData = hallMonths.data
       this.hallOfFameData.push(monthlyData.slice(0, this.hallOfFameLimit));
+
+      console.log("*********** halloffaamedata *********");
+      console.log(this.hallOfFameData);
     },
 
     /* 사용자랭킹 관련 */

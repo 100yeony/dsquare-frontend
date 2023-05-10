@@ -213,9 +213,25 @@ export default [
         path: process.env.VUE_APP_MYPAGE_MYINFO,
         name: "mypage-info",
         meta: {
-          title: "회원정보 관리",
+          title: "개인정보 설정",
         },
         component: () => import("@/pages/mypage/myInfo"),
+      },
+      {
+        path: process.env.VUE_APP_MYPAGE_SETTINGS,
+        name: "settings",
+        meta: {
+          title: "회원정보 관리",
+        },
+        component: () => import("@/pages/mypage/settings"),
+      },
+      {
+        path: process.env.VUE_APP_MYPAGE_SETTINGS_INFO,
+        name: "settings-info",
+        meta: {
+          title: "회원정보 수정",
+        },
+        component: () => import("@/pages/mypage/settingsInfo"),
       },
     ],
   },
