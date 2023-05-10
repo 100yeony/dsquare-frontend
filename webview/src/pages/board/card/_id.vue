@@ -4,10 +4,7 @@
    none_expansion-panel-background-color 
    none_expansion-panel-box-shadow">
     <div>
-      <CardDialog :isShow="isShowCard" 
-      :title="dialogTitle" 
-      @click-confirm="onConfirmCard" 
-      @click-cancel="onCancelCard" />
+      <CardDialog :isShow="isShowCard" :title="dialogTitle" @click-confirm="onConfirmCard" @click-cancel="onCancelCard" />
     </div>
 
     <div>
@@ -18,7 +15,8 @@
       <v-card-item>
         <div>
           <v-chip class="gifted-chip mb-3 w-100" v-if="cardData.selectionInfo" variant="outlined">
-            <img src="@/assets/images/icons/party-popper.svg" class="mr-2"/>{{ cardData.selectionInfo.cardOwner.name}}님이 카드 드립니다!!!
+            <img src="@/assets/images/icons/party-popper.svg" class="mr-2" />{{ cardData.selectionInfo.cardOwner.name }}님이
+            카드 드립니다!!!
           </v-chip>
         </div>
         <v-row class="mb-2" align="center">
@@ -37,7 +35,8 @@
           <v-col cols="4" class="pl-5">
             <div class="text-body font-bold">
               <v-row>{{ cardData.writerInfo.name }}</v-row>
-              <v-row class="text-caption font-0000008F">{{ cardData.writerInfo.teamHierarchy[cardData.writerInfo.teamHierarchy.length-1] }}</v-row>
+              <v-row class="text-caption font-0000008F">{{
+                cardData.writerInfo.teamHierarchy[cardData.writerInfo.teamHierarchy.length - 1] }}</v-row>
             </div>
           </v-col>
           <v-col cols="4">
@@ -76,8 +75,8 @@
             <div class="sizing mt-2" v-if="cardData.teammateCnt">• 참여인원 수: {{ cardData.teammateCnt }}</div>
             <div v-if="cardData.teammate[0] !== ''" class="mt-2">
               <span class="sizing">• 참여인원: </span>
-              <span class="sizing" v-for="(p, index) in cardData.teammate" :key="p" :value="p">{{ p }} 
-                <span class="sizing" v-if="index!==cardData.teammate.length-1">,</span> 
+              <span class="sizing" v-for="(p, index) in cardData.teammate" :key="p" :value="p">{{ p }}
+                <span class="sizing" v-if="index !== cardData.teammate.length - 1">,</span>
               </span>
             </div>
           </div>
@@ -85,10 +84,10 @@
         <v-chip class="mt-7" variant="outlined">
           <v-icon start icon="mdi-account-multiple-outline"></v-icon>
           <template v-for="team in cardData.projTeamInfo?.name">
-            {{  team  }}
+            {{ team }}
           </template>
         </v-chip>
-        
+
         <v-row class="mt-2">
           <v-col cols="2" class="center-container">
             <span @click="toggleLike('card', cardData.cardId)">
@@ -123,7 +122,10 @@
                     <v-col>
                       <div>
                         <div class="font-xs">
-                          {{ comment.writerInfo.name + ' (' + comment.writerInfo.teamHierarchy[comment.writerInfo.teamHierarchy.length - 1] + ')' }}
+                          <v-chip variant="outlined" class="ma-2" size="x-small" color="primary"
+                            v-if="comment.writerInfo.id == cardData.writerInfo.id">작성자</v-chip>
+                          {{ comment.writerInfo.name + ' (' +
+                            comment.writerInfo.teamHierarchy[comment.writerInfo.teamHierarchy.length - 1] + ')' }}
                         </div>
                         <div class="font-xs font_white_gray">
                           {{ comment.createDate }}
@@ -161,8 +163,9 @@
                     @{{ cardData.mentionName }}
                     <v-icon icon="mdi-close-circle" @click="deleteMention(cardData)"></v-icon>
                   </v-chip>
-                  <v-text-field v-model="cardData.commentText" :ref="cardData.commentInputRef" type="input" variant="outlined"
-                    single-line hide-details append-inner-icon="mdi-send" class="mt-2 inputbox" density="compact"
+                  <v-text-field v-model="cardData.commentText" :ref="cardData.commentInputRef" type="input"
+                    variant="outlined" single-line hide-details append-inner-icon="mdi-send" class="mt-2 inputbox"
+                    density="compact"
                     @click:append-inner="writeComment(cardData, 'card', cardData.cardId)"></v-text-field>
                 </div>
               </v-container>
@@ -181,7 +184,7 @@
       </v-card-item>
     </v-card>
 
-  
+
   </div>
 </template>
 
@@ -233,8 +236,8 @@ export default {
       isWriter: false,
       isCardOwner: false,
       isShow: false,
-      isShowCard: false, 
-      selectedPostType: 0, 
+      isShowCard: false,
+      selectedPostType: 0,
       cardMenu: [
         { title: "수정", id: 0 },
         { title: "삭제", id: 1 },
@@ -243,7 +246,7 @@ export default {
   },
   computed: {
     dialogTitle() {
-      if (this.selectedPostType == 0){
+      if (this.selectedPostType == 0) {
         return '게시물을 삭제하시겠습니까?';
       }
       else {
@@ -252,7 +255,7 @@ export default {
     }
   },
   mounted() {
-    if (!this.$route.query.id) { 
+    if (!this.$route.query.id) {
       this.$router.replace(process.env.VUE_APP_BOARD_CARD);
       return;
     }
@@ -267,7 +270,7 @@ export default {
         if (this.user.userId == response.data.writerInfo.id) {
           this.isWriter = true;
         }
-        console.log("mounted",this.cardData)
+        console.log("mounted", this.cardData)
         let res = await this.callComments('card', this.cardData.cardId)
         Object.assign(this.cardData, {
           commentInputRef: 'card' + this.cardData.cardId,
@@ -293,7 +296,7 @@ export default {
           comp[0].scrollIntoView({ behavior: 'smooth', block: 'end' })
         } else {
           comp.scrollIntoView({ behavior: 'smooth', block: 'end' })
-        } 
+        }
       })
     },
     deleteMention(item) {
@@ -393,34 +396,31 @@ export default {
       }
     },
     showDialog() {
-      this.selectedPostType = 0; 
+      this.selectedPostType = 0;
       this.isShow = true;
     },
     showCardDialog() {
-      this.selectedPostType = 1; 
-      this.isShowCard = true; 
+      this.selectedPostType = 1;
+      this.isShowCard = true;
     },
     onConfirm() {
       this.isShow = false;
       this.requestDelCard();
     },
     onConfirmCard() {
-      this.isShowCard = false; 
-      this.cardSelect(); 
+      this.isShowCard = false;
+      this.cardSelect();
     },
     onCancel() {
       this.isShow = false;
     },
     onCancelCard() {
-      this.isShowCard = false; 
+      this.isShowCard = false;
     },
     async requestDelCard() {
-      const res = await api.del('board/cards/' + this.$route.query.id, '').then(
-        (response) => {
-          console.log(response)
-          this.$router.push(process.env.VUE_APP_BOARD_CARD);
-        }
-      )
+      const res = await api.del('board/cards/' + this.$route.query.id, '')
+      console.log(res)
+      this.$router.push(process.env.VUE_APP_BOARD_CARD);
     },
 
     /* 카드 주기 */
@@ -429,11 +429,8 @@ export default {
     },
 
     async cardSelect() {
-      const res = await api.patch('board/cards/' + this.cardData.cardId + '/chosen').then(
-        (response) => {
-          console.log(response)
-        }
-      )
+      const res = await api.patch('board/cards/' + this.cardData.cardId)
+      console.log(res)
     },
 
     // 좋아요 관련
@@ -470,22 +467,22 @@ export default {
   background: white;
 }
 
-::v-deep .v-chip.v-chip--size-default{
-        font-size: 0.75rem !important;
-    }
+::v-deep .v-chip.v-chip--size-default {
+  font-size: 0.75rem !important;
+}
 
 .sizing {
   font-size: 0.875rem !important;
 }
 
-.v-container{
-  padding-top: 0px !important; 
-  padding-bottom: 16px !important; 
-  padding-left: 16px !important; 
-  padding-right: 16px !important; 
+.v-container {
+  padding-top: 0px !important;
+  padding-bottom: 16px !important;
+  padding-left: 16px !important;
+  padding-right: 16px !important;
 }
 
-.inputbox{
-  color: black !important; 
+.inputbox {
+  color: black !important;
 }
 </style>

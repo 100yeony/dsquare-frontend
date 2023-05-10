@@ -25,7 +25,8 @@
                 </v-col>
                 <v-col cols="6" class="">
                   <v-select v-model="subcategory" class="text-truncate" placeholder="소분야" variant="outlined"
-                    density="compact" :items="subcategoryItems" :disabled="!subcategoryItems.length" hide-details></v-select>
+                    density="compact" :items="subcategoryItems" :disabled="!subcategoryItems.length"
+                    hide-details></v-select>
                 </v-col>
               </v-row>
               <v-row>
@@ -191,8 +192,8 @@ export default {
   },
   data() {
     return {
-      workSearchFlag: false, 
-      searchFlag: false, 
+      workSearchFlag: false,
+      searchFlag: false,
     }
   },
   computed: {
@@ -243,26 +244,21 @@ export default {
             var res = await api.get('board/questions?workYn=true&cid='
               + this.cidData[this.subcategory]
               + '&key=' + key
-              + '&value=' + this.searchContent).then(
-                (response) => {
-                  response.data.forEach((d) => {
-                    d.createDate = this.exportDateFromTimeStamp(d.createDate)
-                  });
-                  this.boardCardData = response.data
-                }
-              ); 
-              this.workSearchFlag = (this.boardCardData.length == 0) ? true:false  
+              + '&value=' + this.searchContent)
+            res.data.forEach((d) => {
+              d.createDate = this.exportDateFromTimeStamp(d.createDate)
+            });
+            this.boardCardData = res.data
+            this.workSearchFlag = (this.boardCardData.length == 0) ? true : false
           } else {
             console.log('key, value 없음')
-            var res = await api.get('board/questions?workYn=true&cid=' + this.cidData[this.subcategory]).then(
-              (response) => {
-                response.data.forEach((d) => {
-                  d.createDate = this.exportDateFromTimeStamp(d.createDate)
-                });
-                this.boardCardData = response.data
-              }
-            );
-            this.workSearchFlag = (this.boardCardData.length == 0) ? true:false  
+            var res = await api.get('board/questions?workYn=true&cid=' + this.cidData[this.subcategory])
+            res.data.forEach((d) => {
+              d.createDate = this.exportDateFromTimeStamp(d.createDate)
+            });
+            this.boardCardData = res.data
+
+            this.workSearchFlag = (this.boardCardData.length == 0) ? true : false
           }
         } else {
           if (this.searchKey != '' && this.searchContent != '') {
@@ -274,25 +270,21 @@ export default {
             }
             var res = await api.get('board/questions?workYn=true'
               + '&key=' + key
-              + '&value=' + this.searchContent).then(
-                (response) => {
-                  response.data.forEach((d) => {
-                    d.createDate = this.exportDateFromTimeStamp(d.createDate)
-                  });
-                  this.boardCardData = response.data
-                }
-              );
-              this.workSearchFlag = (this.boardCardData.length == 0) ? true:false  
+              + '&value=' + this.searchContent)
+
+            res.data.forEach((d) => {
+              d.createDate = this.exportDateFromTimeStamp(d.createDate)
+            });
+            this.boardCardData = res.data
+
+            this.workSearchFlag = (this.boardCardData.length == 0) ? true : false
           } else {
-            var res = await api.get('board/questions?workYn=true').then(
-              (response) => {
-                response.data.forEach((d) => {
-                  d.createDate = this.exportDateFromTimeStamp(d.createDate)
-                });
-                this.boardCardData = response.data
-              }
-            );
-            this.workSearchFlag = (this.boardCardData.length == 0) ? true:false  
+            var res = await api.get('board/questions?workYn=true')
+            res.data.forEach((d) => {
+              d.createDate = this.exportDateFromTimeStamp(d.createDate)
+            });
+            this.boardCardData = res.data
+            this.workSearchFlag = (this.boardCardData.length == 0) ? true : false
           }
         }
       } else if (this.qnaTab == 1) {
@@ -305,38 +297,30 @@ export default {
           }
           var res = await api.get('board/questions?workYn=false'
             + '&key=' + key
-            + '&value=' + this.searchContent).then(
-              (response) => {
-                response.data.forEach((d) => {
-                  d.createDate = this.exportDateFromTimeStamp(d.createDate)
-                });
-                this.boardCardData = response.data
-              }
-            );
-            this.searchFlag = (this.boardCardData.length == 0) ? true:false  
+            + '&value=' + this.searchContent)
+          res.data.forEach((d) => {
+            d.createDate = this.exportDateFromTimeStamp(d.createDate)
+          });
+          this.boardCardData = res.data
+
+          this.searchFlag = (this.boardCardData.length == 0) ? true : false
         }
       }
     },
     async requestAllWork() {
-      var res = await api.get('board/questions' + '?' + 'workYn=true').then(
-        (response) => {
-          response.data.forEach((d) => {
-            d.createDate = this.exportDateFromTimeStamp(d.createDate)
-          });
-          this.boardCardData = response.data
-        }
-      )
+      var res = await api.get('board/questions' + '?' + 'workYn=true')
+      res.data.forEach((d) => {
+        d.createDate = this.exportDateFromTimeStamp(d.createDate)
+      });
+      this.boardCardData = res.data
     },
 
     async requestAllNoneWork() {
-      var res = await api.get('board/questions' + '?' + 'workYn=false').then(
-        (response) => {
-          response.data.forEach((d) => {
-            d.createDate = this.exportDateFromTimeStamp(d.createDate)
-          });
-          this.boardCardData = response.data
-        }
-      )
+      var res = await api.get('board/questions' + '?' + 'workYn=false')
+      res.data.forEach((d) => {
+        d.createDate = this.exportDateFromTimeStamp(d.createDate)
+      });
+      this.boardCardData = res.data
     },
 
     tabChanged() {

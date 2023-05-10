@@ -59,7 +59,7 @@ export default {
   },
   methods: {
     async write(editorData) {
-      const res = await api.post('board/carrots', {
+      await api.post('board/carrots', {
         content: editorData,
         title: this.title,
         tags: Array.from(this.chipData),
@@ -68,22 +68,9 @@ export default {
           extension: 'png',
           fileSize: 51239
         }
-      }).then((response) => {
-        store.dispatch('info/setPageState', {});
-        this.$router.push(process.env.VUE_APP_BOARD_DEAL);
-      });
-      //}
-
-      /**
-       * Test code for post file data
-       * 
-      console.log(this.selectedFile)
-      var formData = new FormData();
-      formData.append('file', this.selectedFile[0], this.selectedFile.name);
-      const res2 = await api.multiPartPost('file/upload', formData).then((response) => {
-        console.log(response)
       })
-       */
+      store.dispatch('info/setPageState', {});
+      this.$router.push(process.env.VUE_APP_BOARD_DEAL);
 
     },
     uploader(editor) {
@@ -112,6 +99,9 @@ export default {
     cancle() {
       this.$router.push(process.env.VUE_APP_BOARD_DEAL);
     },
+    fillForm() {
+      this.editorData = "<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;</p><p>&nbsp;</p><p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;(사진)</p><p>&nbsp;</p><p>&nbsp;</p><p>품명: &nbsp;</p><p>장소:&nbsp;</p><p>시간:</p><p>가격:</p><p>상태: &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</p>"
+    }
   }
 };
 </script>
@@ -124,6 +114,7 @@ export default {
         class="mt-2" />
 
       <div class="font-sm font-medium mt-7 mb-2">본문</div>
+      <v-btn variant="outlined" size="x-small" @click="fillForm()" class="font-xs mb-2">양식 불러오기</v-btn>
       <ckeditor v-model="editorData" :editor="editor" :config="editorConfig" height="200"></ckeditor>
 
       <v-file-input v-model="selectedFile" label="파일을 첨부해주세요." chips class="mt-5" variant="outlined" density="compact">

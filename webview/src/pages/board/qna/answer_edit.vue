@@ -34,19 +34,16 @@ export default {
 
   },
   methods: {
-    async edit(editorData) {
-      const res = await api.patch('board/questions/' + this.$route.query.qid + '/answers/' + this.$route.query.id, {
+    async edit() {
+      await api.post('board/questions/' + this.$route.query.qid + '/answers/' + this.$route.query.id, {
         content: this.editorData,
         atc: {
           "originFileName": "테스트파일",
           "extension": "xlsx",
           "fileSize": "512345"
         }
-      }).then(
-        (response) => {
-          this.cancle();
-        }
-      )
+      })
+      this.cancle();
     },
     uploader(editor) {
       editor.plugins.get("FileRepository").createUploadAdapter = (loader) => {
@@ -89,7 +86,7 @@ export default {
         <v-btn block variant="" class="button_white font-medium" @click="cancle">취소</v-btn>
       </v-col>
       <v-col cols="6">
-        <v-btn block variant="" class="button_main font-medium" @click="edit(editorData)"
+        <v-btn block variant="" class="button_main font-medium" @click="edit()"
           :disabled="!answerValidation">저장</v-btn>
       </v-col>
     </v-row>

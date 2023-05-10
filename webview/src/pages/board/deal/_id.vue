@@ -87,8 +87,10 @@
                     </v-col>
                     <v-col>
                       <div>
-                        <div class="font-xs">
-                          {{ comment.writerInfo.name + ' (' + comment.writerInfo.teamHierarchy[comment.writerInfo.teamHierarchy.length - 1] + ')' }}
+                        <div class="font-xs"><v-chip variant="outlined" class="ma-2" size="x-small" color="primary"
+                            v-if="comment.writerInfo.id == qData.writerId">작성자</v-chip>
+                          {{ comment.writerInfo.name + ' (' +
+                            comment.writerInfo.teamHierarchy[comment.writerInfo.teamHierarchy.length - 1] + ')' }}
                         </div>
                         <div class="font-xs font_white_gray">
                           {{ comment.createDate }}
@@ -187,7 +189,7 @@ export default {
         tags: [],
         writerId: 0,
         managerId: 0,
-        profileImage: null, 
+        profileImage: null,
       },
       commentList: [],
       answerList: [
@@ -250,7 +252,7 @@ export default {
           comp[0].scrollIntoView({ behavior: 'smooth', block: 'end' })
         } else {
           comp.scrollIntoView({ behavior: 'smooth', block: 'end' })
-        } 
+        }
       })
     },
     deleteMention(item) {
@@ -353,13 +355,10 @@ export default {
       this.isShow = false;
     },
     async requestDelQuestion() {
-      const res = await api.del('board/carrots/' + this.$route.query.carrotId, '').then(
-        (response) => {
-          console.log(response)
-          store.dispatch('info/setPageState', {});
-          this.$router.push(process.env.VUE_APP_BOARD_DEAL);
-        }
-      )
+      const res = await api.del('board/carrots/' + this.$route.query.carrotId, '')
+      console.log(res)
+      store.dispatch('info/setPageState', {});
+      this.$router.push(process.env.VUE_APP_BOARD_DEAL);
     },
     async requestQuestionData() {
       var res = await api.get('board/carrots/' + this.$route.query.carrotId, '')
@@ -397,7 +396,7 @@ export default {
         likeYn: data.likeYn,
         tags: data.tags,
         writerId: data.writerInfo.id,
-        profileImage: data.writerInfo.profileImage, 
+        profileImage: data.writerInfo.profileImage,
       }
     },
 
@@ -432,14 +431,14 @@ export default {
   font-size: 0.8rem !important;
 }
 
-.v-container{
-  padding-top: 0px !important; 
-  padding-bottom: 16px !important; 
-  padding-left: 16px !important; 
-  padding-right: 16px !important; 
+.v-container {
+  padding-top: 0px !important;
+  padding-bottom: 16px !important;
+  padding-left: 16px !important;
+  padding-right: 16px !important;
 }
 
-.inputbox{
-  color: black !important; 
+.inputbox {
+  color: black !important;
 }
 </style>

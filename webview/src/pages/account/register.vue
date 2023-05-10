@@ -8,6 +8,8 @@ import regex from "@/utils/regex"
 const ktEmailValidator = (email) => email == "" || new RegExp("[A-Za-z0-9]+@kt.com").test(email);
 const contactValidator = (contact) => contact == "" || regex.phoneRegexCheck(contact);
 const pwValidator = (pw) => pw == "" || new RegExp("^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,20}$").test(pw);
+const nameValidator = (name) => name == "" || new RegExp("^.{2,30}$").test(name);
+const nickNameValidator = (nickName) => nickName == "" || new RegExp("^.{1,15}$").test(nickName);
 
 export default {
   setup() {
@@ -58,9 +60,11 @@ export default {
         },
         nickname: {
           required,
+          nickNameValidator
         },
         name: {
           required,
+          nameValidator
         },
         contact: {
           required,
@@ -110,23 +114,22 @@ export default {
       }
       return '';
     },
-    // teamCaution() {
-
-    //   if (this.category === '플랫폼품질혁신TF' || this.category === '플랫폼IT컨설팅vTF') {
-    //     return true;
-    //   } else {
-    //     return false;
-    //   }
-    // },
-
-    // let subcategoryFullList = [
-    //   [],
-    //   [],
-    //   ["메시징DX플랫폼팀", "서비스플랫폼팀", 
-    //     "금융결제DX플랫폼팀", "인증DX플랫폼팀"],
-    //   ["미디어플랫폼팀", "AI서비스팀", 
-    //     "AICC서비스팀", "Safety플랫폼팀"],
-    //   ["AgileCore팀", "Digico사업수행팀", "AICC딜리버리팀"],
+    nameCaution() {
+      if (this.submitted && this.v$.user.name.required.$invalid) {
+        return '이름을 입력해주세요.';
+      } else if (this.submitted && this.v$.user.name.nameValidator.$invalid) {
+        return '이름은 최소 2자, 최대 30자 입니다.'
+      }
+      return '';
+    },
+    nickNameCaution() {
+      if (this.submitted && this.v$.user.nickname.required.$invalid) {
+        return '별칭을 입력해주세요';
+      } else if (this.submitted && this.v$.user.nickname.nickNameValidator.$invalid) {
+        return '별칭은 최소 1자, 최대 15자 입니다.'
+      }
+      return '';
+    }
 
   },
   watch: {
@@ -420,10 +423,10 @@ export default {
               <v-text-field type="text" v-model="user.nickname" variant="outlined" single-line hide-details
                 class="form-control font-sm mt-2" id="nickname" density="compact" :class="{
                   'is-invalid': submitted && v$.user.nickname.$error,
-                }" placeholder="닉네임1" />
-              <div v-if="submitted && v$.user.nickname.required.$invalid" class="invalid-feedback">
+                }" placeholder="닉네임" />
+              <div v-if="submitted && v$.user.nickname.$error">
                 <v-icon size="x-small" color="red">mdi-close-circle-outline</v-icon>
-                <span class="font-xs font_red">닉네임을 입력해주세요.</span>
+                <span class="font-xs font_red">{{ nickNameCaution }}</span>
               </div>
             </v-form-group>
 
@@ -435,9 +438,9 @@ export default {
                 class="form-control font-sm mt-2" id="name" density="compact" :class="{
                   'is-invalid': submitted && v$.user.name.$error,
                 }" placeholder="홍길동" />
-              <div v-if="submitted && v$.user.name.required.$invalid" class="invalid-feedback">
+              <div v-if="submitted && v$.user.name.$error">
                 <v-icon size="x-small" color="red">mdi-close-circle-outline</v-icon>
-                <span class="font-xs font_red">이름을 입력해주세요.</span>
+                <span class="font-xs font_red">{{ nameCaution }}</span>
               </div>
             </v-form-group>
 

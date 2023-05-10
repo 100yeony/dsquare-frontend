@@ -17,7 +17,11 @@ export default class FileUploadAdapter {
           console.log(file)
           console.log(fileUtils.isImage(file.name));
           console.log(fileUtils.isFileSizeLimit(file.size));
-          this._sendRequest(resolve, reject, file);
+          if(fileUtils.isFileSizeLimit(file.size)){
+            alert('파일 크기는 10MB 이하여야 합니다.');
+          } else {
+            this._sendRequest(resolve, reject, file);
+          }
         })
     );
   }

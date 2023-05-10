@@ -65,16 +65,13 @@ export default {
   },
   methods: {
     async edit(editorData) {
-      const res = await api.patch('board/carrots/' + this.$route.query.carrotId, {
+      await api.post('board/carrots/' + this.$route.query.carrotId, {
         content: editorData,
         title: this.title,
         atcId: this.$route.query.atcid,
         tags: Array.from(this.chipData)
-      }).then((response) => {
-        this.cancle()
-      });
-      //}
-
+      })
+      this.cancle()
     },
     uploader(editor) {
       editor.plugins.get("FileRepository").createUploadAdapter = (loader) => {

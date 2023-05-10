@@ -124,10 +124,9 @@ export default {
         teammate: Array.from(this.chipData),
         projTeamId: this.projTeamId,
         teammateCnt: this.teammateCnt,
-      }).then((response) => {
-        this.cancle()
-      });
-
+      })
+      console.log(res)
+      this.cancle()
 
     },
     uploader(editor) {

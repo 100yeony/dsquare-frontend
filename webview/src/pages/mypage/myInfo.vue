@@ -149,7 +149,7 @@ export default {
           this.profileImage = sample
         } else {
           this.profileImage = response.data.profileImage;
-        } 
+        }
       }
     );
     console.log(userData)
@@ -168,9 +168,8 @@ export default {
         const res = await api.patch('member/members/' + this.userId, {
           contact: this.user.contact,
           tid: this.user.tid,
-        }).then((response) => {
-          console.log(response)
-        });
+        })
+        console.log(res)
       }
     },
     goToChangePass() {
@@ -194,10 +193,8 @@ export default {
       this.imageFormData = formData;
       uploadNameInput.value = fileName;
 
-      const res = await api.patch('member/members/' + this.userId + '/profile/image', this.imageFormData
-      ).then((response) => {
-        console.log(response)
-      });
+      const res = await api.patch('member/members/' + this.userId + '/profile/image', this.imageFormData)
+      console.log(res)
     },
     categoryChanged() {
       this.subcategory = [];
@@ -271,8 +268,8 @@ export default {
       <label for="nickname" class="font-medium font-sm">닉네임</label>
       <v-text-field type="text" v-model="user.nickname" variant="outlined" single-line hide-details
         class="form-control font-sm mt-2" id="nickname" density="compact" :class="{
-            'is-invalid': submitted && v$.user.nickname.$error,
-          }" placeholder="닉네임을 입력해주세요." />
+          'is-invalid': submitted && v$.user.nickname.$error,
+        }" placeholder="닉네임을 입력해주세요." />
       <div v-if="submitted && v$.user.nickname.required.$invalid" class="invalid-feedback">
         <v-icon size="x-small" color="red">mdi-close-circle-outline</v-icon>
         <span class="font-xs font_red">닉네임을 입력해주세요.</span>
@@ -285,8 +282,8 @@ export default {
       <label for="contact" class="font-medium font-sm">연락처</label>
       <v-text-field type="text" v-model="user.contact" variant="outlined" single-line hide-details
         class="form-control font-sm mt-2" id="contact" density="compact" :class="{
-            'is-invalid': submitted && v$.user.contact.$error,
-          }" placeholder="연락처를 입력해주세요." />
+          'is-invalid': submitted && v$.user.contact.$error,
+        }" placeholder="연락처를 입력해주세요." />
 
       <div v-if="submitted && v$.user.contact.$error">
         <v-icon size="x-small" color="red">mdi-close-circle-outline</v-icon>
@@ -327,8 +324,8 @@ export default {
       <label for="ktMail" class="font-medium font-sm">사내메일</label>
       <v-text-field type="text" v-model="user.ktMail" variant="outlined" single-line hide-details
         class="form-control font-sm mt-2" id="ktMail" density="compact" :class="{
-            'is-invalid': submitted && v$.user.ktMail.$error,
-          }" placeholder="gildonghong@kt.com" />
+          'is-invalid': submitted && v$.user.ktMail.$error,
+        }" placeholder="gildonghong@kt.com" />
 
       <div v-if="submitted && v$.user.ktMail.$error">
         <v-icon size="x-small" color="red">mdi-close-circle-outline</v-icon>
