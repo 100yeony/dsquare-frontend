@@ -175,6 +175,7 @@ function createInstance() {
   var accessToken = store.getters['info/infoListByKey']('accessToken')
   var accessTokenValue = (typeof accessToken == 'undefined') ? '' : accessToken.value
   console.log(accessToken)
+  console.log('baseURL', baseURL)
   //var token = store.getters["info/infoToken"]
   apiInstance = axios.create({
     baseURL: baseURL,
