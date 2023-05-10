@@ -429,7 +429,6 @@ export default {
     },
 
     async cardSelect() {
-      console.log(this.selectedItem)
       const res = await api.patch('board/cards/' + this.cardData.cardId + '/chosen')
       console.log(res)
     },
