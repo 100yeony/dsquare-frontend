@@ -61,7 +61,7 @@
         <div>
           {{ cardData.content }}
         </div>
-        <div v-if="cardData.teammate[0] !== '' || cardData.teammateCnt !== null">
+        <div v-if="cardData.teammates[0] !== '' || cardData.teammateCnt !== null">
           <v-divider :thickness="1" class="mt-5 mb-3"></v-divider>
           <v-row>
             <v-col cols="1">
@@ -73,10 +73,10 @@
           </v-row>
           <div>
             <div class="sizing mt-2" v-if="cardData.teammateCnt">• 참여인원 수: {{ cardData.teammateCnt }}</div>
-            <div v-if="cardData.teammate[0] !== ''" class="mt-2">
+            <div v-if="cardData.teammates[0] !== ''" class="mt-2">
               <span class="sizing">• 참여인원: </span>
-              <span class="sizing" v-for="(p, index) in cardData.teammate" :key="p" :value="p">{{ p }}
-                <span class="sizing" v-if="index !== cardData.teammate.length - 1">,</span>
+              <span class="sizing" v-for="(p, index) in cardData.teammates" :key="p" :value="p">{{ p }}
+                <span class="sizing" v-if="index !== cardData.teammates.length - 1">,</span>
               </span>
             </div>
           </div>
@@ -219,7 +219,7 @@ export default {
         },
         title: "",
         content: "",
-        teammate: "",
+        teammates: "",
         createDate: "",
         lastUpdateDate: "",
         likeCnt: 0,
@@ -265,8 +265,8 @@ export default {
       async (response) => {
         this.cardData = response.data;
         this.cardData.createDate = this.exportDateFromTimeStamp(this.cardData.createDate);
-        var tempTeammate = this.cardData.teammate.replaceAll('[', '["').replaceAll(']', '"]').replaceAll(',', '","');
-        this.cardData.teammate = JSON.parse(tempTeammate);  // 어레이로 변환
+        var tempTeammates = this.cardData.teammates.replaceAll('[', '["').replaceAll(']', '"]').replaceAll(',', '","');
+        this.cardData.teammates = JSON.parse(tempTeammates);  // 어레이로 변환
         if (this.user.userId == response.data.writerInfo.id) {
           this.isWriter = true;
         }
@@ -384,7 +384,7 @@ export default {
             id: this.cardData.cardId,
             title: this.cardData.title,
             content: this.cardData.content,
-            teammate: this.cardData.teammate,
+            teammates: this.cardData.teammates,
             projTeamId: this.cardData.projTeamInfo.tid,
             projTeamName: this.cardData.projTeamInfo.name,
             teammateCnt: this.cardData.teammateCnt, //추후 api 연동 후 수정  
