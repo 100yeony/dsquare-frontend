@@ -65,7 +65,7 @@ export default {
   },
   methods: {
     async edit(editorData) {
-      await api.post('board/talks/' + this.$route.query.talkId, {
+      await api.patch('board/talks/' + this.$route.query.talkId, {
         content: editorData,
         title: this.title,
         atcId: this.$route.query.atcid,

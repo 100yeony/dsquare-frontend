@@ -325,8 +325,8 @@ export default {
       var res = await api.get('board/cards/card-of-the-month')
       res.data.forEach((d) => {
         d.createDate = this.exportDateFromTimeStamp(d.createDate);
-        var tempTeammate = d.teammate.replaceAll('[', '["').replaceAll(']', '"]').replaceAll(',', '","');
-        d.teammate = JSON.parse(tempTeammate);  // 어레이로 변환
+        var tempTeammates = d.teammates.replaceAll('[', '["').replaceAll(']', '"]').replaceAll(',', '","');
+        d.teammates = JSON.parse(tempTeammates);  // 어레이로 변환
       });
       this.selectedCardData = res.data;
     },
@@ -459,7 +459,7 @@ export default {
     },
     async cardSelect() {
       console.log(this.selectedItem)
-      const res = await api.patch('board/cards/' + this.selectedItem.cardId)
+      const res = await api.patch('board/cards/' + this.selectedItem.cardId + '/chosen')
       console.log(res)
       this.selectedItem = {}
     },
