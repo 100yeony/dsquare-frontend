@@ -28,11 +28,10 @@
       </v-col>
     </v-row>
     <!-- My Weekly Hot body-->
-    <v-row>
+    <v-row class="mb-1"> 
       <v-col cols="10">
         <p class=" text-h6 font-weight-black">Weekly Hot</p>
       </v-col>
-
     </v-row>
     <div>
       <v-slide-group>
@@ -42,7 +41,9 @@
           </v-slide-group-item>
         </template>
         <template v-else>
-          <v-container align="center">한 주간 관심이 많았던 태그가 없습니다.</v-container>
+          <v-container class="text-center">
+           <p><img src="@/assets/images/empty.png" width="25" height="25"></p>
+            한 주간 관심이 많았던 태그가 없어요</v-container>
         </template>
       </v-slide-group>
     </div>
@@ -79,12 +80,12 @@
                       </v-col>
                       <v-col cols="2">
                         <td class="text-caption font-0000008F">
-                          <img src="@/assets/images/icons/icon_heart.png" /> {{ post.likeCnt }}
+                          <img src="@/assets/images/icons/icon_heart.png" width="15" height="15"/> {{ post.likeCnt }}
                         </td>
                       </v-col>
                       <v-col cols="2">
                         <td class="text-caption font-0000008F">
-                          <img src="@/assets/images/icons/icon_message-circle.png" /> {{ "qid" in post ? post.answerCnt :
+                          <img src="@/assets/images/icons/icon_message-circle.png" width="15" height="15"/> {{ "qid" in post ? post.answerCnt :
                             post.commentCnt }}
                         </td>
                       </v-col>
@@ -129,12 +130,12 @@
                       </v-col>
                       <v-col cols="2">
                         <td class="text-caption font-0000008F">
-                          <img src="@/assets/images/icons/icon_heart.png" />{{ post.likeCnt }}
+                          <img src="@/assets/images/icons/icon_heart.png" width="15" height="15"/> {{ post.likeCnt }}
                         </td>
                       </v-col>
                       <v-col cols="2">
                         <td class="text-caption font-0000008F">
-                          <img src="@/assets/images/icons/icon_message-circle.png" />{{ post.answerCnt }}
+                          <img src="@/assets/images/icons/icon_message-circle.png" width="15" height="15"/> {{ post.answerCnt }}
                         </td>
                       </v-col>
                     </v-row>
@@ -176,10 +177,16 @@
                       </v-col>
                       <v-col cols="2">
                         <td>
-                          <v-avatar v-if="'icon' in user && user.icon">
-                            <v-img cover :src="user.icon"></v-img>
-                          </v-avatar>
-                          <v-avatar v-else color="grey">{{ user.memberInfo?.name.slice(0, 3) }}</v-avatar>
+                          <span v-if="user.memberInfo?.profileImage == null">
+                            <v-avatar color="grey" size="30">
+                              <v-img cover src="@/assets/images/users/profile_default.png"></v-img>
+                            </v-avatar>
+                          </span>
+                          <span v-if="user.memberInfo?.profileImage != null">
+                            <v-avatar color="grey" size="30">
+                              <v-img cover :src="user.memberInfo?.profileImage"></v-img>
+                            </v-avatar>
+                          </span>
                         </td>
                       </v-col>
                       <v-col align-self="center" cols="6">
@@ -189,7 +196,7 @@
                       </v-col>
                       <v-col align-self="center" cols="2">
                         <td class="text-caption font-0000008F">
-                          <img src="@/assets/images/icons/icon_message-circle.png" /> {{ user.postCnt }}
+                          <img src="@/assets/images/icons/icon_message-circle.png" width="15" height="15"/> {{ user.postCnt }}
                         </td>
                       </v-col>
                     </v-row>
@@ -479,5 +486,13 @@ export default {
   word-spacing: 0px;
   margin: 0px;
   padding: 0px;
+}
+
+.v-col-10{
+  padding-bottom: 0px !important; 
+}
+
+.v-tab.v-tab{
+  min-width: 80px !important;
 }
 </style>
