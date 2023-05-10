@@ -108,7 +108,7 @@ export default {
   },
   methods: {
     async edit(editorData) {
-      const res = await api.post('board/questions/' + this.$route.query.qid, {
+      const res = await api.patch('board/questions/' + this.$route.query.qid, {
         cid: this.cid,
         content: editorData,
         title: this.title,

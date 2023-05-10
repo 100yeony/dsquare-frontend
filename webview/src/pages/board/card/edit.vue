@@ -118,7 +118,7 @@ export default {
   },
   methods: {
     async edit(editorData) {
-      const res = await api.post('board/cards/' + this.$route.query.id, {
+      const res = await api.patch('board/cards/' + this.$route.query.id, {
         content: editorData,
         title: this.title,
         teammate: Array.from(this.chipData),

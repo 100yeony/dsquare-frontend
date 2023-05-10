@@ -65,7 +65,7 @@ export default {
   },
   methods: {
     async edit(editorData) {
-      const res = await api.post('board/carrots/' + this.$route.query.carrotId, {
+      const res = await api.patch('board/carrots/' + this.$route.query.carrotId, {
         content: editorData,
         title: this.title,
         atcId: this.$route.query.atcid,
