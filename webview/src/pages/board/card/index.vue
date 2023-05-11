@@ -216,7 +216,6 @@ export default {
       categoryItems, subcategoryFullList,
       searchUri,
       sortMenu,
-      selectedSortIndex: 0,
       flickingPlugins,
       flickingOptions,
       qnaTabTitle,
@@ -365,47 +364,38 @@ export default {
     },
     async search() {
       if (typeof this.subcategory == 'string' || typeof this.category == 'string'){
-        var params = { projTeamId: this.projTeamId };
-        var res = await api.get(this.searchUri, { params }).then(
-          (response) => {
-            if (this.qnaTab == 0) {
-              this.requestCardData = []
-            } else {
-              this.completedCardData = []
-            }
-            
-            response.data.forEach((d) => {
-              d.createDate = this.exportDateFromTimeStamp(d.createDate)
-              if ("teammates" in d) {
-                var tempTeammates = d.teammates.replaceAll('[', '["').replaceAll(']', '"]').replaceAll(',', '","');
-                d.teammates = JSON.parse(tempTeammates);  // 어레이로 변환
-              }
-              if (d.selectionInfo == null && this.qnaTab == 0) {
-                this.requestCardData.push(d)
-              } else if (d.selectionInfo != null && this.qnaTab == 1){
-                this.completedCardData.push(d)
-              }
-            });
-
-            if (this.qnaTab == 0){
-              this.searchFlag = (this.requestCardData.length == 0) ? true:false
-            } else {
-              this.completedFlag = (this.completedCardData.length == 0) ? true:false
-            }
-          }
-        );
-        this.searchParams = params;
+        if (this.qnaTab == 0) {
+          var params = { 
+            projTeamId: this.projTeamId,
+            order: this.requestCardDataOrder,
+            page: (this.requestCardDataPage = 0),
+            size: (this.requestCardDataSize = 10),
+          };
+          this.searchParams = params;
+          this.requestCardData = [];
+          this.searchFlag = (this.requestCardData.length == 0) ? true:false
+        } else {
+          var params = { 
+            projTeamId: this.projTeamId,
+            order: this.completedCardDataOrder,
+            page: (this.completedCardDataPage = 0),
+            size: (this.completedCardDataSize = 10),
+          };
+          this.searchParams = params;
+          this.completedCardData = [];
+          this.completedFlag = (this.completedCardData.length == 0) ? true:false
+        }
       }
     },
     async loadMore() {
       var params = this.searchParams ?? {};
       if (this.qnaTab == 0) {
         params['order'] = this.requestCardDataOrder;
-        params['page'] = this.requestCardDataPage ? this.requestCardDataPage + 1 : 0;
+        params['page'] = this.requestCardDataPage;
         params['size'] = this.requestCardDataSize;
       } else {
         params['order'] = this.completedCardDataOrder;
-        params['page'] = this.completedCardDataPage ? this.completedCardDataPage + 1 : 0
+        params['page'] = this.completedCardDataPage;
         params['size'] = this.completedCardDataSize;
       }
       var res = await api.get(requestUri, { params }).then(
@@ -486,16 +476,18 @@ export default {
       )
     },
     sort(index) {
-      this.selectedSortIndex = index;
-      // index 0=좋아요순, 1=등록순
-      if (index === 0) {
-        this.requestCardData.sort((a, b) => parseInt(b.likeCnt, 10) - parseInt(a.likeCnt, 10));
-      } else if (index === 1) {
-        this.requestCardData.sort((a, b) => {
-          if (a.createDate < b.createDate) return 1;
-          if (b.createDate < a.createDate) return -1;
-          return 0;
-        });
+      if (this.qnaTab == 0) {
+        this.requestCardDataOrder = index ? "create" : "like";
+        this.requestCardDataPage = 0;
+        this.requestCardDataSize = 10;
+        this.requestCardDataData = [];
+      }
+      // 비업무
+      else if (this.qnaTab == 1) {
+        this.completedCardDataOrder = index ? "create" : "like";
+        this.completedCardDataPage = 0;
+        this.completedCardDataSize = 10;
+        this.completedCardData = [];
       }
     },
   },

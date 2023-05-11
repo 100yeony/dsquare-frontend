@@ -344,12 +344,12 @@ export default {
       if (this.qnaTab == 0) {
         params['workYn'] = true,
         params['order'] = this.workDataOrder;
-        params['page'] = this.workDataPage ? this.workDataPage + 1 : 0;
+        params['page'] = this.workDataPage;
         params['size'] = this.workDataSize;
       } else {
         params['workYn'] = false;
         params['order'] = this.nonworkDataOrder;
-        params['page'] = this.nonworkDataPage ? this.nonworkDataPage + 1 : 0;
+        params['page'] = this.nonworkDataPage;
         params['size'] = this.nonworkDataSize; 
       }
       var res = await api.get(questionUri, { params }).then(

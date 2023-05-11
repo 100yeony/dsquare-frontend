@@ -24,18 +24,31 @@
       </v-expansion-panel>
     </v-expansion-panels>
 
-    <div v-if="boardCardData.length == 0 && !searchFlag" class="text-center mt-60 mb-20">
+    <!-- 정렬 -->
+    <div class="mt-4 mb-4 d-flex justify-end" >
+      <v-btn prepend-icon="mdi-sort-descending">정렬
+        <v-menu activator="parent">
+          <v-list>
+            <v-list-item v-for="(item, index) in sortMenu" :key="index" :value="index" @click="sort(index)">
+              <v-list-item-title>{{ item.title }}</v-list-item-title>
+            </v-list-item>
+          </v-list>
+        </v-menu>
+      </v-btn>
+    </div>
+
+    <div v-if="talkCardData.length == 0 && !searchFlag" class="text-center mt-60 mb-20">
       <img src="@/assets/images/nopost.png" width="70" height="70">
       <h3>작성된 글이 없어요</h3>
     </div>
 
-    <div v-if="boardCardData.length == 0 && searchFlag" class="text-center mt-60 mb-20">
+    <div v-if="talkCardData.length == 0 && searchFlag" class="text-center mt-60 mb-20">
       <img src="@/assets/images/search.png" width="70" height="70">
       <h3>검색 결과가 없어요</h3>
     </div>
 
     <!-- 질문 카드 -->
-    <div v-for="(item, index) in boardCardData" :value="item.talkId">
+    <div v-for="(item, index) in talkCardData" :value="item.talkId">
       <TalkCard class="mt-2" :data="item" @handle-card-clicked="handleCardClicked" />
     </div>
     <Observe @triggerIntersected="loadMore" />
@@ -58,6 +71,8 @@ import TalkCard from "@/components/cards/TalkCard";
 import Observe from "@/components/Observer";
 import api from '@/api';
 import store from "@/store";
+
+let talkUri = 'board/talks';
 
 export default {
   name: "TalkBoard",
@@ -82,28 +97,27 @@ export default {
     var searchKey = ref(pageState?.searchKey ?? '')
     var searchContent = ref(pageState?.searchContent ?? '')
     var page = ref(pageState?.page ?? 1)
-    var boardCardData = ref(pageState?.boardCardData ?? [])
+    var talkCardData = ref(pageState?.talkCardData ?? [])
 
-    if (Object.keys(pageState).length == 0) {
-      api.get('board/talks').then(
-        (res) => {
-          res.data.forEach((d) => {
-            d.createDate = exportDateFromTimeStamp(d.createDate)
-          });
-          boardCardData.value = res.data
-        }
-      )
-    }
 
     store.dispatch('info/setPageState', {});
 
+    let sortMenu = [
+      { title: "좋아요순" },
+      { title: "최신순" },
+    ]
 
     return {
       searchKey,
       searchContent,
       page,
-      boardCardData,
+      talkCardData,
+      talkCardDataOrder: "create",
+      talkCardDataPage: 0,
+      talkCardDataSize: 10,
       exportDateFromTimeStamp,
+      searchParams: {},
+      sortMenu,
     };
   },
   computed: {
@@ -130,28 +144,18 @@ export default {
         } else if (this.searchKey == '작성자') {
           key = 'member'
         }
-        var res = await api.get('board/talks' + '?'
-          + 'key=' + key
-          + '&value=' + this.searchContent).then(
-            (response) => {
-              response.data.forEach((d) => {
-                d.createDate = this.exportDateFromTimeStamp(d.createDate)
-              });
-              this.boardCardData = response.data
-            }
-          );
-          this.searchFlag = (this.boardCardData.length == 0) ? true:false  
-      }
-    },
-    async requestAll() {
-      var res = await api.get('board/talks').then(
-        (response) => {
-          response.data.forEach((d) => {
-            d.createDate = this.exportDateFromTimeStamp(d.createDate)
-          });
-          this.boardCardData = response.data
+
+        var params = {
+          key: key,
+          value: this.searchContent,
+          order: this.talkCardDataOrder,
+          page: (this.talkCardDataPage = 0),
+          size: (this.talkCardDataSize = 10),
         }
-      )
+        this.searchParams = params;
+        this.talkCardData = [];
+        this.searchFlag = (this.talkCardData.length == 0) ? true:false;
+      }
     },
     handleCardClicked(item) {
       if (item) {
@@ -171,19 +175,6 @@ export default {
         alert('item이 존재하지 않습니다.');
       }
     },
-
-    // handleCardClicked(item) {
-    //   this.saveState();
-    //   if (item) {
-    //     this.$router.push({
-    //       path: process.env.VUE_APP_BOARD_COMMUNICATION_DETAIL,
-    //       title: item?.title,
-    //       query: {
-    //         qid: item?.qid
-    //       }
-    //     });
-    //   }
-    // },
     handleWritePage() {
       this.saveState();
       this.$router.push({
@@ -191,19 +182,38 @@ export default {
       });
 
     },
-    loadMore() {
-      this.page += 1;
-      console.log(this.page)
+    async loadMore() {
+      var params = this.searchParams ?? {};
+      params['order'] = this.talkCardDataOrder;
+      params['page'] = this.talkCardDataPage;
+      params['size'] = this.talkCardDataSize;
 
+      var res = await api.get(talkUri, { params }).then(
+        (response) => {
+          if ([200, 201].includes(response.status) && response.data.length) {
+            response.data.forEach((d) => {
+              d.createDate = this.exportDateFromTimeStamp(d.createDate);
+            });
+            this.talkCardData = this.talkCardData.concat(response.data);
+            this.talkCardDataPage++;
+          }
+        }
+      );
     },
     saveState() {
       store.dispatch('info/setPageState', {
         searchKey: this.searchKey,
         searchContent: this.searchContent,
         page: this.page,
-        boardCardData: this.boardCardData
+        talkCardData: this.talkCardData
       });
-    }
+    },
+    sort(index) {
+      this.talkCardDataOrder = index ? "create" : "like";
+      this.talkCardDataPage = 0;
+      this.talkCardDataSize = 10;
+      this.talkCardData = [];
+    },
   },
 };
 </script>
