@@ -60,21 +60,12 @@
         <!-- 아래는 테스트로, 만약 push notifications가 0보다 큰 경우네는 notification의 color가 primary로 하는 예시입니다. -->
         <v-menu>
           <template v-slot:activator="{ props }">
-            <v-btn icon v-bind="props">
-              <v-badge :content="notifications.length" color="orange" text-color="white">
+            <v-btn icon v-bind="props" @click="goToIndex">
+              <v-badge :content="4" color="orange" text-color="white"> <!-- 추후에 아직 읽지 않은 알림의 개수로 바꾸기 -->
                 <v-icon>mdi-bell</v-icon>
               </v-badge>
             </v-btn>
           </template>
-          <v-list>
-            <v-list-item v-for="(notification, index) in notifications" :key="id" :value="id">
-              <v-list-item-title>{{ notification.title }}</v-list-item-title>
-            </v-list-item>
-            <v-divider class="ml-2 mr-2"></v-divider>
-            <v-list-item @click="goToIndex">
-              <v-list-item-title class="font_white_gray text-center">더보기</v-list-item-title>
-            </v-list-item>
-          </v-list>
         </v-menu>
         <v-app-bar-nav-icon variant="text" @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
       </v-app-bar>
@@ -101,12 +92,6 @@ export default {
     return { menuTitle, back, query, user };
   },
   data: () => ({
-    notifications: [
-      { title: "테스트 push 01", id: 0 },
-      { title: "테스트 push 02", id: 1 },
-      { title: "테스트 push 03", id: 2 },
-      { title: "테스트 push 04", id: 3 },
-    ],
     drawer: false,
     group: null,
     menuItems: menuItems,
