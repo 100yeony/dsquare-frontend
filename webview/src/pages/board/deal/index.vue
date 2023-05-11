@@ -206,6 +206,7 @@ export default {
         page: this.page,
         dealCardData: this.dealCardData
       });
+    },
     sort(index) {
       this.dealCardDataOrder = index ? "create" : "like";
       this.dealCardDataPage = 0;

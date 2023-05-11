@@ -207,6 +207,7 @@ export default {
         page: this.page,
         talkCardData: this.talkCardData
       });
+    },
     sort(index) {
       this.talkCardDataOrder = index ? "create" : "like";
       this.talkCardDataPage = 0;

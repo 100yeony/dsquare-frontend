@@ -249,7 +249,7 @@ export default {
       completedCardDataPage: 0,
       completedCardDataSize: 10,
       searchParams: {},
-      isShow: false, 
+      isShow: false,
       selectedItem: {},
       qnaTab: 0,
       searchFlag: false,
@@ -328,12 +328,14 @@ export default {
               d.teammates = JSON.parse(tempTeammates);  // 어레이로 변환
             }
 
-        if (d.selectionInfo == null) {
-          this.requestCardData.push(d)
-        } else {
-          this.completedCardData.push(d)
+            if (d.selectionInfo == null) {
+              this.requestCardData.push(d)
+            } else {
+              this.completedCardData.push(d)
+            }
+          });
         }
-      });
+      );
     },
     async requestAllSelected() {
       var res = await api.get('board/cards/card-of-the-month').then(
@@ -360,9 +362,9 @@ export default {
       }
     },
     async search() {
-      if (typeof this.subcategory == 'string' || typeof this.category == 'string'){
+      if (typeof this.subcategory == 'string' || typeof this.category == 'string') {
         if (this.qnaTab == 0) {
-          var params = { 
+          var params = {
             projTeamId: this.projTeamId,
             order: this.requestCardDataOrder,
             page: (this.requestCardDataPage = 0),
@@ -370,9 +372,9 @@ export default {
           };
           this.searchParams = params;
           this.requestCardData = [];
-          this.searchFlag = (this.requestCardData.length == 0) ? true:false
+          this.searchFlag = (this.requestCardData.length == 0) ? true : false
         } else {
-          var params = { 
+          var params = {
             projTeamId: this.projTeamId,
             order: this.completedCardDataOrder,
             page: (this.completedCardDataPage = 0),
@@ -380,7 +382,7 @@ export default {
           };
           this.searchParams = params;
           this.completedCardData = [];
-          this.completedFlag = (this.completedCardData.length == 0) ? true:false
+          this.completedFlag = (this.completedCardData.length == 0) ? true : false
         }
       }
     },
