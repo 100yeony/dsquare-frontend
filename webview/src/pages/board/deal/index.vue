@@ -25,18 +25,31 @@
       </v-expansion-panel>
     </v-expansion-panels>
 
-    <div v-if="boardCardData.length == 0 && !searchFlag" class="text-center mt-60 mb-20">
+    <!-- 정렬 -->
+    <div class="mt-4 mb-4 d-flex justify-end" >
+      <v-btn prepend-icon="mdi-sort-descending">정렬
+        <v-menu activator="parent">
+          <v-list>
+            <v-list-item v-for="(item, index) in sortMenu" :key="index" :value="index" @click="sort(index)">
+              <v-list-item-title>{{ item.title }}</v-list-item-title>
+            </v-list-item>
+          </v-list>
+        </v-menu>
+      </v-btn>
+    </div>
+
+    <div v-if="dealCardData.length == 0 && !searchFlag" class="text-center mt-60 mb-20">
       <img src="@/assets/images/nopost.png" width="70" height="70">
       <h3>작성된 글이 없어요</h3>
     </div>
 
-    <div v-if="boardCardData.length == 0 && searchFlag" class="text-center mt-60 mb-20">
+    <div v-if="dealCardData.length == 0 && searchFlag" class="text-center mt-60 mb-20">
       <img src="@/assets/images/search.png" width="70" height="70">
       <h3>검색 결과가 없어요</h3>
     </div>
 
     <!-- 질문 카드 -->
-    <div v-for="(item, index) in boardCardData" :value="item.carrotId">
+    <div v-for="(item, index) in dealCardData" :value="item.carrotId">
       <CarrotCard class="mt-2" :data="item" @handle-card-clicked="handleCardClicked" />
     </div>
     <Observe @triggerIntersected="loadMore" />
@@ -59,6 +72,8 @@ import CarrotCard from "@/components/cards/CarrotCard";
 import Observe from "@/components/Observer";
 import api from '@/api';
 import store from "@/store";
+
+let dealUri = 'board/carrots';
 
 export default {
   name: "carrotBoard",
@@ -83,27 +98,26 @@ export default {
     var searchKey = ref(pageState?.searchKey ?? '')
     var searchContent = ref(pageState?.searchContent ?? '')
     var page = ref(pageState?.page ?? 1)
-    var boardCardData = ref(pageState?.boardCardData ?? [])
-
-    if (Object.keys(pageState).length == 0) {
-      api.get('board/carrots').then(
-        (res) => {
-          res.data.forEach((d) => {
-            d.createDate = exportDateFromTimeStamp(d.createDate)
-          });
-          boardCardData.value = res.data
-        }
-      )
-    }
+    var dealCardData = ref(pageState?.dealCardData ?? [])
 
     store.dispatch('info/setPageState', {});
+
+    let sortMenu = [
+      { title: "좋아요순" },
+      { title: "최신순" },
+    ]
 
     return {
       searchKey,
       searchContent,
       page,
-      boardCardData,
+      dealCardData,
+      dealCardDataOrder: "create",
+      dealCardDataPage: 0,
+      dealCardDataSize: 10,
       exportDateFromTimeStamp,
+      searchParams: {},
+      sortMenu,
     };
   },
   data() {
@@ -124,29 +138,23 @@ export default {
   methods: {
     async search() {
       if (this.searchKey != '' && this.searchContent != '') {
-        var key = ''
+        var key = '';
         if (this.searchKey == '제목 + 내용') {
-          key = 'titleAndContent'
+          key = 'titleAndContent';
         } else if (this.searchKey == '작성자') {
-          key = 'member'
+          key = 'member';
         }
-        var res = await api.get('board/carrots' + '?'
-          + 'key=' + key
-          + '&value=' + this.searchContent)
-        res.data.forEach((d) => {
-          d.createDate = this.exportDateFromTimeStamp(d.createDate)
-        });
-        this.boardCardData = res.data
-        this.searchFlag = (this.boardCardData.length == 0) ? true : false
+        var params = {
+          key: key,
+          value: this.searchContent,
+          order: this.dealCardDataOrder,
+          page: (this.dealCardDataPage = 0),
+          size: (this.dealCardDataSize = 10),
+        }
+        this.searchParams = params;
+        this.dealCardData = [];
+        this.searchFlag = (this.dealCardData.length == 0) ? true:false;
       }
-    },
-    async requestAll() {
-      var res = await api.get('board/carrots')
-      res.data.forEach((d) => {
-        d.createDate = this.exportDateFromTimeStamp(d.createDate)
-      });
-      this.boardCardData = res.data
-
     },
     handleCardClicked(item) {
       if (item) {
@@ -173,18 +181,38 @@ export default {
       });
 
     },
-    loadMore() {
-      this.page += 1;
-      console.log(this.page)
+    async loadMore() {
+      var params = this.searchParams ?? {};
+      params['order'] = this.dealCardDataOrder;
+      params['page'] = this.dealCardDataPage;
+      params['size'] = this.dealCardDataSize;
+
+      var res = await api.get(dealUri, { params }).then(
+        (response) => {
+          if ([200, 201].includes(response.status) && response.data.length) {
+            response.data.forEach((d) => {
+              d.createDate = this.exportDateFromTimeStamp(d.createDate);
+            });
+            this.dealCardData = this.dealCardData.concat(response.data);
+            this.dealCardDataPage++;
+          }
+        }
+      );
     },
     saveState() {
       store.dispatch('info/setPageState', {
         searchKey: this.searchKey,
         searchContent: this.searchContent,
         page: this.page,
-        boardCardData: this.boardCardData
+        dealCardData: this.dealCardData
       });
-    }
+    },
+    sort(index) {
+      this.dealCardDataOrder = index ? "create" : "like";
+      this.dealCardDataPage = 0;
+      this.dealCardDataSize = 10;
+      this.dealCardData = [];
+    },
   },
 };
 </script>

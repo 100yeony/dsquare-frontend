@@ -88,6 +88,7 @@
             <RequestCard class=" mt-2" :data="item" @handle-card-clicked="handleCardClicked"
               @handle-card-dialog="handleCardDialog(item)" :style="item.style" />
           </div>
+          <Observe @triggerIntersected="loadMore" />
         </div>
 
       </v-window-item>
@@ -134,6 +135,7 @@
             <RequestCard class=" mt-2" :data="item" @handle-card-clicked="handleCardClicked"
               @handle-card-dialog="handleCardDialog(item)" :style="item.style" />
           </div>
+          <Observe @triggerIntersected="loadMore" />
         </div>
       </v-window-item>
     </v-window>
@@ -162,6 +164,10 @@ import object from "@/utils/objectUtils";
 import Flicking from "@egjs/vue3-flicking";
 import "@egjs/vue3-flicking/dist/flicking.css";
 import { AutoPlay } from "@egjs/flicking-plugins";
+
+let requestUri = 'board/cards';
+let selectedUri = 'board/cards/card-of-the-month';
+let searchUri = 'board/cards';
 
 const flickingOptions = {
   panelsPerView: 1,
@@ -209,7 +215,6 @@ export default {
       categoryItems, subcategoryFullList,
       searchUri,
       sortMenu,
-      selectedSortIndex: 0,
       flickingPlugins,
       flickingOptions,
       qnaTabTitle,
@@ -235,8 +240,15 @@ export default {
       ProjTeamId: '',
       page: 1,
       requestCardData: [],
+      requestCardDataOrder: "create",
+      requestCardDataPage: 0,
+      requestCardDataSize: 10,
       selectedCardData: [],
       completedCardData: [],
+      completedCardDataOrder: "create",
+      completedCardDataPage: 0,
+      completedCardDataSize: 10,
+      searchParams: {},
       isShow: false,
       selectedItem: {},
       qnaTab: 0,
@@ -282,14 +294,13 @@ export default {
       }
     },
     qnaTab(newVal, oldVal) {
-      this.page = 1;
       console.log(newVal)
       this.tabChanged();
     }
   },
   mounted() {
-    var res = this.requestAll();
-    var resSelected = this.requestAllSelected();
+    // var res = this.requestAll();
+    // var resSelected = this.requestAllSelected();
   },
   computed: {
     dialogTitle() {
@@ -307,28 +318,38 @@ export default {
       this.searchContent = '';
     },
     async requestAll() {
-      var res = await api.get('board/cards')
-      console.log('response', res)
-      res.data.forEach((d) => {
-        d.createDate = this.exportDateFromTimeStamp(d.createDate);
-        var tempTeammates = d.teammates.replaceAll('[', '["').replaceAll(']', '"]').replaceAll(',', '","');
-        d.teammates = JSON.parse(tempTeammates);  // 어레이로 변환
+      var res = await api.get('board/cards').then(
+        (response) => {
+          console.log('response', response)
+          response.data.forEach((d) => {
+            d.createDate = this.exportDateFromTimeStamp(d.createDate);
+            if ("teammates" in d) {
+              var tempTeammates = d.teammates.replaceAll('[', '["').replaceAll(']', '"]').replaceAll(',', '","');
+              d.teammates = JSON.parse(tempTeammates);  // 어레이로 변환
+            }
 
-        if (d.selectionInfo == null) {
-          this.requestCardData.push(d)
-        } else {
-          this.completedCardData.push(d)
+            if (d.selectionInfo == null) {
+              this.requestCardData.push(d)
+            } else {
+              this.completedCardData.push(d)
+            }
+          });
         }
-      });
+      );
     },
     async requestAllSelected() {
-      var res = await api.get('board/cards/card-of-the-month')
-      res.data.forEach((d) => {
-        d.createDate = this.exportDateFromTimeStamp(d.createDate);
-        var tempTeammates = d.teammates.replaceAll('[', '["').replaceAll(']', '"]').replaceAll(',', '","');
-        d.teammates = JSON.parse(tempTeammates);  // 어레이로 변환
-      });
-      this.selectedCardData = res.data;
+      var res = await api.get('board/cards/card-of-the-month').then(
+        (response) => {
+          response.data.forEach((d) => {
+            d.createDate = this.exportDateFromTimeStamp(d.createDate);
+            if ("teammates" in d) {
+              var tempTeammates = d.teammates.replaceAll('[', '["').replaceAll(']', '"]').replaceAll(',', '","');
+              d.teammates = JSON.parse(tempTeammates);  // 어레이로 변환
+            }
+          });
+          this.selectedCardData = response.data;
+        },
+      );
     },
     categoryChanged() {
       this.subcategory = [];
@@ -342,29 +363,60 @@ export default {
     },
     async search() {
       if (typeof this.subcategory == 'string' || typeof this.category == 'string') {
-        var res = await api.get('board/cards?projTeamId=' + this.projTeamId)
         if (this.qnaTab == 0) {
-          this.requestCardData = []
-        } else {
-          this.completedCardData = []
-        }
-
-        res.data.forEach((d) => {
-          d.createDate = this.exportDateFromTimeStamp(d.createDate)
-          if (d.selectionInfo == null && this.qnaTab == 0) {
-            this.requestCardData.push(d)
-          } else if (d.selectionInfo != null && this.qnaTab == 1) {
-            this.completedCardData.push(d)
-          }
-        });
-
-        if (this.qnaTab == 0) {
+          var params = {
+            projTeamId: this.projTeamId,
+            order: this.requestCardDataOrder,
+            page: (this.requestCardDataPage = 0),
+            size: (this.requestCardDataSize = 10),
+          };
+          this.searchParams = params;
+          this.requestCardData = [];
           this.searchFlag = (this.requestCardData.length == 0) ? true : false
         } else {
+          var params = {
+            projTeamId: this.projTeamId,
+            order: this.completedCardDataOrder,
+            page: (this.completedCardDataPage = 0),
+            size: (this.completedCardDataSize = 10),
+          };
+          this.searchParams = params;
+          this.completedCardData = [];
           this.completedFlag = (this.completedCardData.length == 0) ? true : false
         }
-
       }
+    },
+    async loadMore() {
+      var params = this.searchParams ?? {};
+      if (this.qnaTab == 0) {
+        params['order'] = this.requestCardDataOrder;
+        params['page'] = this.requestCardDataPage;
+        params['size'] = this.requestCardDataSize;
+      } else {
+        params['order'] = this.completedCardDataOrder;
+        params['page'] = this.completedCardDataPage;
+        params['size'] = this.completedCardDataSize;
+      }
+      var res = await api.get(requestUri, { params }).then(
+        (response) => {
+          if ([200, 201].includes(response.status) && response.data.length) {
+            response.data.forEach((d) => {
+              d.createDate = this.exportDateFromTimeStamp(d.createDate);
+              if (d.teammates) {
+                var tempTeammates = d.teammates.replaceAll('[', '["').replaceAll(']', '"]').replaceAll(',', '","');
+                d.teammates = JSON.parse(tempTeammates);  // 어레이로 변환
+              }
+            });
+            if (this.qnaTab == 0) {
+              this.requestCardData = this.requestCardData.concat(response.data);
+              this.requestCardDataPage++;
+            } else {
+              this.completedCardData = this.completedCardData.concat(response.data);
+              this.completedCardDataPage++;
+            }
+          }
+        }
+      );
     },
     handleCardClicked(item) {
       if (item) {
@@ -385,12 +437,6 @@ export default {
         query: {},
       });
     },
-    loadMore() {
-      this.page += 1;
-      console.log(this.page)
-      //this.request()
-      // request 한 값을 추가
-    },
     exportDateFromTimeStamp(timeStamp) {
       var date = new Date(timeStamp)
       const year = date.getFullYear();
@@ -404,44 +450,6 @@ export default {
     },
     onScroll(e) {
       this.scrollPosition = window.scrollY;
-    },
-
-    calculateCardStyle(card, index) {
-      var cardHeight = this.$refs.test ? this.$refs.test[index].clientHeight : 0; // height + padding + margin
-      cardHeight += 16;
-      const firstCardTop = this.$refs.test ? this.$refs.test[0].getBoundingClientRect().top : 0;
-
-      const positionY = this.$refs.test ? this.$refs.test[index].getBoundingClientRect().top : 0;
-      const deltaY = positionY - this.scrollPosition;
-      //console.log(`${index} positionY=${positionY}, deltaY=${deltaY}`);
-      // constrain deltaY between -cardHeight and 0
-      const dY = this.clamp(deltaY, -cardHeight, 0);
-
-      const disappearingPosition = firstCardTop + cardHeight * index;
-
-      //const dissapearingValue = (dY / cardHeight) + 1
-      const dissapearingValue = (dY / cardHeight) + 1
-      const zValue = dY / cardHeight * 50;
-      const yValue = dY / cardHeight * -20;
-
-      card.style = {
-        opacity: dissapearingValue,
-        transform: `perspective(200px) translate3d(0,${yValue}px, ${zValue}px)`,
-      }
-      return card;
-    },
-    clamp(value, min, max) {
-      return Math.min(Math.max(min, value), max)
-    },
-    categoryChanged() {
-      this.subcategory = [];
-      var categoryIndex = this.categoryItems.indexOf(this.category);
-      if (categoryIndex != 0) {
-        this.subcategoryItems = this.subcategoryFullList[categoryIndex];
-      }
-      else {
-        this.subcategoryItems = [];
-      }
     },
     handleCardDialog(item) {
       console.log('handel card dialog')
@@ -464,16 +472,18 @@ export default {
       this.selectedItem = {}
     },
     sort(index) {
-      this.selectedSortIndex = index;
-      // index 0=좋아요순, 1=등록순
-      if (index === 0) {
-        this.requestCardData.sort((a, b) => parseInt(b.likeCnt, 10) - parseInt(a.likeCnt, 10));
-      } else if (index === 1) {
-        this.requestCardData.sort((a, b) => {
-          if (a.createDate < b.createDate) return 1;
-          if (b.createDate < a.createDate) return -1;
-          return 0;
-        });
+      if (this.qnaTab == 0) {
+        this.requestCardDataOrder = index ? "create" : "like";
+        this.requestCardDataPage = 0;
+        this.requestCardDataSize = 10;
+        this.requestCardDataData = [];
+      }
+      // 비업무
+      else if (this.qnaTab == 1) {
+        this.completedCardDataOrder = index ? "create" : "like";
+        this.completedCardDataPage = 0;
+        this.completedCardDataSize = 10;
+        this.completedCardData = [];
       }
     },
   },
