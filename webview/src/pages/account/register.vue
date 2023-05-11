@@ -7,7 +7,7 @@ import regex from "@/utils/regex"
 
 const ktEmailValidator = (email) => email == "" || new RegExp("[A-Za-z0-9]+@kt.com").test(email);
 const contactValidator = (contact) => contact == "" || regex.phoneRegexCheck(contact);
-const pwValidator = (pw) => pw == "" || new RegExp("^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,20}$").test(pw);
+const pwValidator = (pw) => pw == "" || new RegExp("^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[!@#$%^&*()_+-=])[A-Za-z\\d!@#$%^&*()_+-=]{8,20}$").test(pw);
 const nameValidator = (name) => name == "" || new RegExp("^.{2,30}$").test(name);
 const nickNameValidator = (nickName) => nickName == "" || new RegExp("^.{1,15}$").test(nickName);
 
