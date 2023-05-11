@@ -7,7 +7,7 @@ import regex from "@/utils/regex"
 
 const ktEmailValidator = (email) => email == "" || new RegExp("[A-Za-z0-9]+@kt.com").test(email);
 const contactValidator = (contact) => contact == "" || regex.phoneRegexCheck(contact);
-const pwValidator = (pw) => pw == "" || new RegExp("^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,20}$").test(pw);
+const pwValidator = (pw) => pw == "" || new RegExp("^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[!@#$%^&*()_+-=])[A-Za-z\\d!@#$%^&*()_+-=]{8,20}$").test(pw);
 const nameValidator = (name) => name == "" || new RegExp("^.{2,30}$").test(name);
 const nickNameValidator = (nickName) => nickName == "" || new RegExp("^.{1,15}$").test(nickName);
 
@@ -33,6 +33,7 @@ export default {
       user: {
         email: "",
         pw: "",
+        new_pw: "",
         nickname: "",
         name: "",
         contact: "",
@@ -55,6 +56,10 @@ export default {
           email,
         },
         pw: {
+          required,
+          pwValidator
+        },
+        new_pw: {
           required,
           pwValidator
         },
@@ -86,6 +91,14 @@ export default {
       if (this.submitted && this.v$.user.pw.required.$invalid) {
         return '비밀번호는 최소 8자 이상 입력하세요.';
       } else if (this.submitted && this.v$.user.pw.pwValidator.$invalid) {
+        return '알파벳 대소문자, 숫자, 특수문자를 조합한 비밀번호를 입력하세요.'
+      }
+      return '';
+    },
+    newPwCaution() {
+      if (this.submitted && this.v$.user.new_pw.required.$invalid) {
+        return '비밀번호는 최소 8자 이상 입력하세요.';
+      } else if (this.submitted && this.v$.user.new_pw.pwValidator.$invalid) {
         return '알파벳 대소문자, 숫자, 특수문자를 조합한 비밀번호를 입력하세요.'
       }
       return '';
@@ -412,6 +425,26 @@ export default {
               <div v-if="submitted && v$.user.pw.$error">
                 <v-icon size="x-small" color="red">mdi-close-circle-outline</v-icon>
                 <span class="font-xs font_red">{{ pwCaution }}</span>
+              </div>
+
+            </v-form-group>
+
+            <div class="mb-20"></div>
+
+            <v-form-group id="pw-ok-group" label="Pw-ok" label-for="new_pw">
+              <label for="passwordOk" class="font-sm font-medium"> 비밀번호 확인</label>
+              <v-text-field type="password" v-model="user.new_pw" variant="outlined" single-line hide-details id="passwordOk"
+                density="compact" :class="{ 'is-invalid': submitted && v$.user.new_pw.$error }" class="font-sm mt-2"
+                placeholder="8~20자 이내로 입력해주세요">
+              </v-text-field>
+
+              <div v-if="submitted && v$.user.new_pw.$error">
+                <v-icon size="x-small" color="red">mdi-close-circle-outline</v-icon>
+                <span class="font-xs font_red">{{ newPwCaution }}</span>
+              </div>
+              <div v-if="submitted && this.user.new_pw != this.user.pw && !v$.user.new_pw.$error">
+                <v-icon size="x-small" color="red">mdi-close-circle-outline</v-icon>
+                <span class="font-xs font_red">비밀번호가 일치하지 않아요.</span>
               </div>
 
             </v-form-group>

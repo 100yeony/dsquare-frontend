@@ -70,6 +70,10 @@
             <v-list-item v-for="(notification, index) in notifications" :key="id" :value="id">
               <v-list-item-title>{{ notification.title }}</v-list-item-title>
             </v-list-item>
+            <v-divider class="ml-2 mr-2"></v-divider>
+            <v-list-item @click="goToIndex">
+              <v-list-item-title class="font_white_gray text-center">더보기</v-list-item-title>
+            </v-list-item>
           </v-list>
         </v-menu>
         <v-app-bar-nav-icon variant="text" @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
@@ -144,6 +148,9 @@ export default {
         this.$router.push(process.env.VUE_APP_LOGIN);
       }
     },
+    goToIndex() {
+      this.$router.push(process.env.VUE_APP_NOTIFICATIONS);
+    }
   },
 };
 </script>
