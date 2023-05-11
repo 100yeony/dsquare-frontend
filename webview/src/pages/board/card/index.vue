@@ -90,6 +90,7 @@
           <div v-for="(item, index) in requestCardData" :value="item.cardId" class="card">
             <RequestCard class=" mt-2" :data="item" @handle-card-clicked="handleCardClicked" @handle-card-dialog="handleCardDialog(item)" :style="item.style"/>
           </div>
+          <Observe @triggerIntersected="loadMore" />
         </div>
 
       </v-window-item>
@@ -135,6 +136,7 @@
           <div v-for="(item, index) in completedCardData" :value="item.cardId" class="card" :key="index">
             <RequestCard class=" mt-2" :data="item" @handle-card-clicked="handleCardClicked" @handle-card-dialog="handleCardDialog(item)" :style="item.style"/>
           </div>
+          <Observe @triggerIntersected="loadMore" />
         </div>
       </v-window-item>
     </v-window>
@@ -163,6 +165,10 @@ import object from "@/utils/objectUtils";
 import Flicking from "@egjs/vue3-flicking";
 import "@egjs/vue3-flicking/dist/flicking.css";
 import { AutoPlay } from "@egjs/flicking-plugins";
+
+let requestUri = 'board/cards';
+let selectedUri = 'board/cards/card-of-the-month';
+let searchUri = 'board/cards';
 
 const flickingOptions = {
   panelsPerView: 1,
@@ -236,8 +242,15 @@ export default {
       ProjTeamId: '',
       page: 1,
       requestCardData: [],
+      requestCardDataOrder: "create",
+      requestCardDataPage: 0,
+      requestCardDataSize: 10,
       selectedCardData: [],
       completedCardData: [],
+      completedCardDataOrder: "create",
+      completedCardDataPage: 0,
+      completedCardDataSize: 10,
+      searchParams: {},
       isShow: false, 
       selectedItem: {},
       qnaTab: 0, 
@@ -283,14 +296,13 @@ export default {
       }
     },
     qnaTab(newVal, oldVal) {
-      this.page = 1;
       console.log(newVal)
       this.tabChanged();
     }
   },
   mounted() {
-    var res = this.requestAll();
-    var resSelected = this.requestAllSelected();
+    // var res = this.requestAll();
+    // var resSelected = this.requestAllSelected();
   },
   computed: {
     dialogTitle() {
@@ -313,8 +325,10 @@ export default {
           console.log('response', response)
           response.data.forEach((d) => {
             d.createDate = this.exportDateFromTimeStamp(d.createDate);
-            var tempTeammate = d.teammate.replaceAll('[', '["').replaceAll(']', '"]').replaceAll(',', '","');
-            d.teammate = JSON.parse(tempTeammate);  // 어레이로 변환
+            if ("teammates" in d) {
+              var tempTeammates = d.teammates.replaceAll('[', '["').replaceAll(']', '"]').replaceAll(',', '","');
+              d.teammates = JSON.parse(tempTeammates);  // 어레이로 변환
+            }
 
             if (d.selectionInfo == null) {
               this.requestCardData.push(d)
@@ -330,8 +344,10 @@ export default {
         (response) => {
           response.data.forEach((d) => {
             d.createDate = this.exportDateFromTimeStamp(d.createDate);
-            var tempTeammate = d.teammate.replaceAll('[', '["').replaceAll(']', '"]').replaceAll(',', '","');
-            d.teammate = JSON.parse(tempTeammate);  // 어레이로 변환
+            if ("teammates" in d) {
+              var tempTeammates = d.teammates.replaceAll('[', '["').replaceAll(']', '"]').replaceAll(',', '","');
+              d.teammates = JSON.parse(tempTeammates);  // 어레이로 변환
+            }
           });
           this.selectedCardData = response.data;
         },
@@ -349,7 +365,8 @@ export default {
     },
     async search() {
       if (typeof this.subcategory == 'string' || typeof this.category == 'string'){
-        var res = await api.get('board/cards?projTeamId=' + this.projTeamId).then(
+        var params = { projTeamId: this.projTeamId };
+        var res = await api.get(this.searchUri, { params }).then(
           (response) => {
             if (this.qnaTab == 0) {
               this.requestCardData = []
@@ -359,6 +376,10 @@ export default {
             
             response.data.forEach((d) => {
               d.createDate = this.exportDateFromTimeStamp(d.createDate)
+              if ("teammates" in d) {
+                var tempTeammates = d.teammates.replaceAll('[', '["').replaceAll(']', '"]').replaceAll(',', '","');
+                d.teammates = JSON.parse(tempTeammates);  // 어레이로 변환
+              }
               if (d.selectionInfo == null && this.qnaTab == 0) {
                 this.requestCardData.push(d)
               } else if (d.selectionInfo != null && this.qnaTab == 1){
@@ -372,8 +393,41 @@ export default {
               this.completedFlag = (this.completedCardData.length == 0) ? true:false
             }
           }
-        )
+        );
+        this.searchParams = params;
       }
+    },
+    async loadMore() {
+      var params = this.searchParams ?? {};
+      if (this.qnaTab == 0) {
+        params['order'] = this.requestCardDataOrder;
+        params['page'] = this.requestCardDataPage ? this.requestCardDataPage + 1 : 0;
+        params['size'] = this.requestCardDataSize;
+      } else {
+        params['order'] = this.completedCardDataOrder;
+        params['page'] = this.completedCardDataPage ? this.completedCardDataPage + 1 : 0
+        params['size'] = this.completedCardDataSize;
+      }
+      var res = await api.get(requestUri, { params }).then(
+        (response) => {
+          if ([200, 201].includes(response.status) && response.data.length) {
+            response.data.forEach((d) => {
+              d.createDate = this.exportDateFromTimeStamp(d.createDate);
+              if (d.teammates) {
+                var tempTeammates = d.teammates.replaceAll('[', '["').replaceAll(']', '"]').replaceAll(',', '","');
+                d.teammates = JSON.parse(tempTeammates);  // 어레이로 변환
+              }
+            });
+            if (this.qnaTab == 0) {
+              this.requestCardData = this.requestCardData.concat(response.data);
+              this.requestCardDataPage++;
+            } else {
+              this.completedCardData = this.completedCardData.concat(response.data);
+              this.completedCardDataPage++;
+            }
+          }
+        }
+      );
     },
     handleCardClicked(item) {
       if (item) {
@@ -394,12 +448,6 @@ export default {
         query: {},
       });
     },
-    loadMore() {
-      this.page += 1;
-      console.log(this.page)
-      //this.request()
-      // request 한 값을 추가
-    },
     exportDateFromTimeStamp(timeStamp) {
       var date = new Date(timeStamp)
       const year = date.getFullYear();
@@ -413,44 +461,6 @@ export default {
     },
     onScroll(e) {
         this.scrollPosition = window.scrollY;
-    },
-
-    calculateCardStyle(card, index) {
-      var cardHeight = this.$refs.test ? this.$refs.test[index].clientHeight : 0; // height + padding + margin
-      cardHeight += 16;
-      const firstCardTop = this.$refs.test ? this.$refs.test[0].getBoundingClientRect().top : 0;
-
-      const positionY = this.$refs.test ? this.$refs.test[index].getBoundingClientRect().top : 0;
-      const deltaY = positionY - this.scrollPosition;
-      //console.log(`${index} positionY=${positionY}, deltaY=${deltaY}`);
-      // constrain deltaY between -cardHeight and 0
-      const dY = this.clamp(deltaY, -cardHeight, 0);
-
-      const disappearingPosition = firstCardTop + cardHeight * index;
-      
-      //const dissapearingValue = (dY / cardHeight) + 1
-      const dissapearingValue = (dY / cardHeight) + 1
-      const zValue = dY / cardHeight * 50;
-      const yValue = dY / cardHeight * -20;
-
-      card.style = {
-        opacity: dissapearingValue,
-        transform: `perspective(200px) translate3d(0,${yValue}px, ${zValue}px)`,
-      }
-      return card;
-    },
-    clamp (value, min, max) {
-      return Math.min(Math.max(min, value), max)
-    },
-    categoryChanged() {
-      this.subcategory = [];
-      var categoryIndex = this.categoryItems.indexOf(this.category);
-      if (categoryIndex != 0) {
-        this.subcategoryItems = this.subcategoryFullList[categoryIndex];
-      }
-      else {
-        this.subcategoryItems = [];
-      }
     },
     handleCardDialog(item) {
       console.log('handel card dialog')

@@ -263,7 +263,6 @@ export default {
   },
   watch: {
     qnaTab(newVal, oldVal) {
-      this.page = 1;
       console.log(newVal)
       this.tabChanged();
     }
@@ -293,26 +292,10 @@ export default {
               params['key'] = 'member';
             }
             params['value'] = this.searchContent;
-            // var res = await api.get(searchUri, {params}).then(
-            //   (response) => {
-            //     response.data.forEach((d) => {
-            //       d.createDate = this.exportDateFromTimeStamp(d.createDate)
-            //     });
-            //     this.workCardData = response.data
-            //   }
-            // ); 
             this.workCardData = [];
             this.workSearchFlag = (this.workCardData.length == 0) ? true:false  
           } else {
-            console.log('key, value 없음')
-            // var res = await api.get(searchUri, {params}).then(
-            //   (response) => {
-            //     response.data.forEach((d) => {
-            //       d.createDate = this.exportDateFromTimeStamp(d.createDate)
-            //     });
-            //     this.workCardData = response.data
-            //   }
-            // );
+            console.log('key, value 없음');
             this.workCardData = [];
             this.workSearchFlag = (this.workCardData.length == 0) ? true:false  
           }
@@ -324,25 +307,9 @@ export default {
               params['key'] = 'member'
             }
             params['value'] = this.searchContent;
-            // var res = await api.get(searchUri, {params}).then(
-            //   (response) => {
-            //     response.data.forEach((d) => {
-            //       d.createDate = this.exportDateFromTimeStamp(d.createDate)
-            //     });
-            //     this.workCardData = response.data
-            //   }
-            // );
             this.workCardData = [];
             this.workSearchFlag = (this.workCardData.length == 0) ? true:false  
           } else {
-            // var res = await api.get(searchUri, {params}).then(
-            //   (response) => {
-            //     response.data.forEach((d) => {
-            //       d.createDate = this.exportDateFromTimeStamp(d.createDate)
-            //     });
-            //     this.workCardData = response.data
-            //   }
-            // );
             this.workCardData = [];
             this.workSearchFlag = (this.workCardData.length == 0) ? true:false  
           }
@@ -366,14 +333,6 @@ export default {
           }
           params['value'] = this.searchContent;
           this.nonworkCardData = [];
-          // var res = await api.get(searchUri, {params}).then(
-          //   (response) => {
-          //     response.data.forEach((d) => {
-          //       d.createDate = this.exportDateFromTimeStamp(d.createDate)
-          //     });
-          //     this.nonworkCardData = response.data
-          //   }
-          // );
           this.searchFlag = (this.nonworkCardData.length == 0) ? true:false  
         }
 
@@ -382,7 +341,7 @@ export default {
     },
     async loadMore() {
       var params = this.searchParams ?? {};
-      if (this.qnaTab === 0) {
+      if (this.qnaTab == 0) {
         params['workYn'] = true,
         params['order'] = this.workDataOrder;
         params['page'] = this.workDataPage ? this.workDataPage + 1 : 0;
