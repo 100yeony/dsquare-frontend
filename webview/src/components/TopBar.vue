@@ -25,7 +25,8 @@
         </v-row>
       </v-list>
       <v-list>
-        <v-list-item v-for="(item, i) in menuItems" :key="i" :value="item" active-color="primary"
+        <div v-for="(item, i) in menuItems">
+        <v-list-item v-if="item.valid" :key="i" :value="item" active-color="primary"
           @click="onClickMenuItem(item)" :disabled="item.type === 'subheader'">
           <template v-slot:prepend>
             <img cover :src="item.icon" class="mr-2" />
@@ -35,6 +36,7 @@
           </template>
           <v-list-item-title v-text="item.title"></v-list-item-title>
         </v-list-item>
+      </div>
       </v-list>
     </v-navigation-drawer>
     <div>
@@ -79,6 +81,7 @@ import { useStore } from "vuex";
 import stringUtils from "@/utils/stringUtils";
 import { menuItems } from "@/components/right-menu";
 import api from '@/api'
+import store from '@/store';
 
 export default {
   name: "TopBar",
@@ -92,6 +95,7 @@ export default {
     return { menuTitle, back, query, user };
   },
   data: () => ({
+    user: store.getters["info/infoUser"],
     drawer: false,
     group: null,
     menuItems: menuItems,
