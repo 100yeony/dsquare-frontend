@@ -138,13 +138,12 @@ export default {
     },
     onClickMenuItem(item) {
       console.log("[onClickMenuItem] ", item);
+      this.$store.dispatch('info/setPageState', {});
       if (item && item.url) {
         this.$router.replace(item.url);
       }
       else if (item.value === 9) {
-        //this.$store.dispatch('info/setInfoToken', { accessToken: '', refreshToken: '' }); // 토큰값을 제거해줍니다.
         this.$store.dispatch('info/setInfoListBlank');
-
         this.$router.push(process.env.VUE_APP_LOGIN);
       }
     },
