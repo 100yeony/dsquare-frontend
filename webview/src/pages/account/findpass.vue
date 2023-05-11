@@ -42,7 +42,12 @@ export default {
         const res = await api.textPlainPost('account/find-pw', this.email)
         console.log(res)
         if (res.status === 200) {
-          this.$router.push(process.env.VUE_APP_FINDPASS_OK);
+          this.$router.push({
+            path: process.env.VUE_APP_FINDPASS_OK,
+            query: {
+              email: this.email,
+            },
+          });
           return;
         }
 

@@ -2,6 +2,11 @@
 export default {
   setup() {
   },
+  data() {
+    return{
+      email: this.$route.query.email
+    }
+  },
   methods: {
 
     login() {
@@ -21,7 +26,7 @@ export default {
               <center>
               <img src="@/assets/images/check.png" width="55" height="55">
               </center>
-              <h2 class="text-primary text-center mt-20 font-bold">example@gmail.com</h2>
+              <h2 class="text-primary text-center mt-20 font-bold">{{ email }}</h2>
               <h3 class="text-center font-bold">으로 임시 비밀번호를 발급해드렸습니다.</h3>
             </v-container>
             <div class="text-center">
