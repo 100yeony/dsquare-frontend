@@ -481,7 +481,7 @@ export default {
 
             <v-form-group id="contact-group" label="Contact" label-for="contact">
               <label for="contact" class="font-medium font-sm">연락처</label>
-              <v-text-field type="text" v-model="user.contact" variant="outlined" single-line hide-details
+              <v-text-field type="number" v-model="user.contact" variant="outlined" single-line hide-details
                 class="form-control font-sm mt-2" id="contact" density="compact" :class="{
                   'is-invalid': submitted && v$.user.contact.$error,
                 }" placeholder="01012345678" />
@@ -600,6 +600,12 @@ export default {
 
 span {
   padding: 0px 5px !important;
+}
+
+input[type="number"]::-webkit-scrollbar-corner,
+input[type="number"]::-webkit-scrollbar-button {
+  -webkit-appearance: none;
+  margin: 0;
 }
 </style>
 
