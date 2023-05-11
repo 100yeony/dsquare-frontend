@@ -113,22 +113,19 @@ export default {
         cardWriterId: store.getters["info/infoUser"].userId,
         content: editorData,
         title: this.title,
-        teammate: Array.from(this.chipData),
+        teammates: Array.from(this.chipData),
         projTeamId: this.projTeamId, 
         teammateCnt: this.teammateCnt,
       })
       const res = await api.post('board/cards', {
-        //cardWriterId: store.getters["info/infoUser"].userId,
         content: editorData,
         title: this.title,
-        teammate: Array.from(this.chipData),
+        teammates: Array.from(this.chipData),
         projTeamId: this.projTeamId, 
         teammateCnt: this.teammateCnt,
-      }).then((response) => {
-        console.log(response)
-        this.$router.push(process.env.VUE_APP_BOARD_CARD);
-      });
-
+      })
+      console.log(res)
+      this.$router.push(process.env.VUE_APP_BOARD_CARD);
 
     },
     uploader(editor) {

@@ -14,7 +14,7 @@ export default {
   },
   setup() {
     const route = useRoute();
-    let chipData = ref(new Set(route.query.teammate))
+    let chipData = ref(new Set(route.query.teammates))
     let chipText = ref("");
     let categoryItems = ['플랫폼품질혁신TF', '플랫폼IT컨설팅vTF', '플랫폼서비스담당',
       'Digico서비스담당', 'Digico개발센터'];
@@ -109,7 +109,7 @@ export default {
   mounted() {
     this.title = this.$route.query.title
     this.editorData = this.$route.query.content
-    this.chipData = new Set(this.$route.query.teammate);
+    this.chipData = new Set(this.$route.query.teammates);
     this.getUpperIdx()
     this.category = this.categoryItems[this.upperTeamIdx]
     if (this.projTeamId != 1 && this.projTeamId != 2) {
@@ -118,16 +118,15 @@ export default {
   },
   methods: {
     async edit(editorData) {
-      const res = await api.post('board/cards/' + this.$route.query.id, {
+      const res = await api.patch('board/cards/' + this.$route.query.id, {
         content: editorData,
         title: this.title,
-        teammate: Array.from(this.chipData),
+        teammates: Array.from(this.chipData),
         projTeamId: this.projTeamId,
         teammateCnt: this.teammateCnt,
-      }).then((response) => {
-        this.cancle()
-      });
-
+      })
+      console.log(res)
+      this.cancle()
 
     },
     uploader(editor) {

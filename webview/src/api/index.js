@@ -2,7 +2,7 @@ import axios from 'axios'
 import store from "@/store";
 import router from "@/router/index";
 import bridgeUtils from '@/utils/bridgeUtils';
-import {NativeValueDto} from "@/class/NativeValueDto"
+import { NativeValueDto } from "@/class/NativeValueDto"
 // import router from '@/router/index'
 // import dayjs from "dayjs";
 // import { v4 } from 'uuid';
@@ -165,7 +165,7 @@ import {NativeValueDto} from "@/class/NativeValueDto"
 // export default createInstance()
 
 const prefix = ''
-const baseURL = 'http://localhost:8090'
+const baseURL = process.env.VUE_APP_BASE_URL
 var apiInstance
 var multiPartApiInstance
 var noneTokenApiInstance
@@ -175,6 +175,7 @@ function createInstance() {
   var accessToken = store.getters['info/infoListByKey']('accessToken')
   var accessTokenValue = (typeof accessToken == 'undefined') ? '' : accessToken.value
   console.log(accessToken)
+  console.log('baseURL', baseURL)
   //var token = store.getters["info/infoToken"]
   apiInstance = axios.create({
     baseURL: baseURL,
@@ -219,7 +220,7 @@ const fn = {
     }
   },
   tokenErrorCheck(err) {
-    if (err?.response?.data?.code == 401 || err?.response?.status == 401 ||err?.response?.status == 403) {// 후에 code 변경
+    if (err?.response?.data?.code == 401 || err?.response?.status == 401) {// 후에 code 변경
       console.log("it's token expired")
       return true
     } else {
@@ -234,24 +235,18 @@ const fn = {
       baseURL: baseURL
     })
     const res = await apiInstance.post('auth/refresh', { refreshToken: refreshToken.value })
-    console.log(res)
+    console.log(res.data.accessToken)
     return res
   },
-  async doRefreshWork(doRequest, uri, params, headers){
-    var flag = await this.requestRefresh().then(
-      (res) => {
-        if (res.status == 200) {
-          this.setTokenState(res.data.accessToken, res.data.refreshToken)
-          this.setDefaultToken()
-          console.log(res)
-          return true
-        } else {
-          return false
-        }
-      }
-    ).catch((err) => {
-      return false
-    })
+  async doRefreshWork(doRequest, uri, params, headers) {
+    var flag = true
+    try {
+      var res = await this.requestRefresh()
+      this.setTokenState(res.data.accessToken, res.data.refreshToken)
+      this.setDefaultToken()
+    } catch {
+      flag = false
+    }
     console.log(flag)
     if (flag) {
       const res = await doRequest(uri, params, headers)
@@ -295,6 +290,7 @@ const fn = {
   }
   ,
   async post(uri, params, headers) {
+
     const doPost = async (uri, params, headers) => {
       return await apiInstance.post(`${prefix + uri}`, params, { headers: headers })
     }
@@ -304,14 +300,16 @@ const fn = {
     } catch (err) {
       if (this.tokenErrorCheck(err)) {
         var r = await this.doRefreshWork(doPost, uri, params, headers)
-        console.log(r) 
+        console.log(r)
         return r
       } else {
         return this.ErrorPayload(err)
       }
     }
+
   },
   async multiPartPost(uri, formData, headers) {
+
     const doMultiPartPost = async (uri, formData, headers) => {
       return await multiPartApiInstance.post(`${prefix + uri}`, formData, { headers: headers })
     }
@@ -325,6 +323,7 @@ const fn = {
         return this.ErrorPayload(err)
       }
     }
+
   },
 
   async noneTokenPost(uri, params, headers) {
@@ -335,14 +334,12 @@ const fn = {
       const res = await doNoneTokenPost(uri, params, headers)
       return this.ResponsePayload(res)
     } catch (err) {
-      if (this.tokenErrorCheck(err)) {
-        return await this.doRefreshWork(doNoneTokenPost, uri, params, headers)
-      } else {
-        return this.ErrorPayload(err)
-      }
+      return this.ErrorPayload(err)
+
     }
   },
   async textPlainPost(uri, params, headers) {
+
     const doTextPlainPost = async (uri, params, headers) => {
       return await textPlainApiInstance.post(`${prefix + uri}`, params, { headers: headers })
     }
@@ -356,8 +353,10 @@ const fn = {
         return this.ErrorPayload(err)
       }
     }
+
   },
   async get(uri, params, headers) {
+
     const doGet = async (uri, params, headers) => {
       return await apiInstance.get(`${prefix + uri}`, params, { headers: headers })
     }
@@ -373,9 +372,11 @@ const fn = {
         return this.ErrorPayload(err)
       }
     }
+
   },
 
   async del(uri, params, headers) {
+
     const doDel = async (uri, params, headers) => {
       return await apiInstance.delete(`${prefix + uri}`, { data: params }, { headers: headers })
     }
@@ -389,8 +390,10 @@ const fn = {
         return this.ErrorPayload(err)
       }
     }
+
   },
   async patch(uri, params, headers) {
+
     const doPatch = async (uri, params, headers) => {
       return await apiInstance.patch(`${prefix + uri}`, params, { headers: headers })
     }
@@ -404,6 +407,7 @@ const fn = {
         return this.ErrorPayload(err)
       }
     }
+
   },
 }
 export default createInstance()

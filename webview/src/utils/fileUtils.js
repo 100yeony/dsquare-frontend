@@ -39,7 +39,7 @@ var methods = {
     return false;
   },
 
-  isFileSizeLimit(fileSize, limit = 5 * 1024 * 1024){ // 임의로  5MB로 해둠.
+  isFileSizeLimit(fileSize, limit = 10 * 1024 * 1024){ // 임의로  5MB로 해둠.
     if( fileSize < limit)
       return false;
     return true;

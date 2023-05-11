@@ -108,15 +108,14 @@ export default {
   },
   methods: {
     async edit(editorData) {
-      const res = await api.post('board/questions/' + this.$route.query.qid, {
+      await api.post('board/questions/' + this.$route.query.qid, {
         cid: this.cid,
         content: editorData,
         title: this.title,
         atcId: this.$route.query.atcid,
         tags: Array.from(this.chipData)
-      }).then((response) => {
-        this.cancle()
-      });
+      })
+      this.cancle()
       //}
 
     },

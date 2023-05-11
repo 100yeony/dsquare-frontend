@@ -5,7 +5,7 @@ import { required, email } from '@vuelidate/validators'
 import store from '@/store';
 import api from '@/api';
 
-const pwValidator = (pw) => pw == "" || new RegExp("^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,20}$").test(pw);
+const pwValidator = (pw) => pw == "" || new RegExp("^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[!@#$%^&*()_+-=])[A-Za-z\\d!@#$%^&*()_+-=]{8,20}$").test(pw);
 
 export default {
   setup() {
@@ -39,11 +39,11 @@ export default {
           email: this.$route.query.email,
           originalPassword: this.current_pw, 
           changedPassword: this.new_pw, 
-        }).then((response) => {
-          console.log(response)
-          this.$store.dispatch('info/setInfoToken', { accessToken: '', refreshToken: '' }); // 토큰값을 제거해줍니다.
-          this.$router.push(process.env.VUE_APP_CHANGEPASS_OK)
-        });
+        })
+        console.log(res)
+        this.$store.dispatch('info/setInfoToken', { accessToken: '', refreshToken: '' }); // 토큰값을 제거해줍니다.
+        this.$router.push(process.env.VUE_APP_CHANGEPASS_OK)
+
       }
     },
   },

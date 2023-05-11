@@ -25,7 +25,8 @@
                 </v-col>
                 <v-col cols="6" class="">
                   <v-select v-model="subcategory" class="text-truncate" placeholder="소분야" variant="outlined"
-                    density="compact" :items="subcategoryItems" :disabled="!subcategoryItems.length" hide-details></v-select>
+                    density="compact" :items="subcategoryItems" :disabled="!subcategoryItems.length"
+                    hide-details></v-select>
                 </v-col>
               </v-row>
               <v-row>
@@ -235,8 +236,8 @@ export default {
   },
   data() {
     return {
-      workSearchFlag: false, 
-      searchFlag: false, 
+      workSearchFlag: false,
+      searchFlag: false,
     }
   },
   computed: {

@@ -1,6 +1,6 @@
 import 'core-js/stable';
 import "regenerator-runtime/runtime.js";
-import { createApp } from 'vue'
+import { createApp, createVNode } from 'vue'
 import App from './App.vue'
 import '@/assets/scss/app.scss'
 import store from "./store";
@@ -14,7 +14,9 @@ import VuetifyDialogPromise from "vuetify-dialog-promise";
 
 window.sendMessage = message;
 window.receiveMessage = receiveMessage;
-const app = createApp(App);
+const app = createApp({
+    render: () => createVNode(App)
+});
 app.use(vuetify)
 app.use(VuetifyDialogPromise);
 app.use(store)

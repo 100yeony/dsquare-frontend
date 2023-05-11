@@ -8,8 +8,8 @@ var methods = {
       acceptText : acceptText
     })
   },
-  async dialogMsgConfirm(context , content='', title='', acceptText='확인', cancelText='취소'){
-    const result = await context.$confirm( {
+  dialogMsgConfirm(context , content='', title='', acceptText='확인', cancelText='취소'){
+    const result = context.$confirm( {
       title : title,
       text : content,
       acceptText : acceptText,

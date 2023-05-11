@@ -5,9 +5,16 @@
       <v-list>
         <v-row justify="center">
           <v-col cols="2">
-            <v-avatar color="grey" size="40">
-              <v-img cover :src="profileImage"></v-img>
-            </v-avatar>
+            <span v-if="profileImage == null">
+              <v-avatar color="grey" size="40">
+                <v-img cover src="@/assets/images/users/profile_default.png"></v-img>
+              </v-avatar>
+            </span>
+            <span v-if="profileImage != null">
+              <v-avatar color="grey" size="40">
+                <v-img cover :src="profileImage"></v-img>
+              </v-avatar>
+            </span>
           </v-col>
           <v-col cols="7" class="d-flex align-self-center pl-5">
             <span class="text-body font-bold">{{ this.userName }}</span>
@@ -32,12 +39,17 @@
     </v-navigation-drawer>
     <div>
       <v-app-bar absolute dense color="#ffffff">
-        <v-btn icon size="x-large" @click="onclickBackBtn()" v-if="back">
+        <!-- <v-btn icon size="x-large" @click="onclickBackBtn()" v-if="back">
           <v-icon>mdi-arrow-left</v-icon>
-        </v-btn>
-        <v-toolbar-title><span>
-          <router-link to="/home" class="n_td">DSquare</router-link>
-        </span></v-toolbar-title>
+        </v-btn> -->
+        <v-toolbar-title>
+          <span class="mr-1">
+            <img cover src="@/assets/images/logo.jpeg" width="30" height="30">
+          </span>
+          <span>
+            <router-link to="/home" class="n_td">DSquare</router-link>
+          </span>
+        </v-toolbar-title>
         <!--
       아래 내용들을 이용해서, 검색, push를 custom 진행하세요.
        -->
@@ -57,6 +69,10 @@
           <v-list>
             <v-list-item v-for="(notification, index) in notifications" :key="id" :value="id">
               <v-list-item-title>{{ notification.title }}</v-list-item-title>
+            </v-list-item>
+            <v-divider class="ml-2 mr-2"></v-divider>
+            <v-list-item @click="goToIndex">
+              <v-list-item-title class="font_white_gray text-center">더보기</v-list-item-title>
             </v-list-item>
           </v-list>
         </v-menu>
@@ -125,13 +141,16 @@ export default {
       if (item && item.url) {
         this.$router.replace(item.url);
       }
-      else if (item.value === 8) {
+      else if (item.value === 9) {
         //this.$store.dispatch('info/setInfoToken', { accessToken: '', refreshToken: '' }); // 토큰값을 제거해줍니다.
         this.$store.dispatch('info/setInfoListBlank');
 
         this.$router.push(process.env.VUE_APP_LOGIN);
       }
     },
+    goToIndex() {
+      this.$router.push(process.env.VUE_APP_NOTIFICATIONS);
+    }
   },
 };
 </script>

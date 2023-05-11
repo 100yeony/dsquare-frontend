@@ -38,7 +38,7 @@ export default {
   methods: {
     async write(editorData) {
       console.log(editorData);
-      const res = await api.post('board/questions/' + this.$route.query.qid + '/answers', {
+      await api.post('board/questions/' + this.$route.query.qid + '/answers', {
         writerId: store.getters["info/infoUser"].userId,
         content: this.editorData,
         atc: {
@@ -46,11 +46,8 @@ export default {
           "extension": "xlsx",
           "fileSize": "512345"
         }
-      }).then(
-        (response) => {
-          this.cancle();
-        }
-      )
+      })
+      this.cancle();
     },
     uploader(editor) {
       editor.plugins.get("FileRepository").createUploadAdapter = (loader) => {

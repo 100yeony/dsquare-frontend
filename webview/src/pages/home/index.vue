@@ -5,7 +5,7 @@
       <v-col cols="10">
         <p class="text-h6 font-weight-black">My Place</p>
       </v-col>
-      
+
     </v-row>
     <v-row>
       <v-col cols="6">
@@ -28,11 +28,10 @@
       </v-col>
     </v-row>
     <!-- My Weekly Hot body-->
-    <v-row>
+    <v-row class="mb-1"> 
       <v-col cols="10">
         <p class=" text-h6 font-weight-black">Weekly Hot</p>
       </v-col>
-      
     </v-row>
     <div>
       <v-slide-group>
@@ -42,7 +41,9 @@
           </v-slide-group-item>
         </template>
         <template v-else>
-          <v-container align="center">한 주간 관심이 많았던 태그가 없습니다.</v-container>
+          <v-container class="text-center">
+           <p><img src="@/assets/images/empty.png" width="25" height="25"></p>
+            한 주간 관심이 많았던 태그가 없어요</v-container>
         </template>
       </v-slide-group>
     </div>
@@ -52,12 +53,13 @@
       <v-col cols="10">
         <p class="text-h6 font-weight-black">최신글</p>
       </v-col>
-      
+
     </v-row>
     <v-card>
       <v-tabs fixed-tabs bg-color="shades-black" color="shades-white" align-tabs="title" height="2rem"
         selected-class="shades-white" v-model="recentTab">
-        <v-tab v-for="(i, index) in recentTabTitle.length" :key="index" :value="index" selected-class="shades-white" class="pa-0">
+        <v-tab v-for="(i, index) in recentTabTitle.length" :key="index" :value="index" selected-class="shades-white"
+          class="pa-0">
           {{ recentTabTitle[index] }}
         </v-tab>
       </v-tabs>
@@ -78,12 +80,13 @@
                       </v-col>
                       <v-col cols="2">
                         <td class="text-caption font-0000008F">
-                          <img src="@/assets/images/icons/icon_heart.png" /> {{ post.likeCnt }}
+                          <img src="@/assets/images/icons/icon_heart.png" width="15" height="15"/> {{ post.likeCnt }}
                         </td>
                       </v-col>
                       <v-col cols="2">
                         <td class="text-caption font-0000008F">
-                          <img src="@/assets/images/icons/icon_message-circle.png" /> {{ "qid" in post ? post.answerCnt : post.commentCnt }}
+                          <img src="@/assets/images/icons/icon_message-circle.png" width="15" height="15"/> {{ "qid" in post ? post.answerCnt :
+                            post.commentCnt }}
                         </td>
                       </v-col>
                     </v-row>
@@ -102,7 +105,7 @@
       <v-col cols="10">
         <p class="text-h6 font-weight-black">명예의 전당</p>
       </v-col>
-      
+
     </v-row>
     <v-card>
       <v-tabs fixed-tabs bg-color="shades-black" color="shades-white" align-tabs="title" height="2rem"
@@ -113,32 +116,34 @@
       </v-tabs>
       <v-card-text>
         <v-window v-model="hallOfFameTab">
-          <v-window-item v-for="(hall, i) in hallofFameData" :key="i" :value="0">
-            <v-table density="compact">
-              <tbody>
-                <tr v-for="post in hall" :key="post.qid">
-                  <v-row no-gutters @click="pushPost(post)">
-                    <v-col cols="8">
-                      <td class="d-inline-block text-truncate text-body-2 font-weight-bold" style="max-width:95%;" 
-                        color="#0000008F">
-                        {{ post.title }}
-                      </td>
-                    </v-col>
-                    <v-col cols="2">
-                      <td class="text-caption font-0000008F">
-                        <img src="@/assets/images/icons/icon_heart.png" />{{ post.likeCnt }}
-                      </td>
-                    </v-col>
-                    <v-col cols="2">
-                      <td class="text-caption font-0000008F">
-                        <img src="@/assets/images/icons/icon_message-circle.png" />{{ post.answerCnt }}
-                      </td>
-                    </v-col>
-                  </v-row>
-                </tr>
-              </tbody>
-            </v-table>
-          </v-window-item>
+          <template v-for="(hall, i) in hallOfFameData" :key="i">
+            <v-window-item :value="i">
+              <v-table density="compact">
+                <tbody>
+                  <tr v-for="post in hall" :key="post.qid">
+                    <v-row no-gutters @click="pushPost(post)">
+                      <v-col cols="8">
+                        <td class="d-inline-block text-truncate text-body-2 font-weight-bold" style="max-width:95%;" 
+                          color="#0000008F">
+                          {{ post.title }}
+                        </td>
+                      </v-col>
+                      <v-col cols="2">
+                        <td class="text-caption font-0000008F">
+                          <img src="@/assets/images/icons/icon_heart.png" width="15" height="15"/> {{ post.likeCnt }}
+                        </td>
+                      </v-col>
+                      <v-col cols="2">
+                        <td class="text-caption font-0000008F">
+                          <img src="@/assets/images/icons/icon_message-circle.png" width="15" height="15"/> {{ post.answerCnt }}
+                        </td>
+                      </v-col>
+                    </v-row>
+                  </tr>
+                </tbody>
+              </v-table>
+            </v-window-item>
+          </template>
         </v-window>
       </v-card-text>
     </v-card>
@@ -147,7 +152,7 @@
       <v-col cols="10">
         <p class="text-h6 font-weight-black">사용자 랭킹</p>
       </v-col>
-      
+
     </v-row>
 
     <v-card>
@@ -172,10 +177,16 @@
                       </v-col>
                       <v-col cols="2">
                         <td>
-                          <v-avatar v-if="'icon' in user && user.icon">
-                            <v-img cover :src="user.icon"></v-img>
-                          </v-avatar>
-                          <v-avatar v-else color="grey">{{ user.memberInfo?.name.slice(0, 3) }}</v-avatar>
+                          <span v-if="user.memberInfo?.profileImage == null">
+                            <v-avatar color="grey" size="30">
+                              <v-img cover src="@/assets/images/users/profile_default.png"></v-img>
+                            </v-avatar>
+                          </span>
+                          <span v-if="user.memberInfo?.profileImage != null">
+                            <v-avatar color="grey" size="30">
+                              <v-img cover :src="user.memberInfo?.profileImage"></v-img>
+                            </v-avatar>
+                          </span>
                         </td>
                       </v-col>
                       <v-col align-self="center" cols="6">
@@ -185,7 +196,7 @@
                       </v-col>
                       <v-col align-self="center" cols="2">
                         <td class="text-caption font-0000008F">
-                          <img src="@/assets/images/icons/icon_message-circle.png" /> {{ user.postCnt }}
+                          <img src="@/assets/images/icons/icon_message-circle.png" width="15" height="15"/> {{ user.postCnt }}
                         </td>
                       </v-col>
                     </v-row>
@@ -294,17 +305,18 @@ export default {
     /* Weekly Hot 태그 관련 */
     async requestWeeklyHot() {
       var temp = [];
-      var res = await api.get(weeklyHotUri).then((response) => { temp = response.data; });
+      var res = await api.get(weeklyHotUri);
+      temp = res.data
       this.weeklyHotData = temp.slice(0, this.weeklyHotLimit);
     },
     async requestAllMyplace() {
-      var res = await api.get(myQnaUri).then((response) => { this.myPostsCount += response.data.length });
-      res = await api.get(myCommUri).then((response) => { this.myPostsCount += response.data.length });
-      res = await api.get(myDealUri).then((response) => { this.myPostsCount += response.data.length });
-      res = await api.get(myRequestCardUri).then((response) => { this.myPostsCount += response.data.length });
-      
-      res = await api.get(myAnswersUri).then((response) => { this.myRepliesCount += response.data.length });
-      res = await api.get(myCommentsUri).then((response) => { this.myRepliesCount += response.data.length });
+      this.myPostsCount += (await api.get(myQnaUri)).data.length;
+      this.myPostsCount += (await api.get(myCommUri)).data.length;
+      this.myPostsCount += (await api.get(myDealUri)).data.length;
+      this.myPostsCount += (await api.get(myRequestCardUri)).data.length;
+
+      this.myRepliesCount += (await api.get(myAnswersUri)).data.length;
+      this.myRepliesCount += (await api.get(myCommentsUri)).data.length;
     },
     pushMyPosts() {
       this.$router.push({
@@ -324,22 +336,20 @@ export default {
       var cardData = [];
 
       // 궁금해요
-      var res = await api.get(qnaWorkUri).then(
-        (response) => {
-          response.data.forEach((d) => {
-            d.createDate = this.exportDateFromTimeStamp(d.createDate)
-          });
-          qnaData = qnaData.concat(response.data);
-        }
-      );
-      res = await api.get(qnaNonworkUri).then(
-        (response) => {
-          response.data.forEach((d) => {
-            d.createDate = this.exportDateFromTimeStamp(d.createDate)
-          });
-          qnaData = qnaData.concat(response.data);
-        }
-      );
+      var qnaWorks = await api.get(qnaWorkUri)
+      qnaWorks.data.forEach((d) => {
+        d.createDate = this.exportDateFromTimeStamp(d.createDate)
+      }
+      )
+      qnaData = qnaData.concat(qnaWorks.data);
+
+      var qnaNoneWorks = await api.get(qnaNonworkUri)
+      qnaNoneWorks.data.forEach((d) => {
+        d.createDate = this.exportDateFromTimeStamp(d.createDate)
+      }
+      )
+      qnaData = qnaData.concat(qnaNoneWorks.data);
+
       qnaData.sort((a, b) => {
         if (a.createDate < b.createDate) return 1;
         if (b.createDate < a.createDate) return -1;
@@ -348,37 +358,30 @@ export default {
       this.recentData.push(qnaData.slice(0, this.recentLimit));
 
       // 소통해요
-      res = await api.get(commUri).then(
-        (response) => {
-          response.data.forEach((d) => {
-            d.createDate = this.exportDateFromTimeStamp(d.createDate)
-          });
-          commData = response.data;
-        }
-      );
+      var comms = await api.get(commUri)
+      comms.data.forEach((d) => {
+        d.createDate = this.exportDateFromTimeStamp(d.createDate)
+      })
+      commData = comms.data
       this.recentData.push(commData.slice(0, this.recentLimit));
 
+
       // 당근해요
-      res = await api.get(dealUri).then(
-        (response) => {
-          response.data.forEach((d) => {
-            d.createDate = this.exportDateFromTimeStamp(d.createDate)
-          });
-          dealData = response.data;
-        }
-      );
+      var deals = await api.get(dealUri)
+      deals.data.forEach((d) => {
+        d.createDate = this.exportDateFromTimeStamp(d.createDate)
+      })
+      dealData = deals.data
       this.recentData.push(dealData.slice(0, this.recentLimit));
 
       // 카드주세요
-      res = await api.get(cardUri).then(
-        (response) => {
-          response.data.forEach((d) => {
-            d.createDate = this.exportDateFromTimeStamp(d.createDate)
-          });
-          cardData = response.data;
-        }
-      );
+      var cards = await api.get(cardUri)
+      cards.data.forEach((d) => {
+        d.createDate = this.exportDateFromTimeStamp(d.createDate)
+      })
+      cardData = cards.data
       this.recentData.push(cardData.slice(0, this.recentLimit));
+
     },
     pushPost(post) {
       var path, query;
@@ -411,11 +414,16 @@ export default {
       var weeklyData = [];
       var monthlyData = [];
 
-      var res = await api.get(hallWeeklyUri).then((response) => { weeklyData = response.data; });
+      var hallWeeklys = await api.get(hallWeeklyUri)
+      weeklyData = hallWeeklys.data
       this.hallOfFameData.push(weeklyData.slice(0, this.hallOfFameLimit));
 
-      res = await api.get(hallMonthlyUri).then((response) => { monthlyData = response.data; });
+      var hallMonths = await api.get(hallMonthlyUri)
+      monthlyData = hallMonths.data
       this.hallOfFameData.push(monthlyData.slice(0, this.hallOfFameLimit));
+
+      console.log("*********** halloffaamedata *********");
+      console.log(this.hallOfFameData);
     },
 
     /* 사용자랭킹 관련 */
@@ -423,24 +431,19 @@ export default {
       var questionUserData = [];
       var answerUserData = [];
 
-      var res = await api.get(questionUserUri).then((response) => { questionUserData = response.data; });
+      var questionUsers = await api.get(questionUserUri)
+      questionUserData = questionUsers.data
       this.userRankingData.push(questionUserData.slice(0, this.userRankingLimit));
 
-      res = await api.get(answerUserUri).then((response) => { answerUserData = response.data; });
+      var answerUsers = await api.get(answerUserUri)
+      answerUserData = answerUsers.data
       this.userRankingData.push(answerUserData.slice(0, this.userRankingLimit));
-    }
-  },
-  mounted() {
-    this.requestWeeklyHot();
-    this.requestAllMyplace();
-    this.requestAllRecent();
-    this.requestAllHall();
-    this.requestAllUserrank();
-    const infoArea = {}
-    var categoryList = ['전체']
-    var subList = []
-    api.get('board/categories').then((response) => {
-      response.data[0].childList.forEach((category) => {
+    },
+    async requestCategories() {
+      var categoryList = ['전체']
+      var subList = []
+      var res = await api.get('board/categories')
+      res.data[0].childList.forEach((category) => {
         categoryList.push(category.name)
         var subs = []
         category.childList.forEach((child) => {
@@ -451,7 +454,15 @@ export default {
       console.log(categoryList)
       console.log(subList)
       store.dispatch('info/setInfoArea', { value1: categoryList, value2: subList })
-    });
+    }
+  },
+  mounted() {
+    this.requestWeeklyHot();
+    this.requestAllMyplace();
+    this.requestAllRecent();
+    this.requestAllHall();
+    this.requestAllUserrank();
+    this.requestCategories();
 
   }
 };
@@ -475,5 +486,13 @@ export default {
   word-spacing: 0px;
   margin: 0px;
   padding: 0px;
+}
+
+.v-col-10{
+  padding-bottom: 0px !important; 
+}
+
+.v-tab.v-tab{
+  min-width: 80px !important;
 }
 </style>

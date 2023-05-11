@@ -102,6 +102,9 @@ export default {
     <v-container class="ph-60 pw-100">
       <v-row class="ph-100">
         <v-col class="pw-100 ph-60" align-self="center">
+          <div class="d-flex justify-center">
+            <img cover src="@/assets/images/logo.jpeg" width="70" height="70">
+          </div>
           <h1 class="text-primary text-center mb-20 font-bold">DSquare</h1>
           <div class="p-2 mt-4">
             <v-alert v-model="isAuthError" variant="danger" class="mt-3" dismissible>{{ authError }}</v-alert>

@@ -149,7 +149,7 @@ export default {
           this.profileImage = sample
         } else {
           this.profileImage = response.data.profileImage;
-        }
+        } 
       }
     );
     console.log(userData)
@@ -168,8 +168,9 @@ export default {
         const res = await api.patch('member/members/' + this.userId, {
           contact: this.user.contact,
           tid: this.user.tid,
-        })
-        console.log(res)
+        }).then((response) => {
+          console.log(response)
+        });
       }
     },
     goToChangePass() {
@@ -193,8 +194,10 @@ export default {
       this.imageFormData = formData;
       uploadNameInput.value = fileName;
 
-      const res = await api.patch('member/members/' + this.userId + '/profile/image', this.imageFormData)
-      console.log(res)
+      const res = await api.patch('member/members/' + this.userId + '/profile/image', this.imageFormData
+      ).then((response) => {
+        console.log(response)
+      });
     },
     categoryChanged() {
       this.subcategory = [];
@@ -268,8 +271,8 @@ export default {
       <label for="nickname" class="font-medium font-sm">닉네임</label>
       <v-text-field type="text" v-model="user.nickname" variant="outlined" single-line hide-details
         class="form-control font-sm mt-2" id="nickname" density="compact" :class="{
-          'is-invalid': submitted && v$.user.nickname.$error,
-        }" placeholder="닉네임을 입력해주세요." />
+            'is-invalid': submitted && v$.user.nickname.$error,
+          }" placeholder="닉네임을 입력해주세요." />
       <div v-if="submitted && v$.user.nickname.required.$invalid" class="invalid-feedback">
         <v-icon size="x-small" color="red">mdi-close-circle-outline</v-icon>
         <span class="font-xs font_red">닉네임을 입력해주세요.</span>
@@ -282,8 +285,8 @@ export default {
       <label for="contact" class="font-medium font-sm">연락처</label>
       <v-text-field type="text" v-model="user.contact" variant="outlined" single-line hide-details
         class="form-control font-sm mt-2" id="contact" density="compact" :class="{
-          'is-invalid': submitted && v$.user.contact.$error,
-        }" placeholder="연락처를 입력해주세요." />
+            'is-invalid': submitted && v$.user.contact.$error,
+          }" placeholder="연락처를 입력해주세요." />
 
       <div v-if="submitted && v$.user.contact.$error">
         <v-icon size="x-small" color="red">mdi-close-circle-outline</v-icon>
@@ -324,8 +327,8 @@ export default {
       <label for="ktMail" class="font-medium font-sm">사내메일</label>
       <v-text-field type="text" v-model="user.ktMail" variant="outlined" single-line hide-details
         class="form-control font-sm mt-2" id="ktMail" density="compact" :class="{
-          'is-invalid': submitted && v$.user.ktMail.$error,
-        }" placeholder="gildonghong@kt.com" />
+            'is-invalid': submitted && v$.user.ktMail.$error,
+          }" placeholder="gildonghong@kt.com" />
 
       <div v-if="submitted && v$.user.ktMail.$error">
         <v-icon size="x-small" color="red">mdi-close-circle-outline</v-icon>
@@ -341,39 +344,6 @@ export default {
     </div>
 
   </v-form>
-
-  <!-- 두개 다 보여주는 건 예시인거지 나중에는 하나만 보여주게 수정하세요. -->
-  <!-- text 형 유저 avatar -->
-  <!-- <v-card class="mt-3">
-      <h3>
-        <v-avatar color="grey" size="120"> asdfsdfa </v-avatar>
-        <span class="font-weight">사진없는유저</span>
-        
-      </h3>
-    </v-card> -->
-  <v-divider :thickness="2" class="mt-4 mb-5"></v-divider>
-
-  <p class="text-h6 font-weight-black mb-20">비밀번호</p>
-  <v-btn class="pph-25 font-sm button_main font-medium mt-0 mb-5" variant="" @click="goToChangePass">
-    비밀번호 변경
-  </v-btn>
-
-  <v-divider :thickness="2" class="mt-4 mb-5"></v-divider>
-  <p class="text-h6 font-weight-black mb-2">계정삭제</p>
-  <div class="alert mb-2">
-    <div>
-      <div class="font-sm ml-5 mt-3 mb-3 mr-5 font_gray">
-        회원 탈퇴일로부터 계정 정보(이메일/사내메일/닉네임/연락처/소속팀)는
-        <span style="color:deepskyblue" class="font-bold">개인정보 보호방침</span>에 따라 <b>30일간 보관 및 잠김</b>되며, 30일 경과된 후에는 모든 개인
-        정보는 완전히 삭제되어 더 이상 복구할 수 없게 됩니다.
-        작성된 게시글은 삭제되지 않으며, Dsquare로 소유권이 귀속됩니다.
-      </div>
-    </div>
-  </div>
-  <v-checkbox label="계정삭제 정책에 동의합니다." density="compact" v-model="flag"></v-checkbox>
-  <v-btn class="pph-25 font-sm button_main font-medium mt-0 mb-5" variant="" :disabled="!flag" @click="goToDeleteMember">
-    회원탈퇴
-  </v-btn>
 </template>
 <style lang="scss" scoped>
 .button_main {

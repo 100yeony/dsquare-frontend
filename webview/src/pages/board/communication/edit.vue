@@ -65,16 +65,13 @@ export default {
   },
   methods: {
     async edit(editorData) {
-      const res = await api.post('board/talks/' + this.$route.query.talkId, {
+      await api.patch('board/talks/' + this.$route.query.talkId, {
         content: editorData,
         title: this.title,
         atcId: this.$route.query.atcid,
         tags: Array.from(this.chipData)
-      }).then((response) => {
-        this.cancle()
-      });
-      //}
-
+      })
+      this.cancle()
     },
     uploader(editor) {
       editor.plugins.get("FileRepository").createUploadAdapter = (loader) => {
