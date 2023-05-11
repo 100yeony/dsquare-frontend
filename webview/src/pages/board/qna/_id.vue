@@ -31,7 +31,7 @@
             <div class="text-caption font-0000008F">{{ qData.createDate }}</div>
           </v-col>
           <v-col cols="2">
-            <v-menu v-if="isWriter || checkAdmin">
+            <v-menu v-if="isWriter || checkAdmin()">
               <template v-slot:activator="{ props }">
                 <v-btn icon flat rounded="0" v-bind="props" color="transparent">
                   <v-icon>mdi-dots-horizontal</v-icon>
@@ -94,8 +94,10 @@
                     <v-col>
                       <div>
                         <div class="font-xs">
-                          {{ comment.writerInfo.name + ' (' + comment.writerInfo.teamHierarchy[comment.writerInfo.teamHierarchy.length - 1] + ')' }}
-                          <v-chip variant="outlined" class="ml-1" size="x-small" color="primary" v-if="comment.writerInfo.id == qData.writerId">작성자</v-chip>
+                          {{ comment.writerInfo.name + ' (' +
+                            comment.writerInfo.teamHierarchy[comment.writerInfo.teamHierarchy.length - 1] + ')' }}
+                          <v-chip variant="outlined" class="ml-1" size="x-small" color="primary"
+                            v-if="comment.writerInfo.id == qData.writerId">작성자</v-chip>
                         </div>
                         <div class="font-xs font_white_gray">
                           {{ comment.createDate }}
@@ -226,7 +228,8 @@
                             {{
                               comment.writerInfo.name + ' (' +
                               comment.writerInfo.teamHierarchy[comment.writerInfo.teamHierarchy.length - 1] + ')' }}
-                            <v-chip variant="outlined" class="ml-1" size="x-small" color="green" v-if="comment.writerInfo.id == item.writerInfo.id">답변자</v-chip>
+                            <v-chip variant="outlined" class="ml-1" size="x-small" color="green"
+                              v-if="comment.writerInfo.id == item.writerInfo.id">답변자</v-chip>
                           </div>
                           <div class="font-xs font_white_gray">
                             {{ comment.createDate }}
@@ -564,7 +567,7 @@ export default {
     },
     async requestAnswerData() {
       var res = await api.get('board/questions/' + this.$route.query.qid + '/answers', '')
-      this.answerList = res.data 
+      this.answerList = res.data
       this.initAnswerData()
     },
     initAnswerData() {
@@ -598,7 +601,7 @@ export default {
       }
     },
     checkAdmin() {
-      return this.user.role.includes("admin")
+      return this.user.role.includes("ADMIN")
     }
   },
 };
