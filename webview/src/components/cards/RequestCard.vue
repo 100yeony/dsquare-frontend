@@ -31,7 +31,7 @@
                 <v-col cols="2" class="center-container justify-content-end"><v-icon size="small">mdi-message-text-outline</v-icon><span
                     class="text-caption ml-1">{{ props?.data?.commentCnt }}</span></v-col>
                 <v-col cols="8" class="d-flex justify-end"> 
-                    <div v-if="props?.data?.selectionInfo == null">
+                    <div v-if="user?.role.includes('OWNER') == true && props?.data?.selectionInfo == null">
                         <v-btn class="card_button mr-4 mb-4" @click="showDialog($event)">카드주기</v-btn>
                     </div>
                 </v-col>
@@ -41,10 +41,13 @@
 </template>
 
 <script setup>
+    import store from "@/store";
+
     const props = defineProps({
     data: Object,
     });
 
+    const user =store.getters["info/infoUser"]
     const emit = defineEmits(["handle-card-clicked","handle-card-dialog"]);
 
     // console.log(props.data);

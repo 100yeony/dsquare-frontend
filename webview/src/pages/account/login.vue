@@ -81,7 +81,11 @@ export default {
           const jwt = require("jsonwebtoken");
           const decodedToken = jwt.decode(res.data.accessToken);
           console.log(decodedToken);
-          this.$store.dispatch('info/setInfoUser', { userId: decodedToken.id });
+          this.$store.dispatch('info/setInfoUser', 
+          { 
+            userId: decodedToken.id,
+            role: decodedToken.role, 
+           });
 
           api.setDefaultToken();
           this.$router.push('/account/change-pass-alert');

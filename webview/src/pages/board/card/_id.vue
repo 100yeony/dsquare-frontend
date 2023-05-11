@@ -43,7 +43,7 @@
             <div class="text-caption font-0000008F">{{ cardData.createDate }}</div>
           </v-col>
           <v-col cols="2">
-            <v-menu v-if="isWriter">
+            <v-menu v-if="isWriter || checkAdmin()">
               <template v-slot:activator="{ props }">
                 <v-btn icon flat rounded="0" v-bind="props" color="transparent">
                   <v-icon>mdi-dots-horizontal</v-icon>
@@ -177,7 +177,7 @@
     </v-card>
 
     <!-- 카드 승인 버튼 -->
-    <v-card v-if="!isWriter && cardData.selectionInfo == null" class="mt-4" variant="outlined">
+    <v-card v-if="checkOwner() && cardData.selectionInfo == null" class="mt-4" variant="outlined">
       <v-card-item>
         <div class="font-m text-center mb-3">수고한 사우들을 응원해주세요!</div>
         <v-btn block color="shades-black" @click="giveCard">카드 주기</v-btn>
@@ -446,6 +446,12 @@ export default {
         this.cardData.likeYn = !this.cardData.likeYn;
         this.$forceUpdate();
       }
+    },
+    checkAdmin() {
+      return this.user.role.includes("ADMIN")
+    },
+    checkOwner() {
+      return this.user.role.includes("OWNER")
     }
   }
 };

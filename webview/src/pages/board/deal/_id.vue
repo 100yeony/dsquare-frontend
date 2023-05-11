@@ -31,7 +31,7 @@
             <div class="text-caption font-0000008F">{{ qData.createDate }}</div>
           </v-col>
           <v-col cols="2">
-            <v-menu v-if="isWriter">
+            <v-menu v-if="isWriter || checkAdmin()">
               <template v-slot:activator="{ props }">
                 <v-btn icon flat rounded="0" v-bind="props" color="transparent">
                   <v-icon>mdi-dots-horizontal</v-icon>
@@ -213,7 +213,7 @@ export default {
     questionData.then(
       async (response) => {
         this.qData = this.parseToQData(response.data)
-        console.log(this.user.userId, response.data.writerId)
+        console.log(this.user.userId, this.user.role, response.data.writerId)
         if (this.user.userId == response.data.writerInfo.id) {
           this.isWriter = true;
         }
@@ -414,6 +414,10 @@ export default {
         this.qData.likeYn = !this.qData.likeYn;
         this.$forceUpdate();
       }
+    }, 
+    
+    checkAdmin() {
+      return this.user.role.includes("ADMIN")
     }
   },
 };
