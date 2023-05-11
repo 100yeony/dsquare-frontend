@@ -9,7 +9,8 @@ export const info = {
         subAreaList: []
       },
       user: {
-        userId: ''
+        userId: '',
+        role: [], 
       },
       pageState: {
 
