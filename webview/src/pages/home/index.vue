@@ -375,11 +375,20 @@ export default {
       this.recentData.push(dealData.slice(0, this.recentLimit));
 
       // 카드주세요
-      var cards = await api.get(cardUri)
-      cards.data.forEach((d) => {
+      var cardsRequested = await api.get(cardUri + "?isSelected=false&page=0&size=5");
+      cardsRequested.data.forEach((d) => {
         d.createDate = this.exportDateFromTimeStamp(d.createDate)
-      })
-      cardData = cards.data
+      });
+      var cardsSelected = await api.get(cardUri + "?isSelected=true&page=0&size=5");
+      cardsSelected.data.forEach((d) => {
+        d.createDate = this.exportDateFromTimeStamp(d.createDate)
+      });
+      cardData = cardsRequested.data.concat(cardsSelected.data);
+      cardData.sort((a, b) => {
+        if (a.createDate < b.createDate) return 1;
+        if (b.createDate < a.createDate) return -1;
+        return 0;
+      });
       this.recentData.push(cardData.slice(0, this.recentLimit));
 
     },

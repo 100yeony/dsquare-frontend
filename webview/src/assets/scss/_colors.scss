@@ -4,8 +4,10 @@ $blue: #00A1F1;
 $orange: #FF6600;
 $yellow: #FFB904;
 $red: #ED223F;
+$green: #008000;
 $GRAY: #D2D2D2;
 $BLUE2: #0AA4FF;
+
 
 
 .font_red {
@@ -14,6 +16,10 @@ $BLUE2: #0AA4FF;
 
 .font_black {
   color: $black !important;
+}
+
+.font_green {
+  color: $green !important;
 }
 
 .font_red {
