@@ -4,10 +4,10 @@ export default {
   },
   methods: {
 
-    cancel() {
-      this.$router.push(process.env.VUE_APP_HOME);
-      // this.$router.push(process.env.VUE_APP_LOGIN);
-    },
+    // cancel() {
+    //   this.$router.push(process.env.VUE_APP_HOME);
+    //   // this.$router.push(process.env.VUE_APP_LOGIN);
+    // },
 
     changepass(){
       this.$router.push(process.env.VUE_APP_CHANGEPASS)
@@ -36,13 +36,13 @@ export default {
               <div class="mt-20 text-center font_gray">90일 동안 비밀번호를 변경하지 않으셨어요. <br> 안전한 사용을 위하여, 기존 비밀번호를 변경해주세요.</div>
 
               <v-row align="center" class="mt-5">
-                <v-col>
+                <!-- <v-col>
                   <v-btn class="mr-5 pph-25 font-sm button_white font-medium" @click="cancel" variant="">
                     취소
                   </v-btn>
-                </v-col>
-                <v-col>
-                  <v-btn type="submit" class="pph-25 font-sm button_main font-medium" @click="changepass" variant="">
+                </v-col> -->
+                <v-col class="d-flex justify-center">
+                  <v-btn type="submit" class="pph-10 font-sm button_main font-medium" @click="changepass" variant="">
                     지금 변경하기
                   </v-btn>
                 </v-col>
@@ -73,6 +73,7 @@ export default {
   max-width: 500px;
   width: 95% !important;
 }
+
 </style>
 
 

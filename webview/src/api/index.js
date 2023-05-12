@@ -165,7 +165,7 @@ import { NativeValueDto } from "@/class/NativeValueDto"
 // export default createInstance()
 
 const prefix = ''
-const baseURL = process.env.VUE_APP_BASE_URL
+const baseURL = 'http://localhost:8090' //process.env.VUE_APP_BASE_URL
 var apiInstance
 var multiPartApiInstance
 var noneTokenApiInstance
@@ -211,13 +211,7 @@ const fn = {
   },
   ErrorPayload(err) {
     console.log('ErrorPayload', err)
-    return {
-      code: err?.code,
-      msg: err?.msg || 'FAIL',
-      messageCode: '',
-      messageInfo: '서비스 요청이 실패하였습니다.',
-      resData: null,
-    }
+    return err.response
   },
   tokenErrorCheck(err) {
     if (err?.response?.data?.code == 401 || err?.response?.status == 401) {// 후에 code 변경
