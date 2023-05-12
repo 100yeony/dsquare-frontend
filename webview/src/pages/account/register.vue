@@ -206,7 +206,7 @@ export default {
 
       this.v$.$touch();
 
-      if (!this.v$.$error && accreditSuccess) {
+      if (!this.v$.$error && this.accreditSuccess) {
         const res = await api.noneTokenPost('/account/signup', this.user)
         if (res.status === 200) {
           this.stepper = 2;
@@ -675,5 +675,6 @@ input[type="number"]::-webkit-scrollbar-button {
   margin: 0;
 }
 </style>
+
 
 
