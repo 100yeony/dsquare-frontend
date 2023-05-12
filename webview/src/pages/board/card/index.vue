@@ -26,15 +26,15 @@
 
     <v-divider :thickness="1" class="mt-4 mb-5"></v-divider>
 
-    <v-tabs fixed-tabs class="mt-5" color="primary" v-model="qnaTab">
-      <v-tab v-for="(i, index) in qnaTabTitle.length" :key="index" :value="index" slider-color="primary">
-        {{ qnaTabTitle[index] }}
+    <v-tabs fixed-tabs class="mt-5" color="primary" v-model="cardTab">
+      <v-tab v-for="(i, index) in cardTabTitle.length" :key="index" :value="index" slider-color="primary">
+        {{ cardTabTitle[index] }}
       </v-tab>
     </v-tabs>
     <!-- 
     <p class="mt-3 text-h6 font-weight-black">카드 대기중</p> -->
 
-    <v-window v-model="qnaTab" :touch="false">
+    <v-window v-model="cardTab" :touch="false">
       <v-window-item :value="0">
         <!-- 검색 -->
         <v-expansion-panels class="my-3">
@@ -119,6 +119,19 @@
             </v-expansion-panel-text>
           </v-expansion-panel>
         </v-expansion-panels>
+
+        <!-- 정렬 -->
+        <div class="mt-4 mb-4 d-flex justify-end">
+          <v-btn prepend-icon="mdi-sort-descending">정렬
+            <v-menu activator="parent">
+              <v-list>
+                <v-list-item v-for="(item, index) in sortMenu" :key="index" :value="index" @click="sort(index)">
+                  <v-list-item-title>{{ item.title }}</v-list-item-title>
+                </v-list-item>
+              </v-list>
+            </v-menu>
+          </v-btn>
+        </div>
 
         <div v-if="completedCardData.length == 0 && !completedFlag" class="text-center mt-60 mb-20">
           <img src="@/assets/images/nopost.png" width="70" height="70">
@@ -209,7 +222,7 @@ export default {
       { title: "최신순" },
     ]
 
-    let qnaTabTitle = ["카드대기중", "선정된카드"];
+    let cardTabTitle = ["카드대기중", "선정된카드"];
 
     return {
       categoryItems, subcategoryFullList,
@@ -217,7 +230,7 @@ export default {
       sortMenu,
       flickingPlugins,
       flickingOptions,
-      qnaTabTitle,
+      cardTabTitle,
     };
   },
   data() {
@@ -251,7 +264,7 @@ export default {
       searchParams: {},
       isShow: false,
       selectedItem: {},
-      qnaTab: 0,
+      cardTab: 0,
       searchFlag: false,
       completedFlag: false,
     };
@@ -293,14 +306,10 @@ export default {
         this.projTeamId = 16;
       }
     },
-    qnaTab(newVal, oldVal) {
+    cardTab(newVal, oldVal) {
       console.log(newVal)
       this.tabChanged();
     }
-  },
-  mounted() {
-    // var res = this.requestAll();
-    // var resSelected = this.requestAllSelected();
   },
   computed: {
     dialogTitle() {
@@ -317,40 +326,6 @@ export default {
       this.searchKey = ''
       this.searchContent = '';
     },
-    async requestAll() {
-      var res = await api.get('board/cards').then(
-        (response) => {
-          console.log('response', response)
-          response.data.forEach((d) => {
-            d.createDate = this.exportDateFromTimeStamp(d.createDate);
-            if ("teammates" in d) {
-              var tempTeammates = d.teammates.replaceAll('[', '["').replaceAll(']', '"]').replaceAll(',', '","');
-              d.teammates = JSON.parse(tempTeammates);  // 어레이로 변환
-            }
-
-            if (d.selectionInfo == null) {
-              this.requestCardData.push(d)
-            } else {
-              this.completedCardData.push(d)
-            }
-          });
-        }
-      );
-    },
-    async requestAllSelected() {
-      var res = await api.get('board/cards/card-of-the-month').then(
-        (response) => {
-          response.data.forEach((d) => {
-            d.createDate = this.exportDateFromTimeStamp(d.createDate);
-            if ("teammates" in d) {
-              var tempTeammates = d.teammates.replaceAll('[', '["').replaceAll(']', '"]').replaceAll(',', '","');
-              d.teammates = JSON.parse(tempTeammates);  // 어레이로 변환
-            }
-          });
-          this.selectedCardData = response.data;
-        },
-      );
-    },
     categoryChanged() {
       this.subcategory = [];
       var categoryIndex = this.categoryItems.indexOf(this.category);
@@ -363,7 +338,7 @@ export default {
     },
     async search() {
       if (typeof this.subcategory == 'string' || typeof this.category == 'string') {
-        if (this.qnaTab == 0) {
+        if (this.cardTab == 0) {
           var params = {
             projTeamId: this.projTeamId,
             order: this.requestCardDataOrder,
@@ -388,15 +363,19 @@ export default {
     },
     async loadMore() {
       var params = this.searchParams ?? {};
-      if (this.qnaTab == 0) {
+      if (this.cardTab == 0) {
+        params['isSelected'] = false;
         params['order'] = this.requestCardDataOrder;
         params['page'] = this.requestCardDataPage;
         params['size'] = this.requestCardDataSize;
       } else {
+        params['isSelected'] = true;
         params['order'] = this.completedCardDataOrder;
         params['page'] = this.completedCardDataPage;
         params['size'] = this.completedCardDataSize;
       }
+      console.log("******* params ******");
+      console.log(params);
       var res = await api.get(requestUri, { params }).then(
         (response) => {
           if ([200, 201].includes(response.status) && response.data.length) {
@@ -407,7 +386,7 @@ export default {
                 d.teammates = JSON.parse(tempTeammates);  // 어레이로 변환
               }
             });
-            if (this.qnaTab == 0) {
+            if (this.cardTab == 0) {
               this.requestCardData = this.requestCardData.concat(response.data);
               this.requestCardDataPage++;
             } else {
@@ -472,14 +451,15 @@ export default {
       this.selectedItem = {}
     },
     sort(index) {
-      if (this.qnaTab == 0) {
+      console.log("sort");
+      if (this.cardTab == 0) {
         this.requestCardDataOrder = index ? "create" : "like";
         this.requestCardDataPage = 0;
         this.requestCardDataSize = 10;
-        this.requestCardDataData = [];
+        this.requestCardData = [];
       }
       // 비업무
-      else if (this.qnaTab == 1) {
+      else if (this.cardTab == 1) {
         this.completedCardDataOrder = index ? "create" : "like";
         this.completedCardDataPage = 0;
         this.completedCardDataSize = 10;
