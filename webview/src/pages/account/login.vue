@@ -88,7 +88,14 @@ export default {
            });
 
           api.setDefaultToken();
-          this.$router.push('/account/change-pass-alert');
+          // this.$router.push('/account/change-pass-alert');
+          console.log(this.email)
+          this.$router.push({
+            path: process.env.VUE_APP_CHANGEPASS_ALERT,
+            query: {
+              email: this.email
+            }
+          });
         } else {
           this.flag = !this.flag;
         }

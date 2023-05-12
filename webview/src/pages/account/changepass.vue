@@ -19,6 +19,7 @@ export default {
       current_pw: "",
       new_pw: "",
       new_pw_ok: "",
+      flag: false, 
     }
   },
   validations() {
@@ -35,15 +36,18 @@ export default {
       // stop here if form is invalid
       this.v$.$touch();
       if (!this.v$.$error && this.new_pw == this.new_pw_ok) {
-        const res = await api.patch('account/change-pw/', {
+        const res = await api.noneTokenPatch('account/change-pw', {
           email: this.$route.query.email,
           originalPassword: this.current_pw, 
           changedPassword: this.new_pw, 
         })
         console.log(res)
-        this.$store.dispatch('info/setInfoToken', { accessToken: '', refreshToken: '' }); // 토큰값을 제거해줍니다.
-        this.$router.push(process.env.VUE_APP_CHANGEPASS_OK)
-
+        if (res.status === 200) {
+          this.$store.dispatch('info/setInfoListBlank');
+          this.$router.push(process.env.VUE_APP_CHANGEPASS_OK)
+        } else {
+          this.flag = true
+        }
       }
     },
   },
@@ -134,6 +138,16 @@ export default {
                         <v-btn type="submit" class="font-sm pph-50 mt-30 button_main font-medium" variant="">
                             비밀번호 변경
                         </v-btn>
+
+                        <div class="alert mt-5" v-if="flag">
+                          <div class="flex">
+                            <div><v-icon size="small" color="#B91C1C" class="mr-3 mt-5 ml-5">mdi-information</v-icon></div>
+                            <div>
+                              <h3 class="font-sm font-B91C1C mt-5">비밀번호 변경 실패</h3>
+                              <div class="font-sm font-B91C1C mt-2 mb-5 mr-5">현재 비밀번호가 일치하지 않습니다.</div>
+                            </div>
+                          </div>
+                        </div>
                     </v-container>
                 </v-form>
             </v-col>
@@ -155,6 +169,14 @@ export default {
 
 span{
   padding: 0px 5px !important; 
+}
+
+.alert {
+  border-width: 0.1px;
+  border-style: solid;
+  border-color: white;
+  border-radius: 0.375rem;
+  background-color: #F5EFFA;
 }
 
 </style>
