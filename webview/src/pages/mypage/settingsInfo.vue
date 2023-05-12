@@ -53,7 +53,7 @@ export default {
         this.user.name = response.data.name;
         this.user.email = response.data.email;
         this.user.contact = response.data.contact;
-        this.user.role = response.data.role; 
+        this.selected = response.data.role; 
         if (response.data.teamHierarchy.length === 1) {
           this.user.lowerTname = response.data.teamHierarchy[0];
         } else {
@@ -129,7 +129,7 @@ export default {
     <v-form @submit.prevent="tryToUpdate" class="overflow-show">
 
       <v-label class="mt-5 mb-3">권한</v-label>
-      <!-- <p>{{ selected }}</p> -->
+      <p>{{ selected }}</p>
       <v-row>
         <v-col cols="3" class="v-col-3_custom">
           <v-checkbox v-model="selected" label="회원" value="USER" hide-details></v-checkbox>
