@@ -19,7 +19,7 @@ const router = createRouter({
  * Vue router의 권한 및 title을 설정해주는 script 입니다.
  */
 // 로그인이 되지 않았을때만 들어가져야합니다.
-const notLogged = [process.env.VUE_APP_LOGIN, process.env.VUE_APP_REGISTER,
+const notLogged = [process.env.VUE_APP_LOGIN, process.env.VUE_APP_REGISTER, process.env.VUE_APP_CHANGEPASS_ALERT, process.env.VUE_APP_CHANGEPASS,
 process.env.VUE_APP_CHANGEPASS_OK, process.env.VUE_APP_FINDPASS, process.env.VUE_APP_FINDPASS_OK];
 
 router.beforeEach(async (to, from, next) => {

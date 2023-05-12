@@ -4,7 +4,7 @@ import { required, email } from '@vuelidate/validators'
 import Footer from "@/components/FooterAuth"
 import api from '@/api'
 
-import {NativeValueDto} from "@/class/NativeValueDto"
+import { NativeValueDto } from "@/class/NativeValueDto"
 import bridgeUtils from '@/utils/bridgeUtils'
 
 /**
@@ -81,23 +81,33 @@ export default {
           const jwt = require("jsonwebtoken");
           const decodedToken = jwt.decode(res.data.accessToken);
           console.log(decodedToken);
-          this.$store.dispatch('info/setInfoUser', 
-          { 
-            userId: decodedToken.id,
-            role: decodedToken.role, 
-           });
+          this.$store.dispatch('info/setInfoUser',
+            {
+              userId: decodedToken.id,
+              role: decodedToken.role,
+            });
+
 
           api.setDefaultToken();
+          this.$router.push(process.env.VUE_APP_HOME);
           // this.$router.push('/account/change-pass-alert');
-          console.log(this.email)
-          this.$router.push({
-            path: process.env.VUE_APP_CHANGEPASS_ALERT,
-            query: {
-              email: this.email
-            }
-          });
         } else {
-          this.flag = !this.flag;
+          console.log(res)
+          if (res?.status == 401) {
+            if (res?.data.code == 401001) {
+              this.flag = true;
+            } else if (res?.data.code == 401002) {
+              this.$router.push({
+                path: process.env.VUE_APP_CHANGEPASS_ALERT,
+                query: {
+                  email: this.email
+                }
+              });
+
+            }
+          } else {
+            this.flag = true;
+          }
         }
       }
     },

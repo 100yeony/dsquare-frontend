@@ -211,13 +211,7 @@ const fn = {
   },
   ErrorPayload(err) {
     console.log('ErrorPayload', err)
-    return {
-      code: err?.code,
-      msg: err?.msg || 'FAIL',
-      messageCode: '',
-      messageInfo: '서비스 요청이 실패하였습니다.',
-      resData: null,
-    }
+    return err.response
   },
   tokenErrorCheck(err) {
     if (err?.response?.data?.code == 401 || err?.response?.status == 401) {// 후에 code 변경
