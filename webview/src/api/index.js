@@ -223,7 +223,6 @@ const fn = {
   },
   async requestRefresh() {
     let refreshToken = store.getters['info/infoListByKey']('refreshToken')
-    //var token = store.getters["info/infoToken"]
     console.log('requestRefresh', refreshToken)
     apiInstance = axios.create({
       baseURL: baseURL
@@ -236,17 +235,29 @@ const fn = {
     var flag = true
     try {
       var res = await this.requestRefresh()
+    } catch(error) {
+      console.log(error)
+      if ([400, 409].includes(error.response.status)){
+        flag = false
+      } else {
+        this.expiredToken()
+        return 
+      }
+    }
+
+    console.log(flag)
+
+    if (flag) {
       this.setTokenState(res.data.accessToken, res.data.refreshToken)
       this.setDefaultToken()
-    } catch {
-      flag = false
-    }
-    console.log(flag)
-    if (flag) {
+    } 
+
+    try {
       const res = await doRequest(uri, params, headers)
-      console.log(res)
-      return this.ResponsePayload(res)
-    } else {
+    console.log(res)
+    return this.ResponsePayload(res)
+    } catch(error) {
+      console.log(error)
       this.expiredToken()
     }
   },
@@ -332,6 +343,19 @@ const fn = {
 
     }
   },
+  async noneTokenDel(uri, params, headers) {
+    const doNoneTokenDel = async (uri, params, headers) => {
+      return await noneTokenApiInstance.delete(`${prefix + uri}`, { data: params }, { headers: headers })
+    }
+    try {
+      const res = await doNoneTokenDel(uri, params, headers)
+      return this.ResponsePayload(res)
+    } catch (err) {
+      return this.ErrorPayload(err)
+
+    }
+  },
+  
   async textPlainPost(uri, params, headers) {
 
     const doTextPlainPost = async (uri, params, headers) => {
