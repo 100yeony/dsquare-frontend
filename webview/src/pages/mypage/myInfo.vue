@@ -170,7 +170,7 @@ export default {
     },
     goToChangePass() {
       this.$router.push({
-        path: process.env.VUE_APP_CHANGEPASS,
+        path: process.env.VUE_APP_CHANGEPASS_FOR_USER,
         query: {
           email: this.user.email
         }
