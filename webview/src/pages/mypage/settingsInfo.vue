@@ -53,7 +53,7 @@ export default {
         this.user.name = response.data.name;
         this.user.email = response.data.email;
         this.user.contact = response.data.contact;
-        this.user.role = response.data.role; 
+        this.selected = response.data.role; 
         if (response.data.teamHierarchy.length === 1) {
           this.user.lowerTname = response.data.teamHierarchy[0];
         } else {
