@@ -259,6 +259,15 @@ export default [
         component: () => import("@/pages/account/changepass"),
       },
       {
+        path: process.env.VUE_APP_CHANGEPASS_FOR_USER,
+        name: "changepass-for-user",
+        meta: {
+          title: "비밀번호변경회원용",
+          back: process.env.VUE_APP_LOGIN
+        },
+        component: () => import("@/pages/account/changepassForUser"),
+      },
+      {
         path: process.env.VUE_APP_CHANGEPASS_OK,
         name: "changepass_ok",
         meta: {

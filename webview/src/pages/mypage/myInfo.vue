@@ -12,16 +12,15 @@ const ktEmailValidator = (email) => email == "" || new RegExp("[A-Za-z0-9]+@kt.c
 
 export default {
   setup() {
-    let categoryItems = ['플랫폼품질혁신TF', '플랫폼IT컨설팅vTF', '플랫폼서비스담당',
+    let categoryItems = ['플랫폼품질혁신TF', '플랫폼서비스담당',
       'Digico서비스담당', 'Digico개발센터'];
     let subcategoryFullList = [
       [],
-      [],
       ["메시징DX플랫폼팀", "서비스플랫폼팀",
-        "금융결제DX플랫폼팀", "인증DX플랫폼팀"],
+        "금융결제DX플랫폼팀", "인증DX플랫폼팀", "플랫폼IT컨설팅팀"],
       ["미디어플랫폼팀", "AI서비스팀",
-        "AICC서비스팀", "Safety플랫폼팀"],
-      ["AgileCore팀", "Digico사업수행팀", "AICC딜리버리팀"],
+        "Safety플랫폼팀"],
+      ["AgileCore팀", "Digico사업수행팀", "DX솔루션사업팀"],
     ];
 
     return {
@@ -93,37 +92,34 @@ export default {
       console.log(newVal)
       if (newVal === '플랫폼품질혁신TF') {
         this.user.tid = 1;
-      } else if (newVal === '플랫폼IT컨설팅vTF') {
-        this.user.tid = 2;
       } else {
         this.user.tid = '';
       }
-      console.log(this.user.tid)
     },
     subcategory(newVal, oldVal) {
       console.log(newVal)
       if (newVal === '메시징DX플랫폼팀') {
-        this.user.tid = 6;
+        this.user.tid = 5;
       } else if (newVal === '서비스플랫폼팀') {
-        this.user.tid = 7;
+        this.user.tid = 6;
       } else if (newVal === '금융결제DX플랫폼팀') {
-        this.user.tid = 8;
+        this.user.tid = 7;
       } else if (newVal === '인증DX플랫폼팀') {
+        this.user.tid = 8;
+      } else if (newVal === '플랫폼IT컨설팅팀') {
         this.user.tid = 9;
       } else if (newVal === '미디어플랫폼팀') {
         this.user.tid = 10;
       } else if (newVal === 'AI서비스팀') {
         this.user.tid = 11;
-      } else if (newVal === 'AICC서비스팀') {
-        this.user.tid = 12;
       } else if (newVal === 'Safety플랫폼팀') {
-        this.user.tid = 13;
+        this.user.tid = 12;
       } else if (newVal === 'AgileCore팀') {
-        this.user.tid = 14;
+        this.user.tid = 13;
       } else if (newVal === 'Digico사업수행팀') {
+        this.user.tid = 14;
+      } else if (newVal === 'DX솔루션사업팀') {
         this.user.tid = 15;
-      } else if (newVal === 'AICC딜리버리팀') {
-        this.user.tid = 16;
       }
     }
   },
@@ -174,7 +170,7 @@ export default {
     },
     goToChangePass() {
       this.$router.push({
-        path: process.env.VUE_APP_CHANGEPASS,
+        path: process.env.VUE_APP_CHANGEPASS_FOR_USER,
         query: {
           email: this.user.email
         }
