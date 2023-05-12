@@ -77,7 +77,7 @@ export default {
       this.v$.$touch();
 
       if (!this.v$.$error) {
-        const res = await api.patch('member/members/' + this.userId, {
+        const res = await api.patch('admin/members/' + this.userId, {
           role: this.selected, 
         })
         console.log(res)
