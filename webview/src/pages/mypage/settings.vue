@@ -1,4 +1,5 @@
 <template>
+  <p class="text-h6 font-weight-black mb-2">회원 목록</p>
   <v-data-table
     :headers="headers"
     :items="users"
@@ -19,40 +20,34 @@
   </template>
 
     <template v-slot:top>
-      <v-toolbar
-        flat
+      <v-dialog
+        v-model="dialog"
+        max-width="500px"
       >
-        <v-toolbar-title>회원 목록</v-toolbar-title>
-        <v-spacer></v-spacer>
-        <v-dialog
-          v-model="dialog"
-          max-width="500px"
-        >
-
-        </v-dialog>
-        <v-dialog v-model="dialogDelete" max-width="500px">
-          <v-card>
-            <v-card-title class="text-h6">회원을 삭제하시겠습니까?</v-card-title>
-            <v-card-actions>
-              <v-spacer></v-spacer>
-              <v-btn color="blue-darken-1" variant="text" @click="closeDelete">취소</v-btn>
-              <v-btn color="blue-darken-1" variant="text" @click="deleteItemConfirm">삭제</v-btn>
-            </v-card-actions>
-          </v-card>
-        </v-dialog>
-      </v-toolbar>
+      </v-dialog>
+      <v-dialog v-model="dialogDelete" max-width="500px">
+        <v-card>
+          <v-card-title class="text-h6">회원을 삭제하시겠습니까?</v-card-title>
+          <v-card-actions>
+            <v-spacer></v-spacer>
+            <v-btn color="blue-darken-1" variant="text" @click="closeDelete">취소</v-btn>
+            <v-btn color="blue-darken-1" variant="text" @click="deleteItemConfirm">삭제</v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
+      
     </template>
     <template v-slot:item.actions="{ item }">
       <v-icon
         size="small"
         class="me-2"
-        @click="editItem(item.raw)"
+        @click="editItem(item.raw.id)"
       >
         mdi-pencil
       </v-icon>
       <v-icon
         size="small"
-        @click="deleteItem(item.raw)"
+        @click="deleteItem(item.raw.id)"
       >
         mdi-delete
       </v-icon>
@@ -82,7 +77,6 @@ import { VDataTable } from 'vuetify/labs/VDataTable'
         { title: '옵션', key: 'actions', sortable: false },
       ],
       users: [],
-      userId: store.getters["info/infoUser"].userId,
       user: {
         nickname: '',
         contact: "",
@@ -123,7 +117,12 @@ import { VDataTable } from 'vuetify/labs/VDataTable'
     },
 
     editItem (item) {
-      this.$router.push(process.env.VUE_APP_MYPAGE_SETTINGS_INFO)
+      this.$router.push({
+        path: process.env.VUE_APP_MYPAGE_SETTINGS_INFO,
+        query: {
+          userId: item,
+        },
+      });
     },
 
     deleteItem (item) {

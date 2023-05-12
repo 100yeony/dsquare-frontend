@@ -14,6 +14,7 @@ import iconAtSign from "@/assets/images/icons/icon_at_sign.png";
 import iconUsers from "@/assets/images/icons/icon_users.png";
 import iconLogout from "@/assets/images/icons/icon_logout.png";
 import iconSettings from "@/assets/images/icons/settings.png";
+import store from "@/store";
 
 export const menuItems = [
   {
@@ -25,7 +26,7 @@ export const menuItems = [
     value: 0,
     title: "Dashboard",
     icon: iconDash,
-    url: process.env.VUE_APP_HOME,
+    url: process.env.VUE_APP_HOME
   },
   {
     value: 1,
