@@ -26,7 +26,7 @@
       </v-list>
       <v-list>
         <div v-for="(item, i) in menuItems">
-        <v-list-item v-if="item.valid" :key="i" :value="item" active-color="primary"
+        <v-list-item v-if="item.title!='회원정보 관리'||isAdmin" :key="i" :value="item" active-color="primary"
           @click="onClickMenuItem(item)" :disabled="item.type === 'subheader'">
           <template v-slot:prepend>
             <img cover :src="item.icon" class="mr-2" />
@@ -95,7 +95,7 @@ export default {
     return { menuTitle, back, query, user };
   },
   data: () => ({
-    user: store.getters["info/infoUser"],
+    isAdmin: store.getters["info/infoUser"].role.includes('ADMIN'),
     drawer: false,
     group: null,
     menuItems: menuItems,
