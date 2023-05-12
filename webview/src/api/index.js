@@ -409,5 +409,20 @@ const fn = {
     }
 
   },
+  async noneTokenPatch(uri, params, headers) {
+
+    const doPatch = async (uri, params, headers) => {
+      return await noneTokenApiInstance.patch(`${prefix + uri}`, params, { headers: headers })
+    }
+    try {
+      const res = await doPatch(uri, params, headers)
+      return this.ResponsePayload(res)
+    } catch (err) {
+      
+        return this.ErrorPayload(err)
+      
+    }
+
+  },
 }
 export default createInstance()

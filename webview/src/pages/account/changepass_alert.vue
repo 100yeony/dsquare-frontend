@@ -10,7 +10,12 @@ export default {
     },
 
     changepass(){
-      this.$router.push(process.env.VUE_APP_CHANGEPASS)
+      this.$router.push({
+        path: process.env.VUE_APP_CHANGEPASS,
+        query: {
+          email: this.$route.query.email
+        }
+      });
     }
 
   },
