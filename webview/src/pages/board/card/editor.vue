@@ -82,6 +82,9 @@ export default {
     }
   },
   computed: {
+    remainingCharacters() {
+      return this.editorData.length;
+    },
     tags() {
       return Array.from(this.chipData);
     },
@@ -170,7 +173,7 @@ export default {
     <div>
       <div class="font-sm font-medium mt-2">제목</div>
       <v-text-field v-model="title" placeholder="제목을 입력해주세요." variant="outlined" density="compact" hide-details
-        class="mt-2 mb-5" />
+        class="mt-2 mb-5" maxlength="50"/>
 
       <label class="font-sm font-medium">프로젝트 수행팀</label>
       <v-row justify="center">
@@ -187,9 +190,11 @@ export default {
       </v-row>
 
       <div class="font-sm font-medium mt-7 mb-2">본문</div>
-      <v-textarea placeholder="내용을 입력해주세요." variant="outlined" v-model="editorData"></v-textarea>
+      <v-textarea placeholder="내용을 입력해주세요." variant="outlined" hide-details
+        v-model.lazy="editorData" maxlength="300"></v-textarea>
+      <p class="d-flex justify-end">{{ remainingCharacters }} / 300자</p>
 
-      <v-expansion-panels class="my-3">
+      <v-expansion-panels class="my-3 mt-5">
         <v-expansion-panel>
           <v-expansion-panel-title>
             <p class="mr-2">옵션</p> <p class="text-caption font-0000008F">(필수 입력란이 아닙니다)</p>

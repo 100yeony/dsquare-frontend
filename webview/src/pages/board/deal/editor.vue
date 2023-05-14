@@ -111,7 +111,7 @@ export default {
     <div>
       <div class="font-sm font-medium mt-2">제목</div>
       <v-text-field v-model="title" placeholder="제목을 입력해주세요." variant="outlined" density="compact" hide-details
-        class="mt-2" />
+        class="mt-2" maxlength="100"/>
 
       <div class="font-sm font-medium mt-7 mb-2">본문</div>
       <v-btn variant="outlined" size="x-small" @click="fillForm()" class="font-xs mb-2">양식 불러오기</v-btn>
@@ -128,7 +128,7 @@ export default {
             <v-row>
               <v-col>
                 <v-text-field :placeholder=placeholderText v-model="chipText" variant="outlined" density="compact"
-                  @input="handleInput" hide-details append-icon="mdi-tag-plus" @click:append="addChips"></v-text-field>
+                  @input="handleInput" hide-details append-icon="mdi-tag-plus" @click:append="addChips" maxlength="15"></v-text-field>
               </v-col>
             </v-row>
             <div>
@@ -185,5 +185,11 @@ export default {
 ::v-deep .v-icon {
   color: black !important;
   opacity: initial !important;
+}
+
+::v-deep .ck.ck-editor__editable_inline {
+    min-height: 300px !important;
+    max-height: 300px !important;
+    overflow-y: scroll !important; 
 }
 </style>

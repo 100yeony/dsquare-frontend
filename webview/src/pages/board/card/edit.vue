@@ -193,7 +193,7 @@ export default {
     <div>
       <div class="font-sm font-medium mt-2">제목</div>
       <v-text-field v-model="title" placeholder="제목을 입력해주세요." variant="outlined" density="compact" hide-details
-        class="mt-2 mb-5" />
+        class="mt-2 mb-5" maxlength="50"/>
 
       <label class="font-sm font-medium">프로젝트 수행팀</label>
       <v-row justify="center">
