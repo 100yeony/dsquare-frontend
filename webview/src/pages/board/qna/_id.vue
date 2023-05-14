@@ -59,8 +59,8 @@
           <v-col cols="2" class="center-container"><v-icon size="small">mdi-message-text-outline</v-icon><span
               class="text-caption font-0000008F ml-1">{{ qData.commentCnt }}</span></v-col>
         </v-row>
-        <div v-if="qData.attachment">
-          <a :href="qData.attachment.url">
+        <div class="my-1" v-if="qData.attachment">
+          <a :href="qData.attachment.url" download>
             <v-icon size="small">mdi-attachment</v-icon>
             <span class="text-caption font-0000008F ml-1"> {{ qData.attachment.origFilename }} </span>
           </a>
@@ -199,6 +199,12 @@
             </v-col>
           </v-row>
           <ckeditor v-model="item.content" :editor="editor" :config="editorConfig" :disabled="true"></ckeditor>
+          <div class="my-1" v-if="item.attachment">
+            <a :href="item.attachment.url" download>
+              <v-icon size="small">mdi-attachment</v-icon>
+              <span class="text-caption font-0000008F ml-1"> {{ item.attachment.origFilename }} </span>
+            </a>
+          </div>
         </v-card-item>
         <div class="mt-2"></div>
         <v-expansion-panels>
