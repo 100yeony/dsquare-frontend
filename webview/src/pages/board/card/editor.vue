@@ -49,35 +49,35 @@ export default {
     category(newVal, oldVal) {
       console.log(newVal)
       if (newVal === '플랫폼품질혁신TF') {
-        this.user.tid = 1;
+        this.projTeamId = 1;
       } else {
-        this.user.tid = '';
+        this.projTeamId = '';
       }
     },
     subcategory(newVal, oldVal) {
       console.log(newVal)
       if (newVal === '메시징DX플랫폼팀') {
-        this.user.tid = 5;
+        this.projTeamId = 5;
       } else if (newVal === '서비스플랫폼팀') {
-        this.user.tid = 6;
+        this.projTeamId = 6;
       } else if (newVal === '금융결제DX플랫폼팀') {
-        this.user.tid = 7;
+        this.projTeamId = 7;
       } else if (newVal === '인증DX플랫폼팀') {
-        this.user.tid = 8;
+        this.projTeamId = 8;
       } else if (newVal === '플랫폼IT컨설팅팀') {
-        this.user.tid = 9;
+        this.projTeamId = 9;
       } else if (newVal === '미디어플랫폼팀') {
-        this.user.tid = 10;
+        this.projTeamId = 10;
       } else if (newVal === 'AI서비스팀') {
-        this.user.tid = 11;
+        this.projTeamId = 11;
       } else if (newVal === 'Safety플랫폼팀') {
-        this.user.tid = 12;
+        this.projTeamId = 12;
       } else if (newVal === 'AgileCore팀') {
-        this.user.tid = 13;
+        this.projTeamId = 13;
       } else if (newVal === 'Digico사업수행팀') {
-        this.user.tid = 14;
+        this.projTeamId = 14;
       } else if (newVal === 'DX솔루션사업팀') {
-        this.user.tid = 15;
+        this.projTeamId = 15;
       }
     }
   },
