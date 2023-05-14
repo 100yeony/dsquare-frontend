@@ -17,12 +17,19 @@ import android.webkit.WebChromeClient;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
+import com.ktds.dsquare.api.RetrofitService;
+import com.ktds.dsquare.api.dto.RToken;
 import com.ktds.dsquare.common.AppDataPreference;
 import com.ktds.dsquare.common.CConstants;
 import com.ktds.dsquare.common.NativeValueDto;
 import com.ktds.dsquare.common.Permission;
 
 import java.util.HashSet;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
 
 public class MainActivity extends AppCompatActivity {
     private String TAG = "[MainActivity]";
@@ -157,6 +164,36 @@ public class MainActivity extends AppCompatActivity {
         public void saveRefreshToken(String token) {
             Log.d(TAG, "[saveRefreshToken] : " + token);
             mAppDataPreference.setRefreshToken(token);
+        }
+
+        @JavascriptInterface
+        public void sendRegistrationToken(String data) {
+            Log.d(TAG, "[sendRegistrationToken : " + data);
+            Retrofit retrofit = new Retrofit.Builder()
+                    .baseUrl("~/")
+                    .build();
+
+            RetrofitService service = retrofit.create(RetrofitService.class);
+
+            RToken rToken = new RToken("");
+            Call<Void> call = service.postRegistrationToken(rToken);
+
+            call.enqueue(new Callback<Void>() {
+                @Override
+                public void onResponse(Call<Void> call, Response<Void> response) {
+                    if(response.isSuccessful()){ // 통신 성공
+
+                    } else { // 4xx, 3xx 등 통신 실패
+
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<Void> call, Throwable t) { // 인터넷 등 시스템 적으로 통신 실패
+
+                }
+            });
+
         }
     }
 

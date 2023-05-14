@@ -19,6 +19,34 @@ public class AppDataPreference {
         this.mSpToken = context.getSharedPreferences(CConstants.PREF_KEY_TOKEN, context.MODE_PRIVATE);
     }
 
+    public boolean getIsRTokenRenewal(){
+        return mSpToken.getBoolean(CConstants.IS_RTOKEN_RENEWAL, false);
+    }
+
+    public boolean setIsRTokenRenewal(boolean isRTokenRenewal){
+        editor = mSpToken.edit();
+        if (editor != null) {
+            editor.putBoolean(CConstants.IS_RTOKEN_RENEWAL, isRTokenRenewal);
+            editor.commit();
+            return true;
+        }
+        return false;
+    }
+
+    public String getRToken(){
+        return mSpToken.getString(CConstants.PREF_KEY_REGISTRATION_TOKEN, "");
+    }
+
+    public boolean setRToken(String registrationToken) {
+        editor = mSpToken.edit();
+        if (editor != null) {
+            editor.putString(CConstants.PREF_KEY_REGISTRATION_TOKEN, registrationToken);
+            editor.commit();
+            return true;
+        }
+        return false;
+    }
+
     public String getAccessToken() {
         return mSpToken.getString(CConstants.PREF_KEY_ACCESS_TOKEN, "");
     }

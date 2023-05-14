@@ -19,12 +19,15 @@ import androidx.core.app.NotificationManagerCompat;
 import com.google.firebase.messaging.RemoteMessage;
 import com.ktds.dsquare.MainActivity;
 import com.ktds.dsquare.R;
+import com.ktds.dsquare.common.AppDataPreference;
 
 import java.util.Map;
 
 public class FirebaseMessagingService extends com.google.firebase.messaging.FirebaseMessagingService {
     private final String TAG = "FirebaseMessagingService";
     private final String CHANNEL_ID = "dsquare_channel";
+
+    private AppDataPreference mAppDataPreference = null;
 
     private void createNotificationChannel() {
         Log.d(TAG, "createNotificationChannel");
@@ -44,6 +47,7 @@ public class FirebaseMessagingService extends com.google.firebase.messaging.Fire
     @Override
     public void onCreate(){
         super.onCreate();
+        mAppDataPreference = new AppDataPreference(this);
         createNotificationChannel();
     }
 
@@ -124,6 +128,8 @@ public class FirebaseMessagingService extends com.google.firebase.messaging.Fire
     @Override
     public void onNewToken(@NonNull String token) {
         Log.d(TAG, "Registration token: " + token);
+        mAppDataPreference.setIsRTokenRenewal(true);
+        mAppDataPreference.setRToken(token);
 
         // If you want to send messages to this application instance or
         // manage this apps subscriptions on the server side, send the
