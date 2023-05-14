@@ -56,7 +56,8 @@ public class MainActivity extends AppCompatActivity {
         String refreshToken = mAppDataPreference.getRefreshToken();
         // @TODO false 인경우도 제작하세요.
         Permission permission = new Permission(this);
-        permission.requestSystemPermissions(Permission.sCheckPermissions);
+        permission.checkPermissions();
+        //permission.requestSystemPermissions(Permission.sCheckPermissions);
         // init 시 전달 값(토큰)
 
         if (!accessToken.equals("") && !refreshToken.equals("")){

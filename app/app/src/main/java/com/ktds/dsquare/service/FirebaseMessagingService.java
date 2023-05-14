@@ -66,7 +66,7 @@ public class FirebaseMessagingService extends com.google.firebase.messaging.Fire
 
             Intent intent = new Intent(this, MainActivity.class);
             intent.putExtra("isFCM", true);
-            PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+            PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_MUTABLE);
 
             NotificationCompat.Builder builder = new NotificationCompat.Builder(this, CHANNEL_ID)
                     .setSmallIcon(R.drawable.ic_launcher_foreground)
