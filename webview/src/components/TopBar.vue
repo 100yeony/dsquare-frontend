@@ -27,7 +27,7 @@
       <v-list>
         <div v-for="(item, i) in menuItems">
         <v-list-item v-if="item.title!='회원정보 관리'||isAdmin" :key="i" :value="item" active-color="primary"
-          @click="onClickMenuItem(item)" :disabled="item.type === 'subheader'">
+          :active="item === activeItem" @click="onClickMenuItem(item)" :disabled="item.type === 'subheader'">
           <template v-slot:prepend>
             <img cover :src="item.icon" class="mr-2" />
           </template>
@@ -49,7 +49,7 @@
             <img cover src="@/assets/images/logo.jpeg" width="30" height="30">
           </span>
           <span>
-            <router-link to="/home" class="n_td">DSquare</router-link>
+            <router-link to="/home" class="n_td" @click="deactivateItem">DSquare</router-link>
           </span>
         </v-toolbar-title>
         <!--
@@ -101,6 +101,7 @@ export default {
     menuItems: menuItems,
     userName: '',
     profileImage: null,
+    activeItem: null,
   }),
   mounted() {
     const userData = this.requestUserData();
@@ -113,6 +114,9 @@ export default {
     );
   },
   methods: {
+    deactivateItem() {
+      this.activeItem = false;
+    },
     async requestUserData() {
       var res = await api.get('member/members/' + this.user.userId, '');
       return res;
@@ -127,6 +131,7 @@ export default {
     },
     onClickMenuItem(item) {
       console.log("[onClickMenuItem] ", item);
+      this.activeItem = item;
       this.$store.dispatch('info/setPageState', {});
       if (item && item.url) {
         this.$router.replace(item.url);
