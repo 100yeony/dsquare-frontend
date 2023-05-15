@@ -165,7 +165,7 @@ import { NativeValueDto } from "@/class/NativeValueDto"
 // export default createInstance()
 
 const prefix = ''
-const baseURL = process.env.VUE_APP_BASE_URL
+const baseURL = 'http://localhost:8090' //process.env.VUE_APP_BASE_URL
 var apiInstance
 var multiPartApiInstance
 var noneTokenApiInstance
