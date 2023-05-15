@@ -38,7 +38,7 @@ export default {
       editorConfig: {
         // 상세 수정은 https://ckeditor.com
         extraPlugins: [this.uploader],
-        removePlugins: ["ImageCaption", "MediaEmbed"] //, "ImageUpload", "EasyImage"
+        removePlugins: ["ImageCaption", "MediaEmbed"],//, "ImageUpload", "EasyImage"
       },
       area: {},
       areaItems: [],
@@ -74,9 +74,28 @@ export default {
       } else {
         this.fileAttachable = false
       }
+    },
+    editorData: function(newVal, oldVal) {
+      console.log("watch")
+      console.log(newVal)
+      console.log(oldVal)
+      if (newVal.length > 10) {
+        console.log("is true", newVal.length)
+        this.editorData = oldVal;
+      } else {
+        console.log("is false", newVal.length)
+        this.editorData = newVal;
+      }
     }
   },
   computed: {
+    // editorData() {
+    //   if (this.editorData.length > 10000) {
+    //     return this.editorData.slice(0, 10000);
+    //   } else {
+    //     return this.editorData;
+    //   }
+    // },
     tags() {
       return Array.from(this.chipData);
     },
@@ -178,19 +197,21 @@ export default {
         <v-col>
           <label class="font-sm font-medium">분야</label>
           <v-select v-model="selectedArea" placeholder="분야 선택" variant="outlined" density="compact" :items="areaItems"
-            :scrollable="true" hide-details @update:modelValue="categoryChanged" class="mt-2"></v-select>
+            :scrollable="true" hide-details @update:modelValue="categoryChanged" class="mt-2 basic"></v-select>
         </v-col>
 
         <v-col>
           <label class="font-sm font-medium">업무</label>
           <v-select v-model="selectedSubArea" placeholder="업무 선택" variant="outlined" density="compact"
             :items="subAreaItems" :scrollable="true" hide-details :disabled="!selectedArea.length"
-            class="mt-2"></v-select>
+            class="mt-2 basic"></v-select>
         </v-col>
       </v-row>
 
       <div class="font-sm font-medium mt-7 mb-2">본문</div>
       <ckeditor v-model="editorData" :editor="editor" :config="editorConfig" height="200"></ckeditor>
+      <!-- <p>{{ editorData }}</p> -->
+      <p>{{ editorData.length }}</p>
 
       <v-file-input v-model="selectedFile" label="파일을 첨부해주세요." chips class="mt-5" variant="outlined" density="compact">
       </v-file-input>
@@ -268,4 +289,10 @@ export default {
     overflow-y: scroll !important; 
 }
 
+.basic{
+  min-width: 150px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
 </style>
