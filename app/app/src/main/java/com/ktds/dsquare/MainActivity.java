@@ -30,6 +30,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 public class MainActivity extends AppCompatActivity {
     private String TAG = "[MainActivity]";
@@ -175,10 +176,12 @@ public class MainActivity extends AppCompatActivity {
                 Log.d(TAG, "RToken: " + mAppDataPreference.getRToken());
                 Retrofit retrofit = new Retrofit.Builder()
                         .baseUrl("http://dsquare.kro.kr/api/")
+                        .addConverterFactory(GsonConverterFactory.create())
                         .build();
                 RetrofitService service = retrofit.create(RetrofitService.class);
                 RTokenInfo rToken = new RTokenInfo(mAppDataPreference.getRToken(), userId);
-                Call<Void> call = service.postRegistrationToken(rToken);
+
+                Call<Void> call = service.postRegistrationToken("Bearer " + mAppDataPreference.getAccessToken(), rToken);
                 call.enqueue(new Callback<Void>() {
                     @Override
                     public void onResponse(Call<Void> call, Response<Void> response) {
