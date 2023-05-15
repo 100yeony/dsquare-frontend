@@ -145,18 +145,22 @@ export default {
       //this.request()
       // request 한 값을 추가
     },
+    leftPad(value) {
+      if (value >= 10) {
+        return value;
+      }
+      return `0${value}`;
+    },
     exportDateFromTimeStamp(timeStamp) {
       var date = new Date(timeStamp)
       const year = date.getFullYear();
-      const month = date.getMonth() + 1; // 월은 0부터 시작하므로 1을 더해줍니다.
-      const day = date.getDate();
-      const hour = date.getHours();
-      const minute = date.getMinutes();
+      const month = this.leftPad(date.getMonth() + 1); // 월은 0부터 시작하므로 1을 더해줍니다.
+      const day = this.leftPad(date.getDate());
+      const hour = this.leftPad(date.getHours());
+      const minute = this.leftPad(date.getMinutes());
 
       return year + "-" + month + "-" + day + " " + hour + ":" + minute
-
-    }
-
+    },
   },
 };
 </script>
@@ -170,17 +174,29 @@ export default {
     <v-window v-model="qnaTab" :touch="false">
       <!-- ***** 내 답변 ***** -->
       <v-window-item :value="0">
-        <div v-for="(item, index) in answerCardData" :key="index" :value="item.aid">
-          <AnswerCard class="mt-2" :data="item" @handle-card-clicked="handleCardClicked" />
+        <div v-if="answerCardData.length != 0">
+          <div v-for="(item, index) in answerCardData" :key="index" :value="item.aid">
+            <AnswerCard class="mt-2" :data="item" @handle-card-clicked="handleCardClicked" />
+          </div>
+          <Observe @triggerIntersected="loadMore" />
         </div>
-        <Observe @triggerIntersected="loadMore" />
+        <div v-if="answerCardData.length == 0" class="text-center mt-60 mb-20">
+          <img src="@/assets/images/nopost.png" width="70" height="70">
+          <h3>작성한 답변이 없어요</h3>
+        </div>
       </v-window-item>
       <!-- ***** 내 댓글 ***** -->
       <v-window-item :value="1">
-        <div v-for="(item, index) in commentCardData" :key="index" :value="item.commentId">
-          <CommentCard class="mt-2" :data="item" @handle-card-clicked="handleCardClicked" />
+        <div v-if="commentCardData.length != 0">
+          <div v-for="(item, index) in commentCardData" :key="index" :value="item.commentId">
+            <CommentCard class="mt-2" :data="item" @handle-card-clicked="handleCardClicked" />
+          </div>
+          <Observe @triggerIntersected="loadMore" />
         </div>
-        <Observe @triggerIntersected="loadMore" />
+        <div v-if="commentCardData.length == 0" class="text-center mt-60 mb-20">
+          <img src="@/assets/images/nopost.png" width="70" height="70">
+          <h3>작성한 댓글이 없어요</h3>
+        </div>
       </v-window-item>
 
     </v-window>

@@ -40,7 +40,7 @@
       </v-list>
     </v-navigation-drawer>
     <div>
-      <v-app-bar absolute dense color="#ffffff">
+      <v-app-bar absolute dense color="#ffffff" :elevation="0" class="top">
         <v-btn icon size="medium" @click="onclickBackBtn()" v-if="back">
           <v-icon>mdi-arrow-left</v-icon>
         </v-btn>
@@ -155,5 +155,11 @@ export default {
 
 a {
   color: black !important; 
+}
+
+.top{
+  border-bottom: 1px !important;
+  border-style: solid !important; 
+  border-color: lightgray !important;
 }
 </style>
