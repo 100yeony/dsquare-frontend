@@ -31,9 +31,9 @@
           <template v-slot:prepend>
             <img cover :src="item.icon" class="mr-2" />
           </template>
-          <template v-slot:append>
+          <!-- <template v-slot:append>
             <v-chip v-if="item.chip">{{ item.chip }}</v-chip>
-          </template>
+          </template> -->
           <v-list-item-title v-text="item.title"></v-list-item-title>
         </v-list-item>
       </div>
@@ -41,9 +41,9 @@
     </v-navigation-drawer>
     <div>
       <v-app-bar absolute dense color="#ffffff">
-        <!-- <v-btn icon size="x-large" @click="onclickBackBtn()" v-if="back">
+        <v-btn icon size="medium" @click="onclickBackBtn()" v-if="back">
           <v-icon>mdi-arrow-left</v-icon>
-        </v-btn> -->
+        </v-btn>
         <v-toolbar-title>
           <span class="mr-1">
             <img cover src="@/assets/images/logo.jpeg" width="30" height="30">
@@ -55,15 +55,15 @@
         <!--
       아래 내용들을 이용해서, 검색, push를 custom 진행하세요.
        -->
-        <v-btn icon>
+        <!-- <v-btn icon>
           <v-icon>mdi-magnify</v-icon>
-        </v-btn>
+        </v-btn> -->
 
         <!-- 아래는 테스트로, 만약 push notifications가 0보다 큰 경우네는 notification의 color가 primary로 하는 예시입니다. -->
         <v-menu>
           <template v-slot:activator="{ props }">
             <v-btn icon v-bind="props" @click="goToIndex">
-              <v-badge :content="4" color="orange" text-color="white"> <!-- 추후에 아직 읽지 않은 알림의 개수로 바꾸기 -->
+              <v-badge :content="4" color="orange" text-color="white"> 
                 <v-icon>mdi-bell</v-icon>
               </v-badge>
             </v-btn>

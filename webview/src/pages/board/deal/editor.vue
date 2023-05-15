@@ -120,7 +120,12 @@ export default {
       <v-file-input v-model="selectedFile" label="파일을 첨부해주세요." chips class="mt-5" variant="outlined" density="compact">
       </v-file-input>
 
-      <div class="font-sm font-medium mb-2">태그</div>
+      <div class="mb-2">
+        <span class="font-sm font-medium">태그</span>
+        <span class="text-caption my-3 font-0000008F">
+          (스페이스 바를 눌러 입력하세요!)
+        </span>
+      </div>
 
       <v-row justify="center">
         <v-col cols="12" class="pw-100 ">
@@ -128,7 +133,7 @@ export default {
             <v-row>
               <v-col>
                 <v-text-field :placeholder=placeholderText v-model="chipText" variant="outlined" density="compact"
-                  @input="handleInput" hide-details append-icon="mdi-tag-plus" @click:append="addChips" maxlength="15"></v-text-field>
+                  @input="handleInput" hide-details append-icon="mdi-tag-plus" @keydown.enter.prevent @click:append="addChips" maxlength="15"></v-text-field>
               </v-col>
             </v-row>
             <div>
