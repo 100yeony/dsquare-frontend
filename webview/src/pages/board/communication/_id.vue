@@ -274,7 +274,9 @@ export default {
       return res.data
     },
     writeComment(item, boardName, boardId) {
-      console.log(item)
+      if (item.commentText==''){
+        return 
+      }
       if (item.mentionName == '') {
         api.post('board/' + boardName + '/' + boardId + '/comments', {
           writerId: store.getters["info/infoUser"].userId,
