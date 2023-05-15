@@ -97,6 +97,14 @@ var methods = {
       console.log(e)
       return 
     }
+  },
+  sendRegistrationToken(userId){
+    try {
+      return window.JavascriptActions.sendRegistrationToken(userId);
+    } catch(e) {
+      console.log(e)
+      return 
+    }
   }
 
 };

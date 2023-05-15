@@ -18,7 +18,7 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
 import com.ktds.dsquare.api.RetrofitService;
-import com.ktds.dsquare.api.dto.RToken;
+import com.ktds.dsquare.api.dto.RTokenInfo;
 import com.ktds.dsquare.common.AppDataPreference;
 import com.ktds.dsquare.common.CConstants;
 import com.ktds.dsquare.common.NativeValueDto;
@@ -168,33 +168,36 @@ public class MainActivity extends AppCompatActivity {
         }
 
         @JavascriptInterface
-        public void sendRegistrationToken(String data) {
-            Log.d(TAG, "[sendRegistrationToken : " + data);
-            Retrofit retrofit = new Retrofit.Builder()
-                    .baseUrl("~/")
-                    .build();
-
-            RetrofitService service = retrofit.create(RetrofitService.class);
-
-            RToken rToken = new RToken("");
-            Call<Void> call = service.postRegistrationToken(rToken);
-
-            call.enqueue(new Callback<Void>() {
-                @Override
-                public void onResponse(Call<Void> call, Response<Void> response) {
-                    if(response.isSuccessful()){ // 통신 성공
-
-                    } else { // 4xx, 3xx 등 통신 실패
-
+        public void sendRegistrationToken(int userId) {
+            Log.d(TAG, "[sendRegistrationToken]");
+            if (mAppDataPreference.getIsRTokenRenewal()) {
+                Log.d(TAG, "userId: " + userId);
+                Log.d(TAG, "RToken: " + mAppDataPreference.getRToken());
+                Retrofit retrofit = new Retrofit.Builder()
+                        .baseUrl("http://dsquare.kro.kr/api/")
+                        .build();
+                RetrofitService service = retrofit.create(RetrofitService.class);
+                RTokenInfo rToken = new RTokenInfo(mAppDataPreference.getRToken(), userId);
+                Call<Void> call = service.postRegistrationToken(rToken);
+                call.enqueue(new Callback<Void>() {
+                    @Override
+                    public void onResponse(Call<Void> call, Response<Void> response) {
+                        if(response.isSuccessful()){ // 통신 성공
+                            Log.d(TAG, "sendRegistrationToken Success");
+                            mAppDataPreference.setIsRTokenRenewal(false);
+                        } else { // 4xx, 3xx 등 통신 실패
+                            Log.d(TAG, response.toString());
+                        }
                     }
-                }
 
-                @Override
-                public void onFailure(Call<Void> call, Throwable t) { // 인터넷 등 시스템 적으로 통신 실패
-
-                }
-            });
-
+                    @Override
+                    public void onFailure(Call<Void> call, Throwable t) { // 인터넷 등 시스템 적으로 통신 실패
+                        Log.d(TAG, t.getMessage());
+                    }
+                });
+            } else {
+                Log.d(TAG, "RToken is not updated.");
+            }
         }
     }
 
