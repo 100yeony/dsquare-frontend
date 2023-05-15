@@ -82,17 +82,24 @@ export default {
     Observe
   },
   setup() {
+    function leftPad(value) {
+      if (value >= 10) {
+        return value;
+      }
+      return `0${value}`;
+    }
+
     function exportDateFromTimeStamp(timeStamp) {
       var date = new Date(timeStamp)
       const year = date.getFullYear();
-      const month = date.getMonth() + 1; // 월은 0부터 시작하므로 1을 더해줍니다.
-      const day = date.getDate();
-      const hour = date.getHours();
-      const minute = date.getMinutes();
+      const month = leftPad(date.getMonth() + 1); // 월은 0부터 시작하므로 1을 더해줍니다.
+      const day = leftPad(date.getDate());
+      const hour = leftPad(date.getHours());
+      const minute = leftPad(date.getMinutes());
 
       return year + "-" + month + "-" + day + " " + hour + ":" + minute
     }
-
+    
     let pageState = store.getters["info/infoPageState"]
 
     var searchKey = ref(pageState?.searchKey ?? '')
