@@ -52,24 +52,26 @@
 }
 
 @font-face {
-    font-family: 'NotoSans RG';
+    font-family: 'NotoSans';
+    font-weight: 400;
     src: url('@/assets/fonts/NotoSans-Regular.eot');
     src: url('@/assets/fonts/NotoSans-Regular.otf') format('truetype'), url('@/assets/fonts/NotoSans-Regular.woff') format('woff');
 }
 
 @font-face {
-    font-family: 'NotoSans MD';
+    font-family: 'NotoSans';
+    font-weight: 500;
     src: url('@/assets/fonts/NotoSans-Medium.eot');
     src: url('@/assets/fonts/NotoSans-Medium.otf') format('truetype'), url('@/assets/fonts/NotoSans-Medium.woff') format('woff');
 }
 
 @font-face {
-    font-family: 'NotoSans BD';
+    font-family: 'NotoSans';
+    font-weight: 700;
     src: url('@/assets/fonts/NotoSans-Bold.eot');
     src: url('@/assets/fonts/NotoSans-Bold.otf') format('truetype'), url('@/assets/fonts/NotoSans-Bold.woff') format('woff');
 }
 
 body {
-    font-family: 'NotoSans RG' !important;
+    font-family: 'NotoSans' !important;
 }
-
