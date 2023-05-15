@@ -69,10 +69,16 @@ export default {
           alert('파일 크기는 10MB 이하여야 합니다.');
           this.selectedFile = null
         } else {
-          this.fileAttachable = true 
+          this.fileAttachable = true
         }
       } else {
         this.fileAttachable = false
+      }
+    },
+
+    editorData(newValue, oldValue){
+      if(newValue?.length > 10) {
+        setTimeout(() => this.editorData = oldValue, 500);
       }
     }
   },
@@ -265,7 +271,7 @@ export default {
 ::v-deep .ck.ck-editor__editable_inline {
     min-height: 300px !important;
     max-height: 300px !important;
-    overflow-y: scroll !important; 
+    overflow-y: scroll !important;
 }
 
 </style>
