@@ -173,7 +173,7 @@ export default {
 </script>
 <template>
   <div class="keep-all">
-    <v-tabs class="mt-5 mb-2" v-model="qnaTab" color="primary">
+    <v-tabs class="mt-5 mb-2" v-model="qnaTab" color="primary" grow>
       <v-tab v-for="(i, index) in myPostTabTitle.length" :key=index :value="index" slider-color="primary">
         {{ myPostTabTitle[index] }}
       </v-tab>
@@ -181,31 +181,55 @@ export default {
     <v-window v-model="qnaTab" :touch="false">
       <!-- ***** 궁금해요 ***** -->
       <v-window-item :value="0">
-        <div v-for="(item, index) in boardCardData" :key="index" :value="item.qid">
-          <BoardCard class="mt-2" :data="item" @handle-card-clicked="handleCardClicked" />
+        <div v-if="boardCardData.length != 0">
+          <div v-for="(item, index) in boardCardData" :key="index" :value="item.qid">
+            <BoardCard class="mt-2" :data="item" @handle-card-clicked="handleCardClicked" />
+          </div>
+          <Observe @triggerIntersected="loadMore" />
         </div>
-        <Observe @triggerIntersected="loadMore" />
+        <div v-if="boardCardData.length == 0" class="text-center mt-60 mb-20">
+          <img src="@/assets/images/nopost.png" width="70" height="70">
+          <h3>작성한 글이 없어요</h3>
+        </div>
       </v-window-item>
       <!-- ***** 소통해요 ***** -->
       <v-window-item :value="1">
-        <div v-for="(item, index) in commCardData" :key="index" :value="item.talkId">
-          <TalkCard class="mt-2" :data="item" @handle-card-clicked="handleCardClicked" />
+        <div v-if="commCardData.length != 0">
+          <div v-for="(item, index) in commCardData" :key="index" :value="item.talkId">
+            <TalkCard class="mt-2" :data="item" @handle-card-clicked="handleCardClicked" />
+          </div>
+          <Observe @triggerIntersected="loadMore" />
         </div>
-        <Observe @triggerIntersected="loadMore" />
+        <div v-if="commCardData.length == 0" class="text-center mt-60 mb-20">
+          <img src="@/assets/images/nopost.png" width="70" height="70">
+          <h3>작성한 글이 없어요</h3>
+        </div>
       </v-window-item>
       <!-- ***** 당근해요 ***** -->
       <v-window-item :value="2">
-        <div v-for="(item, index) in dealCardData" :key="index" :value="item.carrotId">
-          <CarrotCard class="mt-2" :data="item" @handle-card-clicked="handleCardClicked" />
+        <div v-if="dealCardData.length != 0">
+          <div v-for="(item, index) in dealCardData" :key="index" :value="item.carrotId">
+            <CarrotCard class="mt-2" :data="item" @handle-card-clicked="handleCardClicked" />
+          </div>
+          <Observe @triggerIntersected="loadMore" />
         </div>
-        <Observe @triggerIntersected="loadMore" />
+        <div v-if="dealCardData.length == 0" class="text-center mt-60 mb-20">
+          <img src="@/assets/images/nopost.png" width="70" height="70">
+          <h3>작성한 글이 없어요</h3>
+        </div>
       </v-window-item>
       <!-- ***** 카드주세요 ***** -->
       <v-window-item :value="3">
-        <div v-for="(item, index) in requestedCardData" :key="index" :value="item.cardId">
-          <RequestCard class="mt-2" :data="item" @handle-card-clicked="handleCardClicked" />
+        <div v-if="requestedCardData.length != 0">
+          <div v-for="(item, index) in requestedCardData" :key="index" :value="item.cardId">
+            <RequestCard class="mt-2" :data="item" @handle-card-clicked="handleCardClicked" />
+          </div>
+          <Observe @triggerIntersected="loadMore" />
         </div>
-        <Observe @triggerIntersected="loadMore" />
+        <div v-if="requestedCardData.length == 0" class="text-center mt-60 mb-20">
+          <img src="@/assets/images/nopost.png" width="70" height="70">
+          <h3>작성한 글이 없어요</h3>
+        </div>
       </v-window-item>
     </v-window>
   </div>
@@ -225,5 +249,9 @@ export default {
 
 .v-btn--size-default {
   padding: 0 0px;
+}
+
+.v-tab.v-tab{
+  min-width: 80px !important;
 }
 </style>
