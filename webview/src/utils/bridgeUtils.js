@@ -1,6 +1,6 @@
 import store from "@/store";
 var methods = {
-  postMessage(message,defaultValue){
+  postMessage(message, defaultValue) {
     try {
       if (store.getters["info/infoSvcType"] === 'A') {
         return window.JavascriptActions.postMessage(message);
@@ -9,11 +9,11 @@ var methods = {
       } else {
         return window.opener.postMessage(message);
       }
-    } catch(e) {
+    } catch (e) {
       return defaultValue
     }
   },
-  savePreference(message,defaultValue){
+  savePreference(message, defaultValue) {
     try {
       if (store.getters["info/infoSvcType"] === 'A') {
         return window.JavascriptActions.savePreference(message);
@@ -22,11 +22,11 @@ var methods = {
       } else {
         return window.opener.savePreference(message);
       }
-    } catch(e) {
+    } catch (e) {
       return defaultValue
     }
   },
-  forceFinish(){
+  forceFinish() {
     try {
       if (store.getters["info/infoSvcType"] === 'A') {
         return window.JavascriptActions.forceFinish();
@@ -35,11 +35,11 @@ var methods = {
       } else {
         return window.opener.forceFinish();
       }
-    } catch(e) {
+    } catch (e) {
       return defaultValue
     }
   },
-  removeServiceCancel(){// 서비스 해제 시 호출.
+  removeServiceCancel() {// 서비스 해제 시 호출.
     try {
       if (store.getters["info/infoSvcType"] === 'A') {
         return window.JavascriptActions.removeServiceCancel();
@@ -48,12 +48,12 @@ var methods = {
       } else {
         return window.opener.removeServiceCancel();
       }
-    } catch(e) {
+    } catch (e) {
       return defaultValue
     }
 
   },
-  checkPermission(message, defaultValue){
+  checkPermission(message, defaultValue) {
     try {
       if (store.getters["info/infoSvcType"] === 'A') {
         return window.JavascriptActions.checkPermission(message);
@@ -62,11 +62,11 @@ var methods = {
       } else {
         return window.opener.checkPermission(message);
       }
-    } catch(e) {
+    } catch (e) {
       return defaultValue
     }
   },
-  saveAccessToken(token){
+  saveAccessToken(token) {
     try {
       // if (store.getters["info/infoSvcType"] === 'A') {
       //   return window.JavascriptActions.saveAccessToken(token);
@@ -76,13 +76,15 @@ var methods = {
       //   return window.opener.saveAccessToken(token);
       // }
       // 지금은 android only만 남겨둠.
-      return window.JavascriptActions.saveAccessToken(token);
-    } catch(e) {
+      if (store.getters["info/infoSvcType"] === 'A') {
+        return window.JavascriptActions.saveAccessToken(token);
+      }
+    } catch (e) {
       console.log(e)
-      return 
+      return
     }
   },
-  saveRefreshToken(token){
+  saveRefreshToken(token) {
     try {
       // if (store.getters["info/infoSvcType"] === 'A') {
       //   return window.JavascriptActions.saveRefreshToken(token);
@@ -92,18 +94,22 @@ var methods = {
       //   return window.opener.saveRefreshToken(token);
       // }  
       // 지금은 android only만 남겨둠.
-      return window.JavascriptActions.saveRefreshToken(token);
-    } catch(e) {
+      if (store.getters["info/infoSvcType"] === 'A') {
+        return window.JavascriptActions.saveRefreshToken(token); 
+      }
+    } catch (e) {
       console.log(e)
-      return 
+      return
     }
   },
-  sendRegistrationToken(userId){
+  sendRegistrationToken(userId) {
     try {
-      return window.JavascriptActions.sendRegistrationToken(userId);
-    } catch(e) {
+      if (store.getters["info/infoSvcType"] === 'A') {
+        return window.JavascriptActions.sendRegistrationToken(userId);
+      }
+    } catch (e) {
       console.log(e)
-      return 
+      return
     }
   }
 
