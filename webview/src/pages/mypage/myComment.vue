@@ -145,18 +145,22 @@ export default {
       //this.request()
       // request 한 값을 추가
     },
+    leftPad(value) {
+      if (value >= 10) {
+        return value;
+      }
+      return `0${value}`;
+    },
     exportDateFromTimeStamp(timeStamp) {
       var date = new Date(timeStamp)
       const year = date.getFullYear();
-      const month = date.getMonth() + 1; // 월은 0부터 시작하므로 1을 더해줍니다.
-      const day = date.getDate();
-      const hour = date.getHours();
-      const minute = date.getMinutes();
+      const month = this.leftPad(date.getMonth() + 1); // 월은 0부터 시작하므로 1을 더해줍니다.
+      const day = this.leftPad(date.getDate());
+      const hour = this.leftPad(date.getHours());
+      const minute = this.leftPad(date.getMinutes());
 
       return year + "-" + month + "-" + day + " " + hour + ":" + minute
-
-    }
-
+    },
   },
 };
 </script>
