@@ -184,7 +184,12 @@ export default {
       <div class="font-sm font-medium mt-7 mb-2">본문</div>
       <ckeditor v-model="editorData" :editor="editor" :config="editorConfig" height="200"></ckeditor>
 
-      <div class="font-sm font-medium mt-5 mb-2">태그</div>
+      <div class="mt-5 mb-2">
+        <span class="font-sm font-medium">태그</span>
+        <span class="text-caption my-3 font-0000008F">
+          (스페이스 바를 눌러 입력하세요!)
+        </span>
+      </div>
 
       <v-row justify="center">
         <v-col cols="12" class="pw-100 ">
@@ -192,7 +197,7 @@ export default {
             <v-row>
               <v-col>
                 <v-text-field :placeholder=placeholderText v-model="chipText" variant="outlined" density="compact"
-                  @input="handleInput" hide-details append-icon="mdi-tag-plus" @click:append="addChips" maxlength="15"></v-text-field>
+                  @input="handleInput" hide-details append-icon="mdi-tag-plus" @keydown.enter.prevent @click:append="addChips" maxlength="15"></v-text-field>
               </v-col>
             </v-row>
             <div>
@@ -231,8 +236,8 @@ export default {
 .button_main {
   border-width: 1px;
   border-style: solid;
-  border-color: #ADE4EB;
-  background-color: #ADE4EB;
+  border-color: rgb(var(--v-theme-primary));
+  background-color: rgb(var(--v-theme-primary));
   color: white;
 }
 
