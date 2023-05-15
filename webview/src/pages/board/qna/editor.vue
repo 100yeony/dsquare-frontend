@@ -184,14 +184,14 @@ export default {
         <v-col>
           <label class="font-sm font-medium">분야</label>
           <v-select v-model="selectedArea" placeholder="분야 선택" variant="outlined" density="compact" :items="areaItems"
-            :scrollable="true" hide-details @update:modelValue="categoryChanged" class="mt-2"></v-select>
+            :scrollable="true" hide-details @update:modelValue="categoryChanged" class="mt-2 basic"></v-select>
         </v-col>
 
         <v-col>
           <label class="font-sm font-medium">업무</label>
           <v-select v-model="selectedSubArea" placeholder="업무 선택" variant="outlined" density="compact"
             :items="subAreaItems" :scrollable="true" hide-details :disabled="!selectedArea.length"
-            class="mt-2"></v-select>
+            class="mt-2 basic"></v-select>
         </v-col>
       </v-row>
 
@@ -274,4 +274,10 @@ export default {
     overflow-y: scroll !important;
 }
 
+.basic{
+  min-width: 150px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
 </style>
