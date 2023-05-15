@@ -538,13 +538,19 @@ export default {
       var res = await api.get('board/questions/' + this.$route.query.qid, '')
       return res
     },
+    leftPad(value) {
+      if (value >= 10) {
+        return value;
+      }
+      return `0${value}`;
+    },
     exportDateFromTimeStamp(timeStamp) {
       var date = new Date(timeStamp)
       const year = date.getFullYear();
-      const month = date.getMonth() + 1;
-      const day = date.getDate();
-      const hour = date.getHours();
-      const minute = date.getMinutes();
+      const month = this.leftPad(date.getMonth() + 1); // 월은 0부터 시작하므로 1을 더해줍니다.
+      const day = this.leftPad(date.getDate());
+      const hour = this.leftPad(date.getHours());
+      const minute = this.leftPad(date.getMinutes());
 
       return year + "-" + month + "-" + day + " " + hour + ":" + minute
     },
