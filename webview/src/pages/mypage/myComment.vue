@@ -29,8 +29,8 @@ export default {
   },
   data() {
     let sortMenu = [
-      { title: "좋아요순" },
       { title: "최신순" },
+      { title: "좋아요순" },
     ];
 
     return {
@@ -171,13 +171,13 @@ export default {
     sort(index) {
       // index 0=좋아요순, 1=등록순
       if (this.qnaTab == 0) {
-        this.answerCardDataOrder = index ? "create" : "like";
+        this.answerCardDataOrder = index ? "like" : "create";
         this.answerCardDataPage = 0;
         this.answerCardDataSize = 10;
         this.answerCardData = [];
       }
       else if (this.qnaTab == 1) {
-        this.commmentCardDataOrder = index ? "create" : "like";
+        this.commentCardDataOrder = index ? "like" : "create";
         this.commentCardDataPage = 0;
         this.commentCardDataSize = 10;
         this.commentCardData = [];
