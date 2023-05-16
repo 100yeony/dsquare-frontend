@@ -32,7 +32,6 @@ public class FirebaseMessagingService extends com.google.firebase.messaging.Fire
 
     private AppDataPreference mAppDataPreference = null;
     private NotificationCompat.Builder builder;
-    private int notiNums = 0;
     private void createNotificationChannel() {
         Log.d(TAG, "createNotificationChannel");
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -55,7 +54,7 @@ public class FirebaseMessagingService extends com.google.firebase.messaging.Fire
         Log.d(TAG, "onCreate");
         builder = new NotificationCompat.Builder(this, CHANNEL_ID)
                 .setSmallIcon(R.drawable.ic_launcher_foreground)
-                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                .setPriority(NotificationCompat.PRIORITY_HIGH)
                 .setAutoCancel(true);
     }
 
@@ -78,29 +77,18 @@ public class FirebaseMessagingService extends com.google.firebase.messaging.Fire
 
             builder.setContentTitle(data.get("title"))
                     .setContentText(data.get("body"))
-                    .setNumber(++notiNums)
                     .setContentIntent(pendingIntent);
 
 
 
             NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
             if (ActivityCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
-                // TODO: Consider calling
-                //    ActivityCompat#requestPermissions
-                // here to request the missing permissions, and then overriding
-                //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-                //                                          int[] grantResults)
-                // to handle the case where the user grants the permission. See the documentation
-                // for ActivityCompat#requestPermissions for more details.
                 Log.d(TAG, "Permission Denied");
                 return;
             }
             Log.d(TAG, "Permission granted");
-            PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE );
-            @SuppressLint("InvalidWakeLockTag")
-            PowerManager.WakeLock wakeLock = pm.newWakeLock( PowerManager.SCREEN_DIM_WAKE_LOCK| PowerManager.ACQUIRE_CAUSES_WAKEUP, "TAG" );
-            wakeLock.acquire(3000);
 
+            wakeDevice();
 
             notificationManager.notify(0, builder.build());
 
@@ -148,6 +136,13 @@ public class FirebaseMessagingService extends com.google.firebase.messaging.Fire
         // manage this apps subscriptions on the server side, send the
         // FCM registration token to your app server.
         //sendRegistrationToServer(token);
+    }
+
+    public void wakeDevice(){
+        PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE );
+        @SuppressLint("InvalidWakeLockTag")
+        PowerManager.WakeLock wakeLock = pm.newWakeLock( PowerManager.SCREEN_DIM_WAKE_LOCK| PowerManager.ACQUIRE_CAUSES_WAKEUP, "TAG" );
+        wakeLock.acquire(3000);
     }
 
 
