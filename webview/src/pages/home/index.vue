@@ -9,20 +9,20 @@
     </v-row>
     <v-row>
       <v-col cols="6">
-        <v-card color="#0000000A" @click="pushMyPosts">
+        <v-card color="#F5EFFA" @click="pushMyPosts" :elevation="0" class="place">
           <v-card-item class="justify-center text-center">
             <img src="@/assets/images/icons/icon_layout-list.png" />
             <p class="text-caption">등록글</p>
-            <v-chip>{{ myPostsCount }}</v-chip>
+            <v-chip color="primary">{{ myPostsCount }}</v-chip>
           </v-card-item>
         </v-card>
       </v-col>
       <v-col cols="6">
-        <v-card color="#0000000A" @click="pushMyReplies">
+        <v-card color="#F5EFFA" @click="pushMyReplies" :elevation="0" class="place">
           <v-card-item class="justify-center text-center">
             <img src="@/assets/images/icons/icon_smile.png" />
             <p class="text-caption">답변/댓글</p>
-            <v-chip color="shades-black">{{ myRepliesCount }}</v-chip>
+            <v-chip color="primary">{{ myRepliesCount }}</v-chip>
           </v-card-item>
         </v-card>
       </v-col>
@@ -37,7 +37,7 @@
       <v-slide-group>
         <template v-if="weeklyHotData.length">
           <v-slide-group-item v-for="(tag, index) in weeklyHotData" :key="index">
-            <v-chip class="ma-2">{{ tag }}</v-chip>
+            <v-chip class="ma-2">#{{ tag }}</v-chip>
           </v-slide-group-item>
         </template>
         <template v-else>
@@ -56,9 +56,9 @@
 
     </v-row>
     <v-card>
-      <v-tabs fixed-tabs bg-color="shades-black" color="shades-white" align-tabs="title" height="2rem"
-        selected-class="shades-white" v-model="recentTab">
-        <v-tab v-for="(i, index) in recentTabTitle.length" :key="index" :value="index" selected-class="shades-white"
+      <v-tabs color="primary" align-tabs="title" height="2rem"
+        grow v-model="recentTab">
+        <v-tab v-for="(i, index) in recentTabTitle.length" :key="index" :value="index" slider-color="primary"
           class="pa-0">
           {{ recentTabTitle[index] }}
         </v-tab>
@@ -108,9 +108,9 @@
 
     </v-row>
     <v-card>
-      <v-tabs fixed-tabs bg-color="shades-black" color="shades-white" align-tabs="title" height="2rem"
-        selected-class="shades-white" v-model="hallOfFameTab">
-        <v-tab v-for="(i, index) in hallOfFameTabTitle.length" :key="index" :value="index" selected-class="shades-white">
+      <v-tabs color="primary" align-tabs="title" height="2rem"
+        grow v-model="hallOfFameTab">
+        <v-tab v-for="(i, index) in hallOfFameTabTitle.length" :key="index" :value="index" slider-color="primary">
           {{ hallOfFameTabTitle[index] }}
         </v-tab>
       </v-tabs>
@@ -156,9 +156,9 @@
     </v-row>
 
     <v-card>
-      <v-tabs fixed-tabs bg-color="shades-black" color="shades-white" align-tabs="title" height="2rem"
-        selected-class="shades-white" v-model="userRankingTab">
-        <v-tab v-for="(i, index) in userRankingTabTitle.length" :key="index" :value="index" selected-class="shades-white">
+      <v-tabs color="primary" align-tabs="title" height="2rem"
+        grow v-model="userRankingTab">
+        <v-tab v-for="(i, index) in userRankingTabTitle.length" :key="index" :value="index" slider-color="primary">
           {{ userRankingTabTitle[index] }}
         </v-tab>
       </v-tabs>
@@ -504,4 +504,9 @@ export default {
 .v-tab.v-tab{
   min-width: 80px !important;
 }
+
+.place{
+  border-radius: 10px !important;
+}
+
 </style>
