@@ -26,21 +26,21 @@ export default {
     SideMenu,
   },
   setup() {
-    let isMobile = ref(false);
-    return { isMobile };
+    // let isMobile = ref(false);
+    // return { isMobile };
   },
   mounted() {
-    const userAgent = navigator.userAgent.toLowerCase();
-    if ( //아직은 이 값을 통해서, mobile인지 확인한다고만 생각하세요.
-      userAgent.indexOf("android") > -1 ||
-      userAgent.indexOf("iphone") > -1 ||
-      userAgent.indexOf("ipad") > -1 ||
-      userAgent.indexOf("ipod") > -1
-    ) {
-      this.isMobile = true;
-    } else {
-      this.isMobile = false;
-    }
+    // const userAgent = navigator.userAgent.toLowerCase();
+    // if ( //아직은 이 값을 통해서, mobile인지 확인한다고만 생각하세요.
+    //   userAgent.indexOf("android") > -1 ||
+    //   userAgent.indexOf("iphone") > -1 ||
+    //   userAgent.indexOf("ipad") > -1 ||
+    //   userAgent.indexOf("ipod") > -1
+    // ) {
+    //   this.isMobile = true;
+    // } else {
+    //   this.isMobile = false;
+    // }
   },
 };
 </script>

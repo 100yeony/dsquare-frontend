@@ -14,6 +14,14 @@ import VuetifyDialogPromise from "vuetify-dialog-promise";
 
 window.sendMessage = message;
 window.receiveMessage = receiveMessage;
+
+const userAgent = navigator.userAgent.toLowerCase();
+console.log(userAgent)
+if (userAgent.indexOf("android") > -1) {
+    store.dispatch('info/setInfoSvcType', 'A')
+}
+console.log(store.getters['info/infoSvcType'])
+
 const app = createApp({
     render: () => createVNode(App)
 });
