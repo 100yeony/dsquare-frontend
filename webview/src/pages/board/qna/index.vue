@@ -168,8 +168,8 @@ export default {
     categoriesAll.forEach((value, index) => cidData[value] = index + 1);
 
     let sortMenu = [
-      { title: "좋아요순" },
       { title: "최신순" },
+      { title: "좋아요순" },
     ]
 
     function leftPad(value) {
@@ -381,14 +381,14 @@ export default {
       // index 0=좋아요순, 1=등록순
       // 업무
       if (this.qnaTab == 0) {
-        this.workDataOrder = index ? "create" : "like";
+        this.workDataOrder = index ? "like" : "create";
         this.workDataPage = 0;
         this.workDataSize = 10;
         this.workCardData = [];
       }
       // 비업무
       else if (this.qnaTab == 1) {
-        this.nonworkDataOrder = index ? "create" : "like";
+        this.nonworkDataOrder = index ? "like" : "create";
         this.nonworkDataPage = 0;
         this.nonworkDataSize = 10;
         this.nonworkCardData = [];

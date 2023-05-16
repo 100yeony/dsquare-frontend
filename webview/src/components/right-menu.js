@@ -19,15 +19,15 @@ import store from "@/store";
 export const menuItems = [
   {
     type: "subheader",
-    title: "DSquare",
+    title: "",
     url: "",
   },
-  {
-    value: 0,
-    title: "Dashboard",
-    icon: iconDash,
-    url: process.env.VUE_APP_HOME
-  },
+  // {
+  //   value: 0,
+  //   title: "Dashboard",
+  //   icon: iconDash,
+  //   url: process.env.VUE_APP_HOME
+  // },
   {
     value: 1,
     title: "궁금해요",
@@ -54,7 +54,7 @@ export const menuItems = [
   },
   {
     type: "subheader",
-    title: "My page",
+    title: "",
     url: "",
   },
   {
@@ -84,7 +84,7 @@ export const menuItems = [
   },
   {
     type: "subheader",
-    title: "Logout",
+    title: "",
     url: "",
   },
   {
