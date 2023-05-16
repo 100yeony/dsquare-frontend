@@ -44,7 +44,7 @@
         </v-expansion-panels>
 
         <!-- 정렬 -->
-        <div class="mt-4 mb-4 d-flex justify-end" >
+        <div class="mt-4 mb-4 d-flex justify-end" v-if="workCardData.length != 0">
           <v-btn prepend-icon="mdi-sort-descending">정렬
             <v-menu activator="parent">
               <v-list>
@@ -95,7 +95,7 @@
         </v-expansion-panels>
 
         <!-- 정렬 -->
-        <div class="mt-4 mb-4 d-flex justify-end" >
+        <div class="mt-4 mb-4 d-flex justify-end" v-if="nonworkCardData.length != 0">
           <v-btn prepend-icon="mdi-sort-descending">정렬
             <v-menu activator="parent">
               <v-list>

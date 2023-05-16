@@ -214,7 +214,7 @@ export default {
     <v-window v-model="qnaTab" :touch="false">
       <!-- ***** 내 답변 ***** -->
       <v-window-item :value="0">
-        <div class="mt-4 mb-4 d-flex justify-end" >
+        <div class="mb-4 d-flex justify-end" v-if="answerCardData.length != 0">
           <v-btn prepend-icon="mdi-sort-descending">정렬
             <v-menu activator="parent">
               <v-list>
@@ -237,7 +237,7 @@ export default {
 
       <!-- ***** 내 댓글 ***** -->
       <v-window-item :value="1">
-        <div class="mt-4 mb-4 d-flex justify-end" >
+        <div class="mb-4 d-flex justify-end" v-if="commentCardData.length != 0">
           <v-btn prepend-icon="mdi-sort-descending">정렬
             <v-menu activator="parent">
               <v-list>
