@@ -65,13 +65,8 @@ export default {
         formData.append("attachment", this.selectedFile[0], this.selectedFile.name);
       }
 
-      api.multiPartPost(`board/questions/${this.$route.query.qid}/answers`, formData)
-        .then((response) => {
-          console.log(response)
-        }).catch((error) => {
-          console.log(error)
-        }
-      );
+      var res = await api.multiPartPost(`board/questions/${this.$route.query.qid}/answers`, formData)
+      console.log(res)
 
       this.cancle();
     },
