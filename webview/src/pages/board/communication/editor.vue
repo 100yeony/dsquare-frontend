@@ -37,7 +37,7 @@ export default {
     selectedFile: function (newVal, oldVal) {
     },
     editorData(newValue, oldValue){
-      if(newValue?.length > 10) {
+      if(newValue?.length > 10000) {
         this.isWarning = true
       } else {
         this.isWarning = false 
