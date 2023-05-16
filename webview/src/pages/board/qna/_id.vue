@@ -73,7 +73,7 @@
       </v-card-item>
       <v-expansion-panels>
         <v-expansion-panel>
-          <v-expansion-panel-title class="text-center">댓글</v-expansion-panel-title>
+          <v-expansion-panel-title class="text-center" color="#f6f6f6">댓글</v-expansion-panel-title>
           <v-expansion-panel-text>
             <v-list>
               <div v-for="(comment) in qData.comments" :key="comment.writerInfo.id">
@@ -157,8 +157,8 @@
     <!-- ***** 답변 ***** -->
     <div v-for="(item, index) in answerList" :value="item.id">
       <v-card class="mt-4">
-        <v-card-title v-if="item.writerInfo.id == qData.managerId" class="font-6DAE43 manager_title">
-          <v-icon class="mr-2" size="20">mdi-checkbox-marked-circle-outline</v-icon>담당자 답변 완료
+        <v-card-title v-if="item.writerInfo.id == qData.managerId" class="font-6DAE43">
+          <v-icon class="mr-2">mdi-checkbox-marked-circle-outline</v-icon>담당자 답변 완료
         </v-card-title>
         <v-card-item>
           <!-- 답변자 -->
@@ -209,7 +209,8 @@
         <div class="mt-2"></div>
         <v-expansion-panels>
           <v-expansion-panel>
-            <v-expansion-panel-title class="text-center">댓글</v-expansion-panel-title>
+            <v-expansion-panel-title class="text-center" color="#f6f6f6"
+              :color="item.writerInfo.id == qData.managerId ? '#E8F2E1' : ''">댓글</v-expansion-panel-title>
             <v-expansion-panel-text>
               <v-list>
                 <div v-for="(comment) in item.comments" :key="comment.writerInfo.id">
@@ -643,11 +644,4 @@ export default {
 
 .inputbox {
   color: black !important;
-}
-
-.manager_title{
-  font-size: 1rem !important; 
-  font-weight: 700 !important;
-}
-
-</style>
+}</style>

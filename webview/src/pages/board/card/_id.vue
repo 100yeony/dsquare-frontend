@@ -101,7 +101,7 @@
       </v-card-item>
       <v-expansion-panels>
         <v-expansion-panel>
-          <v-expansion-panel-title class="text-center">댓글</v-expansion-panel-title>
+          <v-expansion-panel-title class="text-center" color="#f6f6f6">댓글</v-expansion-panel-title>
           <v-expansion-panel-text>
             <v-list>
               <div v-for="(comment) in cardData.comments" :key="comment.writerInfo.id">
