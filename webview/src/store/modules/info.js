@@ -14,9 +14,13 @@ export const info = {
       },
       pageState: {
 
-      }
+      },
+      infoSvcType: ''
   }),
   mutations: {
+    SET_INFO_SVC_TYPE(state, value){
+      state.infoSvcType = value
+    },
     SET_INFO_VALUE(state, value){
       let inputKey = value?.key;
       let isEdit = false;
@@ -61,6 +65,9 @@ export const info = {
     },
     infoPageState(state){
       return state.pageState;
+    },
+    infoSvcType(state){
+      return state.infoSvcType;
     }
   },
   actions: {
@@ -80,6 +87,9 @@ export const info = {
     },
     setPageState({state, commit, rootState}, value) {
       commit('SET_INFO_PAGE_STATE', value)
+    },
+    setInfoSvcType({state, commit, rootState}, value) {
+      commit('SET_INFO_SVC_TYPE', value)
     }
   }
 };

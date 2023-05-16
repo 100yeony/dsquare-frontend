@@ -59,11 +59,12 @@ public class Permission {
                     });
                     alertDialog.setPositiveButton("확인", new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int whichButton) {
-                            Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS, Uri.parse("package:" + context.getPackageName()));
-                            intent.addCategory(Intent.CATEGORY_DEFAULT);
-                            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                            context.startActivity(intent);
-                            activity.finish();
+//                            Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS, Uri.parse("package:" + context.getPackageName()));
+//                            intent.addCategory(Intent.CATEGORY_DEFAULT);
+//                            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+//                            context.startActivity(intent);
+//                            activity.finish();
+                            ActivityCompat.requestPermissions(activity, (String[]) sFinal, 0x0000001);
                         }
                     });
                     alertDialog.setCancelable(false);
