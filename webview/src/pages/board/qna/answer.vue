@@ -68,7 +68,6 @@ export default {
       api.multiPartPost(`board/questions/${this.$route.query.qid}/answers`, formData)
         .then((response) => {
           console.log(response)
-          store.dispatch('info/setPageState', {});
         }).catch((error) => {
           console.log(error)
         }

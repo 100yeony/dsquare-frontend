@@ -1,14 +1,17 @@
 package com.ktds.dsquare.service;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.Application;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.os.Build;
+import android.os.PowerManager;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -28,7 +31,8 @@ public class FirebaseMessagingService extends com.google.firebase.messaging.Fire
     private final String CHANNEL_ID = "dsquare_channel";
 
     private AppDataPreference mAppDataPreference = null;
-
+    private NotificationCompat.Builder builder;
+    private int notiNums = 0;
     private void createNotificationChannel() {
         Log.d(TAG, "createNotificationChannel");
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -43,12 +47,16 @@ public class FirebaseMessagingService extends com.google.firebase.messaging.Fire
             notificationManager.createNotificationChannel(channel);
         }
     }
-
     @Override
     public void onCreate(){
         super.onCreate();
         mAppDataPreference = new AppDataPreference(this);
         createNotificationChannel();
+        Log.d(TAG, "onCreate");
+        builder = new NotificationCompat.Builder(this, CHANNEL_ID)
+                .setSmallIcon(R.drawable.ic_launcher_foreground)
+                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                .setAutoCancel(true);
     }
 
 
@@ -68,13 +76,12 @@ public class FirebaseMessagingService extends com.google.firebase.messaging.Fire
             intent.putExtra("isFCM", true);
             PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_MUTABLE);
 
-            NotificationCompat.Builder builder = new NotificationCompat.Builder(this, CHANNEL_ID)
-                    .setSmallIcon(R.drawable.ic_launcher_foreground)
-                    .setContentTitle(data.get("title"))
+            builder.setContentTitle(data.get("title"))
                     .setContentText(data.get("body"))
-                    .setPriority(NotificationCompat.PRIORITY_LOW)
-                    .setAutoCancel(true)
+                    .setNumber(++notiNums)
                     .setContentIntent(pendingIntent);
+
+
 
             NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
             if (ActivityCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
@@ -89,7 +96,13 @@ public class FirebaseMessagingService extends com.google.firebase.messaging.Fire
                 return;
             }
             Log.d(TAG, "Permission granted");
-            notificationManager.notify(1, builder.build());
+            PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE );
+            @SuppressLint("InvalidWakeLockTag")
+            PowerManager.WakeLock wakeLock = pm.newWakeLock( PowerManager.SCREEN_DIM_WAKE_LOCK| PowerManager.ACQUIRE_CAUSES_WAKEUP, "TAG" );
+            wakeLock.acquire(3000);
+
+
+            notificationManager.notify(0, builder.build());
 
 
             if (/* Check if data needs to be processed by long running job */ true) {
