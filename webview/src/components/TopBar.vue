@@ -42,7 +42,7 @@
     </v-navigation-drawer>
     <div>
       <v-app-bar absolute dense color="#ffffff" :elevation="0" class="top">
-        <v-btn icon size="medium" @click="onclickBackBtn()" v-if="back">
+        <v-btn icon size="medium" @click="onclickBackBtn()" v-if="back && isMobile">
           <v-icon>mdi-arrow-left</v-icon>
         </v-btn>
         <v-toolbar-title>

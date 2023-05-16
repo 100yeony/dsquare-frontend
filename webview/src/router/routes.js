@@ -230,6 +230,7 @@ export default [
         name: "settings-info",
         meta: {
           title: "회원정보 수정",
+          back: process.env.VUE_APP_MYPAGE_SETTINGS
         },
         component: () => import("@/pages/mypage/settingsInfo"),
       },
