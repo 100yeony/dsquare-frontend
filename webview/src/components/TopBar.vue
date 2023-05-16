@@ -26,8 +26,9 @@
       </v-list>
       <v-list>
         <div v-for="(item, i) in menuItems">
-        <v-list-item v-if="item.title!='회원정보 관리'||isAdmin" :key="i" :value="item" active-color="primary"
-          :active="item === activeItem" @click="onClickMenuItem(item)" :disabled="item.type === 'subheader'">
+        <v-divider v-if="item.type === 'subheader'" :key="i" class="mt-2 mb-2"></v-divider>
+        <v-list-item v-if="(item.title!='회원정보 관리'||isAdmin) && item.type !== 'subheader'" :key="i" :value="item" 
+          :active="false" @click="onClickMenuItem(item)">
           <template v-slot:prepend>
             <img cover :src="item.icon" class="mr-2" />
           </template>
@@ -69,7 +70,7 @@
             </v-btn>
           </template>
         </v-menu>
-        <v-app-bar-nav-icon variant="text" @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
+        <v-app-bar-nav-icon v-if="isMobile" variant="text" @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
       </v-app-bar>
     </div>
   </div>
@@ -92,7 +93,9 @@ export default {
     const back = computed(() => store.getters["url/urlBack"]);
     const query = computed(() => store.getters["url/urlQuery"]);
     const user = computed(() => store.getters["info/infoUser"]);
-    return { menuTitle, back, query, user };
+    let isMobile = ref(false);
+
+    return { menuTitle, back, query, user, isMobile };
   },
   data: () => ({
     isAdmin: store.getters["info/infoUser"].role.includes('ADMIN'),
@@ -101,9 +104,20 @@ export default {
     menuItems: menuItems,
     userName: '',
     profileImage: null,
-    activeItem: null,
   }),
   mounted() {
+    const userAgent = navigator.userAgent.toLowerCase();
+    if ( //아직은 이 값을 통해서, mobile인지 확인한다고만 생각하세요.
+      userAgent.indexOf("android") > -1 ||
+      userAgent.indexOf("iphone") > -1 ||
+      userAgent.indexOf("ipad") > -1 ||
+      userAgent.indexOf("ipod") > -1
+    ) {
+      this.isMobile = true;
+    } else {
+      this.isMobile = false;
+    }
+
     const userData = this.requestUserData();
     userData.then(
       (response) => {
@@ -114,9 +128,6 @@ export default {
     );
   },
   methods: {
-    deactivateItem() {
-      this.activeItem = false;
-    },
     async requestUserData() {
       var res = await api.get('member/members/' + this.user.userId, '');
       return res;
@@ -131,7 +142,6 @@ export default {
     },
     onClickMenuItem(item) {
       console.log("[onClickMenuItem] ", item);
-      this.activeItem = item;
       this.$store.dispatch('info/setPageState', {});
       if (item && item.url) {
         this.$router.replace(item.url);

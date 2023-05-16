@@ -1,38 +1,95 @@
+/**
+ * @author kkw
+ * right menu 값.
+ * T는 title, M는 기본 메뉴 형식.
+ */
+import iconDash from "@/assets/images/icons/icon_dash.png";
+import iconBoxes from "@/assets/images/icons/icon_boxes.png";
+import iconWallet from "@/assets/images/icons/icon_wallet.png";
+import iconCoffe from "@/assets/images/icons/icon_coffee.png";
+import iconCarrot from "@/assets/images/icons/icon_carrot.png";
+import iconLayoutList from "@/assets/images/icons/icon_layout-list.png";
+import iconSmile from "@/assets/images/icons/icon_smile.png";
+import iconAtSign from "@/assets/images/icons/icon_at_sign.png";
+import iconUsers from "@/assets/images/icons/icon_users.png";
+import iconLogout from "@/assets/images/icons/icon_logout.png";
+import iconSettings from "@/assets/images/icons/settings.png";
+import store from "@/store";
+
 export const menuItems = [
+  // {
+  //   type: "subheader",
+  //   title: "",
+  //   url: "",
+  // },
+  // {
+  //   value: 0,
+  //   title: "Dashboard",
+  //   icon: iconDash,
+  //   url: process.env.VUE_APP_HOME
+  // },
   {
-    id: 1,
-    action: "mdi-home",
-    icon: "mdi-home",
-    title: "홈",
-    url : process.env.VUE_APP_HOME,
+    value: 1,
+    title: "궁금해요",
+    icon: iconBoxes,
+    url: process.env.VUE_APP_BOARD_QNA,
   },
   {
-    id: 2,
-    icon: 'mdi-format-list-bulleted',
-    title: "게시판",
-    url : process.env.VUE_APP_BOARD,
+    value: 2,
+    title: "소통해요",
+    icon: iconCoffe,
+    url: process.env.VUE_APP_BOARD_COMMUNICATION,
   },
   {
-    id: 3,
-    icon: 'mdi-pencil',
-    title: "게시판 작성",
-    items: [
-      {
-        id: 4,
-        title: "Q&A 작성",
-        url : process.env.VUE_APP_BOARD_QNA_WRITE,
-      },
-      {
-        id: 5,
-        title: "자유게시판 작성",
-        url : process.env.VUE_APP_BOARD_FREE_WRITE,
-      }
-    ],
+    value: 3,
+    title: "당근해요",
+    icon: iconCarrot,
+    url: process.env.VUE_APP_BOARD_DEAL,
   },
   {
-    id: 6,
-    icon: 'mdi-account',
-    title: "마이페이지",
-    url : process.env.VUE_APP_MYPAGE,
+    value: 4,
+    title: "카드주세요",
+    icon: iconWallet,
+    url: process.env.VUE_APP_BOARD_CARD,
+  },
+  {
+    type: "subheader",
+    title: "",
+    url: "",
+  },
+  {
+    value: 5,
+    title: "내가 등록한 글",
+    icon: iconLayoutList,
+    chip: 4,
+    url: process.env.VUE_APP_MYPAGE_MYPOST,
+  },
+  {
+    value: 6,
+    title: "내 답변/댓글",
+    icon: iconSmile,
+    url: process.env.VUE_APP_MYPAGE_MYCOMMENT,
+  },
+  {
+    value: 7,
+    title: "개인정보 설정",
+    icon: iconUsers,
+    url: process.env.VUE_APP_MYPAGE_MYINFO,
+  },
+  {
+    value: 8,
+    title: "회원정보 관리",
+    icon: iconSettings,
+    url: process.env.VUE_APP_MYPAGE_SETTINGS,
+  },
+  {
+    type: "subheader",
+    title: "",
+    url: "",
+  },
+  {
+    value: 9,
+    title: "로그아웃", 
+    icon: iconLogout,
   },
 ];

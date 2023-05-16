@@ -110,8 +110,8 @@ export default {
     store.dispatch('info/setPageState', {});
 
     let sortMenu = [
-      { title: "좋아요순" },
       { title: "최신순" },
+      { title: "좋아요순" },
     ]
 
     return {
@@ -215,7 +215,7 @@ export default {
       });
     },
     sort(index) {
-      this.dealCardDataOrder = index ? "create" : "like";
+      this.dealCardDataOrder = index ? "like" : "create";
       this.dealCardDataPage = 0;
       this.dealCardDataSize = 10;
       this.dealCardData = [];

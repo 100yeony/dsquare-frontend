@@ -217,8 +217,8 @@ export default {
     let searchUri = "/board/questions";
 
     let sortMenu = [
-      { title: "좋아요순" },
       { title: "최신순" },
+      { title: "좋아요순" },
     ]
 
     let cardTabTitle = ["카드대기중", "선정된카드"];
@@ -455,14 +455,14 @@ export default {
     sort(index) {
       console.log("sort");
       if (this.cardTab == 0) {
-        this.requestCardDataOrder = index ? "create" : "like";
+        this.requestCardDataOrder = index ? "like" : "create";
         this.requestCardDataPage = 0;
         this.requestCardDataSize = 10;
         this.requestCardData = [];
       }
       // 비업무
       else if (this.cardTab == 1) {
-        this.completedCardDataOrder = index ? "create" : "like";
+        this.completedCardDataOrder = index ? "like" : "create";
         this.completedCardDataPage = 0;
         this.completedCardDataSize = 10;
         this.completedCardData = [];
