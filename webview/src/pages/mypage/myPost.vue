@@ -272,7 +272,7 @@ export default {
       <!-- ***** 궁금해요 ***** -->
       <v-window-item :value="0">
         <!-- 정렬 -->
-        <div class="mt-4 mb-4 d-flex justify-end" >
+        <div class="mb-4 d-flex justify-end" v-if="boardCardData.length != 0">
           <v-btn prepend-icon="mdi-sort-descending">정렬
             <v-menu activator="parent">
               <v-list>
@@ -298,7 +298,7 @@ export default {
       <!-- ***** 소통해요 ***** -->
       <v-window-item :value="1">
         <!-- 정렬 -->
-        <div class="mt-4 mb-4 d-flex justify-end" >
+        <div class="mb-4 d-flex justify-end" v-if="commCardData.length != 0">
           <v-btn prepend-icon="mdi-sort-descending">정렬
             <v-menu activator="parent">
               <v-list>
@@ -324,7 +324,7 @@ export default {
       <!-- ***** 당근해요 ***** -->
       <v-window-item :value="2">
         <!-- 정렬 -->
-        <div class="mt-4 mb-4 d-flex justify-end" >
+        <div class="mb-4 d-flex justify-end" v-if="dealCardData.length != 0">
           <v-btn prepend-icon="mdi-sort-descending">정렬
             <v-menu activator="parent">
               <v-list>
@@ -350,7 +350,7 @@ export default {
       <!-- ***** 카드주세요 ***** -->
       <v-window-item :value="3">
         <!-- 정렬 -->
-        <div class="mt-4 mb-4 d-flex justify-end" >
+        <div class="mb-4 d-flex justify-end" v-if="requestedCardData.length != 0">
           <v-btn prepend-icon="mdi-sort-descending">정렬
             <v-menu activator="parent">
               <v-list>
