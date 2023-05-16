@@ -393,6 +393,8 @@ export default {
         this.nonworkDataSize = 10;
         this.nonworkCardData = [];
       }
+      
+      this.loadMore();
     },
 
     tabChanged() {

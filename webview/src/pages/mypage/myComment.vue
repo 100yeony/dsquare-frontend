@@ -4,7 +4,7 @@ import CommentCard from "@/components/cards/CommentCard";
 import Observe from "@/components/Observer";
 import api from '@/api';
 
-let answersUri = 'mypage/answers';
+let answersUri = '/mypage/answers';
 let commentsUri = '/mypage/comments';
 let questionUri = '/board/questions/';
 let answerUri = '/board/answers/';
@@ -28,30 +28,41 @@ export default {
     };
   },
   data() {
+    let sortMenu = [
+      { title: "좋아요순" },
+      { title: "최신순" },
+    ];
+
     return {
       qnaTab: 0,
-      page: 1,
+      sortMenu,
       answerCardData: [],
+      answerCardDataOrder: 'create',
+      answerCardDataPage: 0,
+      answerCardDataSize: 10,
       commentCardData: [],
+      commentCardDataOrder: 'create',
+      commentCardDataPage: 0,
+      commentCardDataSize: 10,
     };
   },
   mounted() {
-    this.requestAllAnswers();
+    // this.requestAllAnswers();
   },
   watch: {
     qnaTab(newVal, oldVal) {
-      this.page = 1;
-      console.log(newVal)
-      this.tabChanged();
+      // this.page = 1;
+      // console.log(newVal)
+      // this.tabChanged();
     }
   },
   methods: {
-    async requestAllAnswers() {
-      var res = await api.get(answersUri)
+    async requestAnswers(params) {
+      var res = await api.get(answersUri, { params })
       res.data.forEach(async (d) => {
         d.createDate = this.exportDateFromTimeStamp(d.createDate);
       });
-      this.answerCardData = res.data;
+      this.answerCardData = this.answerCardData.concat(res.data);
 
       this.answerCardData.forEach(async (answer) => {
         let res = await api.get(questionUri + answer.qid)
@@ -65,12 +76,12 @@ export default {
       });
     },
 
-    async requestAllComments() {
-      var res = await api.get(commentsUri)
+    async requestComments(params) {
+      var res = await api.get(commentsUri, { params })
       res.data.forEach(async (d) => {
         d.createDate = this.exportDateFromTimeStamp(d.createDate);
       });
-      this.commentCardData = res.data;
+      this.commentCardData = this.commentCardData.concat(res.data);
 
       var uriMap = {
         QUESTION: questionUri,
@@ -96,15 +107,15 @@ export default {
     },
 
     tabChanged() {
-      if (this.qnaTab == 0) {
-        if (!this.answerCardData.length) {
-          this.requestAllAnswers();
-        }
-      } else {
-        if (!this.commentCardData.length) {
-          this.requestAllComments();
-        }
-      }
+      // if (this.qnaTab == 0) {
+      //   if (!this.answerCardData.length) {
+      //     this.requestAllAnswers();
+      //   }
+      // } else {
+      //   if (!this.commentCardData.length) {
+      //     this.requestAllComments();
+      //   }
+      // }
     },
     handleCardClicked(item) {
       var path, query;
@@ -139,11 +150,40 @@ export default {
         query: query
       });
     },
-    loadMore() {
-      this.page += 1;
-      console.log(this.page)
-      //this.request()
-      // request 한 값을 추가
+    async loadMore() {
+      var params = {};
+      var uri;
+      if (this.qnaTab == 0) {
+        params['order'] = this.answerCardDataOrder;
+        params['page'] = this.answerCardDataPage;
+        params['size'] = this.answerCardDataSize;
+        this.requestAnswers(params);
+        this.answerCardDataPage++;
+      } else if (this.qnaTab == 1) {
+        params['order'] = this.commentCardDataOrder;
+        params['page'] = this.commentCardDataPage;
+        params['size'] = this.commentCardDataSize;
+        this.requestComments(params);
+        this.commentCardDataPage++;
+      }
+    },
+
+    sort(index) {
+      // index 0=좋아요순, 1=등록순
+      if (this.qnaTab == 0) {
+        this.answerCardDataOrder = index ? "create" : "like";
+        this.answerCardDataPage = 0;
+        this.answerCardDataSize = 10;
+        this.answerCardData = [];
+      }
+      else if (this.qnaTab == 1) {
+        this.commmentCardDataOrder = index ? "create" : "like";
+        this.commentCardDataPage = 0;
+        this.commentCardDataSize = 10;
+        this.commentCardData = [];
+      }
+
+      this.loadMore();
     },
     exportDateFromTimeStamp(timeStamp) {
       var date = new Date(timeStamp)
@@ -170,13 +210,44 @@ export default {
     <v-window v-model="qnaTab" :touch="false">
       <!-- ***** 내 답변 ***** -->
       <v-window-item :value="0">
+        <div class="mt-4 mb-4 d-flex justify-end" >
+          <v-btn prepend-icon="mdi-sort-descending">정렬
+            <v-menu activator="parent">
+              <v-list>
+                <v-list-item v-for="(item, index) in sortMenu" :key="index" :value="index" @click="sort(index)">
+                  <v-list-item-title>{{ item.title }}</v-list-item-title>
+                </v-list-item>
+              </v-list>
+            </v-menu>
+          </v-btn>
+        </div>
+        <div v-if="answerCardData.length == 0" class="text-center mt-60 mb-20">
+          <img src="@/assets/images/nopost.png" width="70" height="70">
+          <h3>작성한 답변이 없어요</h3>
+        </div>
         <div v-for="(item, index) in answerCardData" :key="index" :value="item.aid">
           <AnswerCard class="mt-2" :data="item" @handle-card-clicked="handleCardClicked" />
         </div>
         <Observe @triggerIntersected="loadMore" />
       </v-window-item>
+
       <!-- ***** 내 댓글 ***** -->
       <v-window-item :value="1">
+        <div class="mt-4 mb-4 d-flex justify-end" >
+          <v-btn prepend-icon="mdi-sort-descending">정렬
+            <v-menu activator="parent">
+              <v-list>
+                <v-list-item v-for="(item, index) in sortMenu" :key="index" :value="index" @click="sort(index)">
+                  <v-list-item-title>{{ item.title }}</v-list-item-title>
+                </v-list-item>
+              </v-list>
+            </v-menu>
+          </v-btn>
+        </div>
+        <div v-if="commentCardData.length == 0" class="text-center mt-60 mb-20">
+          <img src="@/assets/images/nopost.png" width="70" height="70">
+          <h3>작성한 댓글이 없어요</h3>
+        </div>
         <div v-for="(item, index) in commentCardData" :key="index" :value="item.commentId">
           <CommentCard class="mt-2" :data="item" @handle-card-clicked="handleCardClicked" />
         </div>
