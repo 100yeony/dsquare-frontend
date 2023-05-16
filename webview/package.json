@@ -7,6 +7,7 @@
     "serve:tb": "vue-cli-service serve --mode tb",
     "serve:prod": "vue-cli-service serve --mode prod",
     "build": "vue-cli-service build",
+    "postinstall": "npx patch-package",
     "postbuild": "",
     "build:tb": "vue-cli-service build --mode tb",
     "build:prod": "vue-cli-service build --mode prod",
