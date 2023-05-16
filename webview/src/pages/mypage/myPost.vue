@@ -28,79 +28,88 @@ export default {
     };
   },
   data() {
+    let sortMenu = [
+      { title: "좋아요순" },
+      { title: "최신순" },
+    ];
+
     return {
       qnaTab: 0,
-      page: 1,
+      sortMenu,
       boardCardData: [],
+      boardCardDataOrder: 'create',
+      boardCardDataPage: 0,
+      boardCardDataSize: 10,
       commCardData: [],
+      commCardDataOrder: 'create',
+      commCardDataPage: 0,
+      commCardDataSize: 10,
       dealCardData: [],
+      dealCardDataOrder: 'create',
+      dealCardDataPage: 0,
+      dealCardDataSize: 10,
       requestedCardData: [],
+      requestedCardDataOrder: 'create',
+      requestedCardDataPage: 0,
+      requestedCardDataSize: 10,
     };
-  },
-  computed: {
-
-  },
-  mounted() {
-    this.requestAllQuestions();
   },
   watch: {
     qnaTab(newVal, oldVal) {
-      this.page = 1;
-      console.log(newVal)
       this.tabChanged();
     }
   },
   methods: {
-    async requestAllQuestions() {
-      var res = await api.get(qnaUri)
-      res.data.forEach((d) => {
-        d.createDate = this.exportDateFromTimeStamp(d.createDate)
-      });
-      this.boardCardData = res.data;
-    },
-    async requestAllComms() {
-      var res = await api.get(commUri)
-      res.data.forEach((d) => {
-        d.createDate = this.exportDateFromTimeStamp(d.createDate)
-      });
-      this.commCardData = res.data;
-    },
-    async requestAllDeals() {
-      var res = await api.get(dealUri)
-      res.data.forEach((d) => {
-        d.createDate = this.exportDateFromTimeStamp(d.createDate)
-      });
-      this.dealCardData = res.data;
+    // async requestAllQuestions() {
+    //   var res = await api.get(qnaUri)
+    //   res.data.forEach((d) => {
+    //     d.createDate = this.exportDateFromTimeStamp(d.createDate)
+    //   });
+    //   this.boardCardData = res.data;
+    // },
+    // async requestAllComms() {
+    //   var res = await api.get(commUri)
+    //   res.data.forEach((d) => {
+    //     d.createDate = this.exportDateFromTimeStamp(d.createDate)
+    //   });
+    //   this.commCardData = res.data;
+    // },
+    // async requestAllDeals() {
+    //   var res = await api.get(dealUri)
+    //   res.data.forEach((d) => {
+    //     d.createDate = this.exportDateFromTimeStamp(d.createDate)
+    //   });
+    //   this.dealCardData = res.data;
 
 
-    },
-    async requestAllRequestedCards() {
-      var res = await api.get(requestCardUri)
-      res.data.forEach((d) => {
-        d.createDate = this.exportDateFromTimeStamp(d.createDate)
-      });
-      this.requestedCardData = res.data;
+    // },
+    // async requestAllRequestedCards() {
+    //   var res = await api.get(requestCardUri)
+    //   res.data.forEach((d) => {
+    //     d.createDate = this.exportDateFromTimeStamp(d.createDate)
+    //   });
+    //   this.requestedCardData = res.data;
 
-    },
+    // },
 
     tabChanged() {
-      if (this.qnaTab == 0) {
-        if (!this.boardCardData.length) {
-          this.requestAllQuestions();
-        }
-      } else if (this.qnaTab == 1) {
-        if (!this.commCardData.length) {
-          this.requestAllComms();
-        }
-      } else if (this.qnaTab == 2) {
-        if (!this.dealCardData.length) {
-          this.requestAllDeals();
-        }
-      } else {
-        if (!this.requestedCardData.length) {
-          this.requestAllRequestedCards();
-        }
-      }
+      // if (this.qnaTab == 0) {
+      //   if (!this.boardCardData.length) {
+      //     this.requestAllQuestions();
+      //   }
+      // } else if (this.qnaTab == 1) {
+      //   if (!this.commCardData.length) {
+      //     this.requestAllComms();
+      //   }
+      // } else if (this.qnaTab == 2) {
+      //   if (!this.dealCardData.length) {
+      //     this.requestAllDeals();
+      //   }
+      // } else {
+      //   if (!this.requestedCardData.length) {
+      //     this.requestAllRequestedCards();
+      //   }
+      // }
     },
     handleCardClicked(item) {
       console.log("[handleCardClicked]", item);
@@ -150,11 +159,88 @@ export default {
         });
       }
     },
-    loadMore() {
-      this.page += 1;
-      console.log(this.page)
-      //this.request()
-      // request 한 값을 추가
+    async loadMore() {
+      var params = {};
+      var uri;
+      if (this.qnaTab == 0) {
+        params['order'] = this.boardCardDataOrder;
+        params['page'] = this.boardCardDataPage;
+        params['size'] = this.boardCardDataSize;
+        uri = qnaUri;
+      } else if (this.qnaTab == 1) {
+        params['order'] = this.commCardDataOrder;
+        params['page'] = this.commCardDataPage;
+        params['size'] = this.commCardDataSize;
+        uri = commUri;
+      } else if (this.qnaTab == 2) {
+        params['order'] = this.dealCardDataOrder;
+        params['page'] = this.dealCardDataPage;
+        params['size'] = this.dealCardDataSize;
+        uri = dealUri;
+      } else if (this.qnaTab == 3) {
+        params['order'] = this.requestedCardDataOrder;
+        params['page'] = this.requestedCardDataPage;
+        params['size'] = this.requestedCardDataSize;
+        uri = requestCardUri;
+      }
+
+      var res = await api.get(uri, { params }).then(
+        (response) => {
+          if ([200, 201].includes(response.status) && response.data.length) {
+            response.data.forEach((d) => {
+              d.createDate = this.exportDateFromTimeStamp(d.createDate);
+            });
+            if (this.qnaTab == 0) {
+              this.boardCardData = this.boardCardData.concat(response.data);
+              this.boardCardDataPage++;
+            } else if (this.qnaTab == 1) {
+              this.commCardData = this.commCardData.concat(response.data);
+              this.commCardDataPage++;
+            } else if (this.qnaTab == 2) {
+              this.dealCardData = this.dealCardData.concat(response.data);
+              this.dealCardDataPage++;
+            } else if (this.qnaTab == 3) {
+              this.requestedCardData = this.requestedCardData.concat(response.data);
+              this.requestedCardDataPage++;
+            }
+          }
+        }
+      );
+    },
+    sort(index) {
+      // index 0=좋아요순, 1=등록순
+      if (this.qnaTab == 0) {
+        this.boardCardDataOrder = index ? "create" : "like";
+        this.boardCardDataPage = 0;
+        this.boardCardDataSize = 10;
+        this.boardCardData = [];
+      }
+      else if (this.qnaTab == 1) {
+        this.commCardDataOrder = index ? "create" : "like";
+        this.commCardDataPage = 0;
+        this.commCardDataSize = 10;
+        this.commCardData = [];
+      }
+      else if (this.qnaTab == 2) {
+        this.dealCardDataOrder = index ? "create" : "like";
+        this.dealCardDataPage = 0;
+        this.dealCardDataSize = 10;
+        this.dealCardData = [];
+      }
+      else if (this.qnaTab == 3) {
+        this.requestedCardDataOrder = index ? "create" : "like";
+        this.requestedCardDataPage = 0;
+        this.requestedCardDataSize = 10;
+        this.requestedCardCardData = [];
+      }
+
+      this.loadMore();
+    },
+    leftPad(value) {
+      if (value >= 10) {
+        return value;
+      }
+      return `0${value}`;
     },
     leftPad(value) {
       if (value >= 10) {
@@ -185,55 +271,105 @@ export default {
     <v-window v-model="qnaTab" :touch="false">
       <!-- ***** 궁금해요 ***** -->
       <v-window-item :value="0">
-        <div v-if="boardCardData.length != 0">
-          <div v-for="(item, index) in boardCardData" :key="index" :value="item.qid">
-            <BoardCard class="mt-2" :data="item" @handle-card-clicked="handleCardClicked" />
-          </div>
-          <Observe @triggerIntersected="loadMore" />
+        <!-- 정렬 -->
+        <div class="mt-4 mb-4 d-flex justify-end" >
+          <v-btn prepend-icon="mdi-sort-descending">정렬
+            <v-menu activator="parent">
+              <v-list>
+                <v-list-item v-for="(item, index) in sortMenu" :key="index" :value="index" @click="sort(index)">
+                  <v-list-item-title>{{ item.title }}</v-list-item-title>
+                </v-list-item>
+              </v-list>
+            </v-menu>
+          </v-btn>
         </div>
+
         <div v-if="boardCardData.length == 0" class="text-center mt-60 mb-20">
           <img src="@/assets/images/nopost.png" width="70" height="70">
           <h3>작성한 글이 없어요</h3>
         </div>
+        <div v-for="(item, index) in boardCardData" :key="index" :value="item.qid">
+          <BoardCard class="mt-2" :data="item" @handle-card-clicked="handleCardClicked" />
+        </div>
+        <Observe @triggerIntersected="loadMore" />
       </v-window-item>
+
+
       <!-- ***** 소통해요 ***** -->
       <v-window-item :value="1">
-        <div v-if="commCardData.length != 0">
-          <div v-for="(item, index) in commCardData" :key="index" :value="item.talkId">
-            <TalkCard class="mt-2" :data="item" @handle-card-clicked="handleCardClicked" />
-          </div>
-          <Observe @triggerIntersected="loadMore" />
+        <!-- 정렬 -->
+        <div class="mt-4 mb-4 d-flex justify-end" >
+          <v-btn prepend-icon="mdi-sort-descending">정렬
+            <v-menu activator="parent">
+              <v-list>
+                <v-list-item v-for="(item, index) in sortMenu" :key="index" :value="index" @click="sort(index)">
+                  <v-list-item-title>{{ item.title }}</v-list-item-title>
+                </v-list-item>
+              </v-list>
+            </v-menu>
+          </v-btn>
         </div>
+
         <div v-if="commCardData.length == 0" class="text-center mt-60 mb-20">
           <img src="@/assets/images/nopost.png" width="70" height="70">
           <h3>작성한 글이 없어요</h3>
         </div>
+        <div v-for="(item, index) in commCardData" :key="index" :value="item.talkId">
+          <TalkCard class="mt-2" :data="item" @handle-card-clicked="handleCardClicked" />
+        </div>
+        <Observe @triggerIntersected="loadMore" />
       </v-window-item>
+
+
       <!-- ***** 당근해요 ***** -->
       <v-window-item :value="2">
-        <div v-if="dealCardData.length != 0">
-          <div v-for="(item, index) in dealCardData" :key="index" :value="item.carrotId">
-            <CarrotCard class="mt-2" :data="item" @handle-card-clicked="handleCardClicked" />
-          </div>
-          <Observe @triggerIntersected="loadMore" />
+        <!-- 정렬 -->
+        <div class="mt-4 mb-4 d-flex justify-end" >
+          <v-btn prepend-icon="mdi-sort-descending">정렬
+            <v-menu activator="parent">
+              <v-list>
+                <v-list-item v-for="(item, index) in sortMenu" :key="index" :value="index" @click="sort(index)">
+                  <v-list-item-title>{{ item.title }}</v-list-item-title>
+                </v-list-item>
+              </v-list>
+            </v-menu>
+          </v-btn>
         </div>
+
         <div v-if="dealCardData.length == 0" class="text-center mt-60 mb-20">
           <img src="@/assets/images/nopost.png" width="70" height="70">
           <h3>작성한 글이 없어요</h3>
         </div>
+        <div v-for="(item, index) in dealCardData" :key="index" :value="item.carrotId">
+          <CarrotCard class="mt-2" :data="item" @handle-card-clicked="handleCardClicked" />
+        </div>
+        <Observe @triggerIntersected="loadMore" />
       </v-window-item>
+
+
       <!-- ***** 카드주세요 ***** -->
       <v-window-item :value="3">
-        <div v-if="requestedCardData.length != 0">
-          <div v-for="(item, index) in requestedCardData" :key="index" :value="item.cardId">
-            <RequestCard class="mt-2" :data="item" @handle-card-clicked="handleCardClicked" />
-          </div>
-          <Observe @triggerIntersected="loadMore" />
+        <!-- 정렬 -->
+        <div class="mt-4 mb-4 d-flex justify-end" >
+          <v-btn prepend-icon="mdi-sort-descending">정렬
+            <v-menu activator="parent">
+              <v-list>
+                <v-list-item v-for="(item, index) in sortMenu" :key="index" :value="index" @click="sort(index)">
+                  <v-list-item-title>{{ item.title }}</v-list-item-title>
+                </v-list-item>
+              </v-list>
+            </v-menu>
+          </v-btn>
         </div>
+
         <div v-if="requestedCardData.length == 0" class="text-center mt-60 mb-20">
           <img src="@/assets/images/nopost.png" width="70" height="70">
           <h3>작성한 글이 없어요</h3>
         </div>
+        <div v-for="(item, index) in requestedCardData" :key="index" :value="item.cardId">
+          <RequestCard class="mt-2" :data="item" @handle-card-clicked="handleCardClicked" />
+        </div>
+        <Observe @triggerIntersected="loadMore" />
       </v-window-item>
     </v-window>
   </div>
@@ -255,7 +391,7 @@ export default {
   padding: 0 0px;
 }
 
-.v-tab.v-tab{
+.v-tab.v-tab {
   min-width: 80px !important;
 }
 </style>

@@ -15,12 +15,12 @@
 
     <!-- 이달의 카드 -->
     <p class="mt-3 mb-2 text-h6 font-weight-black">이달의 카드</p>
-    <div class="text-center" v-if="this.selectedCardData.length === 0">
+    <div class="text-center" v-if="this.cardOfTheMonthData.length === 0">
       <img src="@/assets/images/empty.png" width="70" height="70">
       <h3>이달의 카드가 없어요</h3>
     </div>
     <Flicking :plugins="flickingPlugins" :options="flickingOptions" class="mt-2">
-      <RequestCard class="panel mr-3" v-for="(item, index) in selectedCardData" :data="item" :key="index"
+      <RequestCard class="panel mr-3" v-for="(item, index) in cardOfTheMonthData" :data="item" :key="index"
         @handle-card-clicked="handleCardClicked" @handle-card-dialog="handleCardDialog(item)" />
     </Flicking>
 
@@ -179,7 +179,7 @@ import "@egjs/vue3-flicking/dist/flicking.css";
 import { AutoPlay } from "@egjs/flicking-plugins";
 
 let requestUri = 'board/cards';
-let selectedUri = 'board/cards/card-of-the-month';
+let cardOfTheMonthUri = 'board/cards/card-of-the-month';
 let searchUri = 'board/cards';
 
 const flickingOptions = {
@@ -255,7 +255,7 @@ export default {
       requestCardDataOrder: "create",
       requestCardDataPage: 0,
       requestCardDataSize: 10,
-      selectedCardData: [],
+      cardOfTheMonthData: [],
       completedCardData: [],
       completedCardDataOrder: "create",
       completedCardDataPage: 0,
@@ -316,7 +316,26 @@ export default {
       return window.innerHeight
     }
   },
+  mounted() {
+    this.loadCardOfTheMonth();
+  },
   methods: {
+    async loadCardOfTheMonth() {
+      var res = await api.get(cardOfTheMonthUri).then(
+        (response) => {
+          if ([200, 201].includes(response.status) && response.data.length) {
+            response.data.forEach((d) => {
+              d.createDate = this.exportDateFromTimeStamp(d.createDate);
+              if (d.teammates) {
+                var tempTeammates = d.teammates.replaceAll('[', '["').replaceAll(']', '"]').replaceAll(',', '","');
+                d.teammates = JSON.parse(tempTeammates);  // 어레이로 변환
+              }
+            });
+            this.cardOfTheMonthData = response.data;
+          }
+        }
+      );
+    },
     tabChanged() {
       this.category = []
       this.subcategory = []
@@ -371,8 +390,7 @@ export default {
         params['page'] = this.completedCardDataPage;
         params['size'] = this.completedCardDataSize;
       }
-      console.log("******* params ******");
-      console.log(params);
+      
       var res = await api.get(requestUri, { params }).then(
         (response) => {
           if ([200, 201].includes(response.status) && response.data.length) {
