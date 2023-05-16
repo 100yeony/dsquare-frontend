@@ -50,6 +50,7 @@ export default {
       title: '',
       tags: [],
       cid: '',
+      isWarning: false, 
     };
   },
   watch: {
@@ -77,8 +78,10 @@ export default {
     },
 
     editorData(newValue, oldValue){
-      if(newValue?.length > 10) {
-        setTimeout(() => this.editorData = oldValue, 500);
+      if(newValue?.length > 10000) {
+        this.isWarning = true
+      } else {
+        this.isWarning = false 
       }
     }
   },
@@ -94,7 +97,7 @@ export default {
       }
     },
     editorValidation() {
-      if (this.cid !== '' && this.title !== '' && this.editorData !== '') {
+      if (this.cid !== '' && this.title !== '' && this.editorData !== '' && !this.isWarning) {
         return true;
       } else {
         return false;
@@ -197,7 +200,10 @@ export default {
 
       <div class="font-sm font-medium mt-7 mb-2">본문</div>
       <ckeditor v-model="editorData" :editor="editor" :config="editorConfig" height="200"></ckeditor>
-
+      <div v-if="isWarning" class="invalid-feedback d-flex justify-end mt-2">
+        <v-icon size="x-small" color="red">mdi-information-outline</v-icon>
+        <span class="font-xs font_red ml-1">더 이상 입력할 수 없어요.</span>
+      </div>
       <v-file-input v-model="selectedFile" label="파일을 첨부해주세요." chips class="mt-5" variant="outlined" density="compact">
       </v-file-input>
 
@@ -269,7 +275,7 @@ export default {
 }
 
 ::v-deep .v-icon {
-  color: black !important;
+  color: black;
   opacity: initial !important;
 }
 

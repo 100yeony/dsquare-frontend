@@ -200,7 +200,7 @@ export default {
             <v-row>
               <v-col cols="4">
                 <v-text-field v-model="teammateCnt" placeholder="숫자 입력" variant="outlined" density="compact" hide-details
-                  class="mt-2 mb-5"/>
+                  class="mt-2 mb-5" maxlength="3"/>
               </v-col>
             </v-row>
 
@@ -211,7 +211,7 @@ export default {
                   <v-row>
                     <v-col>
                       <v-text-field :placeholder=placeholderText v-model="chipText" variant="outlined" density="compact"
-                        @input="handleInput" hide-details append-icon="mdi-tag-plus" @click:append="addChips"></v-text-field>
+                        @input="handleInput" hide-details append-icon="mdi-tag-plus" @click:append="addChips" maxlength="15"></v-text-field>
                     </v-col>
                   </v-row>
                   <div>
