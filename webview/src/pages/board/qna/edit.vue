@@ -2,6 +2,7 @@
 import CKEditor from "@ckeditor/ckeditor5-vue";
 import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
 import FileUploadAdapter from "@/utils/fileUploaderAdapter";
+import fileUtils from "@/utils/fileUtils";
 import { watch, onMounted, ref } from "vue";
 import api from '@/api';
 import store from "@/store";
@@ -35,7 +36,7 @@ export default {
   data() {
     return {
       editor: ClassicEditor,
-      editorData: this.$route.query.content,
+      editorData: '',
       editorConfig: {
         // 상세 수정은 https://ckeditor.com
         extraPlugins: [this.uploader],
@@ -49,9 +50,12 @@ export default {
       selectedSubArea: [],
       placeholderText: '',
       isWork: true,
-      title: this.$route.query.title,
+      title: '',
       tags: [],
-      cid: this.$route.query.cid,
+      cid: 0,
+      attachment: null,
+      isDeleted: false,
+      selectedFile: null,
       isWarning: false, 
     };
   },
@@ -68,6 +72,20 @@ export default {
       console.log(oldVal)
       if (typeof newVal === 'string') {
         this.cid = this.cidData[newVal]
+      }
+    },
+    selectedFile: function (newVal, oldVal) {
+      console.log("computed")
+      if (this.selectedFile != null && this.selectedFile?.length != 0) {
+        console.log('not blank')
+        if (fileUtils.isFileSizeLimit(newVal[0].size)) {
+          console.log('is expired')
+          alert('파일 크기는 10MB 이하여야 합니다.');
+          this.selectedFile = null
+        }
+      } else if (this.selectedFile?.length == 0) {
+        console.log("length = 0")
+        this.selectedFile = null
       }
     },
     editorData(newValue, oldValue){
@@ -100,31 +118,61 @@ export default {
   mounted() {
     this.area = store.getters["info/infoArea"]
     this.areaItems = this.area.areaList.slice(1)
-    this.cid = this.$route.query.cid
-    this.title = this.$route.query.title
-    this.editorData = this.$route.query.content
-    this.chipData = new Set(this.$route.query.chipData);
 
-    if (this.cid == 2) {
-      this.isWork = false;
-    } else {
-      this.selectedArea = this.$route.query.upCategory
-      this.selectedSubArea = this.categoriesAll[this.$route.query.cid - 1]
-      this.subAreaItems = this.area.subAreaList[this.areaItems.indexOf(this.selectedArea)]
-    }
+    this.requestQuestionData().then((res) => {
+      console.log(res)
+      this.cid = res.data.category.cid
+      this.title = res.data.title
+      this.editorData = res.data.content
+      this.chipData = new Set(res.data.tags);
+      this.attachment = res.data.attachment
+      console.log(res.data.attachment)
+      if (this.cid == 2) {
+        this.isWork = false;
+      } else {
+        this.selectedArea = res.data.category.categoryHierarchy[1]
+        this.selectedSubArea = this.categoriesAll[this.cid - 1]
+        this.subAreaItems = this.area.subAreaList[this.areaItems.indexOf(this.selectedArea)]
+      }
+    })
+
 
   },
   methods: {
-    async edit(editorData) {
-      await api.post('board/questions/' + this.$route.query.qid, {
+    async requestQuestionData() {
+      var res = await api.get('board/questions/' + this.$route.query.qid, '')
+      return res
+    },
+    async edit() {
+
+      const formData = new FormData();
+
+      const question ={
         cid: this.cid,
-        content: editorData,
         title: this.title,
-        atcId: this.$route.query.atcid,
-        tags: Array.from(this.chipData)
-      })
+        content: this.editorData,
+        tags: Array.from(this.chipData),
+      }
+
+      if (this.attachment) {
+        Object.assign(this.attachment, {
+          deleted: this.isDeleted
+        })
+        Object.assign(question, {
+          attachment: this.attachment
+        })
+      }
+      console.log(question)
+      const questionBlob = new Blob([JSON.stringify(question)], { type: 'application/json' });
+      formData.append('question', questionBlob);
+
+      if ((!this.attachment && !this.isDeleted && this.selectedFile) || (this.attachment && this.isDeleted && this.selectedFile)) {
+        console.log(this.selectedFile)
+        formData.append("attachment", this.selectedFile[0], this.selectedFile.name);
+      }
+      console.log(formData.values)
+      await api.multiPartPatch('board/questions/' + this.$route.query.qid, formData)
       this.cancle()
-      //}
 
     },
     uploader(editor) {
@@ -143,6 +191,11 @@ export default {
       event.preventDefault();
       event.stopPropagation();
       this.chipData.delete(item);
+    },
+    deleteAttachment(event) {
+      event.preventDefault();
+      event.stopPropagation();
+      this.isDeleted = true
     },
     handleInput(event) {
       var inputValue = event.target.value;
@@ -168,11 +221,11 @@ export default {
 </script>
 
 <template>
-  <v-form @submit.prevent="edit(editorData)" class="overflow-show">
+  <v-form @submit.prevent="edit()" class="overflow-show">
     <div>
       <div class="font-sm font-medium mt-2">제목</div>
       <v-text-field v-model="title" placeholder="제목을 입력해주세요." variant="outlined" density="compact" hide-details
-        class="mt-2" maxlength="100"/>
+        class="mt-2" maxlength="100" />
 
       <v-row v-if="this.isWork" align="center" class="mt-2">
         <v-col>
@@ -196,6 +249,18 @@ export default {
         <span class="font-xs font_red ml-1">더 이상 입력할 수 없어요.</span>
       </div>
 
+      <div class="font-sm font-medium mt-7 mb-2">파일</div>
+
+      <v-chip v-if="this.attachment && !isDeleted">
+        <v-icon size="small">mdi-attachment</v-icon> {{ this.attachment.origFilename }}
+        <v-icon class="ml-2" icon="mdi-close-circle" @click="deleteAttachment($event)"></v-icon>
+      </v-chip>
+
+      <div v-if="!this.attachment || isDeleted">
+        <v-file-input v-model="selectedFile" label="파일을 첨부해주세요." chips class="mt-5" variant="outlined" density="compact">
+        </v-file-input>
+      </div>
+
       <div class="mt-5 mb-2">
         <span class="font-sm font-medium">태그</span>
         <span class="text-caption my-3 font-0000008F">
@@ -209,7 +274,8 @@ export default {
             <v-row>
               <v-col>
                 <v-text-field :placeholder=placeholderText v-model="chipText" variant="outlined" density="compact"
-                  @input="handleInput" hide-details append-icon="mdi-tag-plus" @keydown.enter.prevent @click:append="addChips" maxlength="15"></v-text-field>
+                  @input="handleInput" hide-details append-icon="mdi-tag-plus" @keydown.enter.prevent
+                  @click:append="addChips" maxlength="15"></v-text-field>
               </v-col>
             </v-row>
             <div>
@@ -269,12 +335,12 @@ export default {
 }
 
 ::v-deep .ck.ck-editor__editable_inline {
-    min-height: 300px !important;
-    max-height: 300px !important;
-    overflow-y: scroll !important; 
+  min-height: 300px !important;
+  max-height: 300px !important;
+  overflow-y: scroll !important;
 }
 
-.basic{
+.basic {
   min-width: 150px;
   white-space: nowrap;
   overflow: hidden;
