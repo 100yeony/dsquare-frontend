@@ -32,7 +32,7 @@
                     class="text-caption ml-1">{{ props?.data?.commentCnt }}</span></v-col>
                 <v-col cols="8" class="d-flex justify-end"> 
                     <div v-if="user?.role.includes('OWNER') == true && props?.data?.selectionInfo == null">
-                        <v-btn class="card_button mr-4 mb-4" @click="showDialog($event)">카드주기</v-btn>
+                        <v-btn class="card_button mr-4 mb-4" variant="" @click="showDialog($event)">카드주기</v-btn>
                     </div>
                 </v-col>
             </v-row>
@@ -87,9 +87,9 @@
     .card_button{
         border-width: 1px;
         border-style: solid;
-        border-color: black;
-        background-color: black;
-        color: white;
+        border-color: #FED999;
+        background-color: #FED999;
+        color: black;
     }
 
     .v-col-2{
