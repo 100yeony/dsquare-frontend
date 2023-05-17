@@ -227,7 +227,7 @@ export default {
         }
       } 
 
-      if (!this.v$.$error && this.accreditSuccess && !emailExist && !nicknameExist && this.user.pw == this.user.new_pw) {
+      if (!this.v$.$error && this.accreditSuccess && !this.emailExist && !this.nicknameExist && this.user.pw == this.user.new_pw) {
         const res = await api.noneTokenPost('/account/signup', this.user)
         if (res.status === 200) {
           this.stepper = 2;
