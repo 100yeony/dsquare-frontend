@@ -49,7 +49,7 @@
           </v-btn>
           <v-toolbar-title>
             <span class="mr-1">
-              <img cover src="@/assets/images/logo.jpeg" width="30" height="30">
+              <img cover @click="goToHome" src="@/assets/images/logo.jpeg" width="30" height="30">
             </span>
             <span>
               <router-link to="/home" class="n_td">DSquare</router-link>
@@ -57,10 +57,10 @@
           </v-toolbar-title>
         </div>
         <div class="isMobile">
-          <router-link to="/board/qna" class="n_td mr-5">궁금해요</router-link>
-          <router-link to="/board/communication" class="n_td mr-5" >소통해요</router-link>
-          <router-link to="/board/deal" class="n_td mr-5">당근해요</router-link>
-          <router-link to="/board/card" class="n_td mr-5">카드주세요</router-link>
+          <router-link to="/board/qna" class="n_td mr-14">궁금해요</router-link>
+          <router-link to="/board/communication" class="n_td mr-14" >소통해요</router-link>
+          <router-link to="/board/deal" class="n_td mr-14">당근해요</router-link>
+          <router-link to="/board/card" class="n_td mr-14">카드주세요</router-link>
         </div>
         <!-- <div style="width: 15vw;"></div> -->
         <!--
@@ -173,6 +173,9 @@ export default {
     );
   },
   methods: {
+    goToHome(){
+      this.$router.push(process.env.VUE_APP_HOME);
+    },
     async requestUserData() {
       var res = await api.get('member/members/' + this.user.userId, '');
       return res;
