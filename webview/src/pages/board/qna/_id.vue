@@ -150,7 +150,7 @@
     <v-card v-if="!isWriter" class="mt-4">
       <v-card-item>
         <div class="font-m text-center mb-3">답변을 남기고 좋아요를 받아보세요!</div>
-        <v-btn block color="shades-black" @click="answer">등록</v-btn>
+        <v-btn block class="button_main" @click="answer">등록</v-btn>
       </v-card-item>
     </v-card>
 
@@ -642,6 +642,14 @@ export default {
 .manager_title{
   font-size: 1rem !important; 
   font-weight: 700 !important;
+}
+
+.button_main {
+  border-width: 1px;
+  border-style: solid;
+  border-color: rgb(var(--v-theme-primary));
+  background-color: rgb(var(--v-theme-primary));
+  color: white;
 }
 
 </style>

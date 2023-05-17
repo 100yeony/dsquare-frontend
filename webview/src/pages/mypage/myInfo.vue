@@ -46,6 +46,7 @@ export default {
       profileImage: null,
       imageFormData: null,
       menu: false,
+      nicknameExist: false, 
     };
   },
   validations() {
@@ -160,10 +161,22 @@ export default {
 
       this.v$.$touch();
 
-      if (!this.v$.$error) {
+      const resNickname = await api.noneTokenPost('/member/members/existings', { type: 'nickname', value: this.user.nickname })
+      if ([200, 201, 202].includes(resNickname.status)) {
+        if (resNickname.data == true) {
+          this.nicknameExist = true 
+        }
+        else if (resNickname.data == false) {
+          this.nicknameExist = false 
+        }
+      } 
+
+      if (!this.v$.$error && !this.nicknameExist) {
         const res = await api.patch('member/members/' + this.userId, {
           contact: this.user.contact,
           tid: this.user.tid,
+          nickname: this.user.nickname, 
+          ktMail: this.user.ktMail,
         })
         console.log(res)
       }
@@ -269,6 +282,10 @@ export default {
       <div v-if="submitted && v$.user.nickname.required.$invalid" class="invalid-feedback">
         <v-icon size="x-small" color="red">mdi-close-circle-outline</v-icon>
         <span class="font-xs font_red">닉네임을 입력해주세요.</span>
+      </div>
+      <div v-if="submitted && nicknameExist">
+        <v-icon size="x-small" color="red">mdi-close-circle-outline</v-icon>
+        <span class="font-xs font_red">이미 존재하는 닉네임이에요.</span>
       </div>
     </v-form-group>
 
