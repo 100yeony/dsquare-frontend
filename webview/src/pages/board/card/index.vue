@@ -466,7 +466,15 @@ export default {
     },
     async cardSelect() {
       console.log(this.selectedItem)
-      const res = await api.patch('board/cards/' + this.selectedItem.cardId + '/chosen')
+      const res = await api.patch('board/cards/' + this.selectedItem.cardId + '/chosen').then(
+        (response) => {
+          // console.log("index of selectedItem = " + this.requestCardData.indexOf(this.selectedItem));
+          // this.requestCardData.splice(this.requestCardData.indexOf(this.selectedItem), 1);
+          this.sort(1);
+          this.cardTab = 1;
+          this.sort(1);
+        }
+      );
       console.log(res)
       this.selectedItem = {}
     },

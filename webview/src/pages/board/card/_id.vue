@@ -437,7 +437,11 @@ export default {
     },
 
     async cardSelect() {
-      const res = await api.patch('board/cards/' + this.cardData.cardId + '/chosen')
+      const res = await api.patch('board/cards/' + this.cardData.cardId + '/chosen').then(
+        (response) => {
+          this.$router.go(this.$router.currentRoute);
+        }
+      );
       console.log(res)
     },
 
