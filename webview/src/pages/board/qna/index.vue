@@ -199,7 +199,13 @@ export default {
     var searchKey = ref(pageState?.searchKey ?? '')
     var searchContent = ref(pageState?.searchContent ?? '')
     var workCardData = ref(pageState?.workCardData ?? [])
+    var workDataOrder = ref(pageState?.workDataOrder ?? 'create')
+    var workDataPage = ref(pageState?.workDataPage ?? 0)
+    var workDataSize = ref(pageState?.workDataSize ?? 10)
     var nonworkCardData = ref(pageState?.nonworkCardData ?? [])
+    var nonworkDataOrder = ref(pageState?.nonworkDataOrder ?? 'create')
+    var nonworkDataPage = ref(pageState?.nonworkDataPage ?? 0)
+    var nonworkDataSize = ref(pageState?.nonworkDataSize ?? 10)
 
     // if (Object.keys(pageState).length == 0) {
     //   api.get('board/questions' + '?' + 'workYn=true&order=create&page=0&size=10').then(
@@ -232,12 +238,12 @@ export default {
       exportDateFromTimeStamp,
 
       /* GET param 관련  */
-      workDataOrder: "create",
-      workDataPage: 0,
-      workDataSize: 10,
-      nonworkDataOrder: "create",
-      nonworkDataPage: 0,
-      nonworkDataSize: 10,
+      workDataOrder,
+      workDataPage,
+      workDataSize,
+      nonworkDataOrder,
+      nonworkDataPage,
+      nonworkDataSize,
       searchParams: {},
     };
   },

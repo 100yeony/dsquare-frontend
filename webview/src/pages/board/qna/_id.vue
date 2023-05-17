@@ -435,8 +435,14 @@ export default {
           async (response) => {
             console.log(response)
             item.comments = await this.callComments(boardName, boardId)
+            item.commentCnt = item.comments.length;
             item.commentText = ''
 
+            if (store.getters["info/infoPageState"]?.workCardData || store.getters["info/infoPageState"]?.nonworkCardData) {
+              var storedItem = store.getters["info/infoPageState"]?.workCardData?.find(question => question.qid == boardId) 
+                                ?? store.getters["info/infoPageState"]?.nonworkCardData?.find(question => question.qid == boardId);
+              storedItem.commentCnt = item.commentCnt;
+            }
           }
         )
       } else {
@@ -448,8 +454,15 @@ export default {
           async (response) => {
             console.log(response)
             item.comments = await this.callComments(boardName, boardId)
+            item.commentCnt = item.comments.length;
             item.commentText = ''
             this.deleteMention(item)
+
+            if (store.getters["info/infoPageState"]?.workCardData || store.getters["info/infoPageState"]?.nonworkCardData) {
+              var storedItem = store.getters["info/infoPageState"]?.workCardData?.find(question => question.qid == boardId) 
+                                ?? store.getters["info/infoPageState"]?.nonworkCardData?.find(question => question.qid == boardId);
+              storedItem.commentCnt = item.commentCnt;
+            }
           }
         )
       }

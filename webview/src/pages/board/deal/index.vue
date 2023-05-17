@@ -106,6 +106,9 @@ export default {
     var searchContent = ref(pageState?.searchContent ?? '')
     var page = ref(pageState?.page ?? 1)
     var dealCardData = ref(pageState?.dealCardData ?? [])
+    var dealCardDataOrder = ref(pageState?.dealCardDataOrder ?? 'create')
+    var dealCardDataPage = ref(pageState?.dealCardDataPage ?? 0)
+    var dealCardDataSize = ref(pageState?.dealCardDataSize ?? 10)
 
     store.dispatch('info/setPageState', {});
 
@@ -119,9 +122,9 @@ export default {
       searchContent,
       page,
       dealCardData,
-      dealCardDataOrder: "create",
-      dealCardDataPage: 0,
-      dealCardDataSize: 10,
+      dealCardDataOrder,
+      dealCardDataPage,
+      dealCardDataSize,
       exportDateFromTimeStamp,
       searchParams: {},
       sortMenu,
@@ -211,7 +214,10 @@ export default {
         searchKey: this.searchKey,
         searchContent: this.searchContent,
         page: this.page,
-        dealCardData: this.dealCardData
+        dealCardData: this.dealCardData,
+        dealCardDataPage: this.dealCardDataPage,
+        dealCardDataOrder: this.dealCardDataOrder,
+        dealCardDataSize: this.dealCardDataSize,
       });
     },
     sort(index) {

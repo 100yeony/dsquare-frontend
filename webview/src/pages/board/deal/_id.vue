@@ -287,8 +287,13 @@ export default {
           async (response) => {
             console.log(response)
             item.comments = await this.callComments(boardName, boardId)
+            item.commentCnt = item.comments.length;
             item.commentText = ''
 
+            if (store.getters["info/infoPageState"]?.dealCardData) {
+              var storedItem = store.getters["info/infoPageState"]?.dealCardData?.find(post => post.carrotId == boardId);
+              storedItem.commentCnt = item.commentCnt;
+            }
           }
         )
       } else {
@@ -300,8 +305,14 @@ export default {
           async (response) => {
             console.log(response)
             item.comments = await this.callComments(boardName, boardId)
+            item.commentCnt = item.comments.length;
             item.commentText = ''
             this.deleteMention(item)
+
+            if (store.getters["info/infoPageState"]?.dealCardData) {
+              var storedItem = store.getters["info/infoPageState"]?.dealCardData?.find(post => post.carrotId == boardId);
+              storedItem.commentCnt = item.commentCnt;
+            }
           }
         )
       }
