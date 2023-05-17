@@ -180,7 +180,7 @@
     <v-card v-if="checkOwner() && cardData.selectionInfo == null" class="mt-4" variant="outlined">
       <v-card-item>
         <div class="font-m text-center mb-3">수고한 사우들을 응원해주세요!</div>
-        <v-btn block color="shades-black" @click="giveCard">카드 주기</v-btn>
+        <v-btn block class="button_main" @click="giveCard">카드 주기</v-btn>
       </v-card-item>
     </v-card>
 
@@ -498,5 +498,13 @@ export default {
 
 .inputbox {
   color: black !important;
+}
+
+.button_main {
+  border-width: 1px;
+  border-style: solid;
+  border-color: rgb(var(--v-theme-primary));
+  background-color: rgb(var(--v-theme-primary));
+  color: white;
 }
 </style>

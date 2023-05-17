@@ -331,6 +331,24 @@ const fn = {
 
   },
 
+  async multiPartPatch(uri, formData, headers) {
+
+    const doMultiPartPatch = async (uri, formData, headers) => {
+      return await multiPartApiInstance.patch(`${prefix + uri}`, formData, { headers: headers })
+    }
+    try {
+      const res = await doMultiPartPatch(uri, formData, headers)
+      return this.ResponsePayload(res)
+    } catch (err) {
+      if (this.tokenErrorCheck(err)) {
+        return await this.doRefreshWork(doMultiPartPatch, uri, formData, headers)
+      } else {
+        return this.ErrorPayload(err)
+      }
+    }
+
+  },
+
   async noneTokenPost(uri, params, headers) {
     const doNoneTokenPost = async (uri, params, headers) => {
       return await noneTokenApiInstance.post(`${prefix + uri}`, params, { headers: headers })
