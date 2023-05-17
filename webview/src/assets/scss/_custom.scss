@@ -56,6 +56,18 @@
   }
 }
 
+@media (max-width: 587px) {
+  .isMobile{
+    display: none !important;
+  }
+}
+
+@media (max-width: 587px) {
+  .isHamburg{
+    display: inline-grid !important; 
+  }
+}
+
 ::-webkit-scrollbar {
   width: 10px;
   height: 10px;
