@@ -44,7 +44,7 @@
       <v-app-bar absolute dense color="#ffffff" :elevation="0" class="top">
         <v-container class="d-flex justify-space-between" style="align-items: center;">
         <div>
-          <v-btn icon size="medium" @click="onclickBackBtn()" v-if="back && isMobile">
+          <v-btn icon size="medium" @click="onclickBackBtn()" v-if="back" class="isMobile">
             <v-icon>mdi-arrow-left</v-icon>
           </v-btn>
           <v-toolbar-title>
@@ -145,9 +145,8 @@ export default {
     const back = computed(() => store.getters["url/urlBack"]);
     const query = computed(() => store.getters["url/urlQuery"]);
     const user = computed(() => store.getters["info/infoUser"]);
-    let isMobile = ref(false);
 
-    return { menuTitle, back, query, user, isMobile };
+    return { menuTitle, back, query, user };
   },
   data: () => ({
     isAdmin: store.getters["info/infoUser"].role.includes('ADMIN'),
@@ -164,18 +163,6 @@ export default {
       ],
   }),
   mounted() {
-    const userAgent = navigator.userAgent.toLowerCase();
-    if ( //아직은 이 값을 통해서, mobile인지 확인한다고만 생각하세요.
-      userAgent.indexOf("android") > -1 ||
-      userAgent.indexOf("iphone") > -1 ||
-      userAgent.indexOf("ipad") > -1 ||
-      userAgent.indexOf("ipod") > -1
-    ) {
-      this.isMobile = true;
-    } else {
-      this.isMobile = false;
-    }
-
     const userData = this.requestUserData();
     userData.then(
       (response) => {
