@@ -473,12 +473,6 @@ export default {
           path: process.env.VUE_APP_BOARD_QNA_EDIT,
           query: {
             qid: this.qnaId,
-            title: this.qData.title,
-            content: this.qData.content,
-            upCategory: this.qData.upCategory,
-            cid: this.qData.cid,
-            atcid: this.qData.attachment?.id,
-            chipData: this.qData.tags
           }
 
         });
