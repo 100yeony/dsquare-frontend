@@ -43,8 +43,8 @@
     <div>
       <v-app-bar absolute dense color="#ffffff" :elevation="0" class="top">
         <v-container class="d-flex justify-space-between" style="align-items: center;">
-        <div>
-          <v-btn icon size="medium" @click="onclickBackBtn()" v-if="back" class="isMobile">
+        <div class="d-flex">
+          <v-btn icon size="medium" @click="onclickBackBtn()" v-if="back" class="isHamburg display_ham mr-2">
             <v-icon>mdi-arrow-left</v-icon>
           </v-btn>
           <v-toolbar-title>
