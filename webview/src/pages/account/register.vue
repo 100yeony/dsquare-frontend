@@ -52,6 +52,8 @@ export default {
       accreditSuccess: false,
       accreditNumber: null,
       accreditStatusText: '',
+      emailExist: false, 
+      nicknameExist: false, 
     };
   },
   validations() {
@@ -206,7 +208,26 @@ export default {
 
       this.v$.$touch();
 
-      if (!this.v$.$error && this.accreditSuccess) {
+      const resEmail = await api.noneTokenPost('/member/members/existings', { type: 'email', value: this.user.email})
+      const resNickname = await api.noneTokenPost('/member/members/existings', { type: 'nickname', value: this.user.nickname })
+      if ([200, 201, 202].includes(resEmail.status)) {
+        if (resEmail.data == true) {
+          this.emailExist = true 
+        }
+        else if (resEmail.data == false) {
+          this.emailExist = false 
+        }
+      } 
+      if ([200, 201, 202].includes(resNickname.status)) {
+        if (resNickname.data == true) {
+          this.nicknameExist = true 
+        }
+        else if (resNickname.data == false) {
+          this.nicknameExist = false 
+        }
+      } 
+
+      if (!this.v$.$error && this.accreditSuccess && !emailExist && !nicknameExist && this.user.pw == this.user.new_pw) {
         const res = await api.noneTokenPost('/account/signup', this.user)
         if (res.status === 200) {
           this.stepper = 2;
@@ -436,6 +457,10 @@ export default {
                 <v-icon size="x-small" color="red">mdi-close-circle-outline</v-icon>
                 <span class="font-xs font_red">{{ emailCaution }}</span>
               </div>
+              <div v-if="submitted && emailExist">
+                <v-icon size="x-small" color="red">mdi-close-circle-outline</v-icon>
+                <span class="font-xs font_red">이미 존재하는 이메일이에요.</span>
+              </div>
             </v-form-group>
 
             <div class="mb-20"></div>
@@ -485,6 +510,10 @@ export default {
               <div v-if="submitted && v$.user.nickname.$error">
                 <v-icon size="x-small" color="red">mdi-close-circle-outline</v-icon>
                 <span class="font-xs font_red">{{ nickNameCaution }}</span>
+              </div>
+              <div v-if="submitted && nicknameExist">
+                <v-icon size="x-small" color="red">mdi-close-circle-outline</v-icon>
+                <span class="font-xs font_red">이미 존재하는 닉네임이에요.</span>
               </div>
             </v-form-group>
 
