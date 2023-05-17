@@ -122,6 +122,7 @@ export default {
         class="mt-2" maxlength="100"/>
 
         <div class="font-sm font-medium mt-7 mb-2">본문</div>
+        <v-btn variant="outlined" size="x-small" @click="fillForm()" class="font-xs mb-2">양식 불러오기</v-btn>
       <ckeditor v-model="editorData" :editor="editor" :config="editorConfig" height="200"></ckeditor>
       <div v-if="isWarning" class="invalid-feedback d-flex justify-end mt-2">
         <v-icon size="x-small" color="red">mdi-information-outline</v-icon>
