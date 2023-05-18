@@ -86,11 +86,9 @@ export default {
               userId: decodedToken.id,
               role: decodedToken.role,
             });
-
-          api.setDefaultToken();
           bridgeUtils.sendRegistrationToken(decodedToken.id)
           this.$router.push(process.env.VUE_APP_HOME);
-          // this.$router.push('/account/change-pass-alert');
+
         } else {
           console.log(res)
           if (res?.status == 401) {
