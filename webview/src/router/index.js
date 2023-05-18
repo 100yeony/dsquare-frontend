@@ -23,6 +23,7 @@ const notLogged = [process.env.VUE_APP_LOGIN, process.env.VUE_APP_REGISTER, proc
 process.env.VUE_APP_CHANGEPASS_OK, process.env.VUE_APP_FINDPASS, process.env.VUE_APP_FINDPASS_OK];
 
 router.beforeEach(async (to, from, next) => {
+	store.dispatch('info/setInfoWaitingNum', 0)
 	let accessToken = store.getters['info/infoListByKey']('accessToken')
 	let accessTokenValue = (typeof accessToken == 'undefined') ? '':accessToken.value
 	//let token = store.getters["info/infoToken"]; // 좀 더 복잡하게 가질 수 있지만, 현재는 토큰의 유무 정도로 로그인의 유무를 확인한다고 생각합니다.
