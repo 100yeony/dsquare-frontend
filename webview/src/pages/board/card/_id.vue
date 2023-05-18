@@ -331,8 +331,14 @@ export default {
           async (response) => {
             console.log(response)
             item.comments = await this.callComments(boardName, boardId)
+            item.commentCnt = item.comments.length;
             item.commentText = ''
 
+            if (store.getters["info/infoPageState"]?.requestCardData || store.getters["info/infoPageState"]?.completedCardData) {
+              var storedItem = store.getters["info/infoPageState"]?.requestCardData?.find(post => post.cardId == boardId) 
+                                ?? store.getters["info/infoPageState"]?.completedCardData?.find(post => post.cardId == boardId);
+              storedItem.commentCnt = item.commentCnt;
+            }
           }
         )
       } else {
@@ -344,8 +350,15 @@ export default {
           async (response) => {
             console.log(response)
             item.comments = await this.callComments(boardName, boardId)
+            item.commentCnt = item.comments.length;
             item.commentText = ''
             this.deleteMention(item)
+
+            if (store.getters["info/infoPageState"]?.requestCardData || store.getters["info/infoPageState"]?.completedCardData) {
+              var storedItem = store.getters["info/infoPageState"]?.requestCardData?.find(post => post.cardId == boardId) 
+                                ?? store.getters["info/infoPageState"]?.completedCardData?.find(post => post.cardId == boardId);
+              storedItem.commentCnt = item.commentCnt;
+            }
           }
         )
       }
@@ -437,7 +450,11 @@ export default {
     },
 
     async cardSelect() {
-      const res = await api.patch('board/cards/' + this.cardData.cardId + '/chosen')
+      const res = await api.patch('board/cards/' + this.cardData.cardId + '/chosen').then(
+        (response) => {
+          this.$router.go(this.$router.currentRoute);
+        }
+      );
       console.log(res)
     },
 

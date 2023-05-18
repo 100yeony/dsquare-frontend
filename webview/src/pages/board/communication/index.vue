@@ -105,6 +105,9 @@ export default {
     var searchContent = ref(pageState?.searchContent ?? '')
     var page = ref(pageState?.page ?? 1)
     var talkCardData = ref(pageState?.talkCardData ?? [])
+    var talkCardDataOrder = ref(pageState?.talkCardDataOrder ?? 'create')
+    var talkCardDataPage = ref(pageState?.talkCardDataPage ?? 0)
+    var talkCardDataSize = ref(pageState?.talkCardDataSize ?? 10)
 
 
     store.dispatch('info/setPageState', {});
@@ -119,9 +122,9 @@ export default {
       searchContent,
       page,
       talkCardData,
-      talkCardDataOrder: "create",
-      talkCardDataPage: 0,
-      talkCardDataSize: 10,
+      talkCardDataOrder,
+      talkCardDataPage,
+      talkCardDataSize,
       exportDateFromTimeStamp,
       searchParams: {},
       sortMenu,
@@ -212,7 +215,10 @@ export default {
         searchKey: this.searchKey,
         searchContent: this.searchContent,
         page: this.page,
-        talkCardData: this.talkCardData
+        talkCardData: this.talkCardData,
+        talkCardDataOrder: this.talkCardDataOrder,
+        talkCardDataPage: this.talkCardDataPage,
+        talkCardDataSize: this.talkCardDataSize,
       });
     },
     sort(index) {

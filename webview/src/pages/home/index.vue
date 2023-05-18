@@ -231,11 +231,10 @@ let myAnswersUri = 'mypage/answers';
 let myCommentsUri = '/mypage/comments';
 
 /* 최신글 관련 */
-let qnaWorkUri = 'board/questions?workYn=true';
-let qnaNonworkUri = 'board/questions?workYn=false';
-let commUri = 'board/talks';
-let dealUri = 'board/carrots';
-let cardUri = 'board/cards';
+let qnaUri = 'board/questions?order=create&page=0&size=5';
+let commUri = 'board/talks?order=create&page=0&size=5';
+let dealUri = 'board/carrots?order=create&page=0&size=5';
+let cardUri = 'board/cards?isSelected=false&order=create&page=0&size=5';
 
 /* 명예의 전당 관련 */
 let hallWeeklyUri = '/dashboard/hall-of-fame?key=week';
@@ -336,25 +335,11 @@ export default {
       var cardData = [];
 
       // 궁금해요
-      var qnaWorks = await api.get(qnaWorkUri)
-      qnaWorks.data.forEach((d) => {
+      var qna = await api.get(qnaUri)
+      qna.data.forEach((d) => {
         d.createDate = this.exportDateFromTimeStamp(d.createDate)
-      }
-      )
-      qnaData = qnaData.concat(qnaWorks.data);
-
-      var qnaNoneWorks = await api.get(qnaNonworkUri)
-      qnaNoneWorks.data.forEach((d) => {
-        d.createDate = this.exportDateFromTimeStamp(d.createDate)
-      }
-      )
-      qnaData = qnaData.concat(qnaNoneWorks.data);
-
-      qnaData.sort((a, b) => {
-        if (a.createDate < b.createDate) return 1;
-        if (b.createDate < a.createDate) return -1;
-        return 0;
-      });
+      })
+      qnaData = qna.data;
       this.recentData.push(qnaData.slice(0, this.recentLimit));
 
       // 소통해요
@@ -375,20 +360,11 @@ export default {
       this.recentData.push(dealData.slice(0, this.recentLimit));
 
       // 카드주세요
-      var cardsRequested = await api.get(cardUri + "?isSelected=false&page=0&size=5");
+      var cardsRequested = await api.get(cardUri);
       cardsRequested.data.forEach((d) => {
         d.createDate = this.exportDateFromTimeStamp(d.createDate)
       });
-      var cardsSelected = await api.get(cardUri + "?isSelected=true&page=0&size=5");
-      cardsSelected.data.forEach((d) => {
-        d.createDate = this.exportDateFromTimeStamp(d.createDate)
-      });
-      cardData = cardsRequested.data.concat(cardsSelected.data);
-      cardData.sort((a, b) => {
-        if (a.createDate < b.createDate) return 1;
-        if (b.createDate < a.createDate) return -1;
-        return 0;
-      });
+      cardData = cardsRequested.data;
       this.recentData.push(cardData.slice(0, this.recentLimit));
 
     },

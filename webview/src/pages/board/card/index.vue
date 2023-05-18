@@ -233,6 +233,17 @@ export default {
     };
   },
   data() {
+    let pageState = store.getters["info/infoPageState"]
+
+    var requestCardData = ref(pageState?.requestCardData ?? [])
+    var requestCardDataOrder = ref(pageState?.requestCardDataOrder ?? 'create')
+    var requestCardDataPage = ref(pageState?.requestCardDataPage ?? 0)
+    var requestCardDataSize = ref(pageState?.requestCardDataSize ?? 10)
+    var completedCardData = ref(pageState?.completedCardData ?? [])
+    var completedCardDataOrder = ref(pageState?.completedCardDataOrder ?? 'create')
+    var completedCardDataPage = ref(pageState?.completedCardDataPage ?? 0)
+    var completedCardDataSize = ref(pageState?.completedCardDataSize ?? 10)
+
     return {
       writerInfo: {
         id: 0,
@@ -251,15 +262,15 @@ export default {
       subcategoryItems: [],
       ProjTeamId: '',
       page: 1,
-      requestCardData: [],
-      requestCardDataOrder: "create",
-      requestCardDataPage: 0,
-      requestCardDataSize: 10,
+      requestCardData,
+      requestCardDataOrder,
+      requestCardDataPage,
+      requestCardDataSize,
       cardOfTheMonthData: [],
-      completedCardData: [],
-      completedCardDataOrder: "create",
-      completedCardDataPage: 0,
-      completedCardDataSize: 10,
+      completedCardData,
+      completedCardDataOrder,
+      completedCardDataPage,
+      completedCardDataSize,
       searchParams: {},
       isShow: false,
       selectedItem: {},
@@ -414,6 +425,7 @@ export default {
     },
     handleCardClicked(item) {
       if (item) {
+        this.saveState();
         console.log(item);
         this.$router.push({
           path: process.env.VUE_APP_BOARD_CARD_DETAIL,
@@ -425,10 +437,23 @@ export default {
       }
     },
     handleeWritePage() {
+      this.saveState();
       console.log("handleeWritePage");
       this.$router.push({
         path: process.env.VUE_APP_BOARD_CARD_WRITE,
         query: {},
+      });
+    },
+    saveState() {
+      store.dispatch('info/setPageState', {
+        requestCardData: this.requestCardData,
+        requestCardDataOrder: this.requestCardDataOrder,
+        requestCardDataPage: this.requestCardDataPage,
+        requestCardDataSize: this. requestCardDataSize,
+        completedCardData: this.completedCardData,
+        completedCardDataOrder: this.completedCardDataOrder,
+        completedCardDataPage: this.completedCardDataPage,
+        completedCardDataSize: this.completedCardDataSize,
       });
     },
     leftPad(value) {
@@ -466,7 +491,15 @@ export default {
     },
     async cardSelect() {
       console.log(this.selectedItem)
-      const res = await api.patch('board/cards/' + this.selectedItem.cardId + '/chosen')
+      const res = await api.patch('board/cards/' + this.selectedItem.cardId + '/chosen').then(
+        (response) => {
+          // console.log("index of selectedItem = " + this.requestCardData.indexOf(this.selectedItem));
+          // this.requestCardData.splice(this.requestCardData.indexOf(this.selectedItem), 1);
+          this.sort(1);
+          this.cardTab = 1;
+          this.sort(1);
+        }
+      );
       console.log(res)
       this.selectedItem = {}
     },
