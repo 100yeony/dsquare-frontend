@@ -211,7 +211,7 @@ export default {
                   <v-row>
                     <v-col>
                       <v-text-field :placeholder=placeholderText v-model="chipText" variant="outlined" density="compact"
-                        @input="handleInput" hide-details append-icon="mdi-tag-plus" @click:append="addChips" maxlength="15"></v-text-field>
+                        @input="handleInput" hide-details append-icon="mdi-tag-plus" @keydown.enter.prevent @click:append="addChips" maxlength="15"></v-text-field>
                     </v-col>
                   </v-row>
                   <div>
