@@ -86,6 +86,9 @@ export default {
               userId: decodedToken.id,
               role: decodedToken.role,
             });
+
+          api.setResetAPI()
+
           bridgeUtils.sendRegistrationToken(decodedToken.id)
           this.$router.push(process.env.VUE_APP_HOME);
 

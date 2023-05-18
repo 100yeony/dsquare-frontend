@@ -346,6 +346,24 @@ const fn = {
     }
     return err.response
   },
+  setResetAPI() {
+    var accessToken = store.getters['info/infoListByKey']('accessToken')
+    var accessTokenValue = (typeof accessToken == 'undefined') ? '' : accessToken.value
+    console.log('setDefaultToken=> ' + accessTokenValue)
+    apiInstance = axios.create({
+      baseURL: baseURL,
+      headers: { Authorization: 'Bearer ' + accessTokenValue }
+    })
+    multiPartApiInstance = axios.create({
+      baseURL: baseURL,
+      headers: {
+        Authorization: 'Bearer ' + accessTokenValue,
+        'Content-Type': 'multipart/form-data'
+      }
+    })
+    setAxiosInterceptor(apiInstance)
+    setAxiosInterceptor(multiPartApiInstance)
+  },
   async post(uri, params, headers) {
     try {
       const res = await apiInstance.post(`${prefix + uri}`, params, { headers: headers })
