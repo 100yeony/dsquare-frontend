@@ -3,6 +3,7 @@
     <TopBar/>
     <v-main>
       <v-container>
+        <pulse-loader v-if="isWaiting" color="#6200EE" class="spinner-overlay"></pulse-loader>
         <router-view />
         <!-- <SideMenu v-if="isMobile === false" /> -->
       </v-container>
@@ -12,8 +13,10 @@
 </template>
 
 <script>
+import PulseLoader from 'vue-spinner/src/PulseLoader.vue'
 import { computed, onMounted, ref } from "vue";
 import { useStore } from "vuex";
+import store from "@/store"
 import TopBar from "@/components/TopBar";
 import Footer from "@/components/Footer";
 import SideMenu from "@/components/SideMenu";
@@ -24,6 +27,12 @@ export default {
     TopBar,
     Footer,
     SideMenu,
+    PulseLoader,
+  },
+  computed: {
+    isWaiting() {
+      return store.getters['info/infoWaitingNum'] > 0
+    }
   },
   setup() {
     // let isMobile = ref(false);

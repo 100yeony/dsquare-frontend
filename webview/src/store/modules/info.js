@@ -15,9 +15,15 @@ export const info = {
       pageState: {
 
       },
-      infoSvcType: ''
+      infoSvcType: '',
+      waitingNum: 0
+
   }),
   mutations: {
+    SET_INFO_WAITING_NUM(state, value){
+      console.log('change_waiting_num', value)
+      state.waitingNum = value
+    },
     SET_INFO_SVC_TYPE(state, value){
       state.infoSvcType = value
     },
@@ -68,6 +74,9 @@ export const info = {
     },
     infoSvcType(state){
       return state.infoSvcType;
+    },
+    infoWaitingNum(state){
+      return state.waitingNum 
     }
   },
   actions: {
@@ -90,6 +99,9 @@ export const info = {
     },
     setInfoSvcType({state, commit, rootState}, value) {
       commit('SET_INFO_SVC_TYPE', value)
+    },
+    setInfoWaitingNum({state, commit, rootState}, value) {
+      commit('SET_INFO_WAITING_NUM', value)
     }
   }
 };

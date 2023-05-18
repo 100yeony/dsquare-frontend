@@ -171,6 +171,34 @@ var multiPartApiInstance
 var noneTokenApiInstance
 var textPlainApiInstance
 
+function setAxiosInterceptor(instance) {
+  instance.interceptors.request.use(
+    (config) => {
+      console.log("request.config")
+      console.log(store.getters['info/infoWaitingNum'] + 1)
+      store.dispatch('info/setInfoWaitingNum', store.getters['info/infoWaitingNum'] + 1)
+      return config
+    },
+    (error) => {
+      console.log("request.error")
+      return error
+    }
+  )
+  instance.interceptors.response.use(
+    async (response) => {
+      console.log("response.response")
+      store.dispatch('info/setInfoWaitingNum', store.getters['info/infoWaitingNum'] - 1)
+      return response
+    },
+    (error) => {
+      console.log("response.error")
+      console.log(store.getters['info/infoWaitingNum'] - 1)
+      store.dispatch('info/setInfoWaitingNum', store.getters['info/infoWaitingNum'] - 1)
+      return error
+    }
+  )
+}
+
 function createInstance() {
   var accessToken = store.getters['info/infoListByKey']('accessToken')
   var accessTokenValue = (typeof accessToken == 'undefined') ? '' : accessToken.value
@@ -200,6 +228,12 @@ function createInstance() {
       'Content-Type': 'text/plain'
     }
   })
+
+  setAxiosInterceptor(apiInstance)
+  setAxiosInterceptor(multiPartApiInstance)
+  setAxiosInterceptor(noneTokenApiInstance)
+  setAxiosInterceptor(textPlainApiInstance)
+
 
   return fn
 }
@@ -235,13 +269,13 @@ const fn = {
     var flag = true
     try {
       var res = await this.requestRefresh()
-    } catch(error) {
+    } catch (error) {
       console.log(error)
-      if ([400, 409].includes(error.response.status)){
+      if ([400, 409].includes(error.response.status)) {
         flag = false
       } else {
         this.expiredToken()
-        return 
+        return
       }
     }
 
@@ -250,13 +284,13 @@ const fn = {
     if (flag) {
       this.setTokenState(res.data.accessToken, res.data.refreshToken)
       this.setDefaultToken()
-    } 
+    }
 
     try {
       const res = await doRequest(uri, params, headers)
-    console.log(res)
-    return this.ResponsePayload(res)
-    } catch(error) {
+      console.log(res)
+      return this.ResponsePayload(res)
+    } catch (error) {
       console.log(error)
       this.expiredToken()
     }
@@ -279,6 +313,8 @@ const fn = {
         'Content-Type': 'multipart/form-data'
       }
     })
+    setAxiosInterceptor(apiInstance)
+    setAxiosInterceptor(multiPartApiInstance)
   },
   setTokenState(accessToken, refreshToken) {
     let accessTokenNativeDto = new NativeValueDto({ "key": 'accessToken', "value": accessToken, "type": 'P', "preference": 'pref_key_access_token' });
@@ -373,7 +409,7 @@ const fn = {
 
     }
   },
-  
+
   async textPlainPost(uri, params, headers) {
 
     const doTextPlainPost = async (uri, params, headers) => {
@@ -454,9 +490,9 @@ const fn = {
       const res = await doPatch(uri, params, headers)
       return this.ResponsePayload(res)
     } catch (err) {
-      
-        return this.ErrorPayload(err)
-      
+
+      return this.ErrorPayload(err)
+
     }
 
   },
