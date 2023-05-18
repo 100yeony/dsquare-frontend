@@ -132,17 +132,21 @@ export default {
         } else if (item.boardType === "ANSWER") {
           path = process.env.VUE_APP_BOARD_QNA_DETAIL;
           query = { qid: item.post.qid };
-        } else {
+        } else if (item.boardType == "CARD") {
+          path = process.env.VUE_APP_BOARD_CARD_DETAIL;
           query = { id: postId };
-          if (item.boardType === "CARD") {
-            path = process.env.VUE_APP_BOARD_CARD_DETAIL;
-          } else if (item.boardType === "TALK") {
-            path = process.env.VUE_APP_BOARD_COMMUNICATION_DETAIL;
-          } else { // CARROT
-            path = process.env.VUE_APP_BOARD_DEAL_DETAIL;
-          }
+        } else if (item.boardType == "TALK") {
+          path = process.env.VUE_APP_BOARD_COMMUNICATION_DETAIL;
+          query = { talkId: postId };
+        } else if (item.boardType == "CARROT") {
+          path = process.env.VUE_APP_BOARD_DEAL_DETAIL;
+          query = { carrotId: postId };
+        } else {
+          console.log("오류");
+          return;
         }
       }
+      
 
       this.$router.push({
         path: path,
