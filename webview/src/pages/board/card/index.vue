@@ -244,6 +244,8 @@ export default {
     var completedCardDataPage = ref(pageState?.completedCardDataPage ?? 0)
     var completedCardDataSize = ref(pageState?.completedCardDataSize ?? 10)
 
+    store.dispatch('info/setPageState', {});
+
     return {
       writerInfo: {
         id: 0,

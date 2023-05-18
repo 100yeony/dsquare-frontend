@@ -399,6 +399,7 @@ export default {
     editPost(index) {
       console.log(index)
       if (index === 0) {  // 수정
+        store.dispatch('info/setPageState', {});
         this.$router.push({
           path: process.env.VUE_APP_BOARD_CARD_EDIT,
           query: {
@@ -441,6 +442,7 @@ export default {
     async requestDelCard() {
       const res = await api.del('board/cards/' + this.$route.query.id, '')
       console.log(res)
+      store.dispatch('info/setPageState', {});
       this.$router.push(process.env.VUE_APP_BOARD_CARD);
     },
 

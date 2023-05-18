@@ -122,6 +122,7 @@ export default {
         teammateCnt: this.teammateCnt,
       })
       console.log(res)
+      store.dispatch('info/setPageState', {});
       this.$router.push(process.env.VUE_APP_BOARD_CARD);
 
     },
