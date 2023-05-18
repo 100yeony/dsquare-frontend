@@ -1127,3 +1127,12 @@ $bottom-navigation-content-font-size : var(--font-size-v-xxs);
   background-color: rgba(255, 255, 255, 0.60);
   z-index: 9999;
 }
+
+body {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  -webkit-overflow-scrolling: touch; /* 스크롤 성능 최적화 */
+}
+body::-webkit-scrollbar {
+  display: none;
+}
