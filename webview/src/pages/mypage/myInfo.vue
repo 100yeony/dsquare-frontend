@@ -376,9 +376,8 @@ export default {
   <div class="alert mb-2">
     <div>
       <div class="font-sm ml-5 mt-3 mb-3 mr-5 font_gray">
-        회원 탈퇴일로부터 계정 정보(이메일/사내메일/닉네임/연락처/소속팀)는
-        <span style="color:deepskyblue" class="font-bold">개인정보 보호방침</span>에 따라 <b>30일간 보관 및 잠김</b>되며, 30일 경과된 후에는 모든 개인
-        정보는 완전히 삭제되어 더 이상 복구할 수 없게 됩니다.
+        회원 탈퇴일로부터 <b>계정 정보(이메일/사내메일/닉네임/연락처/소속팀)</b>와
+        모든 개인정보는 <span style="color:crimson" class="font-bold">완전히 삭제</span>되어 더 이상 복구할 수 없게 됩니다.
         작성된 게시글은 삭제되지 않으며, Dsquare로 소유권이 귀속됩니다.
       </div>
     </div>
