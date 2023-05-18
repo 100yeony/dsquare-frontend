@@ -464,9 +464,21 @@ export default {
       if ([200, 201].includes(res.status)) {  // 성공
         if (this.cardData.likeYn) {
           this.cardData.likeCnt--;
+          if (store.getters["info/infoPageState"]?.requestCardData || store.getters["info/infoPageState"]?.completedCardData) {
+            var storedItem = store.getters["info/infoPageState"]?.requestCardData?.find(post => post.cardId == id) 
+                              ?? store.getters["info/infoPageState"]?.completedCardData?.find(post => post.cardId == id);
+            storedItem.likeCnt--;
+            storedItem.likeYn = !storedItem.likeYn;
+          }
         }
         else {
           this.cardData.likeCnt++;
+          if (store.getters["info/infoPageState"]?.requestCardData || store.getters["info/infoPageState"]?.completedCardData) {
+            var storedItem = store.getters["info/infoPageState"]?.requestCardData?.find(post => post.cardId == id) 
+                              ?? store.getters["info/infoPageState"]?.completedCardData?.find(post => post.cardId == id);
+            storedItem.likeCnt++;
+            storedItem.likeYn = !storedItem.likeYn;
+          }
         }
         this.cardData.likeYn = !this.cardData.likeYn;
         this.$forceUpdate();

@@ -428,9 +428,19 @@ export default {
       if ([200, 201].includes(res.status)) {  // 성공
         if (this.qData.likeYn) {
           this.qData.likeCnt--;
+          if (store.getters["info/infoPageState"]?.talkCardData) {
+            var storedItem = store.getters["info/infoPageState"]?.talkCardData?.find(post => post.talkId == id);
+            storedItem.likeCnt--;
+            storedItem.likeYn = !storedItem.likeYn;
+          }
         }
         else {
           this.qData.likeCnt++;
+          if (store.getters["info/infoPageState"]?.talkCardData) {
+            var storedItem = store.getters["info/infoPageState"]?.talkCardData?.find(post => post.talkId == id);
+            storedItem.likeCnt++;
+            storedItem.likeYn = !storedItem.likeYn;
+          }
         }
         this.qData.likeYn = !this.qData.likeYn;
         this.$forceUpdate();
