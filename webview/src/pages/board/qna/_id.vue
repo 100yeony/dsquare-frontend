@@ -51,7 +51,7 @@
           </v-col>
         </v-row>
         <h3>
-          <span class="text-primary">{{ qData.cname }}: </span>{{ qData.title }}
+          <span v-if="qData.isWork" class="text-primary">{{ qData.cname }}: </span>{{ qData.title }}
         </h3>
         <ckeditor v-model="qData.content" :editor="editor" :config="editorConfig" :disabled="true"></ckeditor>
         <v-row class="mt-3">

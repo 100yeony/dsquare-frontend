@@ -10,7 +10,7 @@
           <v-col cols="5" align="right" class="text-caption font-0000008F">{{ props?.data?.createDate }}</v-col>
         </v-row>
         <div class="text-h7">
-          <span class="text-primary">{{ props?.data?.category.name }}:</span> {{ props?.data?.title }}
+          <span v-if="props?.data?.category.name !== '비업무'" class="text-primary">{{ props?.data?.category.name }}:</span> {{ props?.data?.title }}
         </div>
       </div>
 
