@@ -39,6 +39,7 @@ export default {
         name: "",
         ktMail: "",
       },
+      userOriginNickName: '',
       category: [],
       subcategory: [],
       subcategoryItems: [],
@@ -132,6 +133,7 @@ export default {
     userData.then(
       (response) => {
         console.log('user infooooooo', response)
+        this.userOriginNickName = response.data.nickname;
         this.user.nickname = response.data.nickname;
         this.user.name = response.data.name;
         this.user.email = response.data.email;
@@ -166,10 +168,10 @@ export default {
 
       const resNickname = await api.noneTokenPost('/member/members/existings', { type: 'nickname', value: this.user.nickname })
       if ([200, 201, 202].includes(resNickname.status)) {
-        if (resNickname.data == true) {
+        if (resNickname.data == true && this.userOriginNickName !== this.user.nickname) {
           this.nicknameExist = true 
         }
-        else if (resNickname.data == false) {
+        else {
           this.nicknameExist = false 
         }
       } 
