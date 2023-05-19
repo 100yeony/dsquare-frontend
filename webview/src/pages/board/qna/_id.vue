@@ -696,7 +696,7 @@ export default {
   margin-left: 8px; 
   border-top: 0.5px solid; 
   margin-bottom: 8px; 
-  color: gray;
+  color: lightgray;
 }
 
 .heart-comment {
