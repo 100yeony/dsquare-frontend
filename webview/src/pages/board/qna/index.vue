@@ -70,7 +70,7 @@
         <div v-for="(item, index) in workCardData" :value="item.qid">
           <BoardCard class="mt-2" :data="item" @handle-card-clicked="handleCardClicked" />
         </div>
-        <Observe @triggerIntersected="loadMore" />
+        <Observe @triggerIntersected="loadMore" ref="workObserve"/>
       </v-window-item>
 
       <!-- ***** 비업무 ***** -->
@@ -121,7 +121,7 @@
         <div v-for="(item, index) in nonworkCardData" :value="item.qid">
           <BoardCard class="mt-2" :data="item" @handle-card-clicked="handleCardClicked" />
         </div>
-        <Observe @triggerIntersected="loadMore" />
+        <Observe @triggerIntersected="loadMore" ref="nonworkObserve"/>
       </v-window-item>
     </v-window>
   </div>
@@ -143,6 +143,7 @@ import BoardCard from "@/components/cards/BoardCard";
 import Observe from "@/components/Observer";
 import api from '@/api';
 import store from "@/store";
+import { useElementVisibility } from '@vueuse/core';
 
 let questionUri = 'board/questions';
 let searchUri = 'board/questions';
@@ -220,7 +221,12 @@ export default {
 
     store.dispatch('info/setPageState', {});
 
-
+    const workObserve = ref(null);
+    const nonworkObserve = ref(null);
+    const workObserveIsVisible = useElementVisibility(workObserve);
+    const nonworkObserveIsVisible = useElementVisibility(nonworkObserve);
+      
+    
     return {
       qnaTabTitle,
       categoryItems,
@@ -245,6 +251,11 @@ export default {
       nonworkDataPage,
       nonworkDataSize,
       searchParams: {},
+
+      workObserve,
+      nonworkObserve,
+      workObserveIsVisible,
+      nonworkObserveIsVisible,
     };
   },
   data() {
@@ -277,7 +288,6 @@ export default {
   },
   watch: {
     qnaTab(newVal, oldVal) {
-      console.log(newVal)
       this.tabChanged();
     }
   },
@@ -288,8 +298,13 @@ export default {
       this.subcategoryItems = 1 <= categoryIndex ? this.subcategoryFullList[categoryIndex - 1] : [];
     },
     async search() {
+      let visibleBefore = false;
+      let visibleAfter = false;
+
       // 업무
       if (this.qnaTab == 0) {
+        visibleBefore = this.workObserveIsVisible;
+
         var params = {
           workYn: true,
           order: this.workDataOrder,
@@ -309,7 +324,6 @@ export default {
             this.workCardData = [];
             this.workSearchFlag = (this.workCardData.length == 0) ? true:false  
           } else {
-            console.log('key, value 없음');
             this.workCardData = [];
             this.workSearchFlag = (this.workCardData.length == 0) ? true:false  
           }
@@ -328,11 +342,12 @@ export default {
             this.workSearchFlag = (this.workCardData.length == 0) ? true:false  
           }
         }
-
+        visibleAfter = this.workObserveIsVisible;
         this.searchParams = params;
       }
       // 비업무
       else if (this.qnaTab == 1) {
+        visibleBefore = this.nonworkObserveIsVisible;
         var params = {
           workYn: false,
           order: this.nonworkDataOrder,
@@ -349,8 +364,13 @@ export default {
           this.nonworkCardData = [];
           this.searchFlag = (this.nonworkCardData.length == 0) ? true:false  
         }
-
+        
+        visibleAfter = this.nonworkObserveIsVisible;
         this.searchParams = params;
+      }
+
+      if (visibleBefore == visibleAfter) {
+        this.loadMore();
       }
     },
     async loadMore() {
@@ -384,23 +404,36 @@ export default {
       );
     },
     sort(index) {
+      let visibleBefore = false;
+      let visibleAfter = false;
+
       // index 0=좋아요순, 1=등록순
       // 업무
       if (this.qnaTab == 0) {
+        visibleBefore = this.workObserveIsVisible;
+
         this.workDataOrder = index ? "like" : "create";
         this.workDataPage = 0;
         this.workDataSize = 10;
         this.workCardData = [];
+
+        visibleAfter = this.workObserveIsVisible;
       }
       // 비업무
       else if (this.qnaTab == 1) {
+        visibleBefore = this.nonworkObserveIsVisible;
+
         this.nonworkDataOrder = index ? "like" : "create";
         this.nonworkDataPage = 0;
         this.nonworkDataSize = 10;
         this.nonworkCardData = [];
+
+        visibleAfter = this.nonworkObserveIsVisible;
       }
       
-      this.loadMore();
+      if (visibleBefore == visibleAfter) {
+        this.loadMore();
+      }
     },
 
     tabChanged() {

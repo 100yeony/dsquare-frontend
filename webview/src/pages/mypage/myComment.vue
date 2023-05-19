@@ -1,8 +1,10 @@
 <script>
+import { ref } from "vue";
 import AnswerCard from "@/components/cards/AnswerCard";
 import CommentCard from "@/components/cards/CommentCard";
 import Observe from "@/components/Observer";
 import api from '@/api';
+import { useElementVisibility } from '@vueuse/core';
 
 let answersUri = '/mypage/answers';
 let commentsUri = '/mypage/comments';
@@ -23,8 +25,18 @@ export default {
   setup() {
     let myPostTabTitle = ["내 답변", "내 댓글"];
 
+    const answerObserve = ref(null);
+    const answerObserveIsVisible = useElementVisibility(answerObserve);
+    const commentObserve = ref(null);
+    const commentObserveIsVisible = useElementVisibility(commentObserve);
+
     return {
       myPostTabTitle,
+
+      answerObserve,
+      answerObserveIsVisible,
+      commentObserve,
+      commentObserveIsVisible,
     };
   },
   data() {
@@ -173,21 +185,34 @@ export default {
     },
 
     sort(index) {
+      let visibleBefore = false;
+      let visibleAfter = false;
+
       // index 0=좋아요순, 1=등록순
       if (this.qnaTab == 0) {
+        visibleBefore = this.answerObserveIsVisible;
+
         this.answerCardDataOrder = index ? "like" : "create";
         this.answerCardDataPage = 0;
         this.answerCardDataSize = 10;
         this.answerCardData = [];
+
+        visibleAfter = this.answerObserveIsVisible;
       }
       else if (this.qnaTab == 1) {
+        visibleBefore = this.commentObserveIsVisible;
+
         this.commentCardDataOrder = index ? "like" : "create";
         this.commentCardDataPage = 0;
         this.commentCardDataSize = 10;
         this.commentCardData = [];
+
+        visibleAfter = this.commentObserveIsVisible;
       }
 
-      this.loadMore();
+      if (visibleBefore == visibleAfter) {
+        this.loadMore();
+      }
     },
     leftPad(value) {
       if (value >= 10) {
@@ -236,7 +261,7 @@ export default {
         <div v-for="(item, index) in answerCardData" :key="index" :value="item.aid">
           <AnswerCard class="mt-2" :data="item" @handle-card-clicked="handleCardClicked" />
         </div>
-        <Observe @triggerIntersected="loadMore" />
+        <Observe @triggerIntersected="loadMore" ref="answerObserve"/>
       </v-window-item>
 
       <!-- ***** 내 댓글 ***** -->
@@ -259,7 +284,7 @@ export default {
         <div v-for="(item, index) in commentCardData" :key="index" :value="item.commentId">
           <CommentCard class="mt-2" :data="item" @handle-card-clicked="handleCardClicked" />
         </div>
-        <Observe @triggerIntersected="loadMore" />
+        <Observe @triggerIntersected="loadMore" ref="commentObserve"/>
       </v-window-item>
 
     </v-window>

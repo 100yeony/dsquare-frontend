@@ -51,7 +51,7 @@
     <div v-for="(item, index) in talkCardData" :value="item.talkId">
       <TalkCard class="mt-2" :data="item" @handle-card-clicked="handleCardClicked" />
     </div>
-    <Observe @triggerIntersected="loadMore" />
+    <Observe @triggerIntersected="loadMore" ref="observe"/>
   </div>
 
   <v-menu transition="slide-y-transition">
@@ -71,6 +71,7 @@ import TalkCard from "@/components/cards/TalkCard";
 import Observe from "@/components/Observer";
 import api from '@/api';
 import store from "@/store";
+import { useElementVisibility } from '@vueuse/core';
 
 let talkUri = 'board/talks';
 
@@ -117,6 +118,9 @@ export default {
       { title: "좋아요순" },
     ]
 
+    const observe = ref(null);
+    const observeIsVisible = useElementVisibility(observe);
+
     return {
       searchKey,
       searchContent,
@@ -128,6 +132,9 @@ export default {
       exportDateFromTimeStamp,
       searchParams: {},
       sortMenu,
+
+      observe,
+      observeIsVisible,
     };
   },
   computed: {
@@ -148,6 +155,11 @@ export default {
   methods: {
     async search() {
       if (this.searchKey != '' && this.searchContent != '') {
+        let visibleBefore = false;
+        let visibleAfter = false;
+
+        visibleBefore = this.observeIsVisible;
+
         var key = ''
         if (this.searchKey == '제목 + 내용') {
           key = 'titleAndContent'
@@ -162,9 +174,16 @@ export default {
           page: (this.talkCardDataPage = 0),
           size: (this.talkCardDataSize = 10),
         }
+
         this.searchParams = params;
         this.talkCardData = [];
         this.searchFlag = (this.talkCardData.length == 0) ? true:false;
+
+        visibleAfter = this.observeIsVisible;
+
+        if (visibleBefore == visibleAfter) {
+          this.loadMore();
+        }
       }
     },
     handleCardClicked(item) {
@@ -222,10 +241,16 @@ export default {
       });
     },
     sort(index) {
+      let callLoadMore = this.observeIsVisible;
+
       this.talkCardDataOrder = index ? "like" : "create";
       this.talkCardDataPage = 0;
       this.talkCardDataSize = 10;
       this.talkCardData = [];
+
+      if (callLoadMore) {
+        this.loadMore();
+      }
     },
   },
 };
