@@ -6,7 +6,7 @@
     <div>
       <DeleteDialog :isShow="isShow" :title="dialogTitle" @click-confirm="onConfirm" @click-cancel="onCancel" />
     </div>
-    <div style="display: flex; align-items: center;">
+    <div v-if="qData.isWork" style="display: flex; align-items: center;">
       <span class="mb-2 text-caption font-0000008F">{{ qData.upCategory }} > {{ qData.category }}</span>
       <span class="divider"></span>
     </div>
@@ -325,6 +325,7 @@ export default {
         attachment: null,
         cname: '',
         cid: 0,
+        isWork: '',
         upCategory: '',
         category: '',
         title: '',
@@ -359,7 +360,7 @@ export default {
     questionData.then(
       async (response) => {
         this.qData = this.parseToQData(response.data)
-        console.log(this.user.userId, response.data.writerId)
+        console.log('isworkkk', this.qData.isWork)
         if (this.user.userId == response.data.writerInfo.id) {
           this.isWriter = true;
         }
@@ -580,6 +581,7 @@ export default {
         team: data.writerInfo.teamHierarchy[data.writerInfo.teamHierarchy.length - 1],
         attachment: data.attachment,
         cname: data.category.name,
+        isWork: data.category.categoryHierarchy[0] === '업무',
         category: data.category.categoryHierarchy[2],
         upCategory: data.category.categoryHierarchy[1],
         cid: data.category.cid,

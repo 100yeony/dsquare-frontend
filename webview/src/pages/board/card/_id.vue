@@ -61,7 +61,7 @@
         <div>
           {{ cardData.content }}
         </div>
-        <div v-if="cardData.teammates[0] !== '' || cardData.teammateCnt !== null">
+        <div v-if="cardData.teammates.length !== 0 || cardData.teammateCnt !== null">
           <v-divider :thickness="1" class="mt-5 mb-3"></v-divider>
           <v-row>
             <v-col cols="1">
@@ -73,7 +73,7 @@
           </v-row>
           <div>
             <div class="sizing mt-2" v-if="cardData.teammateCnt">• 참여인원 수: {{ cardData.teammateCnt }}</div>
-            <div v-if="cardData.teammates[0] !== ''" class="mt-2">
+            <div v-if="cardData.teammates.length !== 0" class="mt-2">
               <span class="sizing">• 참여인원: </span>
               <span class="sizing" v-for="(p, index) in cardData.teammates" :key="p" :value="p">{{ p }}
                 <span class="sizing" v-if="index !== cardData.teammates.length - 1">,</span>
@@ -265,8 +265,9 @@ export default {
       async (response) => {
         this.cardData = response.data;
         this.cardData.createDate = this.exportDateFromTimeStamp(this.cardData.createDate);
-        var tempTeammates = this.cardData.teammates.replaceAll('[', '["').replaceAll(']', '"]').replaceAll(',', '","');
-        this.cardData.teammates = JSON.parse(tempTeammates);  // 어레이로 변환
+        var tempTeammates = this.cardData.teammates.replaceAll('[', '["').replaceAll(']', '"]').replaceAll(',', '","'); 
+        tempTeammates = (tempTeammates == '[""]') ? '[]':tempTeammates 
+        this.cardData.teammates = JSON.parse(tempTeammates);  
         if (this.user.userId == response.data.writerInfo.id) {
           this.isWriter = true;
         }
