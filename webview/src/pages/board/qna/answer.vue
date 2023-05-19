@@ -30,6 +30,7 @@ export default {
         extraPlugins: [this.uploader],
         removePlugins: ["ImageCaption", "MediaEmbed"],
       },
+      isWarning: false, 
     };
   },
   watch: {
@@ -45,6 +46,13 @@ export default {
         }
       } else {
         this.fileAttachable = false
+      }
+    },
+    editorData(newValue, oldValue){
+      if(newValue?.length > 10000) {
+        this.isWarning = true
+      } else {
+        this.isWarning = false 
       }
     }
   },
@@ -87,7 +95,7 @@ export default {
   },
   computed: {
     answerValidation() {
-      if (this.editorData !== '') {
+      if (this.editorData !== '' && !this.isWarning) {
         return true;
       } else {
         return false;
@@ -102,6 +110,10 @@ export default {
 
     <div class="font-sm font-medium mt-7 mb-2">답변</div>
     <ckeditor v-model="editorData" :editor="editor" :config="editorConfig" height="200"></ckeditor>
+    <div v-if="isWarning" class="invalid-feedback d-flex justify-end mt-2">
+      <v-icon size="x-small" color="red">mdi-information-outline</v-icon>
+      <span class="font-xs font_red ml-1">더 이상 입력할 수 없어요.</span>
+    </div>
 
     <v-file-input v-model="selectedFile" label="파일을 첨부해주세요." chips class="mt-5" variant="outlined" density="compact" hide-details>
     </v-file-input>
@@ -141,5 +153,11 @@ export default {
 
 ::v-deep .v-icon {
   opacity: initial !important;
+}
+
+::v-deep .ck.ck-editor__editable_inline {
+    min-height: 300px !important;
+    max-height: 300px !important;
+    overflow-y: scroll !important;
 }
 </style>

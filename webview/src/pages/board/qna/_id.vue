@@ -6,8 +6,13 @@
     <div>
       <DeleteDialog :isShow="isShow" :title="dialogTitle" @click-confirm="onConfirm" @click-cancel="onCancel" />
     </div>
+    <div style="display: flex; align-items: center;">
+      <span class="mb-2 text-caption font-0000008F">{{ qData.upCategory }} > {{ qData.category }}</span>
+      <span class="divider"></span>
+    </div>
     <v-card>
       <v-card-item>
+        <!-- <div class="mb-2 font-0000008F">{{ qData.upCategory }} > {{ qData.category }}</div> -->
         <v-row class="mb-2" align="center">
           <v-col cols="2">
             <span v-if="qData.profileImage == null">
@@ -50,13 +55,13 @@
         </h3>
         <ckeditor v-model="qData.content" :editor="editor" :config="editorConfig" :disabled="true"></ckeditor>
         <v-row class="mt-3">
-          <v-col cols="2" class="center-container">
+          <v-col cols="2" class="center-container heart-comment">
             <span @click="toggleLike('question', qnaId)">
               <template v-if="qData.likeYn"><v-icon size="small" color="red">mdi-heart</v-icon></template>
               <template v-else><v-icon size="small">mdi-heart-outline</v-icon></template>
             </span>
             <span class="text-caption font-0000008F ml-1">{{ qData.likeCnt }}</span></v-col>
-          <v-col cols="2" class="center-container"><v-icon size="small">mdi-message-text-outline</v-icon><span
+          <v-col cols="2" class="center-container heart-comment"><v-icon size="small">mdi-message-text-outline</v-icon><span
               class="text-caption font-0000008F ml-1">{{ qData.commentCnt }}</span></v-col>
         </v-row>
         <div class="my-1" v-if="qData.attachment">
@@ -175,12 +180,15 @@
                 </v-avatar>
               </span>
             </v-col>
-            <v-col cols="8" class="pl-5">
+            <v-col cols="4" class="pl-5">
               <div class="text-body font-bold">
                 <v-row> {{ item.writerInfo.name }} </v-row>
                 <v-row class="text-caption font-0000008F"> {{
                   item.writerInfo.teamHierarchy[item.writerInfo.teamHierarchy.length - 1] }}</v-row>
               </div>
+            </v-col>
+            <v-col cols="4">
+              <div class="text-caption font-0000008F">{{ qData.createDate }}</div>
             </v-col>
             <v-col cols="2">
               <v-menu v-if="this.user.userId == item.writerInfo.id">
@@ -318,6 +326,7 @@ export default {
         cname: '',
         cid: 0,
         upCategory: '',
+        category: '',
         title: '',
         content: '',
         createDate: '',
@@ -571,6 +580,7 @@ export default {
         team: data.writerInfo.teamHierarchy[data.writerInfo.teamHierarchy.length - 1],
         attachment: data.attachment,
         cname: data.category.name,
+        category: data.category.categoryHierarchy[2],
         upCategory: data.category.categoryHierarchy[1],
         cid: data.category.cid,
         title: data.title,
@@ -677,6 +687,18 @@ export default {
   border-color: rgb(var(--v-theme-primary));
   background-color: rgb(var(--v-theme-primary));
   color: white;
+}
+
+.divider {
+  flex-grow: 1; 
+  margin-left: 8px; 
+  border-top: 0.5px solid; 
+  margin-bottom: 8px; 
+  color: gray;
+}
+
+.heart-comment {
+  align-items: end !important;
 }
 
 </style>

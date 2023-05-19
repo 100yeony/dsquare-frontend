@@ -49,13 +49,13 @@
         </h3>
         <ckeditor v-model="qData.content" :editor="editor" :config="editorConfig" :disabled="true"></ckeditor>
         <v-row class="mt-3">
-          <v-col cols="2" class="center-container">
+          <v-col cols="2" class="center-container heart-comment">
             <span @click="toggleLike('talk', qnaId)">
               <template v-if="qData.likeYn"><v-icon size="small" color="red">mdi-heart</v-icon></template>
               <template v-else><v-icon size="small">mdi-heart-outline</v-icon></template>
             </span>
             <span class="text-caption font-0000008F ml-1">{{ qData.likeCnt }}</span></v-col>
-          <v-col cols="2" class="center-container"><v-icon size="small">mdi-message-text-outline</v-icon><span
+          <v-col cols="2" class="center-container heart-comment"><v-icon size="small">mdi-message-text-outline</v-icon><span
               class="text-caption font-0000008F ml-1">{{ qData.commentCnt }}</span></v-col>
         </v-row>
         <v-slide-group>
@@ -475,5 +475,9 @@ export default {
 
 .inputbox {
   color: black !important;
+}
+
+.heart-comment {
+  align-items: end !important;
 }
 </style>
