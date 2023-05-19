@@ -333,7 +333,7 @@ export default {
         console.log("수정하기")
         store.dispatch('info/setPageState', {});
         this.$router.push({
-          path: process.env.VUE_APP_BOARD_DEAL_EDIT,
+          path: '/board/deal/edit/' + Math.random().toString(36).substring(7) + '/',
           query: {
             carrotId: this.qnaId,
             title: this.qData.title,

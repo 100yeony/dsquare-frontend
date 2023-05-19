@@ -188,7 +188,7 @@ export default {
     handleWritePage() {
       this.saveState();
       this.$router.push({
-        path: process.env.VUE_APP_BOARD_COMMUNICATION_WRITE,
+        path: 'write/' + Math.random().toString(36).substring(7) + '/',
       });
 
     },

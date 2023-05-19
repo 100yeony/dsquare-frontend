@@ -331,7 +331,7 @@ export default {
         console.log("수정하기")
         store.dispatch('info/setPageState', {});
         this.$router.push({
-          path: process.env.VUE_APP_BOARD_COMMUNICATION_EDIT,
+          path: '/board/communication/edit/' + Math.random().toString(36).substring(7) + '/',
           query: {
             talkId: this.qnaId,
             title: this.qData.title,

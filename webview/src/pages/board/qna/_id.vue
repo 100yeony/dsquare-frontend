@@ -391,7 +391,7 @@ export default {
   methods: {
     answer() {
       this.$router.push({
-        path: process.env.VUE_APP_BOARD_QNA_ANSWER,
+        path: '/board/qna/answer/' + Math.random().toString(36).substring(7) + '/',
         query: {
           qid: this.$route.query.qid
         }
@@ -491,8 +491,8 @@ export default {
       if (index === 0) {
         console.log("수정하기")
         store.dispatch('info/setPageState', {});
-        this.$router.push({
-          path: process.env.VUE_APP_BOARD_QNA_EDIT,
+        this.$router.push({ 
+          path: '/board/qna/edit/' + Math.random().toString(36).substring(7) + '/', 
           query: {
             qid: this.qnaId,
           }
@@ -512,7 +512,7 @@ export default {
       if (index == 0) {
         console.log("답변 수정하기")
         this.$router.push({
-          path: process.env.VUE_APP_BOARD_QNA_ANSWER_EDIT,
+          path: '/board/qna/answer_edit/' + Math.random().toString(36).substring(7) + '/',
           query: {
             qid: this.$route.query.qid,
             id: id,
