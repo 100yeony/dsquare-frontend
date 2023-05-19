@@ -166,6 +166,7 @@ import { NativeValueDto } from "@/class/NativeValueDto"
 
 const prefix = ''
 const baseURL = process.env.VUE_APP_BASE_URL
+const pendingRequests = []
 var apiInstance
 var multiPartApiInstance
 var noneTokenApiInstance
@@ -174,29 +175,123 @@ var textPlainApiInstance
 function setAxiosInterceptor(instance) {
   instance.interceptors.request.use(
     (config) => {
-      console.log("request.config")
-      console.log(store.getters['info/infoWaitingNum'] + 1)
       store.dispatch('info/setInfoWaitingNum', store.getters['info/infoWaitingNum'] + 1)
+
+      const source = axios.CancelToken.source();
+      config.cancelToken = source.token
+      pendingRequests.push(source);
+
       return config
     },
     (error) => {
-      console.log("request.error")
       return error
     }
   )
   instance.interceptors.response.use(
     async (response) => {
-      console.log("response.response")
       store.dispatch('info/setInfoWaitingNum', store.getters['info/infoWaitingNum'] - 1)
+      const requestToken = response.config.cancelToken;
+      removePendingRequest(requestToken);
+
       return response
     },
-    (error) => {
-      console.log("response.error")
-      console.log(store.getters['info/infoWaitingNum'] - 1)
+    async (error) => {
       store.dispatch('info/setInfoWaitingNum', store.getters['info/infoWaitingNum'] - 1)
+      const requestToken = error.config.cancelToken;
+      removePendingRequest(requestToken);
+
+      if (tokenExpiredCheck(error)) {
+        cancelAllRequests()
+        requestRefresh().then((res) => {
+          if ([200, 201, 202].includes(res.status)) {
+            setTokenState(res.data.accessToken, res.data.refreshToken)
+            setDefaultToken()
+            refreshPage()
+          } else {
+            console.log('you should go to login')
+            expiredToken()
+          }
+        }).catch((err) => {
+          console.log('you should go to login')
+          expiredToken()
+        })
+      } else {
+        cancelAllRequests()
+        expiredToken()
+      }
       return error
     }
   )
+}
+function refreshPage() {
+  router.go();
+}
+
+function removePendingRequest(requestToken) {
+  const index = pendingRequests.findIndex(source => source.token === requestToken);
+  if (index !== -1) {
+    pendingRequests.splice(index, 1);
+  }
+}
+
+function cancelAllRequests() {
+  pendingRequests.forEach(source => {
+    source.cancel("request's canceled");
+  });
+  pendingRequests.length = 0;
+}
+
+function setDefaultToken() {
+  var accessToken = store.getters['info/infoListByKey']('accessToken')
+  var accessTokenValue = (typeof accessToken == 'undefined') ? '' : accessToken.value
+  console.log('setDefaultToken=> ' + accessTokenValue)
+  apiInstance = axios.create({
+    baseURL: baseURL,
+    headers: { Authorization: 'Bearer ' + accessTokenValue }
+  })
+  multiPartApiInstance = axios.create({
+    baseURL: baseURL,
+    headers: {
+      Authorization: 'Bearer ' + accessTokenValue,
+      'Content-Type': 'multipart/form-data'
+    }
+  })
+  setAxiosInterceptor(apiInstance)
+  setAxiosInterceptor(multiPartApiInstance)
+}
+
+function setTokenState(accessToken, refreshToken) {
+  let accessTokenNativeDto = new NativeValueDto({ "key": 'accessToken', "value": accessToken, "type": 'P', "preference": 'pref_key_access_token' });
+  store.dispatch('info/setInfoValue', accessTokenNativeDto);
+  bridgeUtils.saveAccessToken(accessToken);
+
+  let refreshTokenNativeDto = new NativeValueDto({ "key": 'refreshToken', "value": refreshToken, "type": 'P', "preference": 'pref_key_refresh_token' });
+  store.dispatch('info/setInfoValue', refreshTokenNativeDto);
+  bridgeUtils.saveRefreshToken(refreshToken);
+}
+
+function tokenExpiredCheck(err) {
+  if (err?.response?.data?.code == 401 || err?.response?.status == 401) {// 후에 code 변경
+    console.log("it's token expired")
+    return true
+  } else {
+    return false
+  }
+}
+
+function expiredToken() {
+  store.dispatch('info/setInfoListBlank'); // 토큰값을 제거해줍니다.
+  console.log('expiredToken')
+  router.push(process.env.VUE_APP_LOGIN);
+}
+
+async function requestRefresh() {
+  let refreshToken = store.getters['info/infoListByKey']('refreshToken')
+  const instance = axios.create({
+    baseURL: baseURL
+  })
+  const res = await instance.post('auth/refresh', { refreshToken: refreshToken.value })
+  return res
 }
 
 function createInstance() {
@@ -244,61 +339,14 @@ const fn = {
     return res
   },
   ErrorPayload(err) {
-    console.log('ErrorPayload', err)
+    if (axios.isCancel(err)) {
+      console.log('is canceled')
+    } else {
+      console.log('ErrorPayload', err)
+    }
     return err.response
   },
-  tokenErrorCheck(err) {
-    if (err?.response?.data?.code == 401 || err?.response?.status == 401) {// 후에 code 변경
-      console.log("it's token expired")
-      return true
-    } else {
-      return false
-    }
-  },
-  async requestRefresh() {
-    let refreshToken = store.getters['info/infoListByKey']('refreshToken')
-    console.log('requestRefresh', refreshToken)
-    apiInstance = axios.create({
-      baseURL: baseURL
-    })
-    const res = await apiInstance.post('auth/refresh', { refreshToken: refreshToken.value })
-    console.log(res.data.accessToken)
-    return res
-  },
-  async doRefreshWork(doRequest, uri, params, headers) {
-    var flag = true
-    try {
-      var res = await this.requestRefresh()
-    } catch (error) {
-      console.log(error)
-      if ([400, 409].includes(error.response.status)) {
-        flag = false
-      } else {
-        this.expiredToken()
-        return
-      }
-    }
-
-    console.log(flag)
-
-    if (flag) {
-      this.setTokenState(res.data.accessToken, res.data.refreshToken)
-      this.setDefaultToken()
-    }
-
-    try {
-      const res = await doRequest(uri, params, headers)
-      console.log(res)
-      return this.ResponsePayload(res)
-    } catch (error) {
-      console.log(error)
-      this.expiredToken()
-    }
-  },
-  getBaseUrl() {
-    return apiInstance.defaults.baseURL
-  },
-  setDefaultToken() {
+  setResetAPI() {
     var accessToken = store.getters['info/infoListByKey']('accessToken')
     var accessTokenValue = (typeof accessToken == 'undefined') ? '' : accessToken.value
     console.log('setDefaultToken=> ' + accessTokenValue)
@@ -316,183 +364,94 @@ const fn = {
     setAxiosInterceptor(apiInstance)
     setAxiosInterceptor(multiPartApiInstance)
   },
-  setTokenState(accessToken, refreshToken) {
-    let accessTokenNativeDto = new NativeValueDto({ "key": 'accessToken', "value": accessToken, "type": 'P', "preference": 'pref_key_access_token' });
-    store.dispatch('info/setInfoValue', accessTokenNativeDto);
-    bridgeUtils.saveAccessToken(accessToken);
-
-    let refreshTokenNativeDto = new NativeValueDto({ "key": 'refreshToken', "value": refreshToken, "type": 'P', "preference": 'pref_key_refresh_token' });
-    store.dispatch('info/setInfoValue', refreshTokenNativeDto);
-    bridgeUtils.saveRefreshToken(refreshToken);
-  },
-  expiredToken() {
-    store.dispatch('info/setInfoListBlank'); // 토큰값을 제거해줍니다.
-    router.push(process.env.VUE_APP_LOGIN);
-  }
-  ,
   async post(uri, params, headers) {
-
-    const doPost = async (uri, params, headers) => {
-      return await apiInstance.post(`${prefix + uri}`, params, { headers: headers })
-    }
     try {
-      const res = await doPost(uri, params, headers)
+      const res = await apiInstance.post(`${prefix + uri}`, params, { headers: headers })
       return this.ResponsePayload(res)
     } catch (err) {
-      if (this.tokenErrorCheck(err)) {
-        var r = await this.doRefreshWork(doPost, uri, params, headers)
-        console.log(r)
-        return r
-      } else {
-        return this.ErrorPayload(err)
-      }
+      return this.ErrorPayload(err)
     }
 
   },
   async multiPartPost(uri, formData, headers) {
-
-    const doMultiPartPost = async (uri, formData, headers) => {
-      return await multiPartApiInstance.post(`${prefix + uri}`, formData, { headers: headers })
-    }
     try {
-      const res = await doMultiPartPost(uri, formData, headers)
+      const res = await multiPartApiInstance.post(`${prefix + uri}`, formData, { headers: headers })
       return this.ResponsePayload(res)
     } catch (err) {
-      if (this.tokenErrorCheck(err)) {
-        return await this.doRefreshWork(doMultiPartPost, uri, formData, headers)
-      } else {
-        return this.ErrorPayload(err)
-      }
+      return this.ErrorPayload(err)
     }
 
   },
 
   async multiPartPatch(uri, formData, headers) {
-
-    const doMultiPartPatch = async (uri, formData, headers) => {
-      return await multiPartApiInstance.patch(`${prefix + uri}`, formData, { headers: headers })
-    }
     try {
-      const res = await doMultiPartPatch(uri, formData, headers)
+      const res = await multiPartApiInstance.patch(`${prefix + uri}`, formData, { headers: headers })
       return this.ResponsePayload(res)
     } catch (err) {
-      if (this.tokenErrorCheck(err)) {
-        return await this.doRefreshWork(doMultiPartPatch, uri, formData, headers)
-      } else {
-        return this.ErrorPayload(err)
-      }
+      return this.ErrorPayload(err)
     }
-
   },
 
   async noneTokenPost(uri, params, headers) {
-    const doNoneTokenPost = async (uri, params, headers) => {
-      return await noneTokenApiInstance.post(`${prefix + uri}`, params, { headers: headers })
-    }
     try {
-      const res = await doNoneTokenPost(uri, params, headers)
+      const res = await noneTokenApiInstance.post(`${prefix + uri}`, params, { headers: headers })
       return this.ResponsePayload(res)
     } catch (err) {
       return this.ErrorPayload(err)
-
     }
   },
   async noneTokenDel(uri, params, headers) {
-    const doNoneTokenDel = async (uri, params, headers) => {
-      return await noneTokenApiInstance.delete(`${prefix + uri}`, { data: params }, { headers: headers })
-    }
     try {
-      const res = await doNoneTokenDel(uri, params, headers)
+      const res = await noneTokenApiInstance.delete(`${prefix + uri}`, { data: params }, { headers: headers })
       return this.ResponsePayload(res)
     } catch (err) {
       return this.ErrorPayload(err)
-
     }
   },
 
   async textPlainPost(uri, params, headers) {
-
-    const doTextPlainPost = async (uri, params, headers) => {
-      return await textPlainApiInstance.post(`${prefix + uri}`, params, { headers: headers })
-    }
     try {
-      const res = await doTextPlainPost(uri, params, headers)
+      const res = await textPlainApiInstance.post(`${prefix + uri}`, params, { headers: headers })
       return this.ResponsePayload(res)
     } catch (err) {
-      if (this.tokenErrorCheck(err)) {
-        return await this.doRefreshWork(doTextPlainPost, uri, params, headers)
-      } else {
-        return this.ErrorPayload(err)
-      }
+      return this.ErrorPayload(err)
     }
 
   },
   async get(uri, params, headers) {
-
-    const doGet = async (uri, params, headers) => {
-      return await apiInstance.get(`${prefix + uri}`, params, { headers: headers })
-    }
     try {
-      console.log('[GET]', uri, params)
-      console.log(apiInstance.config)
-      const res = await doGet(uri, params, headers)
+      const res = await apiInstance.get(`${prefix + uri}`, params, { headers: headers })
       return this.ResponsePayload(res)
     } catch (err) {
-      if (this.tokenErrorCheck(err)) {
-        return await this.doRefreshWork(doGet, uri, params, headers)
-      } else {
-        return this.ErrorPayload(err)
-      }
+      return this.ErrorPayload(err)
     }
 
   },
 
   async del(uri, params, headers) {
-
-    const doDel = async (uri, params, headers) => {
-      return await apiInstance.delete(`${prefix + uri}`, { data: params }, { headers: headers })
-    }
     try {
-      const res = await doDel(uri, params, headers)
+      const res = await apiInstance.delete(`${prefix + uri}`, { data: params }, { headers: headers })
       return this.ResponsePayload(res)
     } catch (err) {
-      if (this.tokenErrorCheck(err)) {
-        return await this.doRefreshWork(doDel, uri, params, headers)
-      } else {
-        return this.ErrorPayload(err)
-      }
+      return this.ErrorPayload(err)
     }
 
   },
   async patch(uri, params, headers) {
-
-    const doPatch = async (uri, params, headers) => {
-      return await apiInstance.patch(`${prefix + uri}`, params, { headers: headers })
-    }
     try {
-      const res = await doPatch(uri, params, headers)
+      const res = await apiInstance.patch(`${prefix + uri}`, params, { headers: headers })
       return this.ResponsePayload(res)
     } catch (err) {
-      if (this.tokenErrorCheck(err)) {
-        return await this.doRefreshWork(doPatch, uri, params, headers)
-      } else {
-        return this.ErrorPayload(err)
-      }
+      return this.ErrorPayload(err)
     }
 
   },
   async noneTokenPatch(uri, params, headers) {
-
-    const doPatch = async (uri, params, headers) => {
-      return await noneTokenApiInstance.patch(`${prefix + uri}`, params, { headers: headers })
-    }
     try {
-      const res = await doPatch(uri, params, headers)
+      const res = await noneTokenApiInstance.patch(`${prefix + uri}`, params, { headers: headers })
       return this.ResponsePayload(res)
     } catch (err) {
-
       return this.ErrorPayload(err)
-
     }
 
   },

@@ -15,9 +15,10 @@ export default {
   setup() {
     let terms = ref([false, false, false, false]);
     let stepper = ref(0);
-    let categoryItems = ['플랫폼품질혁신TF', '플랫폼서비스담당',
+    let categoryItems = ['플랫폼서비스본부', '플랫폼품질혁신TF', '플랫폼서비스담당',
       'Digico서비스담당', 'Digico개발센터'];
     let subcategoryFullList = [
+      [],
       [],
       ["메시징DX플랫폼팀", "서비스플랫폼팀",
         "금융결제DX플랫폼팀", "인증DX플랫폼팀", "플랫폼IT컨설팅팀"],
@@ -52,8 +53,8 @@ export default {
       accreditSuccess: false,
       accreditNumber: null,
       accreditStatusText: '',
-      emailExist: false, 
-      nicknameExist: false, 
+      emailExist: false,
+      nicknameExist: false,
     };
   },
   validations() {
@@ -163,8 +164,10 @@ export default {
   watch: {
     category(newVal, oldVal) {
       console.log(newVal)
-      if (newVal === '플랫폼품질혁신TF') {
+      if (newVal === '플랫폼서비스본부') {
         this.user.tid = 1;
+      } else if(newVal === '플랫폼품질혁신TF'){
+        this.user.tid = 2;
       } else {
         this.user.tid = '';
       }
@@ -172,27 +175,27 @@ export default {
     subcategory(newVal, oldVal) {
       console.log(newVal)
       if (newVal === '메시징DX플랫폼팀') {
-        this.user.tid = 5;
-      } else if (newVal === '서비스플랫폼팀') {
         this.user.tid = 6;
-      } else if (newVal === '금융결제DX플랫폼팀') {
+      } else if (newVal === '서비스플랫폼팀') {
         this.user.tid = 7;
-      } else if (newVal === '인증DX플랫폼팀') {
+      } else if (newVal === '금융결제DX플랫폼팀') {
         this.user.tid = 8;
-      } else if (newVal === '플랫폼IT컨설팅팀') {
+      } else if (newVal === '인증DX플랫폼팀') {
         this.user.tid = 9;
-      } else if (newVal === '미디어플랫폼팀') {
+      } else if (newVal === '플랫폼IT컨설팅팀') {
         this.user.tid = 10;
-      } else if (newVal === 'AI서비스팀') {
+      } else if (newVal === '미디어플랫폼팀') {
         this.user.tid = 11;
-      } else if (newVal === 'Safety플랫폼팀') {
+      } else if (newVal === 'AI서비스팀') {
         this.user.tid = 12;
-      } else if (newVal === 'AgileCore팀') {
+      } else if (newVal === 'Safety플랫폼팀') {
         this.user.tid = 13;
-      } else if (newVal === 'Digico사업수행팀') {
+      } else if (newVal === 'AgileCore팀') {
         this.user.tid = 14;
-      } else if (newVal === 'DX솔루션사업팀') {
+      } else if (newVal === 'Digico사업수행팀') {
         this.user.tid = 15;
+      } else if (newVal === 'DX솔루션사업팀') {
+        this.user.tid = 16;
       }
     }
   },
@@ -212,20 +215,20 @@ export default {
       const resNickname = await api.noneTokenPost('/member/members/existings', { type: 'nickname', value: this.user.nickname })
       if ([200, 201, 202].includes(resEmail.status)) {
         if (resEmail.data == true) {
-          this.emailExist = true 
+          this.emailExist = true
         }
         else if (resEmail.data == false) {
-          this.emailExist = false 
+          this.emailExist = false
         }
-      } 
+      }
       if ([200, 201, 202].includes(resNickname.status)) {
         if (resNickname.data == true) {
-          this.nicknameExist = true 
+          this.nicknameExist = true
         }
         else if (resNickname.data == false) {
-          this.nicknameExist = false 
+          this.nicknameExist = false
         }
-      } 
+      }
 
       if (!this.v$.$error && this.accreditSuccess && !this.emailExist && !this.nicknameExist && this.user.pw == this.user.new_pw) {
         const res = await api.noneTokenPost('/account/signup', this.user)
@@ -408,7 +411,7 @@ export default {
               </v-expansion-panel-text>
             </v-expansion-panel>
 
-            <!-- 
+            <!--
                                               <v-expansion-panel>
                                                 <v-expansion-panel-title @click="terms[3] = true">
                                                   디스퀘어 개인정보 처리방침 선택 동의(선택)
@@ -425,7 +428,7 @@ export default {
                                                   회사가 수집하는 개인정보 항목과 수집/이용하는 목적은 다음과 같습니다.
                                                   \n\n회원가입 및 로그인에서...........
                                                 </v-expansion-panel-text>
-                                              </v-expansion-panel> 
+                                              </v-expansion-panel>
                                         -->
           </v-expansion-panels>
 
@@ -703,7 +706,10 @@ input[type="number"]::-webkit-scrollbar-button {
   -webkit-appearance: none;
   margin: 0;
 }
+
+::v-deep input::-webkit-outer-spin-button,
+::v-deep input::-webkit-inner-spin-button {
+-webkit-appearance: none;
+margin: 0;
+}
 </style>
-
-
-

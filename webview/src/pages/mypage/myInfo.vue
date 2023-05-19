@@ -12,9 +12,10 @@ const ktEmailValidator = (email) => email == "" || new RegExp("[A-Za-z0-9]+@kt.c
 
 export default {
   setup() {
-    let categoryItems = ['플랫폼품질혁신TF', '플랫폼서비스담당',
+    let categoryItems = ['플랫폼서비스본부', '플랫폼품질혁신TF', '플랫폼서비스담당',
       'Digico서비스담당', 'Digico개발센터'];
     let subcategoryFullList = [
+      [],
       [],
       ["메시징DX플랫폼팀", "서비스플랫폼팀",
         "금융결제DX플랫폼팀", "인증DX플랫폼팀", "플랫폼IT컨설팅팀"],
@@ -38,6 +39,7 @@ export default {
         name: "",
         ktMail: "",
       },
+      userOriginNickName: '',
       category: [],
       subcategory: [],
       subcategoryItems: [],
@@ -91,8 +93,10 @@ export default {
   watch: {
     category(newVal, oldVal) {
       console.log(newVal)
-      if (newVal === '플랫폼품질혁신TF') {
+      if (newVal === '플랫폼서비스본부') {
         this.user.tid = 1;
+      } else if(newVal === '플랫폼품질혁신TF'){
+        this.user.tid = 2;
       } else {
         this.user.tid = '';
       }
@@ -100,27 +104,27 @@ export default {
     subcategory(newVal, oldVal) {
       console.log(newVal)
       if (newVal === '메시징DX플랫폼팀') {
-        this.user.tid = 5;
-      } else if (newVal === '서비스플랫폼팀') {
         this.user.tid = 6;
-      } else if (newVal === '금융결제DX플랫폼팀') {
+      } else if (newVal === '서비스플랫폼팀') {
         this.user.tid = 7;
-      } else if (newVal === '인증DX플랫폼팀') {
+      } else if (newVal === '금융결제DX플랫폼팀') {
         this.user.tid = 8;
-      } else if (newVal === '플랫폼IT컨설팅팀') {
+      } else if (newVal === '인증DX플랫폼팀') {
         this.user.tid = 9;
-      } else if (newVal === '미디어플랫폼팀') {
+      } else if (newVal === '플랫폼IT컨설팅팀') {
         this.user.tid = 10;
-      } else if (newVal === 'AI서비스팀') {
+      } else if (newVal === '미디어플랫폼팀') {
         this.user.tid = 11;
-      } else if (newVal === 'Safety플랫폼팀') {
+      } else if (newVal === 'AI서비스팀') {
         this.user.tid = 12;
-      } else if (newVal === 'AgileCore팀') {
+      } else if (newVal === 'Safety플랫폼팀') {
         this.user.tid = 13;
-      } else if (newVal === 'Digico사업수행팀') {
+      } else if (newVal === 'AgileCore팀') {
         this.user.tid = 14;
-      } else if (newVal === 'DX솔루션사업팀') {
+      } else if (newVal === 'Digico사업수행팀') {
         this.user.tid = 15;
+      } else if (newVal === 'DX솔루션사업팀') {
+        this.user.tid = 16;
       }
     }
   },
@@ -129,6 +133,7 @@ export default {
     userData.then(
       (response) => {
         console.log('user infooooooo', response)
+        this.userOriginNickName = response.data.nickname;
         this.user.nickname = response.data.nickname;
         this.user.name = response.data.name;
         this.user.email = response.data.email;
@@ -163,10 +168,10 @@ export default {
 
       const resNickname = await api.noneTokenPost('/member/members/existings', { type: 'nickname', value: this.user.nickname })
       if ([200, 201, 202].includes(resNickname.status)) {
-        if (resNickname.data == true) {
+        if (resNickname.data == true && this.userOriginNickName !== this.user.nickname) {
           this.nicknameExist = true 
         }
-        else if (resNickname.data == false) {
+        else {
           this.nicknameExist = false 
         }
       } 
@@ -376,9 +381,8 @@ export default {
   <div class="alert mb-2">
     <div>
       <div class="font-sm ml-5 mt-3 mb-3 mr-5 font_gray">
-        회원 탈퇴일로부터 계정 정보(이메일/사내메일/닉네임/연락처/소속팀)는
-        <span style="color:deepskyblue" class="font-bold">개인정보 보호방침</span>에 따라 <b>30일간 보관 및 잠김</b>되며, 30일 경과된 후에는 모든 개인
-        정보는 완전히 삭제되어 더 이상 복구할 수 없게 됩니다.
+        회원 탈퇴일로부터 <b>계정 정보(이메일/사내메일/닉네임/연락처/소속팀)</b>와
+        모든 개인정보는 <span style="color:crimson" class="font-bold">완전히 삭제</span>되어 더 이상 복구할 수 없게 됩니다.
         작성된 게시글은 삭제되지 않으며, Dsquare로 소유권이 귀속됩니다.
       </div>
     </div>

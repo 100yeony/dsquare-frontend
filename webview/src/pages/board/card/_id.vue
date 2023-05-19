@@ -89,13 +89,13 @@
         </v-chip>
 
         <v-row class="mt-2">
-          <v-col cols="2" class="center-container">
+          <v-col cols="2" class="center-container heart-comment">
             <span @click="toggleLike('card', cardData.cardId)">
               <template v-if="cardData.likeYn"><v-icon size="small" color="red">mdi-heart</v-icon></template>
               <template v-else><v-icon size="small">mdi-heart-outline</v-icon></template>
             </span>
             <span class="text-caption font-0000008F ml-1">{{ cardData.likeCnt }}</span></v-col>
-          <v-col cols="2" class="center-container"><v-icon size="small">mdi-message-text-outline</v-icon><span
+          <v-col cols="2" class="center-container heart-comment"><v-icon size="small">mdi-message-text-outline</v-icon><span
               class="text-caption font-0000008F ml-1">{{ cardData.commentCnt }}</span></v-col>
         </v-row>
       </v-card-item>
@@ -399,6 +399,7 @@ export default {
     editPost(index) {
       console.log(index)
       if (index === 0) {  // 수정
+        store.dispatch('info/setPageState', {});
         this.$router.push({
           path: process.env.VUE_APP_BOARD_CARD_EDIT,
           query: {
@@ -441,6 +442,7 @@ export default {
     async requestDelCard() {
       const res = await api.del('board/cards/' + this.$route.query.id, '')
       console.log(res)
+      store.dispatch('info/setPageState', {});
       this.$router.push(process.env.VUE_APP_BOARD_CARD);
     },
 
@@ -535,5 +537,9 @@ export default {
   border-color: rgb(var(--v-theme-primary));
   background-color: rgb(var(--v-theme-primary));
   color: white;
+}
+
+.heart-comment {
+  align-items: end !important;
 }
 </style>
