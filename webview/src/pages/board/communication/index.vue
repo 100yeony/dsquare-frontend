@@ -174,7 +174,7 @@ export default {
         this.saveState();
         if (item.talkId) {
           this.$router.push({
-            path: item?.talkId + '/',
+            path: '/board/communication/' + item?.talkId + '/',
             title: item.title
           });
         } else {
@@ -187,7 +187,7 @@ export default {
     handleWritePage() {
       this.saveState();
       this.$router.push({
-        path: 'write/' + Math.random().toString(36).substring(7) + '/',
+        path: '/board/communication/write/' + Math.random().toString(36).substring(7) + '/',
       });
 
     },

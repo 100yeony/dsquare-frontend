@@ -65,47 +65,35 @@ export default {
       console.log("[handleCardClicked]", item);
       if ('qid' in item) {
         this.$router.push({
-          path: process.env.VUE_APP_BOARD_QNA_DETAIL,
+          path: '/board/qna/' + item?.qid + '/',
           meta: {
             back: process.env.VUE_APP_MYPAGE_MYPOST,
             title: item?.title,
           },
-          query: {
-            qid: item?.qid
-          }
         });
       } else if ('talkId' in item) {
         this.$router.push({
-          path: process.env.VUE_APP_BOARD_COMMUNICATION_DETAIL,
+          path: '/board/communication/' + item?.talkId + '/',
           meta: {
             back: process.env.VUE_APP_MYPAGE_MYPOST,
           },
           title: item?.title,
-          query: {
-            talkId: item?.talkId
-          }
         });
       } else if ('carrotId' in item) {
         this.$router.push({
-          path: process.env.VUE_APP_BOARD_DEAL_DETAIL,
+          path: '/board/deal/' + item?.carrotId + '/',
           meta: {
             back: process.env.VUE_APP_MYPAGE_MYPOST,
           },
           title: item?.title,
-          query: {
-            carrotId: item?.carrotId
-          }
         });
       } else {
         this.$router.push({
-          path: process.env.VUE_APP_BOARD_CARD_DETAIL,
+          path: '/board/card/' + item?.cardId + '/',
           meta: {
             back: process.env.VUE_APP_MYPAGE_MYPOST,
           },
           title: item?.title,
-          query: {
-            id: item?.cardId,
-          }
         });
       }
     },

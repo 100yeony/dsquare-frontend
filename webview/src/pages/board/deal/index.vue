@@ -173,7 +173,7 @@ export default {
         this.saveState();
         if (item.carrotId) {
           this.$router.push({
-            path: item?.carrotId + '/',
+            path: '/board/deal/' + item?.carrotId + '/',
             title: item.title,
           });
         } else {
@@ -186,7 +186,7 @@ export default {
     handleWritePage() {
       this.saveState();
       this.$router.push({
-        path: 'write/' + Math.random().toString(36).substring(7) + '/',
+        path: '/board/deal/write/' + Math.random().toString(36).substring(7) + '/',
       });
 
     },

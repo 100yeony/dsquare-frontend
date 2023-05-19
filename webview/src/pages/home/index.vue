@@ -28,7 +28,7 @@
       </v-col>
     </v-row>
     <!-- My Weekly Hot body-->
-    <v-row class="mb-1"> 
+    <v-row class="mb-1">
       <v-col cols="10">
         <p class=" text-h6 font-weight-black">Weekly Hot</p>
       </v-col>
@@ -42,8 +42,9 @@
         </template>
         <template v-else>
           <v-container class="text-center">
-           <p><img src="@/assets/images/empty.png" width="25" height="25"></p>
-            한 주간 관심이 많았던 태그가 없어요</v-container>
+            <p><img src="@/assets/images/empty.png" width="25" height="25"></p>
+            한 주간 관심이 많았던 태그가 없어요
+          </v-container>
         </template>
       </v-slide-group>
     </div>
@@ -56,8 +57,7 @@
 
     </v-row>
     <v-card>
-      <v-tabs color="primary" align-tabs="title" height="2rem"
-        grow v-model="recentTab">
+      <v-tabs color="primary" align-tabs="title" height="2rem" grow v-model="recentTab">
         <v-tab v-for="(i, index) in recentTabTitle.length" :key="index" :value="index" slider-color="primary"
           class="pa-0">
           {{ recentTabTitle[index] }}
@@ -80,12 +80,13 @@
                       </v-col>
                       <v-col cols="2">
                         <td class="text-caption font-0000008F">
-                          <img src="@/assets/images/icons/icon_heart.png" width="15" height="15"/> {{ post.likeCnt }}
+                          <img src="@/assets/images/icons/icon_heart.png" width="15" height="15" /> {{ post.likeCnt }}
                         </td>
                       </v-col>
                       <v-col cols="2">
                         <td class="text-caption font-0000008F">
-                          <img src="@/assets/images/icons/icon_message-circle.png" width="15" height="15"/> {{ "qid" in post ? post.answerCnt :
+                          <img src="@/assets/images/icons/icon_message-circle.png" width="15" height="15" /> {{ "qid" in
+                            post ? post.answerCnt :
                             post.commentCnt }}
                         </td>
                       </v-col>
@@ -108,8 +109,7 @@
 
     </v-row>
     <v-card>
-      <v-tabs color="primary" align-tabs="title" height="2rem"
-        grow v-model="hallOfFameTab">
+      <v-tabs color="primary" align-tabs="title" height="2rem" grow v-model="hallOfFameTab">
         <v-tab v-for="(i, index) in hallOfFameTabTitle.length" :key="index" :value="index" slider-color="primary">
           {{ hallOfFameTabTitle[index] }}
         </v-tab>
@@ -123,19 +123,20 @@
                   <tr v-for="post in hall" :key="post.qid">
                     <v-row no-gutters @click="pushPost(post)">
                       <v-col cols="8">
-                        <td class="d-inline-block text-truncate text-body-2 font-weight-bold" style="max-width:95%;" 
+                        <td class="d-inline-block text-truncate text-body-2 font-weight-bold" style="max-width:95%;"
                           color="#0000008F">
                           {{ post.title }}
                         </td>
                       </v-col>
                       <v-col cols="2">
                         <td class="text-caption font-0000008F">
-                          <img src="@/assets/images/icons/icon_heart.png" width="15" height="15"/> {{ post.likeCnt }}
+                          <img src="@/assets/images/icons/icon_heart.png" width="15" height="15" /> {{ post.likeCnt }}
                         </td>
                       </v-col>
                       <v-col cols="2">
                         <td class="text-caption font-0000008F">
-                          <img src="@/assets/images/icons/icon_message-circle.png" width="15" height="15"/> {{ post.answerCnt }}
+                          <img src="@/assets/images/icons/icon_message-circle.png" width="15" height="15" /> {{
+                            post.answerCnt }}
                         </td>
                       </v-col>
                     </v-row>
@@ -156,8 +157,7 @@
     </v-row>
 
     <v-card>
-      <v-tabs color="primary" align-tabs="title" height="2rem"
-        grow v-model="userRankingTab">
+      <v-tabs color="primary" align-tabs="title" height="2rem" grow v-model="userRankingTab">
         <v-tab v-for="(i, index) in userRankingTabTitle.length" :key="index" :value="index" slider-color="primary">
           {{ userRankingTabTitle[index] }}
         </v-tab>
@@ -196,7 +196,8 @@
                       </v-col>
                       <v-col align-self="center" cols="2">
                         <td class="text-caption font-0000008F">
-                          <img src="@/assets/images/icons/icon_message-circle.png" width="15" height="15"/> {{ user.postCnt }}
+                          <img src="@/assets/images/icons/icon_message-circle.png" width="15" height="15" /> {{
+                            user.postCnt }}
                         </td>
                       </v-col>
                     </v-row>
@@ -369,28 +370,23 @@ export default {
 
     },
     pushPost(post) {
-      var path, query;
+      var path = ''
 
       if ("qid" in post) {
-        path = process.env.VUE_APP_BOARD_QNA_DETAIL;
-        query = { qid: post.qid };
+        path = '/board/qna/' + post.qid + '/'
       } else {
         if ("talkId" in post) {
-          path = process.env.VUE_APP_BOARD_COMMUNICATION_DETAIL;
-          query = { talkId: post.talkId };
+          path = '/board/communication/' + post.talkId + '/'
         } else if ("carrotId" in post) {
-          path = process.env.VUE_APP_BOARD_DEAL_DETAIL;
-          query = { carrotId: post.carrotId };
+          path = '/board/deal/' + post.carrotId + '/'
         } else {
-          path = process.env.VUE_APP_BOARD_CARD_DETAIL;
-          query = { id: post.cardId };
+          path = '/board/card/' + post.cardId + '/'
         }
       }
 
       this.$router.push({
         path: path,
         title: post?.title,
-        query: query
       });
     },
 
@@ -473,16 +469,15 @@ export default {
   padding: 0px;
 }
 
-.v-col-10{
-  padding-bottom: 0px !important; 
+.v-col-10 {
+  padding-bottom: 0px !important;
 }
 
-.v-tab.v-tab{
+.v-tab.v-tab {
   min-width: 80px !important;
 }
 
-.place{
+.place {
   border-radius: 10px !important;
 }
-
 </style>

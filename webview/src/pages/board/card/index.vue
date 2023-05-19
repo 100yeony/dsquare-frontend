@@ -473,7 +473,7 @@ export default {
       if (item) {
         this.saveState();
         this.$router.push({
-          path: item?.cardId + '/',
+          path: '/board/card/' + item?.cardId + '/',
           title: item?.title
         });
       }
