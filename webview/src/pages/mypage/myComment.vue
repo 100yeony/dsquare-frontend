@@ -130,29 +130,23 @@ export default {
       // }
     },
     handleCardClicked(item) {
-      var path, query;
+      var path = '';
 
       if ("aid" in item) {
-        path = process.env.VUE_APP_BOARD_QNA_DETAIL;
-        query = { qid: item.qid };
+        path = '/board/qna/' + item.qid + '/';
       } else {
         var postId = item.postId;
 
         if (item.boardType === "QUESTION") {
-          path = process.env.VUE_APP_BOARD_QNA_DETAIL;
-          query = { qid: postId };
+          path = '/board/qna/' + postId + '/';
         } else if (item.boardType === "ANSWER") {
-          path = process.env.VUE_APP_BOARD_QNA_DETAIL;
-          query = { qid: item.post.qid };
+          path = '/board/qna/' + item.post.qid + '/';
         } else if (item.boardType == "CARD") {
-          path = process.env.VUE_APP_BOARD_CARD_DETAIL;
-          query = { id: postId };
+          path = '/board/card/' + postId + '/';
         } else if (item.boardType == "TALK") {
-          path = process.env.VUE_APP_BOARD_COMMUNICATION_DETAIL;
-          query = { talkId: postId };
+          path = '/board/communication/' + postId + '/';
         } else if (item.boardType == "CARROT") {
-          path = process.env.VUE_APP_BOARD_DEAL_DETAIL;
-          query = { carrotId: postId };
+          path = '/board/deal/' + postId + '/';
         } else {
           console.log("오류");
           return;
@@ -163,7 +157,6 @@ export default {
       this.$router.push({
         path: path,
         title: item?.title,
-        query: query
       });
     },
     async loadMore() {

@@ -452,7 +452,7 @@ export default {
       this.saveState();
       if (item) {
         this.$router.push({
-          path: item?.qid + '/',
+          path: '/board/qna/' + item?.qid + '/',
           title: item?.title,
         });
       }
@@ -460,7 +460,7 @@ export default {
     handleWritePage() {
       this.saveState();
       this.$router.push({
-        path: 'write/' + Math.random().toString(36).substring(7) + '/',
+        path: '/board/qna/write/' + Math.random().toString(36).substring(7) + '/',
         query: {
           work: (this.qnaTab == 0) ? true : false
         }
