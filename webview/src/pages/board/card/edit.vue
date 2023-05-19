@@ -135,7 +135,7 @@ export default {
       };
     },
     addChips() {
-      let item = this.chipText.trim().replaceAll('#', '')
+      let item = this.chipText.trim().replaceAll('#', '').toLowerCase()
       if (item !== "") {
         this.chipData.add(item)
       }
