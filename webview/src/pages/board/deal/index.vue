@@ -52,7 +52,7 @@
     <div v-for="(item, index) in dealCardData" :value="item.carrotId">
       <CarrotCard class="mt-2" :data="item" @handle-card-clicked="handleCardClicked" />
     </div>
-    <Observe @triggerIntersected="loadMore" />
+    <Observe @triggerIntersected="loadMore" ref="observe"/>
   </div>
 
   <v-menu transition="slide-y-transition">
@@ -72,6 +72,7 @@ import CarrotCard from "@/components/cards/CarrotCard";
 import Observe from "@/components/Observer";
 import api from '@/api';
 import store from "@/store";
+import { useElementVisibility } from '@vueuse/core';
 
 let dealUri = 'board/carrots';
 
@@ -117,6 +118,9 @@ export default {
       { title: "좋아요순" },
     ]
 
+    const observe = ref(null);
+    const observeIsVisible = useElementVisibility(observe);
+
     return {
       searchKey,
       searchContent,
@@ -128,6 +132,9 @@ export default {
       exportDateFromTimeStamp,
       searchParams: {},
       sortMenu,
+
+      observe,
+      observeIsVisible,
     };
   },
   data() {
@@ -148,6 +155,11 @@ export default {
   methods: {
     async search() {
       if (this.searchKey != '' && this.searchContent != '') {
+        let visibleBefore = false;
+        let visibleAfter = false;
+
+        visibleBefore = this.observeIsVisible;
+
         var key = '';
         if (this.searchKey == '제목 + 내용') {
           key = 'titleAndContent';
@@ -161,9 +173,16 @@ export default {
           page: (this.dealCardDataPage = 0),
           size: (this.dealCardDataSize = 10),
         }
+
         this.searchParams = params;
         this.dealCardData = [];
         this.searchFlag = (this.dealCardData.length == 0) ? true:false;
+
+        visibleAfter = this.observeIsVisible;
+
+        if (visibleBefore == visibleAfter) {
+          this.loadMore();
+        }
       }
     },
     handleCardClicked(item) {
@@ -221,10 +240,21 @@ export default {
       });
     },
     sort(index) {
+      let visibleBefore = false;
+      let visibleAfter = false;
+
+      visibleBefore = this.observeIsVisible;
+
       this.dealCardDataOrder = index ? "like" : "create";
       this.dealCardDataPage = 0;
       this.dealCardDataSize = 10;
       this.dealCardData = [];
+
+      visibleAfter = this.observeIsVisible;
+
+      if (visibleBefore == visibleAfter) {
+        this.loadMore();
+      }
     },
   },
 };

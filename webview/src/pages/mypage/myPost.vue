@@ -1,10 +1,12 @@
 <script>
+import { ref } from "vue";
 import BoardCard from "@/components/cards/BoardCard";
 import TalkCard from "@/components/cards/TalkCard";
 import CarrotCard from "@/components/cards/CarrotCard";
 import RequestCard from "@/components/cards/RequestCard";
 import Observe from "@/components/Observer";
 import api from '@/api';
+import { useElementVisibility } from '@vueuse/core';
 
 let qnaUri = 'mypage/questions';
 let commUri = 'mypage/talks';
@@ -23,8 +25,25 @@ export default {
   setup() {
     let myPostTabTitle = ["궁금해요", "소통해요", "당근해요", "카드주세요"];
 
+    const qnaObserve = ref(null);
+    const qnaObserveIsVisible = useElementVisibility(qnaObserve);
+    const commObserve = ref(null);
+    const commObserveIsVisible = useElementVisibility(commObserve);
+    const dealObserve = ref(null);
+    const dealObserveIsVisible = useElementVisibility(dealObserve);
+    const requestedObserve = ref(null);
+    const requestedObserveIsVisible = useElementVisibility(requestedObserve);
+
     return {
       myPostTabTitle,
+      qnaObserve,
+      qnaObserveIsVisible,
+      commObserve,
+      commObserveIsVisible,
+      dealObserve,
+      dealObserveIsVisible,
+      requestedObserve,
+      requestedObserveIsVisible,
     };
   },
   data() {
@@ -208,33 +227,54 @@ export default {
       );
     },
     sort(index) {
+      let visibleBefore = false;
+      let visibleAfter = false;
+
       // index 0=좋아요순, 1=등록순
       if (this.qnaTab == 0) {
+        visibleBefore = this.qnaObserveIsVisible;
+
         this.boardCardDataOrder = index ? "like" : "create";
         this.boardCardDataPage = 0;
         this.boardCardDataSize = 10;
         this.boardCardData = [];
+
+        visibleAfter = this.qnaObserveIsVisible;
       }
       else if (this.qnaTab == 1) {
+        visibleBefore = this.commObserveIsVisible;
+
         this.commCardDataOrder = index ? "like" : "create";
         this.commCardDataPage = 0;
         this.commCardDataSize = 10;
         this.commCardData = [];
+
+        visibleAfter = this.commObserveIsVisible;
       }
       else if (this.qnaTab == 2) {
+        visibleBefore = this.dealObserveIsVisible;
+
         this.dealCardDataOrder = index ? "like" : "create";
         this.dealCardDataPage = 0;
         this.dealCardDataSize = 10;
         this.dealCardData = [];
+
+        visibleAfter = this.dealObserveIsVisible;
       }
       else if (this.qnaTab == 3) {
+        visibleBefore = this.requestedObserveIsVisible;
+
         this.requestedCardDataOrder = index ? "like" : "create";
         this.requestedCardDataPage = 0;
         this.requestedCardDataSize = 10;
-        this.requestedCardCardData = [];
+        this.requestedCardData = [];
+
+        visibleAfter = this.requestedObserveIsVisible;
       }
 
-      this.loadMore();
+      if (visibleBefore == visibleAfter) {
+        this.loadMore();
+      }
     },
     leftPad(value) {
       if (value >= 10) {
@@ -291,7 +331,7 @@ export default {
         <div v-for="(item, index) in boardCardData" :key="index" :value="item.qid">
           <BoardCard class="mt-2" :data="item" @handle-card-clicked="handleCardClicked" />
         </div>
-        <Observe @triggerIntersected="loadMore" />
+        <Observe @triggerIntersected="loadMore" ref="qnaObserve"/>
       </v-window-item>
 
 
@@ -317,7 +357,7 @@ export default {
         <div v-for="(item, index) in commCardData" :key="index" :value="item.talkId">
           <TalkCard class="mt-2" :data="item" @handle-card-clicked="handleCardClicked" />
         </div>
-        <Observe @triggerIntersected="loadMore" />
+        <Observe @triggerIntersected="loadMore" ref="commObserve" />
       </v-window-item>
 
 
@@ -343,7 +383,7 @@ export default {
         <div v-for="(item, index) in dealCardData" :key="index" :value="item.carrotId">
           <CarrotCard class="mt-2" :data="item" @handle-card-clicked="handleCardClicked" />
         </div>
-        <Observe @triggerIntersected="loadMore" />
+        <Observe @triggerIntersected="loadMore" ref="dealObserve" />
       </v-window-item>
 
 
@@ -369,7 +409,7 @@ export default {
         <div v-for="(item, index) in requestedCardData" :key="index" :value="item.cardId">
           <RequestCard class="mt-2" :data="item" @handle-card-clicked="handleCardClicked" />
         </div>
-        <Observe @triggerIntersected="loadMore" />
+        <Observe @triggerIntersected="loadMore" ref="requestedObserve" />
       </v-window-item>
     </v-window>
   </div>

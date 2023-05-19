@@ -88,7 +88,7 @@
             <RequestCard class=" mt-2" :data="item" @handle-card-clicked="handleCardClicked"
               @handle-card-dialog="handleCardDialog(item)" :style="item.style" />
           </div>
-          <Observe @triggerIntersected="loadMore" />
+          <Observe @triggerIntersected="loadMore" ref="requestObserve"/>
         </div>
 
       </v-window-item>
@@ -148,7 +148,7 @@
             <RequestCard class=" mt-2" :data="item" @handle-card-clicked="handleCardClicked"
               @handle-card-dialog="handleCardDialog(item)" :style="item.style" />
           </div>
-          <Observe @triggerIntersected="loadMore" />
+          <Observe @triggerIntersected="loadMore" ref="completedObserve"/>
         </div>
       </v-window-item>
     </v-window>
@@ -177,6 +177,7 @@ import object from "@/utils/objectUtils";
 import Flicking from "@egjs/vue3-flicking";
 import "@egjs/vue3-flicking/dist/flicking.css";
 import { AutoPlay } from "@egjs/flicking-plugins";
+import { useElementVisibility } from '@vueuse/core';
 
 let requestUri = 'board/cards';
 let cardOfTheMonthUri = 'board/cards/card-of-the-month';
@@ -223,6 +224,11 @@ export default {
 
     let cardTabTitle = ["카드대기중", "선정된카드"];
 
+    const requestObserve = ref(null);
+    const completedObserve = ref(null);
+    const requestObserveIsVisible = useElementVisibility(requestObserve);
+    const completedObserveIsVisible = useElementVisibility(completedObserve);
+
     return {
       categoryItems, subcategoryFullList,
       searchUri,
@@ -230,6 +236,11 @@ export default {
       flickingPlugins,
       flickingOptions,
       cardTabTitle,
+
+      requestObserve,
+      completedObserve,
+      requestObserveIsVisible,
+      completedObserveIsVisible,
     };
   },
   data() {
@@ -281,7 +292,6 @@ export default {
   },
   watch: {
     category(newVal, oldVal) {
-      console.log(newVal)
       if (newVal === '플랫폼품질혁신TF') {
         this.projTeamId = 1;
       } else {
@@ -289,7 +299,6 @@ export default {
       }
     },
     subcategory(newVal, oldVal) {
-      console.log(newVal)
       if (newVal === '메시징DX플랫폼팀') {
         this.projTeamId = 5;
       } else if (newVal === '서비스플랫폼팀') {
@@ -315,7 +324,6 @@ export default {
       }
     },
     cardTab(newVal, oldVal) {
-      console.log(newVal)
       this.tabChanged();
     }
   },
@@ -365,7 +373,12 @@ export default {
     },
     async search() {
       if (typeof this.subcategory == 'string' || typeof this.category == 'string') {
+        let visibleBefore = false;
+        let visibleAfter = false;
+
         if (this.cardTab == 0) {
+          visibleBefore = this.requestObserveIsVisible;
+
           var params = {
             projTeamId: this.projTeamId,
             order: this.requestCardDataOrder,
@@ -375,7 +388,11 @@ export default {
           this.searchParams = params;
           this.requestCardData = [];
           this.searchFlag = (this.requestCardData.length == 0) ? true : false
+
+          visibleAfter = this.requestObserveIsVisible;
         } else {
+          visibleBefore = this.completedObserveIsVisible;
+
           var params = {
             projTeamId: this.projTeamId,
             order: this.completedCardDataOrder,
@@ -385,6 +402,12 @@ export default {
           this.searchParams = params;
           this.completedCardData = [];
           this.completedFlag = (this.completedCardData.length == 0) ? true : false
+          
+          visibleAfter = this.completedObserveIsVisible;
+        }
+
+        if (visibleBefore == visibleAfter) {
+          this.loadMore();
         }
       }
     },
@@ -426,7 +449,6 @@ export default {
     handleCardClicked(item) {
       if (item) {
         this.saveState();
-        console.log(item);
         this.$router.push({
           path: process.env.VUE_APP_BOARD_CARD_DETAIL,
           title: item?.title,
@@ -438,7 +460,6 @@ export default {
     },
     handleeWritePage() {
       this.saveState();
-      console.log("handleeWritePage");
       this.$router.push({
         path: process.env.VUE_APP_BOARD_CARD_WRITE,
         query: {},
@@ -476,47 +497,54 @@ export default {
       this.scrollPosition = window.scrollY;
     },
     handleCardDialog(item) {
-      console.log('handel card dialog')
       this.selectedItem = item;
       this.isShow = true;
     },
     onConfirm() {
-      console.log('confirm payload:');
       this.isShow = false;
       this.cardSelect()
     },
     onCancel() {
-      console.log('cancel');
       this.isShow = false;
     },
     async cardSelect() {
-      console.log(this.selectedItem)
       const res = await api.patch('board/cards/' + this.selectedItem.cardId + '/chosen').then(
         (response) => {
-          // console.log("index of selectedItem = " + this.requestCardData.indexOf(this.selectedItem));
-          // this.requestCardData.splice(this.requestCardData.indexOf(this.selectedItem), 1);
           this.sort(1);
           this.cardTab = 1;
           this.sort(1);
         }
       );
-      console.log(res)
       this.selectedItem = {}
     },
     sort(index) {
-      console.log("sort");
+      let visibleBefore = false;
+      let visibleAfter = false;
+
       if (this.cardTab == 0) {
+        visibleBefore = this.requestObserveIsVisible;
+
         this.requestCardDataOrder = index ? "like" : "create";
         this.requestCardDataPage = 0;
         this.requestCardDataSize = 10;
         this.requestCardData = [];
+
+        visibleAfter = this.requestObserveIsVisible;
       }
       // 비업무
       else if (this.cardTab == 1) {
+        visibleBefore = this.requestObserveIsVisible;
+
         this.completedCardDataOrder = index ? "like" : "create";
         this.completedCardDataPage = 0;
         this.completedCardDataSize = 10;
         this.completedCardData = [];
+
+        visibleAfter = this.requestObserveIsVisible;
+      }
+
+      if (visibleBefore == visibleAfter) {
+        this.loadMore();
       }
     },
   },
