@@ -108,7 +108,7 @@ export default {
       this.$router.push(process.env.VUE_APP_BOARD_DEAL);
     },
     fillForm() {
-      this.editorData = "<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;</p><p>&nbsp;</p><p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;(사진)</p><p>&nbsp;</p><p>&nbsp;</p><p>품명: &nbsp;</p><p>장소:&nbsp;</p><p>시간:</p><p>가격:</p><p>상태: &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</p>"
+      this.editorData = "<p>(제품 사진을 첨부해주세요)</p><p>&nbsp;</p><p>&nbsp;</p><p>&nbsp;</p><p>[ 품명 ] &nbsp;</p><p>[ 가격 ] &nbsp;</p><p>[ 상태 ] &nbsp;</p><p>[ 장소 ] &nbsp;</p><p>[ 시간 ] &nbsp;</p>"
     }
   }
 };
