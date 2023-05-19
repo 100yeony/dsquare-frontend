@@ -6,7 +6,6 @@ import CarrotCard from "@/components/cards/CarrotCard";
 import RequestCard from "@/components/cards/RequestCard";
 import Observe from "@/components/Observer";
 import api from '@/api';
-import { useElementVisibility } from '@vueuse/core';
 
 let qnaUri = 'mypage/questions';
 let commUri = 'mypage/talks';
@@ -24,26 +23,8 @@ export default {
   },
   setup() {
     let myPostTabTitle = ["궁금해요", "소통해요", "당근해요", "카드주세요"];
-
-    const qnaObserve = ref(null);
-    const qnaObserveIsVisible = useElementVisibility(qnaObserve);
-    const commObserve = ref(null);
-    const commObserveIsVisible = useElementVisibility(commObserve);
-    const dealObserve = ref(null);
-    const dealObserveIsVisible = useElementVisibility(dealObserve);
-    const requestedObserve = ref(null);
-    const requestedObserveIsVisible = useElementVisibility(requestedObserve);
-
     return {
       myPostTabTitle,
-      qnaObserve,
-      qnaObserveIsVisible,
-      commObserve,
-      commObserveIsVisible,
-      dealObserve,
-      dealObserveIsVisible,
-      requestedObserve,
-      requestedObserveIsVisible,
     };
   },
   data() {
@@ -79,57 +60,7 @@ export default {
     }
   },
   methods: {
-    // async requestAllQuestions() {
-    //   var res = await api.get(qnaUri)
-    //   res.data.forEach((d) => {
-    //     d.createDate = this.exportDateFromTimeStamp(d.createDate)
-    //   });
-    //   this.boardCardData = res.data;
-    // },
-    // async requestAllComms() {
-    //   var res = await api.get(commUri)
-    //   res.data.forEach((d) => {
-    //     d.createDate = this.exportDateFromTimeStamp(d.createDate)
-    //   });
-    //   this.commCardData = res.data;
-    // },
-    // async requestAllDeals() {
-    //   var res = await api.get(dealUri)
-    //   res.data.forEach((d) => {
-    //     d.createDate = this.exportDateFromTimeStamp(d.createDate)
-    //   });
-    //   this.dealCardData = res.data;
-
-
-    // },
-    // async requestAllRequestedCards() {
-    //   var res = await api.get(requestCardUri)
-    //   res.data.forEach((d) => {
-    //     d.createDate = this.exportDateFromTimeStamp(d.createDate)
-    //   });
-    //   this.requestedCardData = res.data;
-
-    // },
-
-    tabChanged() {
-      // if (this.qnaTab == 0) {
-      //   if (!this.boardCardData.length) {
-      //     this.requestAllQuestions();
-      //   }
-      // } else if (this.qnaTab == 1) {
-      //   if (!this.commCardData.length) {
-      //     this.requestAllComms();
-      //   }
-      // } else if (this.qnaTab == 2) {
-      //   if (!this.dealCardData.length) {
-      //     this.requestAllDeals();
-      //   }
-      // } else {
-      //   if (!this.requestedCardData.length) {
-      //     this.requestAllRequestedCards();
-      //   }
-      // }
-    },
+    tabChanged() {},
     handleCardClicked(item) {
       console.log("[handleCardClicked]", item);
       if ('qid' in item) {
@@ -226,55 +157,78 @@ export default {
         }
       );
     },
-    sort(index) {
-      let visibleBefore = false;
-      let visibleAfter = false;
+    async loadNew() {
+      var params = {};
+      var uri;
+      if (this.qnaTab == 0) {
+        params['order'] = this.boardCardDataOrder;
+        params['page'] = this.boardCardDataPage;
+        params['size'] = this.boardCardDataSize;
+        uri = qnaUri;
+      } else if (this.qnaTab == 1) {
+        params['order'] = this.commCardDataOrder;
+        params['page'] = this.commCardDataPage;
+        params['size'] = this.commCardDataSize;
+        uri = commUri;
+      } else if (this.qnaTab == 2) {
+        params['order'] = this.dealCardDataOrder;
+        params['page'] = this.dealCardDataPage;
+        params['size'] = this.dealCardDataSize;
+        uri = dealUri;
+      } else if (this.qnaTab == 3) {
+        params['order'] = this.requestedCardDataOrder;
+        params['page'] = this.requestedCardDataPage;
+        params['size'] = this.requestedCardDataSize;
+        uri = requestCardUri;
+      }
 
+      var res = await api.get(uri, { params }).then(
+        (response) => {
+          if ([200, 201].includes(response.status) && response.data.length) {
+            response.data.forEach((d) => {
+              d.createDate = this.exportDateFromTimeStamp(d.createDate);
+            });
+            if (this.qnaTab == 0) {
+              this.boardCardData = response.data;
+              this.boardCardDataPage++;
+            } else if (this.qnaTab == 1) {
+              this.commCardData = response.data;
+              this.commCardDataPage++;
+            } else if (this.qnaTab == 2) {
+              this.dealCardData = response.data;
+              this.dealCardDataPage++;
+            } else if (this.qnaTab == 3) {
+              this.requestedCardData = response.data;
+              this.requestedCardDataPage++;
+            }
+          }
+        }
+      );
+    },
+    sort(index) {
       // index 0=좋아요순, 1=등록순
       if (this.qnaTab == 0) {
-        visibleBefore = this.qnaObserveIsVisible;
-
         this.boardCardDataOrder = index ? "like" : "create";
         this.boardCardDataPage = 0;
         this.boardCardDataSize = 10;
-        this.boardCardData = [];
-
-        visibleAfter = this.qnaObserveIsVisible;
       }
       else if (this.qnaTab == 1) {
-        visibleBefore = this.commObserveIsVisible;
-
         this.commCardDataOrder = index ? "like" : "create";
         this.commCardDataPage = 0;
         this.commCardDataSize = 10;
-        this.commCardData = [];
-
-        visibleAfter = this.commObserveIsVisible;
       }
       else if (this.qnaTab == 2) {
-        visibleBefore = this.dealObserveIsVisible;
-
         this.dealCardDataOrder = index ? "like" : "create";
         this.dealCardDataPage = 0;
         this.dealCardDataSize = 10;
-        this.dealCardData = [];
-
-        visibleAfter = this.dealObserveIsVisible;
       }
       else if (this.qnaTab == 3) {
-        visibleBefore = this.requestedObserveIsVisible;
-
         this.requestedCardDataOrder = index ? "like" : "create";
         this.requestedCardDataPage = 0;
         this.requestedCardDataSize = 10;
-        this.requestedCardData = [];
-
-        visibleAfter = this.requestedObserveIsVisible;
       }
 
-      if (visibleBefore == visibleAfter) {
-        this.loadMore();
-      }
+      this.loadNew();
     },
     leftPad(value) {
       if (value >= 10) {

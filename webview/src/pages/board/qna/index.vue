@@ -70,7 +70,7 @@
         <div v-for="(item, index) in workCardData" :value="item.qid">
           <BoardCard class="mt-2" :data="item" @handle-card-clicked="handleCardClicked" />
         </div>
-        <Observe @triggerIntersected="loadMore" ref="workObserve"/>
+        <Observe @triggerIntersected="loadMore" />
       </v-window-item>
 
       <!-- ***** 비업무 ***** -->
@@ -121,7 +121,7 @@
         <div v-for="(item, index) in nonworkCardData" :value="item.qid">
           <BoardCard class="mt-2" :data="item" @handle-card-clicked="handleCardClicked" />
         </div>
-        <Observe @triggerIntersected="loadMore" ref="nonworkObserve"/>
+        <Observe @triggerIntersected="loadMore" />
       </v-window-item>
     </v-window>
   </div>
@@ -143,7 +143,6 @@ import BoardCard from "@/components/cards/BoardCard";
 import Observe from "@/components/Observer";
 import api from '@/api';
 import store from "@/store";
-import { useElementVisibility } from '@vueuse/core';
 
 let questionUri = 'board/questions';
 let searchUri = 'board/questions';
@@ -220,12 +219,6 @@ export default {
     // }
 
     store.dispatch('info/setPageState', {});
-
-    const workObserve = ref(null);
-    const nonworkObserve = ref(null);
-    const workObserveIsVisible = useElementVisibility(workObserve);
-    const nonworkObserveIsVisible = useElementVisibility(nonworkObserve);
-      
     
     return {
       qnaTabTitle,
@@ -251,11 +244,6 @@ export default {
       nonworkDataPage,
       nonworkDataSize,
       searchParams: {},
-
-      workObserve,
-      nonworkObserve,
-      workObserveIsVisible,
-      nonworkObserveIsVisible,
     };
   },
   data() {
@@ -298,13 +286,8 @@ export default {
       this.subcategoryItems = 1 <= categoryIndex ? this.subcategoryFullList[categoryIndex - 1] : [];
     },
     async search() {
-      let visibleBefore = false;
-      let visibleAfter = false;
-
       // 업무
       if (this.qnaTab == 0) {
-        visibleBefore = this.workObserveIsVisible;
-
         var params = {
           workYn: true,
           order: this.workDataOrder,
@@ -321,10 +304,8 @@ export default {
               params['key'] = 'member';
             }
             params['value'] = this.searchContent;
-            this.workCardData = [];
             this.workSearchFlag = (this.workCardData.length == 0) ? true:false  
           } else {
-            this.workCardData = [];
             this.workSearchFlag = (this.workCardData.length == 0) ? true:false  
           }
         } else {
@@ -335,19 +316,17 @@ export default {
               params['key'] = 'member'
             }
             params['value'] = this.searchContent;
-            this.workCardData = [];
+            // this.workCardData = [];
             this.workSearchFlag = (this.workCardData.length == 0) ? true:false  
           } else {
-            this.workCardData = [];
             this.workSearchFlag = (this.workCardData.length == 0) ? true:false  
           }
         }
-        visibleAfter = this.workObserveIsVisible;
+        
         this.searchParams = params;
       }
       // 비업무
       else if (this.qnaTab == 1) {
-        visibleBefore = this.nonworkObserveIsVisible;
         var params = {
           workYn: false,
           order: this.nonworkDataOrder,
@@ -361,17 +340,13 @@ export default {
             params['key'] = 'member';
           }
           params['value'] = this.searchContent;
-          this.nonworkCardData = [];
           this.searchFlag = (this.nonworkCardData.length == 0) ? true:false  
         }
-        
-        visibleAfter = this.nonworkObserveIsVisible;
+
         this.searchParams = params;
       }
 
-      if (visibleBefore == visibleAfter) {
-        this.loadMore();
-      }
+      this.loadNew();
     },
     async loadMore() {
       var params = this.searchParams ?? {};
@@ -403,37 +378,52 @@ export default {
         }
       );
     },
+    async loadNew() {
+      var params = this.searchParams ?? {};
+      if (this.qnaTab == 0) {
+        params['workYn'] = true,
+        params['order'] = this.workDataOrder;
+        params['page'] = this.workDataPage;
+        params['size'] = this.workDataSize;
+      } else {
+        params['workYn'] = false;
+        params['order'] = this.nonworkDataOrder;
+        params['page'] = this.nonworkDataPage;
+        params['size'] = this.nonworkDataSize; 
+      }
+      var res = await api.get(questionUri, { params }).then(
+        (response) => {
+          if ([200, 201].includes(response.status) && response.data.length) {
+            response.data.forEach((d) => {
+              d.createDate = this.exportDateFromTimeStamp(d.createDate);
+            });
+            if (this.qnaTab == 0) {
+              this.workCardData = response.data;
+              this.workDataPage++;
+            } else {
+              this.nonworkCardData = response.data;
+              this.nonworkDataPage++;
+            }
+          }
+        }
+      );
+    },
     sort(index) {
-      let visibleBefore = false;
-      let visibleAfter = false;
-
       // index 0=좋아요순, 1=등록순
       // 업무
       if (this.qnaTab == 0) {
-        visibleBefore = this.workObserveIsVisible;
-
         this.workDataOrder = index ? "like" : "create";
         this.workDataPage = 0;
         this.workDataSize = 10;
-        this.workCardData = [];
-
-        visibleAfter = this.workObserveIsVisible;
       }
       // 비업무
       else if (this.qnaTab == 1) {
-        visibleBefore = this.nonworkObserveIsVisible;
-
         this.nonworkDataOrder = index ? "like" : "create";
         this.nonworkDataPage = 0;
         this.nonworkDataSize = 10;
-        this.nonworkCardData = [];
-
-        visibleAfter = this.nonworkObserveIsVisible;
       }
       
-      if (visibleBefore == visibleAfter) {
-        this.loadMore();
-      }
+      this.loadNew();
     },
 
     tabChanged() {
