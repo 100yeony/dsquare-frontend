@@ -88,7 +88,7 @@
             <RequestCard class=" mt-2" :data="item" @handle-card-clicked="handleCardClicked"
               @handle-card-dialog="handleCardDialog(item)" :style="item.style" />
           </div>
-          <Observe @triggerIntersected="loadMore" ref="requestObserve"/>
+          <Observe @triggerIntersected="loadMore" />
         </div>
 
       </v-window-item>
@@ -148,7 +148,7 @@
             <RequestCard class=" mt-2" :data="item" @handle-card-clicked="handleCardClicked"
               @handle-card-dialog="handleCardDialog(item)" :style="item.style" />
           </div>
-          <Observe @triggerIntersected="loadMore" ref="completedObserve"/>
+          <Observe @triggerIntersected="loadMore"/>
         </div>
       </v-window-item>
     </v-window>
@@ -177,7 +177,6 @@ import object from "@/utils/objectUtils";
 import Flicking from "@egjs/vue3-flicking";
 import "@egjs/vue3-flicking/dist/flicking.css";
 import { AutoPlay } from "@egjs/flicking-plugins";
-import { useElementVisibility } from '@vueuse/core';
 
 let requestUri = 'board/cards';
 let cardOfTheMonthUri = 'board/cards/card-of-the-month';
@@ -225,11 +224,6 @@ export default {
 
     let cardTabTitle = ["카드대기중", "선정된카드"];
 
-    const requestObserve = ref(null);
-    const completedObserve = ref(null);
-    const requestObserveIsVisible = useElementVisibility(requestObserve);
-    const completedObserveIsVisible = useElementVisibility(completedObserve);
-
     return {
       categoryItems, subcategoryFullList,
       searchUri,
@@ -237,11 +231,6 @@ export default {
       flickingPlugins,
       flickingOptions,
       cardTabTitle,
-
-      requestObserve,
-      completedObserve,
-      requestObserveIsVisible,
-      completedObserveIsVisible,
     };
   },
   data() {
@@ -291,6 +280,7 @@ export default {
       cardTab: 0,
       searchFlag: false,
       completedFlag: false,
+      loadingLock: false,
     };
   },
   watch: {
@@ -378,12 +368,7 @@ export default {
     },
     async search() {
       if (typeof this.subcategory == 'string' || typeof this.category == 'string') {
-        let visibleBefore = false;
-        let visibleAfter = false;
-
         if (this.cardTab == 0) {
-          visibleBefore = this.requestObserveIsVisible;
-
           var params = {
             projTeamId: this.projTeamId,
             order: this.requestCardDataOrder,
@@ -391,13 +376,8 @@ export default {
             size: (this.requestCardDataSize = 10),
           };
           this.searchParams = params;
-          this.requestCardData = [];
           this.searchFlag = (this.requestCardData.length == 0) ? true : false
-
-          visibleAfter = this.requestObserveIsVisible;
         } else {
-          visibleBefore = this.completedObserveIsVisible;
-
           var params = {
             projTeamId: this.projTeamId,
             order: this.completedCardDataOrder,
@@ -405,51 +385,89 @@ export default {
             size: (this.completedCardDataSize = 10),
           };
           this.searchParams = params;
-          this.completedCardData = [];
           this.completedFlag = (this.completedCardData.length == 0) ? true : false
-          
-          visibleAfter = this.completedObserveIsVisible;
         }
-
-        if (visibleBefore == visibleAfter) {
-          this.loadMore();
-        }
+        
+        this.loadNew();
       }
     },
     async loadMore() {
-      var params = this.searchParams ?? {};
-      if (this.cardTab == 0) {
-        params['isSelected'] = false;
-        params['order'] = this.requestCardDataOrder;
-        params['page'] = this.requestCardDataPage;
-        params['size'] = this.requestCardDataSize;
-      } else {
-        params['isSelected'] = true;
-        params['order'] = this.completedCardDataOrder;
-        params['page'] = this.completedCardDataPage;
-        params['size'] = this.completedCardDataSize;
-      }
-      
-      var res = await api.get(requestUri, { params }).then(
-        (response) => {
-          if ([200, 201].includes(response.status) && response.data.length) {
-            response.data.forEach((d) => {
-              d.createDate = this.exportDateFromTimeStamp(d.createDate);
-              if (d.teammates) {
-                var tempTeammates = d.teammates.replaceAll('[', '["').replaceAll(']', '"]').replaceAll(',', '","');
-                d.teammates = JSON.parse(tempTeammates);  // 어레이로 변환
+      if (!this.loadingLock) {
+        this.loadingLock = true;
+        var params = this.searchParams ?? {};
+        if (this.cardTab == 0) {
+          params['isSelected'] = false;
+          params['order'] = this.requestCardDataOrder;
+          params['page'] = this.requestCardDataPage;
+          params['size'] = this.requestCardDataSize;
+        } else {
+          params['isSelected'] = true;
+          params['order'] = this.completedCardDataOrder;
+          params['page'] = this.completedCardDataPage;
+          params['size'] = this.completedCardDataSize;
+        }
+        
+        var res = await api.get(requestUri, { params }).then(
+          (response) => {
+            if ([200, 201].includes(response.status) && response.data.length) {
+              response.data.forEach((d) => {
+                d.createDate = this.exportDateFromTimeStamp(d.createDate);
+                if (d.teammates) {
+                  var tempTeammates = d.teammates.replaceAll('[', '["').replaceAll(']', '"]').replaceAll(',', '","');
+                  d.teammates = JSON.parse(tempTeammates);  // 어레이로 변환
+                }
+              });
+              if (this.cardTab == 0) {
+                this.requestCardData = this.requestCardData.concat(response.data);
+                this.requestCardDataPage++;
+              } else {
+                this.completedCardData = this.completedCardData.concat(response.data);
+                this.completedCardDataPage++;
               }
-            });
-            if (this.cardTab == 0) {
-              this.requestCardData = this.requestCardData.concat(response.data);
-              this.requestCardDataPage++;
-            } else {
-              this.completedCardData = this.completedCardData.concat(response.data);
-              this.completedCardDataPage++;
             }
           }
+        );
+        this.loadingLock = false;
+      }
+    },
+    async loadNew() {
+      if (!this.loadingLock) {
+        this.loadingLock = true;
+        var params = this.searchParams ?? {};
+        if (this.cardTab == 0) {
+          params['isSelected'] = false;
+          params['order'] = this.requestCardDataOrder;
+          params['page'] = this.requestCardDataPage;
+          params['size'] = this.requestCardDataSize;
+        } else {
+          params['isSelected'] = true;
+          params['order'] = this.completedCardDataOrder;
+          params['page'] = this.completedCardDataPage;
+          params['size'] = this.completedCardDataSize;
         }
-      );
+        
+        var res = await api.get(requestUri, { params }).then(
+          (response) => {
+            if ([200, 201].includes(response.status) && response.data.length) {
+              response.data.forEach((d) => {
+                d.createDate = this.exportDateFromTimeStamp(d.createDate);
+                if (d.teammates) {
+                  var tempTeammates = d.teammates.replaceAll('[', '["').replaceAll(']', '"]').replaceAll(',', '","');
+                  d.teammates = JSON.parse(tempTeammates);  // 어레이로 변환
+                }
+              });
+              if (this.cardTab == 0) {
+                this.requestCardData = response.data;
+                this.requestCardDataPage++;
+              } else {
+                this.completedCardData = response.data;
+                this.completedCardDataPage++;
+              }
+            }
+          }
+        );
+        this.loadingLock = false;
+      }
     },
     handleCardClicked(item) {
       if (item) {
@@ -523,34 +541,19 @@ export default {
       this.selectedItem = {}
     },
     sort(index) {
-      let visibleBefore = false;
-      let visibleAfter = false;
-
       if (this.cardTab == 0) {
-        visibleBefore = this.requestObserveIsVisible;
-
         this.requestCardDataOrder = index ? "like" : "create";
         this.requestCardDataPage = 0;
         this.requestCardDataSize = 10;
-        this.requestCardData = [];
-
-        visibleAfter = this.requestObserveIsVisible;
       }
       // 비업무
       else if (this.cardTab == 1) {
-        visibleBefore = this.requestObserveIsVisible;
-
         this.completedCardDataOrder = index ? "like" : "create";
         this.completedCardDataPage = 0;
         this.completedCardDataSize = 10;
-        this.completedCardData = [];
-
-        visibleAfter = this.requestObserveIsVisible;
       }
-
-      if (visibleBefore == visibleAfter) {
-        this.loadMore();
-      }
+      
+      this.loadNew();
     },
   },
 };

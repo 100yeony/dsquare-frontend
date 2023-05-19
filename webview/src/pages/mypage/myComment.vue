@@ -4,7 +4,6 @@ import AnswerCard from "@/components/cards/AnswerCard";
 import CommentCard from "@/components/cards/CommentCard";
 import Observe from "@/components/Observer";
 import api from '@/api';
-import { useElementVisibility } from '@vueuse/core';
 
 let answersUri = '/mypage/answers';
 let commentsUri = '/mypage/comments';
@@ -25,18 +24,8 @@ export default {
   setup() {
     let myPostTabTitle = ["내 답변", "내 댓글"];
 
-    const answerObserve = ref(null);
-    const answerObserveIsVisible = useElementVisibility(answerObserve);
-    const commentObserve = ref(null);
-    const commentObserveIsVisible = useElementVisibility(commentObserve);
-
     return {
       myPostTabTitle,
-
-      answerObserve,
-      answerObserveIsVisible,
-      commentObserve,
-      commentObserveIsVisible,
     };
   },
   data() {
@@ -69,12 +58,14 @@ export default {
     }
   },
   methods: {
-    async requestAnswers(params) {
+    async requestAnswers(moreOrNew, params) {
       var res = await api.get(answersUri, { params })
       res.data.forEach(async (d) => {
         d.createDate = this.exportDateFromTimeStamp(d.createDate);
       });
-      this.answerCardData = this.answerCardData.concat(res.data);
+
+      if (moreOrNew == 0) this.answerCardData = this.answerCardData.concat(res.data);
+      else if (moreOrNew == 1) this.answerCardData = res.data;
 
       this.answerCardData.forEach(async (answer) => {
         let res = await api.get(questionUri + answer.qid)
@@ -88,12 +79,14 @@ export default {
       });
     },
 
-    async requestComments(params) {
+    async requestComments(moreOrNew, params) {
       var res = await api.get(commentsUri, { params })
       res.data.forEach(async (d) => {
         d.createDate = this.exportDateFromTimeStamp(d.createDate);
       });
-      this.commentCardData = this.commentCardData.concat(res.data);
+
+      if (moreOrNew == 0) this.commentCardData = this.commentCardData.concat(res.data);
+      else if (moreOrNew == 1) this.commentCardData = res.data;
 
       var uriMap = {
         QUESTION: questionUri,
@@ -173,46 +166,47 @@ export default {
         params['order'] = this.answerCardDataOrder;
         params['page'] = this.answerCardDataPage;
         params['size'] = this.answerCardDataSize;
-        this.requestAnswers(params);
+        this.requestAnswers(0, params);
         this.answerCardDataPage++;
       } else if (this.qnaTab == 1) {
         params['order'] = this.commentCardDataOrder;
         params['page'] = this.commentCardDataPage;
         params['size'] = this.commentCardDataSize;
-        this.requestComments(params);
+        this.requestComments(0, params);
         this.commentCardDataPage++;
       }
     },
-
+    async loadNew() {
+      var params = {};
+      var uri;
+      if (this.qnaTab == 0) {
+        params['order'] = this.answerCardDataOrder;
+        params['page'] = this.answerCardDataPage;
+        params['size'] = this.answerCardDataSize;
+        this.requestAnswers(1, params);
+        this.answerCardDataPage++;
+      } else if (this.qnaTab == 1) {
+        params['order'] = this.commentCardDataOrder;
+        params['page'] = this.commentCardDataPage;
+        params['size'] = this.commentCardDataSize;
+        this.requestComments(1, params);
+        this.commentCardDataPage++;
+      }
+    },
     sort(index) {
-      let visibleBefore = false;
-      let visibleAfter = false;
-
       // index 0=좋아요순, 1=등록순
       if (this.qnaTab == 0) {
-        visibleBefore = this.answerObserveIsVisible;
-
         this.answerCardDataOrder = index ? "like" : "create";
         this.answerCardDataPage = 0;
         this.answerCardDataSize = 10;
-        this.answerCardData = [];
-
-        visibleAfter = this.answerObserveIsVisible;
       }
       else if (this.qnaTab == 1) {
-        visibleBefore = this.commentObserveIsVisible;
-
         this.commentCardDataOrder = index ? "like" : "create";
         this.commentCardDataPage = 0;
         this.commentCardDataSize = 10;
-        this.commentCardData = [];
-
-        visibleAfter = this.commentObserveIsVisible;
       }
 
-      if (visibleBefore == visibleAfter) {
-        this.loadMore();
-      }
+      this.loadNew();
     },
     leftPad(value) {
       if (value >= 10) {
@@ -261,7 +255,7 @@ export default {
         <div v-for="(item, index) in answerCardData" :key="index" :value="item.aid">
           <AnswerCard class="mt-2" :data="item" @handle-card-clicked="handleCardClicked" />
         </div>
-        <Observe @triggerIntersected="loadMore" ref="answerObserve"/>
+        <Observe @triggerIntersected="loadMore" />
       </v-window-item>
 
       <!-- ***** 내 댓글 ***** -->
@@ -284,7 +278,7 @@ export default {
         <div v-for="(item, index) in commentCardData" :key="index" :value="item.commentId">
           <CommentCard class="mt-2" :data="item" @handle-card-clicked="handleCardClicked" />
         </div>
-        <Observe @triggerIntersected="loadMore" ref="commentObserve"/>
+        <Observe @triggerIntersected="loadMore" />
       </v-window-item>
 
     </v-window>
