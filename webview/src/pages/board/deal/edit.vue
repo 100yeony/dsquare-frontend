@@ -79,7 +79,7 @@ export default {
         atcId: this.$route.query.atcid,
         tags: Array.from(this.chipData)
       })
-      this.cancle()
+      this.cancel()
     },
     uploader(editor) {
       editor.plugins.get("FileRepository").createUploadAdapter = (loader) => {
@@ -104,12 +104,9 @@ export default {
         this.addChips();
       }
     },
-    cancle() {
+    cancel() {
       this.$router.replace({
-        path: process.env.VUE_APP_BOARD_DEAL_DETAIL,
-        query: {
-          carrotId: this.$route.query.carrotId
-        }
+        path: '/board/deal/' + this.$route.query.carrotId + '/',
       });
     },
     fillForm() {
@@ -165,7 +162,7 @@ export default {
 
       <v-row class="mt-5" align="center">
         <v-col cols="6">
-          <v-btn block variant="" class="button_white font-medium" @click="cancle">취소</v-btn>
+          <v-btn block variant="" class="button_white font-medium" @click="cancel">취소</v-btn>
         </v-col>
         <v-col cols="6">
           <v-btn block variant="" class="button_main font-medium" type="submit" :disabled="!editorValidation">수정</v-btn>

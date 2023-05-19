@@ -255,7 +255,7 @@ export default {
     }
   },
   mounted() {
-    if (!this.$route.query.id) {
+    if (!this.$route.params.id) {
       this.$router.replace(process.env.VUE_APP_BOARD_CARD);
       return;
     }
@@ -375,7 +375,7 @@ export default {
     },
     /* 카드 정보 받아오기 */
     async requestQuestionData() {
-      var res = await api.get('board/cards/' + this.$route.query.id, '');
+      var res = await api.get('board/cards/' + this.$route.params.id, '');
       return res;
     },
     leftPad(value) {
@@ -440,7 +440,7 @@ export default {
       this.isShowCard = false;
     },
     async requestDelCard() {
-      const res = await api.del('board/cards/' + this.$route.query.id, '')
+      const res = await api.del('board/cards/' + this.$route.params.id, '')
       console.log(res)
       store.dispatch('info/setPageState', {});
       this.$router.push(process.env.VUE_APP_BOARD_CARD);

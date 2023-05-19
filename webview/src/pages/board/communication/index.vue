@@ -172,11 +172,8 @@ export default {
         this.saveState();
         if (item.talkId) {
           this.$router.push({
-            path: process.env.VUE_APP_BOARD_COMMUNICATION_DETAIL,
-            title: item.title,
-            query: {
-              talkId: item.talkId
-            }
+            path: item?.talkId + '/',
+            title: item.title
           });
         } else {
           alert('qid가 존재하지 않습니다.');

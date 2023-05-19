@@ -419,11 +419,8 @@ export default {
       this.saveState();
       if (item) {
         this.$router.push({
-          path: process.env.VUE_APP_BOARD_QNA_DETAIL,
+          path: item?.qid + '/',
           title: item?.title,
-          query: {
-            qid: item?.qid
-          }
         });
       }
     },

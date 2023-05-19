@@ -35,7 +35,8 @@ router.beforeEach(async (to, from, next) => {
 	let back = to?.meta?.back ?? '' 
 	
 	store.dispatch("layout/setMenuTitle", title)
-	store.dispatch("url/setUrlBack", back)
+	console.log(from.fullPath)
+	store.dispatch("url/setUrlBack",(back.includes(':id')||back.includes(':cacheBuster')) ? from.fullPath:back)
 	if (back == ''){
 		store.dispatch("url/setUrlQuery", {})
 	}

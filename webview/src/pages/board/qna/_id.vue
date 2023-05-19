@@ -352,9 +352,9 @@ export default {
     };
   },
   mounted() {
-    this.qnaId = this.$route.query.qid;
+    this.qnaId = this.$route.params.id;
     console.log("--mounted");
-    console.log(this.$route.query.qid);
+    console.log(this.$route.params.id);
     const questionData = this.requestQuestionData();
     questionData.then(
       async (response) => {
@@ -393,7 +393,7 @@ export default {
       this.$router.push({
         path: '/board/qna/answer/' + Math.random().toString(36).substring(7) + '/',
         query: {
-          qid: this.$route.query.qid
+          qid: this.$route.params.id
         }
       });
     },
@@ -514,7 +514,7 @@ export default {
         this.$router.push({
           path: '/board/qna/answer_edit/' + Math.random().toString(36).substring(7) + '/',
           query: {
-            qid: this.$route.query.qid,
+            qid: this.$route.params.id,
             id: id,
             content: content
           }
@@ -544,16 +544,16 @@ export default {
       this.isShow = false;
     },
     async requestDelQuestion() {
-      await api.del('board/questions/' + this.$route.query.qid, '')
+      await api.del('board/questions/' + this.$route.params.id, '')
       store.dispatch('info/setPageState', {});
       this.$router.push(process.env.VUE_APP_BOARD_QNA);
     },
     async requestDelAnswer() {
-      await api.del('board/questions/' + this.$route.query.qid + '/answers/' + this.answerId, '')
+      await api.del('board/questions/' + this.$route.params.id + '/answers/' + this.answerId, '')
       this.requestAnswerData()
     },
     async requestQuestionData() {
-      var res = await api.get('board/questions/' + this.$route.query.qid, '')
+      var res = await api.get('board/questions/' + this.$route.params.id, '')
       return res
     },
     leftPad(value) {
@@ -597,7 +597,7 @@ export default {
       }
     },
     async requestAnswerData() {
-      var res = await api.get('board/questions/' + this.$route.query.qid + '/answers', '')
+      var res = await api.get('board/questions/' + this.$route.params.id + '/answers', '')
       this.answerList = res.data
       this.initAnswerData()
     },

@@ -171,11 +171,8 @@ export default {
         this.saveState();
         if (item.carrotId) {
           this.$router.push({
-            path: process.env.VUE_APP_BOARD_DEAL_DETAIL,
+            path: item?.carrotId + '/',
             title: item.title,
-            query: {
-              carrotId: item.carrotId
-            }
           });
         } else {
           alert('carrotId가 존재하지 않습니다.');

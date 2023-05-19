@@ -433,11 +433,8 @@ export default {
         this.saveState();
         console.log(item);
         this.$router.push({
-          path: process.env.VUE_APP_BOARD_CARD_DETAIL,
-          title: item?.title,
-          query: {
-            id: item?.cardId,
-          },
+          path: item?.cardId + '/',
+          title: item?.title
         });
       }
     },
@@ -446,7 +443,6 @@ export default {
       console.log("handleeWritePage");
       this.$router.push({
         path: process.env.VUE_APP_BOARD_CARD_WRITE,
-        query: {},
       });
     },
     saveState() {

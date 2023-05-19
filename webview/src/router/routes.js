@@ -39,7 +39,6 @@ export default [
         path: process.env.VUE_APP_BOARD_QNA_WRITE,
         name: "qna-write",
         meta: {
-          isCacheBuster: true,
           title: "궁금해요 작성",
           back: process.env.VUE_APP_BOARD_QNA
         },
@@ -58,7 +57,6 @@ export default [
         path: process.env.VUE_APP_BOARD_QNA_ANSWER, 
         name: "qna-answer",
         meta: {
-          isCacheBuster: true,
           title: "궁금해요 답변",
           back: process.env.VUE_APP_BOARD_QNA_DETAIL
         },
@@ -68,7 +66,6 @@ export default [
         path: process.env.VUE_APP_BOARD_QNA_ANSWER_EDIT, 
         name: "qna-answer-edit",
         meta: {
-          isCacheBuster: true,
           title: "궁금해요 답변 수정",
           back: process.env.VUE_APP_BOARD_QNA_DETAIL
         },
@@ -78,7 +75,6 @@ export default [
         path: process.env.VUE_APP_BOARD_QNA_EDIT, 
         name: "qna-edit",
         meta: {
-          isCacheBuster: true,
           title: "궁금해요 수정",
           back: process.env.VUE_APP_BOARD_QNA_DETAIL
         },
@@ -96,7 +92,6 @@ export default [
         path: process.env.VUE_APP_BOARD_COMMUNICATION_WRITE,
         name: "communication-write",
         meta: {
-          isCacheBuster: true,
           title: "소통해요 작성",
           back: process.env.VUE_APP_BOARD_COMMUNICATION
         },
@@ -115,7 +110,6 @@ export default [
         path: process.env.VUE_APP_BOARD_COMMUNICATION_EDIT, 
         name: "communication-edit",
         meta: {
-          isCacheBuster: true,
           title: "소통해요 수정",
           back: process.env.VUE_APP_BOARD_COMMUNICATION_DETAIL
         },
@@ -133,7 +127,6 @@ export default [
         path: process.env.VUE_APP_BOARD_DEAL_WRITE,
         name: "deal-write",
         meta: {
-          isCacheBuster: true,
           title: "당근해요 작성",
           back: process.env.VUE_APP_BOARD_DEAL
         },
@@ -152,7 +145,6 @@ export default [
         path: process.env.VUE_APP_BOARD_DEAL_EDIT, 
         name: "deal-edit",
         meta: {
-          isCacheBuster: true,
           title: "당근해요 수정",
           back: process.env.VUE_APP_BOARD_DEAL_DETAIL
         },
