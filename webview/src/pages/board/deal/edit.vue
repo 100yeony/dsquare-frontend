@@ -79,7 +79,7 @@ export default {
         atcId: this.$route.query.atcid,
         tags: Array.from(this.chipData)
       })
-      this.cancle()
+      this.cancel()
     },
     uploader(editor) {
       editor.plugins.get("FileRepository").createUploadAdapter = (loader) => {
@@ -104,14 +104,14 @@ export default {
         this.addChips();
       }
     },
-    cancle() {
+    cancel() {
       this.$router.replace({
-        path: process.env.VUE_APP_BOARD_DEAL_DETAIL,
-        query: {
-          carrotId: this.$route.query.carrotId
-        }
+        path: '/board/deal/' + this.$route.query.carrotId + '/',
       });
     },
+    fillForm() {
+      this.editorData = "<p>(제품 사진을 첨부해주세요)</p><p>&nbsp;</p><p>&nbsp;</p><p>&nbsp;</p><p>[ 품명 ] &nbsp;</p><p>[ 가격 ] &nbsp;</p><p>[ 상태 ] &nbsp;</p><p>[ 장소 ] &nbsp;</p><p>[ 시간 ] &nbsp;</p>"
+    }
   }
 };
 </script>
@@ -124,6 +124,7 @@ export default {
         class="mt-2" maxlength="100"/>
 
       <div class="font-sm font-medium mt-7 mb-2">본문</div>
+      <v-btn variant="outlined" size="x-small" @click="fillForm()" class="font-xs mb-2">양식 불러오기</v-btn>
       <ckeditor v-model="editorData" :editor="editor" :config="editorConfig" height="200"></ckeditor>
       <div v-if="isWarning" class="invalid-feedback d-flex justify-end mt-2">
         <v-icon size="x-small" color="red">mdi-information-outline</v-icon>
@@ -161,7 +162,7 @@ export default {
 
       <v-row class="mt-5" align="center">
         <v-col cols="6">
-          <v-btn block variant="" class="button_white font-medium" @click="cancle">취소</v-btn>
+          <v-btn block variant="" class="button_white font-medium" @click="cancel">취소</v-btn>
         </v-col>
         <v-col cols="6">
           <v-btn block variant="" class="button_main font-medium" type="submit" :disabled="!editorValidation">수정</v-btn>

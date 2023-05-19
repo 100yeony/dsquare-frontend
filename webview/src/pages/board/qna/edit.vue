@@ -172,7 +172,7 @@ export default {
       }
       console.log(formData.values)
       await api.multiPartPatch('board/questions/' + this.$route.query.qid, formData)
-      this.cancle()
+      this.cancel()
 
     },
     uploader(editor) {
@@ -203,12 +203,9 @@ export default {
         this.addChips();
       }
     },
-    cancle() {
+    cancel() {
       this.$router.replace({
-        path: process.env.VUE_APP_BOARD_QNA_DETAIL,
-        query: {
-          qid: this.$route.query.qid
-        }
+        path: '/board/qna/' + this.$route.query.qid + '/'
       });
     },
     categoryChanged() {
@@ -293,7 +290,7 @@ export default {
 
       <v-row class="mt-5" align="center">
         <v-col cols="6">
-          <v-btn block variant="" class="button_white font-medium" @click="cancle">취소</v-btn>
+          <v-btn block variant="" class="button_white font-medium" @click="cancel">취소</v-btn>
         </v-col>
         <v-col cols="6">
           <v-btn block variant="" class="button_main font-medium" type="submit" :disabled="!editorValidation">수정</v-btn>

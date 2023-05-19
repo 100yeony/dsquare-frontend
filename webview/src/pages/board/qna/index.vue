@@ -442,18 +442,15 @@ export default {
       this.saveState();
       if (item) {
         this.$router.push({
-          path: process.env.VUE_APP_BOARD_QNA_DETAIL,
+          path: item?.qid + '/',
           title: item?.title,
-          query: {
-            qid: item?.qid
-          }
         });
       }
     },
     handleWritePage() {
       this.saveState();
       this.$router.push({
-        path: process.env.VUE_APP_BOARD_QNA_WRITE,
+        path: 'write/' + Math.random().toString(36).substring(7) + '/',
         query: {
           work: (this.qnaTab == 0) ? true : false
         }
