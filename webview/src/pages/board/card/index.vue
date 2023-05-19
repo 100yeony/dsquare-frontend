@@ -455,11 +455,8 @@ export default {
       if (item) {
         this.saveState();
         this.$router.push({
-          path: process.env.VUE_APP_BOARD_CARD_DETAIL,
-          title: item?.title,
-          query: {
-            id: item?.cardId,
-          },
+          path: item?.cardId + '/',
+          title: item?.title
         });
       }
     },
@@ -467,7 +464,6 @@ export default {
       this.saveState();
       this.$router.push({
         path: process.env.VUE_APP_BOARD_CARD_WRITE,
-        query: {},
       });
     },
     saveState() {

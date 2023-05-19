@@ -206,9 +206,9 @@ export default {
     };
   },
   mounted() {
-    this.qnaId = this.$route.query.carrotId;
+    this.qnaId = this.$route.params.id;
     console.log("--mounted");
-    console.log(this.$route.query.carrotId);
+    console.log(this.$route.params.id);
     const questionData = this.requestQuestionData();
     questionData.then(
       async (response) => {
@@ -333,7 +333,7 @@ export default {
         console.log("수정하기")
         store.dispatch('info/setPageState', {});
         this.$router.push({
-          path: process.env.VUE_APP_BOARD_DEAL_EDIT,
+          path: '/board/deal/edit/' + Math.random().toString(36).substring(7) + '/',
           query: {
             carrotId: this.qnaId,
             title: this.qData.title,
@@ -369,13 +369,13 @@ export default {
       this.isShow = false;
     },
     async requestDelQuestion() {
-      const res = await api.del('board/carrots/' + this.$route.query.carrotId, '')
+      const res = await api.del('board/carrots/' + this.$route.params.id, '')
       console.log(res)
       store.dispatch('info/setPageState', {});
       this.$router.push(process.env.VUE_APP_BOARD_DEAL);
     },
     async requestQuestionData() {
-      var res = await api.get('board/carrots/' + this.$route.query.carrotId, '')
+      var res = await api.get('board/carrots/' + this.$route.params.id, '')
       return res
     },
     leftPad(value) {

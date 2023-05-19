@@ -204,9 +204,9 @@ export default {
     };
   },
   mounted() {
-    this.qnaId = this.$route.query.talkId;
+    this.qnaId = this.$route.params.id;
     console.log("--mounted");
-    console.log(this.$route.query.talkId);
+    console.log(this.$route.params.id);
     const questionData = this.requestQuestionData();
     questionData.then(
       async (response) => {
@@ -331,7 +331,7 @@ export default {
         console.log("수정하기")
         store.dispatch('info/setPageState', {});
         this.$router.push({
-          path: process.env.VUE_APP_BOARD_COMMUNICATION_EDIT,
+          path: '/board/communication/edit/' + Math.random().toString(36).substring(7) + '/',
           query: {
             talkId: this.qnaId,
             title: this.qData.title,
@@ -367,7 +367,7 @@ export default {
       this.isShow = false;
     },
     async requestDelQuestion() {
-      const res = await api.del('board/talks/' + this.$route.query.talkId, '').then(
+      const res = await api.del('board/talks/' + this.$route.params.id, '').then(
         (response) => {
           console.log(response)
           store.dispatch('info/setPageState', {});
@@ -376,7 +376,7 @@ export default {
       )
     },
     async requestQuestionData() {
-      var res = await api.get('board/talks/' + this.$route.query.talkId, '')
+      var res = await api.get('board/talks/' + this.$route.params.id, '')
       return res
     },
     leftPad(value) {

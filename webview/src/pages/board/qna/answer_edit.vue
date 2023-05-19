@@ -67,7 +67,7 @@ export default {
       }
       console.log(formData.values) 
       await api.multiPartPatch('board/questions/' + this.$route.query.qid + '/answers/' + this.$route.query.id, formData)
-      this.cancle()
+      this.cancel()
 
 
 
@@ -90,12 +90,9 @@ export default {
       event.stopPropagation();
       this.isDeleted = true
     },
-    cancle() {
+    cancel() {
       this.$router.replace({
-        path: process.env.VUE_APP_BOARD_QNA_DETAIL,
-        query: {
-          qid: this.$route.query.qid
-        }
+        path: '/board/qna/' + this.$route.query.qid + '/',
       });
     }
 
@@ -148,7 +145,7 @@ export default {
 
     <v-row class="mt-5" align="center">
       <v-col cols="6">
-        <v-btn block variant="" class="button_white font-medium" @click="cancle">취소</v-btn>
+        <v-btn block variant="" class="button_white font-medium" @click="cancel">취소</v-btn>
       </v-col>
       <v-col cols="6">
         <v-btn block variant="" class="button_main font-medium" @click="edit()" :disabled="!answerValidation">저장</v-btn>
