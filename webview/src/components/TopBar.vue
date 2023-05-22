@@ -182,10 +182,11 @@ export default {
     },
     onclickBackBtn() {
       if (!stringUtils.isEmptyBool(this.back)) {
-        this.$router.replace({
-          path: this.back,
-          query: this.query
-        });
+        this.$router.go(-1)
+        // this.$router.replace({
+        //   path: this.back,
+        //   query: this.query
+        // });
       }
     },
     onClickMenuItem(item) {
