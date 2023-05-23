@@ -128,14 +128,6 @@ export default {
       }
       return '';
     },
-    ktEmailCaution() {
-      if (this.submitted && this.v$.user.ktMail.required.$invalid) {
-        return '사내메일을 입력해주세요.';
-      } else if (this.submitted && this.v$.user.ktMail.ktEmailValidator.$invalid) {
-        return '올바른 사내메일 형식이 아닙니다.'
-      }
-      return '';
-    },
     nameCaution() {
       if (this.submitted && this.v$.user.name.required.$invalid) {
         return '이름을 입력해주세요.';
@@ -166,7 +158,7 @@ export default {
       console.log(newVal)
       if (newVal === '플랫폼서비스본부') {
         this.user.tid = 1;
-      } else if(newVal === '플랫폼품질혁신TF'){
+      } else if (newVal === '플랫폼품질혁신TF') {
         this.user.tid = 2;
       } else {
         this.user.tid = '';
@@ -211,7 +203,7 @@ export default {
 
       this.v$.$touch();
 
-      const resEmail = await api.noneTokenPost('/member/members/existings', { type: 'email', value: this.user.email})
+      const resEmail = await api.noneTokenPost('/member/members/existings', { type: 'email', value: this.user.email })
       const resNickname = await api.noneTokenPost('/member/members/existings', { type: 'nickname', value: this.user.nickname })
       if ([200, 201, 202].includes(resEmail.status)) {
         if (resEmail.data == true) {
@@ -257,7 +249,7 @@ export default {
       }
     },
     async accredit() {
-      if (!this.accreditNumRequested) {
+      if (!this.accreditNumRequested && !this.v$.user.ktMail.ktEmailValidator.$invalid && !this.v$.user.ktMail.required.$invalid) {
         this.accreditNumRequested = true
         this.accreditNumRequestFailed = false
         this.accreditStatusText = '인증번호 발송 요청 중..'
@@ -590,15 +582,12 @@ export default {
                     }" placeholder="gildonghong@kt.com" />
                 </v-col>
                 <v-col cols="4" align-self="center" @click="accredit">
-                  <v-btn :disabled="accreditNumRequested">
+                  <v-btn
+                    :disabled="accreditNumRequested || v$.user.ktMail.ktEmailValidator.$invalid || v$.user.ktMail.required.$invalid">
                     발송하기
                   </v-btn>
                 </v-col>
               </v-row>
-              <div v-if="submitted && v$.user.ktMail.$error">
-                <v-icon size="x-small" color="red">mdi-close-circle-outline</v-icon>
-                <span class="font-xs font_red">{{ ktEmailCaution }}</span>
-              </div>
               <div v-if="accreditNumRequested">
                 <v-icon size="x-small" color="green">mdi-check-circle-outline</v-icon>
                 <span class="font-xs font_green">{{ accreditStatusText }}</span>
@@ -709,7 +698,7 @@ input[type="number"]::-webkit-scrollbar-button {
 
 ::v-deep input::-webkit-outer-spin-button,
 ::v-deep input::-webkit-inner-spin-button {
--webkit-appearance: none;
-margin: 0;
+  -webkit-appearance: none;
+  margin: 0;
 }
 </style>
