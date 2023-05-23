@@ -164,7 +164,7 @@ export default {
         }
 
         this.searchParams = params;
-        this.searchFlag = (this.talkCardData.length == 0) ? true:false;
+        this.searchFlag = true;
 
         this.loadNew();
       }
@@ -217,7 +217,7 @@ export default {
 
       var res = await api.get(talkUri, { params }).then(
         (response) => {
-          if ([200, 201].includes(response.status) && response.data.length) {
+          if ([200, 201].includes(response.status)) {
             response.data.forEach((d) => {
               d.createDate = this.exportDateFromTimeStamp(d.createDate);
             });
