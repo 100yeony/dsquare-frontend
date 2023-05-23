@@ -132,7 +132,7 @@ export default {
       <!-- <v-file-input v-model="selectedFile" label="파일을 첨부해주세요." chips class="mt-5" variant="outlined" density="compact">
       </v-file-input> -->
 
-      <div class="mb-2">
+      <div class="mb-2 mt-7">
         <span class="font-sm font-medium">태그</span>
         <span class="text-caption my-3 font-0000008F">
           (스페이스 바를 눌러 입력하세요!)
