@@ -1,7 +1,7 @@
 export const url = {
     namespaced: true,
     state: () => ({
-        urlBack: '',
+        urlBack: false,
         urlQuery: {}
     }),
     mutations: {
