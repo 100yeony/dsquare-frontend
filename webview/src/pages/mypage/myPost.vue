@@ -245,7 +245,8 @@ export default {
 </script>
 <template>
   <div class="keep-all">
-    <v-tabs class="mt-5 mb-2" v-model="qnaTab" color="primary" grow>
+    <p class="text-h6 font-weight-black">내가 등록한 글</p>
+    <v-tabs class="mt-2 mb-2" v-model="qnaTab" color="primary" grow>
       <v-tab v-for="(i, index) in myPostTabTitle.length" :key=index :value="index" slider-color="primary">
         {{ myPostTabTitle[index] }}
       </v-tab>
