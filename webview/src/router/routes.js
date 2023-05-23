@@ -23,7 +23,7 @@ export default [
         name: "notifications",
         meta: {
           title: "일림 목록",
-          back: process.env.VUE_APP_HOME
+          back: true
         },
         component: () => import("@/pages/notification/index"),
       },
@@ -40,7 +40,7 @@ export default [
         name: "qna-write",
         meta: {
           title: "궁금해요 작성",
-          back: process.env.VUE_APP_BOARD_QNA
+          back: true
         },
         component: () => import("@/pages/board/qna/editor"),
       },
@@ -49,7 +49,7 @@ export default [
 				name: "qna-detail",
 				meta: {
           title: "궁금해요 상세",
-          back: process.env.VUE_APP_BOARD_QNA
+          back: true
 				},
 				component: () => import("@/pages/board/qna/_id"),
 			},
@@ -58,7 +58,7 @@ export default [
         name: "qna-answer",
         meta: {
           title: "궁금해요 답변",
-          back: process.env.VUE_APP_BOARD_QNA_DETAIL
+          back: true
         },
         component: () => import("@/pages/board/qna/answer"),
       },
@@ -67,7 +67,7 @@ export default [
         name: "qna-answer-edit",
         meta: {
           title: "궁금해요 답변 수정",
-          back: process.env.VUE_APP_BOARD_QNA_DETAIL
+          back: true
         },
         component: () => import("@/pages/board/qna/answer_edit"),
       },
@@ -76,7 +76,7 @@ export default [
         name: "qna-edit",
         meta: {
           title: "궁금해요 수정",
-          back: process.env.VUE_APP_BOARD_QNA_DETAIL
+          back: true
         },
         component: () => import("@/pages/board/qna/edit"),
       },
@@ -93,7 +93,7 @@ export default [
         name: "communication-write",
         meta: {
           title: "소통해요 작성",
-          back: process.env.VUE_APP_BOARD_COMMUNICATION
+          back: true
         },
         component: () => import("@/pages/board/communication/editor"),
       },
@@ -102,7 +102,7 @@ export default [
 				name: "communication-detail",
 				meta: {
           title: "소통해요 상세",
-          back: process.env.VUE_APP_BOARD_COMMUNICATION
+          back: true
 				},
 				component: () => import("@/pages/board/communication/_id"),
 			},
@@ -111,7 +111,7 @@ export default [
         name: "communication-edit",
         meta: {
           title: "소통해요 수정",
-          back: process.env.VUE_APP_BOARD_COMMUNICATION_DETAIL
+          back: true
         },
         component: () => import("@/pages/board/communication/edit"),
       },
@@ -128,7 +128,7 @@ export default [
         name: "deal-write",
         meta: {
           title: "당근해요 작성",
-          back: process.env.VUE_APP_BOARD_DEAL
+          back: true
         },
         component: () => import("@/pages/board/deal/editor"),
       },
@@ -137,7 +137,7 @@ export default [
 				name: "deal-detail",
 				meta: {
           title: "당근해요 상세",
-          back: process.env.VUE_APP_BOARD_DEAL
+          back: true
 				},
 				component: () => import("@/pages/board/deal/_id"),
 			},
@@ -146,7 +146,7 @@ export default [
         name: "deal-edit",
         meta: {
           title: "당근해요 수정",
-          back: process.env.VUE_APP_BOARD_DEAL_DETAIL
+          back: true
         },
         component: () => import("@/pages/board/deal/edit"),
       },
@@ -163,7 +163,7 @@ export default [
         name: "card-write",
         meta: {
           title: "카드주세요 작성",
-          back: process.env.VUE_APP_BOARD_CARD
+          back: true
         },
         component: () => import("@/pages/board/card/editor"),
       },
@@ -172,7 +172,7 @@ export default [
 				name: "card-detail",
 				meta: {
           title: "카드주세요 상세",
-          back: process.env.VUE_APP_BOARD_CARD
+          back: true
 				},
 				component: () => import("@/pages/board/card/_id"),
 			},
@@ -181,7 +181,7 @@ export default [
         name: "card-edit",
         meta: {
           title: "카드주세요 수정",
-          back: process.env.VUE_APP_BOARD_CARD_DETAIL
+          back: true
         },
         component: () => import("@/pages/board/card/edit"),
       },
@@ -230,7 +230,7 @@ export default [
         name: "settings-info",
         meta: {
           title: "회원정보 수정",
-          back: process.env.VUE_APP_MYPAGE_SETTINGS
+          back: true
         },
         component: () => import("@/pages/mypage/settingsInfo"),
       },
@@ -246,7 +246,7 @@ export default [
         name: "register",
         meta: {
           title: "회원가입",
-          back: process.env.VUE_APP_LOGIN
+          back: true
         },
         component: () => import("@/pages/account/register"),
       },
@@ -255,7 +255,7 @@ export default [
         name: "changepass",
         meta: {
           title: "비밀번호변경",
-          back: process.env.VUE_APP_LOGIN
+          back: true
         },
         component: () => import("@/pages/account/changepass"),
       },
@@ -264,7 +264,7 @@ export default [
         name: "changepass-for-user",
         meta: {
           title: "비밀번호변경회원용",
-          back: process.env.VUE_APP_LOGIN
+          back: true
         },
         component: () => import("@/pages/account/changepassForUser"),
       },
@@ -289,7 +289,7 @@ export default [
         name: "findpass",
         meta: {
           title: "비밀번호찾기",
-          back: process.env.VUE_APP_LOGIN
+          back: true
         },
         component: () => import("@/pages/account/findpass"),
       },

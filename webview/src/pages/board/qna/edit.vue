@@ -28,9 +28,6 @@ export default {
     let cidData = {};
     categoriesAll.forEach((value, index) => cidData[value] = index + 1);
 
-    const route = useRoute();
-    store.dispatch("url/setUrlQuery", { qid: route.query.qid })
-
     return { chipData, chipText, cidData, categoriesAll };
   },
   data() {
