@@ -16,9 +16,6 @@ export default {
     let chipData = ref(new Set());
     let chipText = ref("");
 
-    const route = useRoute();
-    store.dispatch("url/setUrlQuery", { carrotId: route.query.carrotId })
-
     return { chipData, chipText };
   },
   data() {
