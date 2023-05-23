@@ -26,13 +26,20 @@ router.beforeEach(async (to, from, next) => {
 	store.dispatch('info/setInfoWaitingNum', 0)
 	let accessToken = store.getters['info/infoListByKey']('accessToken')
 	let accessTokenValue = (typeof accessToken == 'undefined') ? '':accessToken.value
+	//let token = store.getters["info/infoToken"]; // 좀 더 복잡하게 가질 수 있지만, 현재는 토큰의 유무 정도로 로그인의 유무를 확인한다고 생각합니다.
+	//let path = to?.matched[to?.matched?.length - 1].path ?? to.path; //절대 위치 path값 가져오기.
 	const absolutePath = to.path.startsWith('/') ? to.path : `/${to.path}`
-	let tokenRequired = !notLogged.includes(absolutePath); 
+	console.log(absolutePath)
+	let tokenRequired = !notLogged.includes(absolutePath); // 토큰이 필요한, 로그인이 필요한 페이지인지 확인해주는 value입니다.
 	let title = to?.meta?.title ?? ''
-	let back = to?.meta?.back ?? false 
+	let back = to?.meta?.back ?? '' 
 	
 	store.dispatch("layout/setMenuTitle", title)
-	store.dispatch("url/setUrlBack",back)
+	console.log(from.fullPath)
+	store.dispatch("url/setUrlBack",(back.includes(':id')||back.includes(':cacheBuster')) ? from.fullPath:back)
+	if (back == ''){
+		store.dispatch("url/setUrlQuery", {})
+	}
 
 	console.log(tokenRequired)
 	if(tokenRequired) { // 인증 필요 사이트

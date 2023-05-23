@@ -14,6 +14,10 @@ export default {
     ckeditor: CKEditor.component,
   },
   setup() {
+    const route = useRoute();
+    console.log("setup__")
+    console.log(route.query.qid)
+    store.dispatch("url/setUrlQuery", { qid: route.query.qid })
   },
   data() {
     return {

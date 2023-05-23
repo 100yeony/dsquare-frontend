@@ -13,6 +13,7 @@
 <script>
 import { computed, onMounted, ref } from "vue";
 import { useStore } from "vuex";
+import stringUtils from "@/utils/stringUtils";
 export default {
   name: "TopBar",
   components: {},
@@ -24,8 +25,8 @@ export default {
   },
   methods: {
     onclickBackBtn() {
-      if(this.back){
-        this.$router.go(-1);
+      if(!stringUtils.isEmptyBool(this.back)){
+        this.$router.replace(this.back);
       }
     },
   },

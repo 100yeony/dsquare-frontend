@@ -143,9 +143,10 @@ export default {
     const store = useStore();
     const menuTitle = computed(() => store.getters["layout/menuTitle"]);
     const back = computed(() => store.getters["url/urlBack"]);
+    const query = computed(() => store.getters["url/urlQuery"]);
     const user = computed(() => store.getters["info/infoUser"]);
 
-    return { menuTitle, back, user };
+    return { menuTitle, back, query, user };
   },
   data: () => ({
     isAdmin: store.getters["info/infoUser"].role.includes('ADMIN'),
@@ -180,7 +181,7 @@ export default {
       return res;
     },
     onclickBackBtn() {
-      if (this.back) {
+      if (!stringUtils.isEmptyBool(this.back)) {
         this.$router.go(-1)
         // this.$router.replace({
         //   path: this.back,
@@ -190,6 +191,7 @@ export default {
     },
     onClickMenuItem(item) {
       console.log("[onClickMenuItem] ", item);
+      this.$store.dispatch('info/setPageState', {});
       if (item && item.url) {
         this.$router.replace(item.url);
       }
