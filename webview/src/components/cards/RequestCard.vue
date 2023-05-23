@@ -31,7 +31,7 @@
                 <v-col cols="2" class="center-container justify-content-end"><v-icon size="small">mdi-message-text-outline</v-icon><span
                     class="text-caption ml-1">{{ props?.data?.commentCnt }}</span></v-col>
                 <v-col cols="8" class="d-flex justify-end"> 
-                    <div v-if="user?.role.includes('OWNER') == true && props?.data?.selectionInfo == null">
+                    <div v-if="user?.role.includes('OWNER') == true && props?.data?.selectionInfo == null && props?.data?.writerInfo?.id != user?.userId">
                         <v-btn class="card_button mr-4 mb-4" variant="" @click="showDialog($event)">카드주기</v-btn>
                     </div>
                 </v-col>
