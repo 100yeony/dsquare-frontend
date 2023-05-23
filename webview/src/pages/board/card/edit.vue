@@ -155,7 +155,7 @@ export default {
     },
     cancel() {
       this.$router.replace({
-        path: '/board/card/' + this.$route.query.qid + '/',
+        path: '/board/card/' + this.$route.query.id + '/',
       });
     },
     categoryChanged() {
