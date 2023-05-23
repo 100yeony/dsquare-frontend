@@ -88,7 +88,6 @@ export const info = {
       commit('SET_INFO_LIST_BLANK')
     },
     setInfoArea({state, commit, rootState}, value) {
-      //추후 api 와 연동
       commit('SET_INFO_AREA', value)
     },
     setInfoUser({state, commit, rootState}, value) {
