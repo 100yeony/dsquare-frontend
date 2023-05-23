@@ -202,10 +202,11 @@ export default {
     CardDialog,
     Flicking,
   },
-  setup() {
-    let categoryItems = ['플랫폼서비스본부', '플랫폼품질혁신TF', '플랫폼서비스담당',
+  setup() {''
+    let categoryItems = ['전체', '플랫폼서비스본부', '플랫폼품질혁신TF', '플랫폼서비스담당',
       'Digico서비스담당', 'Digico개발센터'];
     let subcategoryFullList = [
+      [],
       [],
       [],
       ["메시징DX플랫폼팀", "서비스플랫폼팀",

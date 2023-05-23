@@ -20,7 +20,7 @@
               <v-text-field v-model="searchContent" placeholder="검색어" variant="outlined" density="compact" />
             </v-col>
           </v-row>
-          <v-btn color="shades-black" @click="search()" block :disabled="!searchValidation">검색</v-btn>
+          <v-btn color="shades-black" @click="search()" block>검색</v-btn>
         </v-expansion-panel-text>
       </v-expansion-panel>
     </v-expansion-panels>
@@ -136,13 +136,13 @@ export default {
     }
   },
   computed: {
-    searchValidation() {
-      if (this.searchKey != '' && this.searchContent != '') {
-        return true
-      } else {
-        return false
-      }
-    }
+    // searchValidation() {
+    //   if (this.searchKey != '' && this.searchContent != '') {
+    //     return true
+    //   } else {
+    //     return false
+    //   }
+    // }
 
   },
   methods: {
