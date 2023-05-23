@@ -145,7 +145,7 @@ export default {
     const back = computed(() => store.getters["url/urlBack"]);
     const user = computed(() => store.getters["info/infoUser"]);
 
-    return { menuTitle, back, query, user };
+    return { menuTitle, back, user };
   },
   data: () => ({
     isAdmin: store.getters["info/infoUser"].role.includes('ADMIN'),
@@ -190,7 +190,6 @@ export default {
     },
     onClickMenuItem(item) {
       console.log("[onClickMenuItem] ", item);
-      this.$store.dispatch('info/setPageState', {});
       if (item && item.url) {
         this.$router.replace(item.url);
       }
