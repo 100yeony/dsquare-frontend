@@ -19,7 +19,7 @@
     </span>
   </template>
 
-    <template v-slot:top>
+    <template v-slot:top >
       <v-dialog
         v-model="dialog"
         max-width="500px"
@@ -85,6 +85,7 @@ import { VDataTable } from 'vuetify/labs/VDataTable'
         name: "",
         ktMail: "",
       },
+      userId: '',
     }),
 
     computed: {
@@ -126,11 +127,27 @@ import { VDataTable } from 'vuetify/labs/VDataTable'
     },
 
     deleteItem (item) {
+      this.userId = item;
       this.dialogDelete = true
     },
 
-    deleteItemConfirm () {
+    async deleteItemConfirm () {
+      const res = await api.patch('/account/members/' + this.userId, '')
+
+      // 목록 새로고침
+      this.users = [];
+      const userData = this.requestUserData();
+      userData.then(
+        (response) => {
+          console.log('회원 목록 새로고침', response)
+          response.data.forEach((d) => {
+            this.users.push(d)
+          });
+        }
+      );
+
       this.closeDelete()
+      this.userId = '';
     },
 
     closeDelete () {

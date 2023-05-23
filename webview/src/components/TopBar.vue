@@ -75,9 +75,9 @@
           <v-menu>
             <template v-slot:activator="{ props }">
               <v-btn icon v-bind="props" @click="goToIndex">
-                <v-badge :content="4" color="orange" text-color="white"> 
+                <!-- <v-badge :content="0" color="orange" text-color="white">  -->
                   <v-icon>mdi-bell</v-icon>
-                </v-badge>
+                <!-- </v-badge> -->
               </v-btn>
             </template>
           </v-menu>
@@ -182,10 +182,11 @@ export default {
     },
     onclickBackBtn() {
       if (!stringUtils.isEmptyBool(this.back)) {
-        this.$router.replace({
-          path: this.back,
-          query: this.query
-        });
+        this.$router.go(-1)
+        // this.$router.replace({
+        //   path: this.back,
+        //   query: this.query
+        // });
       }
     },
     onClickMenuItem(item) {
