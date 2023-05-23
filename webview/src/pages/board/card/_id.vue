@@ -177,7 +177,7 @@
     </v-card>
 
     <!-- 카드 승인 버튼 -->
-    <v-card v-if="checkOwner() && cardData.selectionInfo == null" class="mt-4" variant="outlined">
+    <v-card v-if="checkOwner() && cardData.selectionInfo == null && cardData.writerInfo.id != user.userId" class="mt-4" variant="outlined">
       <v-card-item>
         <div class="font-m text-center mb-3">수고한 사우들을 응원해주세요!</div>
         <v-btn block class="button_main" @click="giveCard">카드 주기</v-btn>
