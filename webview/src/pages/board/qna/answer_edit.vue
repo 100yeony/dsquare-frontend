@@ -43,10 +43,9 @@ export default {
       return await api.get('board/answers/' + this.$route.query.id)
     },
     async edit() {
-
       const formData = new FormData();
-
       const answer = this.answer 
+      answer.content = this.editorData
 
       if (this.attachment) {
         Object.assign(this.attachment, {
