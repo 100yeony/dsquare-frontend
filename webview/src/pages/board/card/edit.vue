@@ -28,7 +28,7 @@ export default {
         "Safety플랫폼팀"],
       ["AgileCore팀", "Digico사업수행팀", "DX솔루션사업팀"],
     ];
-  
+    store.dispatch("url/setUrlQuery", { qid: route.query.qid })
     return { chipData, chipText, categoryItems, subcategoryFullList };
   },
   data() {

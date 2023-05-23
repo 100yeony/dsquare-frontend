@@ -17,6 +17,7 @@ export default {
     let chipText = ref("");
 
     const route = useRoute();
+    store.dispatch("url/setUrlQuery", { talkId: route.query.talkId })
 
     return { chipData, chipText };
   },
