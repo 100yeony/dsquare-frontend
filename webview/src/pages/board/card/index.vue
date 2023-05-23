@@ -376,7 +376,7 @@ export default {
             size: (this.requestCardDataSize = 10),
           };
           this.searchParams = params;
-          this.searchFlag = (this.requestCardData.length == 0) ? true : false
+          this.searchFlag = true;
         } else {
           var params = {
             projTeamId: this.projTeamId,
@@ -385,7 +385,7 @@ export default {
             size: (this.completedCardDataSize = 10),
           };
           this.searchParams = params;
-          this.completedFlag = (this.completedCardData.length == 0) ? true : false
+          this.completedFlag = true;
         }
         
         this.loadNew();
@@ -448,7 +448,7 @@ export default {
         
         var res = await api.get(requestUri, { params }).then(
           (response) => {
-            if ([200, 201].includes(response.status) && response.data.length) {
+            if ([200, 201].includes(response.status)) {
               response.data.forEach((d) => {
                 d.createDate = this.exportDateFromTimeStamp(d.createDate);
                 if (d.teammates) {

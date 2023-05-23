@@ -304,9 +304,9 @@ export default {
               params['key'] = 'member';
             }
             params['value'] = this.searchContent;
-            this.workSearchFlag = (this.workCardData.length == 0) ? true:false  
+            this.workSearchFlag = true  
           } else {
-            this.workSearchFlag = (this.workCardData.length == 0) ? true:false  
+            this.workSearchFlag = true  
           }
         } else {
           if (this.searchKey != '' && this.searchContent != '') {
@@ -316,11 +316,8 @@ export default {
               params['key'] = 'member'
             }
             params['value'] = this.searchContent;
-            // this.workCardData = [];
-            this.workSearchFlag = (this.workCardData.length == 0) ? true:false  
-          } else {
-            this.workSearchFlag = (this.workCardData.length == 0) ? true:false  
           }
+          this.workSearchFlag = true 
         }
         
         this.searchParams = params;
@@ -340,7 +337,7 @@ export default {
             params['key'] = 'member';
           }
           params['value'] = this.searchContent;
-          this.searchFlag = (this.nonworkCardData.length == 0) ? true:false  
+          this.searchFlag = true  
         }
 
         this.searchParams = params;
@@ -393,7 +390,7 @@ export default {
       }
       var res = await api.get(questionUri, { params }).then(
         (response) => {
-          if ([200, 201].includes(response.status) && response.data.length) {
+          if ([200, 201].includes(response.status)) {
             response.data.forEach((d) => {
               d.createDate = this.exportDateFromTimeStamp(d.createDate);
             });
@@ -431,6 +428,8 @@ export default {
       this.subcategory = []
       this.searchKey = ''
       this.searchContent = '';
+
+      this.searchFlag = false;
 
       // if (this.qnaTab == 0) {
       //   this.requestAllWork()

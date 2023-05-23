@@ -172,7 +172,7 @@ export default {
 
       var res = await api.get(uri, { params }).then(
         (response) => {
-          if ([200, 201].includes(response.status) && response.data.length) {
+          if ([200, 201].includes(response.status)) {
             response.data.forEach((d) => {
               d.createDate = this.exportDateFromTimeStamp(d.createDate);
             });
