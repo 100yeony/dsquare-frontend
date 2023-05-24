@@ -530,9 +530,10 @@ export default {
     async cardSelect() {
       const res = await api.patch('board/cards/' + this.selectedItem.cardId + '/chosen').then(
         (response) => {
-          this.sort(1);
-          this.cardTab = 1;
-          this.sort(1);
+          this.$router.push({
+            path: '/board/card/' + this.selectedItem.cardId + '/',
+            title: this.selectedItem.title
+          });
         }
       );
       this.selectedItem = {}
