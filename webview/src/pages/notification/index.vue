@@ -1,6 +1,6 @@
 <template>
-  <div class="keep-all">
-    <p class="text-h7 font-weight-black">오늘</p>
+  <div v-if="notifications.length > 0" class="keep-all">
+    <p v-if="todayNotis.length > 0" class="text-h7 font-weight-black">오늘</p>
     <v-list>
       <v-list-item v-for="(item, index) in todayNotis" :key="index">
         <v-card variant="" @click="handleItemClick(item)">
@@ -28,7 +28,7 @@
         <v-divider></v-divider>
       </v-list-item>
     </v-list>
-    <p class="text-h7 font-weight-black">어제</p>
+    <p v-if="yesterdayNotis.length > 0" class="text-h7 font-weight-black">어제</p>
     <v-list>
       <v-list-item v-for="(item, index) in yesterdayNotis" :key="index">
         <v-card variant="" @click="handleItemClick(item)">
@@ -56,7 +56,7 @@
         <v-divider></v-divider>
       </v-list-item>
     </v-list>
-    <p class="text-h7 font-weight-black">이번 주</p>
+    <p v-if="weekNotis.length > 0" class="text-h7 font-weight-black">이번 주</p>
     <v-list>
       <v-list-item v-for="(item, index) in weekNotis" :key="index">
         <v-card variant="" @click="handleItemClick(item)">
@@ -84,7 +84,7 @@
         <v-divider></v-divider>
       </v-list-item>
     </v-list>
-    <p class="text-h7 font-weight-black">이번 달</p>
+    <p v-if="monthNotis.length > 0" class="text-h7 font-weight-black">이번 달</p>
     <v-list>
       <v-list-item v-for="(item, index) in monthNotis" :key="index">
         <v-card variant="" @click="handleItemClick(item)">
@@ -112,7 +112,7 @@
         <v-divider></v-divider>
       </v-list-item>
     </v-list>
-    <p class="text-h7 font-weight-black">이전 활동</p>
+    <p v-if="outOfMonthNotis > 0" class="text-h7 font-weight-black">이전 활동</p>
     <v-list>
       <v-list-item v-for="(item, index) in outOfMonthNotis" :key="index">
         <v-card variant="" @click="handleItemClick(item)">
@@ -140,7 +140,9 @@
         <v-divider></v-divider>
       </v-list-item>
     </v-list>
-
+  </div>
+  <div v-else class="text-center mt-60 mb-20">
+    <p><img src="@/assets/images/noti_empty.png" width="80" height="80"></p>
   </div>
 </template>
   
