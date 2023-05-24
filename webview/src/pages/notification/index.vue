@@ -1,145 +1,155 @@
 <template>
   <div v-if="notifications.length > 0" class="keep-all">
-    <p v-if="todayNotis.length > 0" class="text-h7 font-weight-black">오늘</p>
-    <v-list>
-      <v-list-item v-for="(item, index) in todayNotis" :key="index">
-        <v-card variant="" @click="handleItemClick(item)">
-          <v-row class="mt-3 mb-3">
-            <v-col cols="2">
-              <v-avatar v-if="!item.profileImage" color="grey" size="35">
-                <v-img cover src="@/assets/images/users/profile_default.png"></v-img>
-              </v-avatar>
-              <v-avatar v-else color="grey" size="35">
-                <v-img cover :src="item.profileImage"></v-img>
-              </v-avatar>
-            </v-col>
-            <v-col cols="10">
-              <v-list-item-content>
-                <v-list-item-title class="text-truncate">
-                  <v-list-item-subtitle class="grey--text"><span class="font-weight-bold">{{ item.username }}</span> {{
-                    item.time }}</v-list-item-subtitle>
-                  <p></p>
-                  <span v-html="item.message"></span>
-                </v-list-item-title>
-              </v-list-item-content>
-            </v-col>
-          </v-row>
-        </v-card>
-        <v-divider></v-divider>
-      </v-list-item>
-    </v-list>
-    <p v-if="yesterdayNotis.length > 0" class="text-h7 font-weight-black">어제</p>
-    <v-list>
-      <v-list-item v-for="(item, index) in yesterdayNotis" :key="index">
-        <v-card variant="" @click="handleItemClick(item)">
-          <v-row class="mt-3 mb-3">
-            <v-col cols="2">
-              <v-avatar v-if="!item.profileImage" color="grey" size="35">
-                <v-img cover src="@/assets/images/users/profile_default.png"></v-img>
-              </v-avatar>
-              <v-avatar v-else color="grey" size="35">
-                <v-img cover :src="item.profileImage"></v-img>
-              </v-avatar>
-            </v-col>
-            <v-col cols="10">
-              <v-list-item-content>
-                <v-list-item-title class="text-truncate">
-                  <v-list-item-subtitle class="grey--text"><span class="font-weight-bold">{{ item.username }}</span> {{
-                    item.time }}</v-list-item-subtitle>
-                  <p></p>
-                  <span v-html="item.message"></span>
-                </v-list-item-title>
-              </v-list-item-content>
-            </v-col>
-          </v-row>
-        </v-card>
-        <v-divider></v-divider>
-      </v-list-item>
-    </v-list>
-    <p v-if="weekNotis.length > 0" class="text-h7 font-weight-black">이번 주</p>
-    <v-list>
-      <v-list-item v-for="(item, index) in weekNotis" :key="index">
-        <v-card variant="" @click="handleItemClick(item)">
-          <v-row class="mt-3 mb-3">
-            <v-col cols="2">
-              <v-avatar v-if="!item.profileImage" color="grey" size="35">
-                <v-img cover src="@/assets/images/users/profile_default.png"></v-img>
-              </v-avatar>
-              <v-avatar v-else color="grey" size="35">
-                <v-img cover :src="item.profileImage"></v-img>
-              </v-avatar>
-            </v-col>
-            <v-col cols="10">
-              <v-list-item-content>
-                <v-list-item-title class="text-truncate">
-                  <v-list-item-subtitle class="grey--text"><span class="font-weight-bold">{{ item.username }}</span> {{
-                    item.time }}</v-list-item-subtitle>
-                  <p></p>
-                  <span v-html="item.message"></span>
-                </v-list-item-title>
-              </v-list-item-content>
-            </v-col>
-          </v-row>
-        </v-card>
-        <v-divider></v-divider>
-      </v-list-item>
-    </v-list>
-    <p v-if="monthNotis.length > 0" class="text-h7 font-weight-black">이번 달</p>
-    <v-list>
-      <v-list-item v-for="(item, index) in monthNotis" :key="index">
-        <v-card variant="" @click="handleItemClick(item)">
-          <v-row class="mt-3 mb-3">
-            <v-col cols="2">
-              <v-avatar v-if="!item.profileImage" color="grey" size="35">
-                <v-img cover src="@/assets/images/users/profile_default.png"></v-img>
-              </v-avatar>
-              <v-avatar v-else color="grey" size="35">
-                <v-img cover :src="item.profileImage"></v-img>
-              </v-avatar>
-            </v-col>
-            <v-col cols="10">
-              <v-list-item-content>
-                <v-list-item-title class="text-truncate">
-                  <v-list-item-subtitle class="grey--text"><span class="font-weight-bold">{{ item.username }}</span> {{
-                    item.time }}</v-list-item-subtitle>
-                  <p></p>
-                  <span v-html="item.message"></span>
-                </v-list-item-title>
-              </v-list-item-content>
-            </v-col>
-          </v-row>
-        </v-card>
-        <v-divider></v-divider>
-      </v-list-item>
-    </v-list>
-    <p v-if="outOfMonthNotis > 0" class="text-h7 font-weight-black">이전 활동</p>
-    <v-list>
-      <v-list-item v-for="(item, index) in outOfMonthNotis" :key="index">
-        <v-card variant="" @click="handleItemClick(item)">
-          <v-row class="mt-3 mb-3">
-            <v-col cols="2">
-              <v-avatar v-if="!item.profileImage" color="grey" size="35">
-                <v-img cover src="@/assets/images/users/profile_default.png"></v-img>
-              </v-avatar>
-              <v-avatar v-else color="grey" size="35">
-                <v-img cover :src="item.profileImage"></v-img>
-              </v-avatar>
-            </v-col>
-            <v-col cols="10">
-              <v-list-item-content>
-                <v-list-item-title class="text-truncate">
-                  <v-list-item-subtitle class="grey--text"><span class="font-weight-bold">{{ item.username }}</span> {{
-                    item.time }}</v-list-item-subtitle>
-                  <p></p>
-                  <span v-html="item.message"></span>
-                </v-list-item-title>
-              </v-list-item-content>
-            </v-col>
-          </v-row>
-        </v-card>
-        <v-divider></v-divider>
-      </v-list-item>
-    </v-list>
+    <div v-if="todayNotis.length > 0">
+      <p class="text-h7 font-weight-black">오늘</p>
+      <v-list>
+        <v-list-item v-for="(item, index) in todayNotis" :key="index">
+          <v-card variant="" @click="handleItemClick(item)">
+            <v-row class="mt-3 mb-3">
+              <v-col cols="2">
+                <v-avatar v-if="!item.profileImage" color="grey" size="35">
+                  <v-img cover src="@/assets/images/users/profile_default.png"></v-img>
+                </v-avatar>
+                <v-avatar v-else color="grey" size="35">
+                  <v-img cover :src="item.profileImage"></v-img>
+                </v-avatar>
+              </v-col>
+              <v-col cols="10">
+                <v-list-item-content>
+                  <v-list-item-title class="text-truncate">
+                    <v-list-item-subtitle class="grey--text"><span class="font-weight-bold">{{ item.username }}</span> {{
+                      item.time }}</v-list-item-subtitle>
+                    <p></p>
+                    <span v-html="item.message"></span>
+                  </v-list-item-title>
+                </v-list-item-content>
+              </v-col>
+            </v-row>
+          </v-card>
+          <v-divider></v-divider>
+        </v-list-item>
+      </v-list>
+    </div>
+    <div v-if="yesterdayNotis.length > 0">
+      <p class="text-h7 font-weight-black">어제</p>
+      <v-list>
+        <v-list-item v-for="(item, index) in yesterdayNotis" :key="index">
+          <v-card variant="" @click="handleItemClick(item)">
+            <v-row class="mt-3 mb-3">
+              <v-col cols="2">
+                <v-avatar v-if="!item.profileImage" color="grey" size="35">
+                  <v-img cover src="@/assets/images/users/profile_default.png"></v-img>
+                </v-avatar>
+                <v-avatar v-else color="grey" size="35">
+                  <v-img cover :src="item.profileImage"></v-img>
+                </v-avatar>
+              </v-col>
+              <v-col cols="10">
+                <v-list-item-content>
+                  <v-list-item-title class="text-truncate">
+                    <v-list-item-subtitle class="grey--text"><span class="font-weight-bold">{{ item.username }}</span> {{
+                      item.time }}</v-list-item-subtitle>
+                    <p></p>
+                    <span v-html="item.message"></span>
+                  </v-list-item-title>
+                </v-list-item-content>
+              </v-col>
+            </v-row>
+          </v-card>
+          <v-divider></v-divider>
+        </v-list-item>
+      </v-list>
+    </div>
+    <div v-if="weekNotis.length > 0">
+      <p class="text-h7 font-weight-black">이번 주</p>
+      <v-list>
+        <v-list-item v-for="(item, index) in weekNotis" :key="index">
+          <v-card variant="" @click="handleItemClick(item)">
+            <v-row class="mt-3 mb-3">
+              <v-col cols="2">
+                <v-avatar v-if="!item.profileImage" color="grey" size="35">
+                  <v-img cover src="@/assets/images/users/profile_default.png"></v-img>
+                </v-avatar>
+                <v-avatar v-else color="grey" size="35">
+                  <v-img cover :src="item.profileImage"></v-img>
+                </v-avatar>
+              </v-col>
+              <v-col cols="10">
+                <v-list-item-content>
+                  <v-list-item-title class="text-truncate">
+                    <v-list-item-subtitle class="grey--text"><span class="font-weight-bold">{{ item.username }}</span> {{
+                      item.time }}</v-list-item-subtitle>
+                    <p></p>
+                    <span v-html="item.message"></span>
+                  </v-list-item-title>
+                </v-list-item-content>
+              </v-col>
+            </v-row>
+          </v-card>
+          <v-divider></v-divider>
+        </v-list-item>
+      </v-list>
+    </div>
+    <div v-if="monthNotis.length > 0">
+      <p class="text-h7 font-weight-black">이번 달</p>
+      <v-list>
+        <v-list-item v-for="(item, index) in monthNotis" :key="index">
+          <v-card variant="" @click="handleItemClick(item)">
+            <v-row class="mt-3 mb-3">
+              <v-col cols="2">
+                <v-avatar v-if="!item.profileImage" color="grey" size="35">
+                  <v-img cover src="@/assets/images/users/profile_default.png"></v-img>
+                </v-avatar>
+                <v-avatar v-else color="grey" size="35">
+                  <v-img cover :src="item.profileImage"></v-img>
+                </v-avatar>
+              </v-col>
+              <v-col cols="10">
+                <v-list-item-content>
+                  <v-list-item-title class="text-truncate">
+                    <v-list-item-subtitle class="grey--text"><span class="font-weight-bold">{{ item.username }}</span> {{
+                      item.time }}</v-list-item-subtitle>
+                    <p></p>
+                    <span v-html="item.message"></span>
+                  </v-list-item-title>
+                </v-list-item-content>
+              </v-col>
+            </v-row>
+          </v-card>
+          <v-divider></v-divider>
+        </v-list-item>
+      </v-list>
+    </div>
+    <div v-if="outOfMonthNotis > 0">
+      <p class="text-h7 font-weight-black">이전 활동</p>
+      <v-list>
+        <v-list-item v-for="(item, index) in outOfMonthNotis" :key="index">
+          <v-card variant="" @click="handleItemClick(item)">
+            <v-row class="mt-3 mb-3">
+              <v-col cols="2">
+                <v-avatar v-if="!item.profileImage" color="grey" size="35">
+                  <v-img cover src="@/assets/images/users/profile_default.png"></v-img>
+                </v-avatar>
+                <v-avatar v-else color="grey" size="35">
+                  <v-img cover :src="item.profileImage"></v-img>
+                </v-avatar>
+              </v-col>
+              <v-col cols="10">
+                <v-list-item-content>
+                  <v-list-item-title class="text-truncate">
+                    <v-list-item-subtitle class="grey--text"><span class="font-weight-bold">{{ item.username }}</span> {{
+                      item.time }}</v-list-item-subtitle>
+                    <p></p>
+                    <span v-html="item.message"></span>
+                  </v-list-item-title>
+                </v-list-item-content>
+              </v-col>
+            </v-row>
+          </v-card>
+          <v-divider></v-divider>
+        </v-list-item>
+      </v-list>
+    </div>
   </div>
   <div v-else class="text-center mt-60 mb-20">
     <p><img src="@/assets/images/noti_empty.png" width="80" height="80"></p>
@@ -166,7 +176,7 @@ export default {
     const weekNotis = ref([])
     const monthNotis = ref([])
     const outOfMonthNotis = ref([])
-  
+
     let today = new Date()
     let yesterday = new Date((new Date().setDate(new Date().getDate() - 1)))
     let weekAgo = new Date((new Date().setDate(new Date().getDate() - 7)))
@@ -192,7 +202,7 @@ export default {
 
           notifications.value.push(noti)
           const date = new Date(noti.time)
-          
+
           if (date >= today) {
             todayNotis.value.push(noti)
           } else if (today > date && date >= yesterday) {
