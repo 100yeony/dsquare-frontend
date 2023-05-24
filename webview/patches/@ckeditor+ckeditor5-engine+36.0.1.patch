@@ -1,15 +1,17 @@
 diff --git a/node_modules/@ckeditor/ckeditor5-engine/src/view/renderer.js b/node_modules/@ckeditor/ckeditor5-engine/src/view/renderer.js
-index a2a1a14..a7942b4 100644
+index a2a1a14..f82f5eb 100644
 --- a/node_modules/@ckeditor/ckeditor5-engine/src/view/renderer.js
 +++ b/node_modules/@ckeditor/ckeditor5-engine/src/view/renderer.js
-@@ -633,7 +633,9 @@ export default class Renderer extends ObservableMixin() {
+@@ -633,8 +633,10 @@ export default class Renderer extends ObservableMixin() {
                  // @if CK_DEBUG_TYPING // 		'color: green;font-weight: bold', ''
                  // @if CK_DEBUG_TYPING // 	);
                  // @if CK_DEBUG_TYPING // }
 -                updateTextNode(actualDomChildren[i], expectedDomChildren[i].data);
+-                i++;
 +                if (!this.isComposing) {
 +                    updateTextNode(actualDomChildren[i], expectedDomChildren[i].data);
++                    i++;
 +                }
-                 i++;
                  // @if CK_DEBUG_TYPING // if ( window.logCKETyping ) {
                  // @if CK_DEBUG_TYPING // 	console.groupEnd();
+                 // @if CK_DEBUG_TYPING // }
