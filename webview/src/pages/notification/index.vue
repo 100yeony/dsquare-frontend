@@ -153,6 +153,7 @@
   </div>
   <div v-else class="text-center mt-60 mb-20">
     <p><img src="@/assets/images/noti_empty.png" width="80" height="80"></p>
+    <h3 class="mt-5">받은 알림이 없어요</h3>
   </div>
 </template>
   
