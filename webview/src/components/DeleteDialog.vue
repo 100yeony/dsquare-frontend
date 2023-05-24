@@ -52,3 +52,8 @@ export default {
   }
 }
 </script>
+<style scoped>
+::v-deep .v-overlay__content {
+  max-width: 70% !important;
+}
+</style>

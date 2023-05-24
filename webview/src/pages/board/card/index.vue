@@ -586,7 +586,4 @@ export default {
   @include translateY;
 }
 
-.v-window {
-  overflow: inherit !important;
-}
 </style>
