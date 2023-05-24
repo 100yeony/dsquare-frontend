@@ -1,9 +1,8 @@
 <template>
   <div class="keep-all">
-    <!-- <p class="text-h7 font-weight-black">오늘</p> -->
-
+    <p class="text-h7 font-weight-black">오늘</p>
     <v-list>
-      <v-list-item v-for="(item, index) in notifications" :key="index">
+      <v-list-item v-for="(item, index) in todayNotis" :key="index">
         <v-card variant="" @click="handleItemClick(item)">
           <v-row class="mt-3 mb-3">
             <v-col cols="2">
@@ -29,77 +28,118 @@
         <v-divider></v-divider>
       </v-list-item>
     </v-list>
-    <!-- <p class="text-h7 font-weight-black">이번 주</p>
-    <v-card variant="">
-      <v-list>
-        <v-list-item v-for="(item, index) in notifications" :key="index" :href="item.link">
-          <v-row>
+    <p class="text-h7 font-weight-black">어제</p>
+    <v-list>
+      <v-list-item v-for="(item, index) in yesterdayNotis" :key="index">
+        <v-card variant="" @click="handleItemClick(item)">
+          <v-row class="mt-3 mb-3">
             <v-col cols="2">
-              <v-avatar color="grey" size="35">
+              <v-avatar v-if="!item.profileImage" color="grey" size="35">
                 <v-img cover src="@/assets/images/users/profile_default.png"></v-img>
+              </v-avatar>
+              <v-avatar v-else color="grey" size="35">
+                <v-img cover :src="item.profileImage"></v-img>
               </v-avatar>
             </v-col>
             <v-col cols="10">
               <v-list-item-content>
                 <v-list-item-title class="text-truncate">
-                  <span class="font-weight-bold">{{ item.username }}</span>
+                  <v-list-item-subtitle class="grey--text"><span class="font-weight-bold">{{ item.username }}</span> {{
+                    item.time }}</v-list-item-subtitle>
+                  <p></p>
                   <span v-html="item.message"></span>
                 </v-list-item-title>
-                <v-list-item-subtitle class="grey--text">{{ item.time }}</v-list-item-subtitle>
               </v-list-item-content>
             </v-col>
           </v-row>
-        </v-list-item>
-      </v-list>
-    </v-card>
-    <v-divider class="mb-2"></v-divider>
+        </v-card>
+        <v-divider></v-divider>
+      </v-list-item>
+    </v-list>
+    <p class="text-h7 font-weight-black">이번 주</p>
+    <v-list>
+      <v-list-item v-for="(item, index) in weekNotis" :key="index">
+        <v-card variant="" @click="handleItemClick(item)">
+          <v-row class="mt-3 mb-3">
+            <v-col cols="2">
+              <v-avatar v-if="!item.profileImage" color="grey" size="35">
+                <v-img cover src="@/assets/images/users/profile_default.png"></v-img>
+              </v-avatar>
+              <v-avatar v-else color="grey" size="35">
+                <v-img cover :src="item.profileImage"></v-img>
+              </v-avatar>
+            </v-col>
+            <v-col cols="10">
+              <v-list-item-content>
+                <v-list-item-title class="text-truncate">
+                  <v-list-item-subtitle class="grey--text"><span class="font-weight-bold">{{ item.username }}</span> {{
+                    item.time }}</v-list-item-subtitle>
+                  <p></p>
+                  <span v-html="item.message"></span>
+                </v-list-item-title>
+              </v-list-item-content>
+            </v-col>
+          </v-row>
+        </v-card>
+        <v-divider></v-divider>
+      </v-list-item>
+    </v-list>
     <p class="text-h7 font-weight-black">이번 달</p>
-    <v-card variant="">
-      <v-list>
-        <v-list-item v-for="(item, index) in notifications" :key="index" :href="item.link">
-          <v-row>
+    <v-list>
+      <v-list-item v-for="(item, index) in monthNotis" :key="index">
+        <v-card variant="" @click="handleItemClick(item)">
+          <v-row class="mt-3 mb-3">
             <v-col cols="2">
-              <v-avatar color="grey" size="35">
+              <v-avatar v-if="!item.profileImage" color="grey" size="35">
                 <v-img cover src="@/assets/images/users/profile_default.png"></v-img>
+              </v-avatar>
+              <v-avatar v-else color="grey" size="35">
+                <v-img cover :src="item.profileImage"></v-img>
               </v-avatar>
             </v-col>
             <v-col cols="10">
               <v-list-item-content>
                 <v-list-item-title class="text-truncate">
-                  <span class="font-weight-bold">{{ item.username }}</span>
+                  <v-list-item-subtitle class="grey--text"><span class="font-weight-bold">{{ item.username }}</span> {{
+                    item.time }}</v-list-item-subtitle>
+                  <p></p>
                   <span v-html="item.message"></span>
                 </v-list-item-title>
-                <v-list-item-subtitle class="grey--text">{{ item.time }}</v-list-item-subtitle>
               </v-list-item-content>
             </v-col>
           </v-row>
-        </v-list-item>
-      </v-list>
-    </v-card>
-    <v-divider class="mb-2"></v-divider>
+        </v-card>
+        <v-divider></v-divider>
+      </v-list-item>
+    </v-list>
     <p class="text-h7 font-weight-black">이전 활동</p>
-    <v-card variant="">
-      <v-list>
-        <v-list-item v-for="(item, index) in notifications" :key="index" :href="item.link">
-          <v-row>
+    <v-list>
+      <v-list-item v-for="(item, index) in outOfMonthNotis" :key="index">
+        <v-card variant="" @click="handleItemClick(item)">
+          <v-row class="mt-3 mb-3">
             <v-col cols="2">
-              <v-avatar color="grey" size="35">
+              <v-avatar v-if="!item.profileImage" color="grey" size="35">
                 <v-img cover src="@/assets/images/users/profile_default.png"></v-img>
+              </v-avatar>
+              <v-avatar v-else color="grey" size="35">
+                <v-img cover :src="item.profileImage"></v-img>
               </v-avatar>
             </v-col>
             <v-col cols="10">
               <v-list-item-content>
                 <v-list-item-title class="text-truncate">
-                  <span class="font-weight-bold">{{ item.username }}</span>
+                  <v-list-item-subtitle class="grey--text"><span class="font-weight-bold">{{ item.username }}</span> {{
+                    item.time }}</v-list-item-subtitle>
+                  <p></p>
                   <span v-html="item.message"></span>
                 </v-list-item-title>
-                <v-list-item-subtitle class="grey--text">{{ item.time }}</v-list-item-subtitle>
               </v-list-item-content>
             </v-col>
           </v-row>
-        </v-list-item>
-      </v-list>
-    </v-card> -->
+        </v-card>
+        <v-divider></v-divider>
+      </v-list-item>
+    </v-list>
 
   </div>
 </template>
@@ -119,27 +159,56 @@ export default {
   },
   setup() {
     const notifications = ref([])
+    const todayNotis = ref([])
+    const yesterdayNotis = ref([])
+    const weekNotis = ref([])
+    const monthNotis = ref([])
+    const outOfMonthNotis = ref([])
+  
+    let today = new Date()
+    let yesterday = new Date((new Date().setDate(new Date().getDate() - 1)))
+    let weekAgo = new Date((new Date().setDate(new Date().getDate() - 7)))
+    let monthAgo = new Date((new Date().setMonth(new Date().getMonth() - 1)))
+    today.setHours(0, 0, 0)
+    yesterday.setHours(0, 0, 0)
+    weekAgo.setHours(0, 0, 0)
+    monthAgo.setHours(0, 0, 0)
+
     var userInfo = store.getters['info/infoUser']
     api.get('/member/members/' + userInfo.userId + '/notification', '').then(
-      (res) => {
-        res.data.forEach(async (data) => {
+      async (res) => {
+        await res.data.forEach(async (data) => {
           var r = await requestUserData(data.data.writerId)
-          console.log(r)
-          console.log(data.data.postId)
-          console.log((typeof data.data.postId == 'undefined'))
-          notifications.value.push(
-            {
-              userProfile: r.data.profileImage,
-              username: (data.data.board == "CARROT") ? r.data.nickname : r.data.name,
-              message: data.data.body,
-              time: data.sentAt.substr(0, 10),
-              boardType: data.data.board,
-              postId: (typeof data.data.postId == 'undefined') ? data.data.questionId : data.data.postId
-            }
-          )
+          const noti = {
+            userProfile: r.data.profileImage,
+            username: (data.data.board == "CARROT") ? r.data.nickname : r.data.name,
+            message: data.data.body,
+            time: data.sentAt.substr(0, 10),
+            boardType: data.data.board,
+            postId: (typeof data.data.postId == 'undefined') ? data.data.questionId : data.data.postId
+          }
+
+          notifications.value.push(noti)
+          const date = new Date(noti.time)
+          
+          if (date >= today) {
+            todayNotis.value.push(noti)
+          } else if (today > date && date >= yesterday) {
+            yesterdayNotis.value.push(noti)
+          } else if (yesterday > date && date >= weekAgo) {
+            weekNotis.value.push(noti)
+          } else if (weekAgo > date && date >= monthAgo) {
+            monthNotis.value.push(noti)
+          } else if (monthAgo > date) {
+            outOfMonthNotis.value.push(noti)
+          }
         })
       }
     )
+
+
+
+
 
 
     function exportDateFromTimeStamp(timeStamp) {
@@ -161,7 +230,12 @@ export default {
 
     return {
       exportDateFromTimeStamp,
-      notifications
+      notifications,
+      todayNotis,
+      yesterdayNotis,
+      weekNotis,
+      monthNotis,
+      outOfMonthNotis
     };
   },
   data() {
@@ -187,8 +261,8 @@ export default {
         console.log("none boardType")
       }
       this.$router.push({
-          path: path
-        });
+        path: path
+      });
     }
   },
 };
