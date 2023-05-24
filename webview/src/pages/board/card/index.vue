@@ -34,7 +34,7 @@
     <!-- 
     <p class="mt-3 text-h6 font-weight-black">카드 대기중</p> -->
 
-    <v-window v-model="cardTab" :touch="false">
+    <v-window v-model="cardTab" :touch="false" class="v-card-window">
       <v-window-item :value="0">
         <!-- 검색 -->
         <v-expansion-panels class="my-3">
@@ -587,4 +587,7 @@ export default {
   @include translateY;
 }
 
+::v-deep .v-card-window {
+  overflow: inherit !important;
+}
 </style>
