@@ -58,7 +58,8 @@
 <script>
 import store from '@/store';
 import api from '@/api'
-import { VDataTable } from 'vuetify/labs/VDataTable'
+import { VDataTable } from 'vuetify/components' 
+// vuetify/labs/VDataTable 는 오류나서 변경함.
 
   export default {
     components: {
