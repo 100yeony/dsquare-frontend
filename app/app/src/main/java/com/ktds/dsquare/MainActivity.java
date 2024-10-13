@@ -175,7 +175,8 @@ public class MainActivity extends AppCompatActivity {
                 Log.d(TAG, "userId: " + userId);
                 Log.d(TAG, "RToken: " + mAppDataPreference.getRToken());
                 Retrofit retrofit = new Retrofit.Builder()
-                        .baseUrl("http://dsquare.kro.kr/api/")
+                        // .baseUrl("http://dsquare.kro.kr/api/")
+                        .baseUrl("http://100.83.227.59/api/")
                         .addConverterFactory(GsonConverterFactory.create())
                         .build();
                 RetrofitService service = retrofit.create(RetrofitService.class);
